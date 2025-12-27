@@ -33,7 +33,7 @@ class ApiConstants {
   /// API Base URL
   ///
   /// Priority: Dynamic Config > Compile-time Env
-  /// Throws if not configured
+  /// Returns empty string if not configured (allows app startup to show config page)
   String get baseUrl {
     // 1. Dynamic configuration
     final configService = _ref.read(serverConfigServiceProvider);
@@ -47,10 +47,19 @@ class ApiConstants {
       return _envBaseUrl;
     }
 
-    // No default - must be configured
-    throw StateError(
-      'Server not configured. Please set server URL in settings or use --dart-define=API_BASE_URL=xxx',
-    );
+    // Return empty placeholder to allow app startup
+    // The router will redirect to server-setup page
+    return '';
+  }
+
+  /// Ensure server is configured before making network requests
+  /// Throws StateError if not configured
+  void ensureConfigured() {
+    if (!isConfigured) {
+      throw StateError(
+        'Server not configured. Please set server URL in settings.',
+      );
+    }
   }
 
   /// SSE Base URL (for AI chat streaming)

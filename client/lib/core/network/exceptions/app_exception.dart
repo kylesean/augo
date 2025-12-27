@@ -76,3 +76,9 @@ class BusinessException extends AppException {
   BusinessException([String? message, this.code])
     : super(message, ""); // No prefix, display backend message directly
 }
+
+/// Server not configured exception: thrown when trying to make requests without server config
+class ServerNotConfiguredException extends AppException {
+  ServerNotConfiguredException([String? message])
+    : super(message, "Server Not Configured: ");
+}

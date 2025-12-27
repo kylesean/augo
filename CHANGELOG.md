@@ -5,6 +5,13 @@ All notable changes to **Augo** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1-alpha] - 2025-12-28
+
+### Fixed
+- **Critical**: Fixed application crash on first launch when server URL is not configured. Previously required `--dart-define=API_BASE_URL=xxx` to start the app; now the app gracefully shows the server configuration page.
+- Added `ConfigurationCheckInterceptor` to validate server configuration before making network requests.
+- Added `ServerNotConfiguredException` for clearer error handling when server is not configured.
+
 ## [0.1.0-alpha] - 2025-12-27
 
 ### Added
