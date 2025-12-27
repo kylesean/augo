@@ -337,7 +337,7 @@ requires-dist = [
     { name = "langchain-community", specifier = ">=0.4.1" },
     { name = "langchain-core", specifier = ">=1.2.5" },
     { name = "langchain-openai", specifier = ">=1.0.2" },
-    { name = "langfuse", extras = ["langchain"], specifier = "==3.9.1" },
+    { name = "langfuse", specifier = "==3.9.1" },
     { name = "langgraph", specifier = ">=1.0.2" },
     { name = "langgraph-checkpoint-postgres", specifier = ">=3.0.1" },
     { name = "mem0ai", specifier = ">=1.0.0" },
@@ -369,7 +369,7 @@ requires-dist = [
     { name = "uuid-utils", specifier = ">=0.12.0" },
     { name = "uvicorn", specifier = ">=0.34.0" },
     { name = "uvloop", specifier = ">=0.22.1" },
-    { name = "webdav4", extras = ["async"], specifier = ">=0.9.8" },
+    { name = "webdav4", specifier = ">=0.9.8" },
 ]
 provides-extras = ["dev"]
 

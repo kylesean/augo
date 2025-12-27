@@ -9,7 +9,7 @@ dependencies = [
     "langchain>=1.0.5",
     "langchain-core>=1.2.5",
     "langchain-openai>=1.0.2",
-    "langfuse[langchain]==3.9.1",
+    "langfuse==3.9.1",
     "langgraph>=1.0.2",
     "langgraph-checkpoint-postgres>=3.0.1",
     "passlib[bcrypt]>=1.7.4",
@@ -52,7 +52,7 @@ dependencies = [
     # Storage adapters
     "s3fs>=2024.9.0",
     "aiobotocore>=2.13.0",
-    "webdav4[async]>=0.9.8",
+    "webdav4>=0.9.8",
     "universal-pathlib>=0.2.0",
     "cryptography>=42.0.0",
     "uuid-utils>=0.12.0",
