@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">?android:colorBackground</item>
+        <!-- 设置默认字体为系统字体，确保中文显示正常 -->
+        <item name="android:typeface">normal</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+</resources>

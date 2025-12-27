@@ -1,0 +1,52 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ / Android Studio
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Visual Studio Code
+.vscode/
+
+# Flutter/Dart/Pub
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Generated files (Uncomment if you want to keep repo small, but requires 'dart run build_runner build' after clone)
+# *.g.dart
+# *.freezed.dart
+
+# Symbolication
+app.*.symbols
+
+# Obfuscation
+app.*.map.json
+
+# Android Studio local files (Defensive)
+/android/app/debug
+/android/app/profile
+/android/app/release
+local.properties
+
+# Signing & Credentials (Critical for Open Source)
+*.keystore
+*.jks
+key.properties
+google-services.json
+GoogleService-Info.plist

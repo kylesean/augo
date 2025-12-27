@@ -1,0 +1,31 @@
+# ==============================================================================
+# Git Attributes
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Auto-generated files (Collapse in Diff / Exclude from Language Stats)
+# ------------------------------------------------------------------------------
+
+# Flutter / Dart
+*.g.dart                linguist-generated=true
+*.freezed.dart          linguist-generated=true
+*.config.dart           linguist-generated=true
+*.gen.dart              linguist-generated=true
+*.mocks.dart            linguist-generated=true
+client/pubspec.lock     linguist-generated=true
+
+# Python
+uv.lock                 linguist-generated=true
+*.pyc                   linguist-generated=true
+
+# Documentation
+*.md                    linguist-documentation=true
+docs/*                  linguist-documentation=true
+
+# ------------------------------------------------------------------------------
+# Line Endings (Consistency across Windows/Linux)
+# ------------------------------------------------------------------------------
+*                       text=auto eol=lf
+*.bat                   text eol=crlf
+*.cmd                   text eol=crlf
+*.ps1                   text eol=crlf

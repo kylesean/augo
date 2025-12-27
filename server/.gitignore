@@ -1,0 +1,23 @@
+# ==============================================================================
+# Server Specific Rules
+# ==============================================================================
+
+# 1. Virtual Environments (Local only)
+.venv/
+venv/
+ENV/
+
+# 2. Application Runtime Data
+# These directories contain runtime generated data (logs, uploads, db files)
+logs/
+storage/
+evals/reports/
+
+# 3. Build & Dist Artifacts (Python Packaging)
+build/
+dist/
+wheels/
+*.egg-info
+
+# 4. Jupyter Notebooks (Often used for scratching/testing, exclude by default)
+*.ipynb

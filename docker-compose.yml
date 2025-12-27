@@ -1,0 +1,159 @@
+name: augo
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: augo-db
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5433:5432" # Use 5433 externally to avoid conflict with local Postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - monitoring
+    labels:
+      - "project=augo"
+      - "component=database"
+
+  redis:
+    image: redis:alpine
+    container_name: augo-redis
+    ports:
+      - "6380:6379" # Use 6380 externally to avoid conflict with local Redis
+    volumes:
+      - redis-data:/data
+    networks:
+      - monitoring
+    restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    labels:
+      - "project=augo"
+      - "component=redis"
+
+  # Single API service with dynamic environment
+  app:
+    image: augo-api:${APP_ENV:-development}
+    build:
+      context: ./server
+      args:
+        APP_ENV: ${APP_ENV:-development}
+    container_name: augo-api
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "if [ \"$${APP_ENV}\" = \"development\" ]; then 
+               uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /app/app;
+             else 
+               uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2;
+             fi"
+    volumes:
+      - ./server/app:/app/app
+      - ./server/logs:/app/logs
+      - ./server/storage:/app/storage
+      - ./server/artifacts:/app/artifacts
+    environment:
+      - APP_ENV=${APP_ENV:-development}
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - DEFAULT_LLM_MODEL=${DEFAULT_LLM_MODEL:-gpt-4o-mini}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-}
+    labels:
+      - "project=augo"
+      - "component=api"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: on-failure
+    networks:
+      - monitoring
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: augo-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./server/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - monitoring
+    restart: always
+    labels:
+      - "project=augo"
+      - "component=monitoring"
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: augo-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./server/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./server/grafana/dashboards/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - monitoring
+    restart: always
+    labels:
+      - "project=augo"
+      - "component=monitoring-ui"
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: augo-cadvisor
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - monitoring
+    restart: always
+    labels:
+      - "project=augo"
+      - "component=monitoring-agent"
+
+networks:
+  monitoring:
+    driver: bridge
+
+volumes:
+  grafana-storage:
+  postgres-data:
+  redis-data:

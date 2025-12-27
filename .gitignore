@@ -1,0 +1,26 @@
+# ==============================================================================
+# Global Ignore Rules
+# ==============================================================================
+
+# OS & System Files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+._*
+
+# Editors & IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+
+# Environment & Secrets
+.env*
+!.env.example
+
+# Python Global Caches (in case scripts run from root)
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/

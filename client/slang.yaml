@@ -1,0 +1,14 @@
+base_locale: zh
+fallback_strategy: base_locale
+input_directory: lib/i18n
+input_file_pattern: .i18n.json
+output_directory: lib/i18n
+output_file_name: strings.g.dart
+flutter_integration: true
+translate_var: t
+enum_name: AppLocale
+class_name: Translations
+key_case: camel
+param_case: camel
+string_interpolation: dart
+statistics: true

@@ -1,0 +1,490 @@
+"""File upload service (Local Storage Only).
+
+最佳实践：将文件处理和数据库操作分开。
+1. 先处理所有文件（验证、压缩、保存到磁盘）
+2. 然后一次性批量插入数据库记录
+3. 单次 commit
+"""
+
+import hashlib
+import io
+import mimetypes
+import uuid
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import List, Optional, Tuple
+
+import aiofiles
+import aiofiles.os
+from fastapi import UploadFile
+from PIL import Image
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.config import settings
+from app.core.exceptions import BusinessException
+from app.core.logging import logger
+from app.models.attachment import Attachment
+from app.models.storage_config import StorageConfig
+
+# ============================================================================
+# 文件类型配置
+# ============================================================================
+
+IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "gif", "webp", "bmp", "ico", "svg"}
+IMAGE_MIME_TYPES = {
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/webp",
+    "image/bmp",
+    "image/x-icon",
+    "image/svg+xml",
+}
+
+DOCUMENT_EXTENSIONS = {
+    "pdf",
+    "doc",
+    "docx",
+    "xls",
+    "xlsx",
+    "ppt",
+    "pptx",
+    "txt",
+    "md",
+    "csv",
+    "json",
+    "xml",
+    "html",
+    "htm",
+    "rtf",
+    "odt",
+    "ods",
+    "odp",
+}
+DOCUMENT_MIME_TYPES = {
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.ms-powerpoint",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "text/plain",
+    "text/markdown",
+    "text/csv",
+    "application/json",
+    "application/xml",
+    "text/xml",
+    "text/html",
+    "application/rtf",
+    "application/vnd.oasis.opendocument.text",
+    "application/vnd.oasis.opendocument.spreadsheet",
+    "application/vnd.oasis.opendocument.presentation",
+}
+
+ALLOWED_EXTENSIONS = IMAGE_EXTENSIONS | DOCUMENT_EXTENSIONS
+ALLOWED_MIME_TYPES = IMAGE_MIME_TYPES | DOCUMENT_MIME_TYPES
+COMPRESSIBLE_FORMATS = {"jpg", "jpeg", "png", "webp"}
+
+
+class UploadService:
+    """本地文件上传服务。"""
+
+    MAX_FILE_SIZE: int = settings.MAX_UPLOAD_SIZE
+    UPLOAD_DIR: Path = settings.UPLOAD_DIR
+    IMAGE_MAX_WIDTH: int = 1920
+    IMAGE_MAX_HEIGHT: int = 1920
+    IMAGE_QUALITY: int = 85
+
+    def __init__(self, db: AsyncSession):
+        self.db = db
+
+    async def upload_files(
+        self,
+        files: List[UploadFile],
+        user_uuid,  # Can be str or UUID
+        compress: bool = True,
+        thread_id: Optional[str] = None,
+    ) -> Tuple[List[dict], List[dict]]:
+        """批量上传文件。
+
+        最佳实践：
+        1. 先处理所有文件（文件 I/O，不涉及数据库）
+        2. 批量创建数据库记录（单次 commit）
+
+        Args:
+            files: 文件列表
+            user_uuid: 用户 UUID (str or UUID object)
+            compress: 是否压缩图片
+            thread_id: 可选的会话 ID
+
+        Returns:
+            (成功列表, 失败列表)
+        """
+        import uuid as uuid_lib
+
+        # Convert user_uuid to UUID if it's a string
+        user_uuid = uuid_lib.UUID(user_uuid) if isinstance(user_uuid, str) else user_uuid
+
+        # ====================================================================
+        # 阶段 1：获取存储配置（数据库操作）
+        # ====================================================================
+        storage_config_id = await self._get_or_create_storage_config(user_uuid)
+
+        # ====================================================================
+        # 阶段 2：处理所有文件（纯文件 I/O，无数据库操作）
+        # ====================================================================
+        processed = []  # 成功处理的文件信息
+        failed = []  # 失败的文件
+
+        for file in files:
+            try:
+                file_info = await self._process_and_save_file(
+                    file=file,
+                    user_uuid=user_uuid,
+                    compress=compress,
+                )
+                processed.append(file_info)
+            except BusinessException as e:
+                failed.append(
+                    {
+                        "filename": file.filename,
+                        "error": e.message,
+                        "errorCode": e.error_code,
+                    }
+                )
+            except Exception as e:
+                logger.error("file_process_error", filename=file.filename, error=str(e))
+                failed.append(
+                    {
+                        "filename": file.filename,
+                        "error": "文件处理失败",
+                        "errorCode": "PROCESS_FAILED",
+                    }
+                )
+
+        if not processed:
+            return [], failed
+
+        # ====================================================================
+        # 阶段 3：批量创建数据库记录（单次数据库操作）
+        # ====================================================================
+        attachments = []
+        for info in processed:
+            attachment = Attachment(
+                user_uuid=user_uuid,
+                storage_config_id=storage_config_id,
+                thread_id=thread_id,
+                filename=info["filename"],
+                object_key=info["object_key"],
+                mime_type=info["mime_type"],
+                size=info["size"],
+                hash=info["hash"],
+            )
+            attachments.append(attachment)
+
+        # 批量添加
+        self.db.add_all(attachments)
+        await self.db.commit()
+
+        # 刷新获取 ID
+        for att in attachments:
+            await self.db.refresh(att)
+
+        # ====================================================================
+        # 阶段 4：构建返回结果
+        # ====================================================================
+        base_url = settings.APP_URL.rstrip("/")
+        successful = []
+
+        for i, att in enumerate(attachments):
+            info = processed[i]
+            # Convert UUID to string for JSON serialization
+            att_id = str(att.id)
+            successful.append(
+                {
+                    "id": att_id,
+                    "attachmentId": att_id,
+                    "originalName": info["filename"],
+                    "filename": info["filename"],
+                    "objectKey": info["object_key"],
+                    "uri": f"{base_url}/api/v1/files/view/{att_id}",
+                    "size": info["size"],
+                    "mimeType": info["mime_type"],
+                    "hash": info["hash"],
+                    "compressed": info["compressed"],
+                    "threadId": thread_id,
+                }
+            )
+
+        logger.info(
+            "batch_upload_completed",
+            user_uuid=user_uuid,
+            total=len(files),
+            successful=len(successful),
+            failed=len(failed),
+        )
+
+        return successful, failed
+
+    async def _get_or_create_storage_config(self, user_uuid) -> int:
+        """获取或创建用户的默认存储配置。
+
+        Args:
+            user_uuid: User UUID (str or UUID object)
+        """
+        stmt = select(StorageConfig).where(
+            StorageConfig.user_uuid == user_uuid,
+            StorageConfig.provider_type == "local_uploads",
+        )
+        result = await self.db.execute(stmt)
+        config = result.scalar_one_or_none()
+
+        if config:
+            return config.id
+
+        # 创建新配置
+        new_config = StorageConfig(
+            user_uuid=user_uuid,
+            provider_type="local_uploads",
+            name="本地存储",
+            base_path=str(self.UPLOAD_DIR),
+            is_readonly=False,
+        )
+        self.db.add(new_config)
+        await self.db.commit()
+        await self.db.refresh(new_config)
+
+        logger.info("storage_config_created", user_uuid=user_uuid, config_id=new_config.id)
+        return new_config.id
+
+    async def _process_and_save_file(
+        self,
+        file: UploadFile,
+        user_uuid: str,
+        compress: bool,
+    ) -> dict:
+        """处理并保存单个文件到磁盘（不涉及数据库）。
+
+        Returns:
+            包含文件信息的字典
+        """
+        upload_id = f"up_{uuid.uuid4().hex[:8]}"
+
+        # 1. 校验并读取文件
+        content = await self._validate_and_read(file)
+
+        # 2. 获取扩展名和 MIME 类型
+        extension = self._get_extension(file.filename)
+        mime_type = file.content_type
+        guessed_type, _ = mimetypes.guess_type(file.filename)
+        if guessed_type:
+            mime_type = guessed_type
+
+        # 3. 压缩图片（如果需要）
+        compressed = False
+        if compress and extension.lower() in COMPRESSIBLE_FORMATS:
+            content, _ = self._compress_image(content, extension)
+            compressed = True
+
+        # 4. 计算哈希
+        file_hash = hashlib.sha256(content).hexdigest()
+
+        # 5. 生成存储路径
+        object_key = self._generate_object_key(extension, upload_id)
+        file_path = self.UPLOAD_DIR / object_key
+
+        # 6. 写入文件
+        await aiofiles.os.makedirs(file_path.parent, exist_ok=True)
+        async with aiofiles.open(file_path, "wb") as f:
+            await f.write(content)
+
+        logger.debug(
+            "file_saved",
+            upload_id=upload_id,
+            filename=file.filename,
+            size=len(content),
+        )
+
+        return {
+            "filename": file.filename,
+            "object_key": object_key,
+            "mime_type": mime_type,
+            "size": len(content),
+            "hash": file_hash,
+            "compressed": compressed,
+        }
+
+    # =========================================================================
+    # 其他公共方法
+    # =========================================================================
+
+    async def get_file_path(self, attachment_id: str, user_uuid) -> Tuple[Path, Attachment]:
+        """获取附件的本地文件路径。
+
+        Args:
+            attachment_id: 附件 ID (字符串格式的 UUID)
+            user_uuid: 用户 UUID (字符串或 UUID 对象)
+        """
+        import uuid as uuid_lib
+        from uuid import UUID
+
+        # 验证并转换 attachment_id 为 UUID
+        try:
+            if isinstance(attachment_id, str):
+                attachment_uuid = UUID(attachment_id)
+            elif isinstance(attachment_id, UUID):
+                attachment_uuid = attachment_id
+            else:
+                raise ValueError(f"无效的 attachment_id 类型: {type(attachment_id)}")
+        except ValueError as e:
+            logger.warning(
+                "invalid_attachment_id",
+                attachment_id=str(attachment_id)[:50],  # 截断以避免日志过长
+                error=str(e),
+            )
+            raise BusinessException(
+                message="无效的附件 ID 格式",
+                status_code=400,
+                error_code="INVALID_ATTACHMENT_ID",
+            )
+
+        # 确保 user_uuid 是正确的 UUID 类型
+        if isinstance(user_uuid, str):
+            user_uuid = uuid_lib.UUID(user_uuid)
+
+        stmt = select(Attachment).where(
+            Attachment.id == attachment_uuid,
+            Attachment.user_uuid == user_uuid,
+        )
+        result = await self.db.execute(stmt)
+        attachment = result.scalar_one_or_none()
+
+        if not attachment:
+            raise BusinessException(
+                message="附件不存在或无权访问",
+                status_code=404,
+                error_code="FILE_NOT_FOUND",
+            )
+
+        # 构建绝对文件路径（FileResponse 需要绝对路径）
+        file_path = (self.UPLOAD_DIR / attachment.object_key).resolve()
+
+        if not file_path.exists():
+            raise BusinessException(
+                message="文件不存在",
+                status_code=404,
+                error_code="FILE_NOT_FOUND",
+            )
+
+        return file_path, attachment
+
+    async def delete_file(self, attachment_id, user_uuid: str) -> bool:
+        """删除文件。"""
+        file_path, attachment = await self.get_file_path(attachment_id, user_uuid)
+
+        if file_path.exists():
+            await aiofiles.os.remove(file_path)
+
+        await self.db.delete(attachment)
+        await self.db.commit()
+        return True
+
+    # =========================================================================
+    # 私有辅助方法
+    # =========================================================================
+
+    async def _validate_and_read(self, file: UploadFile) -> bytes:
+        """校验并读取文件。"""
+        if not file.filename:
+            raise BusinessException(
+                message="文件名不能为空",
+                status_code=400,
+                error_code="INVALID_FILENAME",
+            )
+
+        extension = self._get_extension(file.filename)
+        if extension.lower() not in ALLOWED_EXTENSIONS:
+            raise BusinessException(
+                message=f"不支持的文件类型: .{extension}",
+                status_code=400,
+                error_code="INVALID_FILE_TYPE",
+            )
+
+        content = await file.read()
+
+        if len(content) > self.MAX_FILE_SIZE:
+            size_mb = self.MAX_FILE_SIZE / (1024 * 1024)
+            raise BusinessException(
+                message=f"文件大小超过限制 ({size_mb:.1f}MB)",
+                status_code=400,
+                error_code="FILE_TOO_LARGE",
+            )
+
+        if len(content) == 0:
+            raise BusinessException(
+                message="文件内容为空",
+                status_code=400,
+                error_code="FILE_EMPTY",
+            )
+
+        return content
+
+    def _get_extension(self, filename: str) -> str:
+        """获取文件扩展名。"""
+        if "." not in filename:
+            return ""
+        return filename.rsplit(".", 1)[-1].lower()
+
+    def _generate_object_key(self, extension: str, upload_id: str) -> str:
+        """生成存储路径。"""
+        now = datetime.now(timezone.utc)
+        date_path = now.strftime("%Y/%m/%d")
+        unique_suffix = uuid.uuid4().hex[:12]
+        return f"{date_path}/{upload_id}_{unique_suffix}.{extension}"
+
+    def _compress_image(self, content: bytes, extension: str) -> Tuple[bytes, int]:
+        """压缩图片（同步方法）。"""
+        try:
+            image = Image.open(io.BytesIO(content))
+            original_width, original_height = image.size
+
+            # 调整尺寸
+            if original_width > self.IMAGE_MAX_WIDTH or original_height > self.IMAGE_MAX_HEIGHT:
+                ratio = original_width / original_height
+                if original_width > original_height:
+                    new_width = self.IMAGE_MAX_WIDTH
+                    new_height = int(new_width / ratio)
+                else:
+                    new_height = self.IMAGE_MAX_HEIGHT
+                    new_width = int(new_height * ratio)
+                image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+
+            # RGBA -> RGB
+            if image.mode == "RGBA" and extension.lower() in ("jpg", "jpeg"):
+                background = Image.new("RGB", image.size, (255, 255, 255))
+                background.paste(image, mask=image.split()[3])
+                image = background
+
+            # 保存
+            buffer = io.BytesIO()
+            format_map = {"jpg": "JPEG", "jpeg": "JPEG", "png": "PNG", "webp": "WEBP"}
+            save_format = format_map.get(extension.lower(), "PNG")
+
+            save_kwargs = {}
+            if save_format == "JPEG":
+                save_kwargs = {"quality": self.IMAGE_QUALITY, "optimize": True}
+            elif save_format == "PNG":
+                save_kwargs = {"optimize": True}
+            elif save_format == "WEBP":
+                save_kwargs = {"quality": self.IMAGE_QUALITY}
+
+            image.save(buffer, format=save_format, **save_kwargs)
+            compressed = buffer.getvalue()
+            return compressed, len(compressed)
+
+        except Exception as e:
+            logger.warning("compression_failed", error=str(e))
+            # 压缩失败时返回原内容
+            return content, len(content)
