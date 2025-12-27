@@ -41,7 +41,10 @@ class _SpeechSettingsPageState extends ConsumerState<SpeechSettingsPage> {
   void _initControllers() {
     final settings = ref.read(speechSettingsProvider).settings;
     if (settings != null) {
-      _hostController.text = settings.websocketHost ?? SpeechConfig.host;
+      // Use saved settings first, fallback to env config, then empty/default
+      _hostController.text =
+          settings.websocketHost ??
+          (SpeechConfig.host.isNotEmpty ? SpeechConfig.host : '');
       _portController.text = (settings.websocketPort ?? SpeechConfig.port)
           .toString();
       _pathController.text = settings.websocketPath ?? SpeechConfig.path;

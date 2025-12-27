@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **Critical**: Fixed application crash on first launch when server URL is not configured. Previously required `--dart-define=API_BASE_URL=xxx` to start the app; now the app gracefully shows the server configuration page.
+- **Critical**: Fixed crash when opening Speech Settings page without `--dart-define=SPEECH_WS_HOST=xxx`. Users can now configure WebSocket host directly in the settings UI.
 - Added `ConfigurationCheckInterceptor` to validate server configuration before making network requests.
 - Added `ServerNotConfiguredException` for clearer error handling when server is not configured.
 
