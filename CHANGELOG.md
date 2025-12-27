@@ -1,14 +1,14 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to **Augo** will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.1.0-alpha] - 2025-12-27
 
 ### Added
-- Initial alpha release of AI Financial Assistant.
+- Initial alpha release of **Augo**, the privacy-first AI financial assistant.
 - Core FastAPI backend with LangGraph agent support.
 - Flutter mobile client with GenUI (Server-driven UI) capabilities.
 - Transaction management, budget analysis, and financial forecasting features.
@@ -30,4 +30,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Resolved various UI rendering inconsistencies.
 - Fixed Docker entrypoint path issues for Python module loading.
 - Fixed 24+ failing unit and integration tests to ensure 100% test pass rate.
-

@@ -1,124 +1,126 @@
 # Augo: Self-Hosted & Privacy-First AI Financial Assistant
 
-Augo is a premium, open-source AI financial assistant designed for individuals and families who prioritize **data sovereignty** and **absolute privacy**. Unlike centralized financial apps, Augo is built to be **self-hosted**, giving you 100% ownership of your financial records and intellectual property.
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
+[![Python 3.13](https://img.shields.io/badge/Python-3.13-blue.svg)](https://www.python.org/downloads/release/python-3130/)
+[![Flutter](https://img.shields.io/badge/Flutter-Environment-02569B.svg)](https://flutter.dev)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
+**Augo** is a premium, open-source AI financial assistant designed for individuals and families who prioritize **data sovereignty** and **absolute privacy**. Unlike centralized financial apps, Augo is built to be **self-hosted**, giving you 100% ownership of your financial records and personal intelligence.
+
+[中文版 (Chinese Edition)](./README.zh-CN.md)
+
+---
 
 ## 🛡️ Privacy & Sovereignty First
 
-- **Own Your Data**: Deploy on your own hardware or private cloud. Your financial history never leaves your infrastructure.
-- **Privacy by Design**: No third-party data mining or cloud eavesdropping. You control the encryption keys and access.
-- **Personal & Family Oriented**: Securely manage individual accounts or coordinate household finances in a private, shared environment.
-- **Transparent AI**: Run your orchestration locally. Leverage the power of AI without compromising your financial secrets.
+- **Data Sovereignty**: Deploy on your own hardware or private cloud. Your financial history never leaves your infrastructure.
+- **Privacy by Design**: No third-party data mining. You control the encryption keys and access.
+- **Family Oriented**: Securely manage individual accounts or coordinate household finances in a private, shared environment.
+- **Transparent AI**: Run orchestration locally. Leverage the power of AI without compromising your financial secrets.
 
 ## 🌟 Key Features
 
 - **Natural Interaction**: Record transactions via voice or text with a human-like assistant that understands context.
 - **Privatized Intelligence**: Deep analysis of spending patterns and budget health, computed on your own terms.
-- **Dynamic Interface**: A responsive, AI-driven experience that adapts to your financial queries in real-time.
+- **Generative UI (GenUI)**: Powered by the **Google A2UI protocol**, the interface adapts and evolves based on your queries in real-time.
 - **Global Ready**: Built-in multi-currency support with private exchange rate management.
-- **Proactive Management**: Smart budget alerts and financial health scoring tailored for your family's needs.
+- **Smart Orchestration**: Leverages **LangGraph** for complex financial reasoning and high-precision tool usage.
 
 ## 🚀 Core Technology
 
-
 Augo is built on a cutting-edge technological foundation:
 
-- **Generative UI (A2UI)**: Implements dynamic interface generation based on the **Google A2UI protocol**, providing a seamless, context-aware user experience that evolves during the conversation.
-- **Agentic reasoning (LangGraph)**: Powered by the **LangGraph Agent framework**, enabling complex multi-step financial reasoning and tool interaction.
-- **Anthropic Skills Compatible**: Fully compatible with the **Anthropic Skills specification**, allowing the AI to execute precise financial operations through a standardized toolset.
-- **Modern Stack**: Built with **Python 3.13 (FastAPI)** on the backend and **Flutter** for a premium, responsive cross-platform mobile experience.
+- **Back-end**: **Python 3.13 (FastAPI)** managed with **uv** for high performance and reliability.
+- **Front-end**: **Flutter** mobile application providing a premium, native experience using the **Forui** design system.
+- **AI Engine**: **LangGraph** for agentic reasoning and **Mem0** for intelligent long-term memory.
+- **Database**: **PostgreSQL** with **pgvector** for both structured financial data and vectorized knowledge.
 
 ---
 
-## �️ Getting Started
+## 🛠️ Quick Start
 
 ### Prerequisites
 
 - **Docker & Docker Compose** (Recommended)
-- **Python 3.13** (for local development)
-- **PostgreSQL 16** and **Redis**
-- **Flutter SDK** (for client development)
+- **Python 3.13** (Local dev, [uv](https://github.com/astral-sh/uv) recommended)
+- **Flutter SDK** (Client development)
 
 ---
 
 ### 🐳 Docker Deployment (Recommended)
 
-The easiest way to get the Augo backend up and running is via Docker.
+The fastest way to get Augo up and running with database, Redis, and monitoring.
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/augo-assistant.git
-   cd augo-assistant
-2. **Setup environment variables**:
+   git clone https://github.com/kylesean/augo.git
+   cd augo
+   ```
+2. **Setup environment**:
    ```bash
-   cd server
-   cp .env.example .env.production
-   # Edit .env.production with your API keys (OpenAI/DeepSeek, etc.)
+   cp server/.env.example server/.env
+   # Edit server/.env with your API keys (OpenAI, DeepSeek, etc.)
    ```
 3. **Start the stack**:
    ```bash
-   cd ..
-   make docker-up ENV=production
+   make docker-up
    ```
-4. **Verify**:
-   Access the API health check at `http://localhost:8000/api/v1/health`.
+   *Once started, the terminal will display a QR code for easy mobile app connection.*
 
 ---
 
-### 💻 Local Deployment
-For developers who want to run everything locally:
+### 💻 Local Development
 
 1. **Initial Setup (Everything)**:
    ```bash
    make setup-all
    ```
-   *This initializes the backend database and installs both Flutter and Python dependencies.*
+   *Installs Python and Flutter dependencies and initializes the database.*
 
-2. **Start the server**:
+2. **Start Backend**:
    ```bash
    make start
    ```
-   *The server will display a QR code in the terminal to help you easily configure your mobile app.*
-   *The server will display a QR code in the terminal to help you easily configure your mobile app.*
+
+3. **Run Client**:
+   ```bash
+   make client-run
+   ```
 
 ---
 
-### � Client Setup (Flutter)
+## 📝 Essential Commands (Makefile)
 
-1. **Navigate to client directory**:
-   ```bash
-   cd client
-   ```
-2. **Install Flutter packages**:
-   ```bash
-   flutter pub get
-   ```
-3. **Run the app**:
-   ```bash
-   flutter run
-   ```
-4. **Connect to Server**:
-   Scan the QR code displayed by the backend or manually input your server URL (e.g., `http://192.168.x.x:8000`).
+| Command | Description |
+| :--- | :--- |
+| `make setup-all` | Full environment setup and DB initialization |
+| `make start` | Start the local FastAPI server |
+| `make docker-up` | Build and launch all Docker services |
+| `make docker-down` | Stop and remove Docker containers |
+| `make lint` / `make format` | Check and fix Python code quality |
+| `make test` | Run backend test suite |
+| `make client-run` | Launch Flutter app on connected device |
+| `make gen-keys` | Generate secure JWT and Encryption keys |
 
 ---
 
 ## 🗺️ Project Structure
 
-- `/client`: Premium Flutter application using the Forui design system.
+- `/client`: Premium Flutter app using Forui.
 - `/server`: High-performance FastAPI backend with LangGraph agents.
 - `/docker-compose.yml`: Full stack orchestration (API, DB, Redis, Monitoring).
 - `/docs`: Detailed documentation:
   - [Architecture Overview](docs/ARCHITECTURE.md)
   - [Private Self-Hosting Guide](docs/SELF_HOSTING.md)
 
-
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the AGPLv3 License - see the [LICENSE](LICENSE) file for details.
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
 ---
 
-Built with ❤️ by the Augo Team.
+Email: jkxsai@gmail.com.
