@@ -47,6 +47,15 @@ abstract class SpeechRecognitionService {
   /// This identifier helps the UI layer correctly handle results from different services.
   bool get isIncrementalResult;
 
+  /// Ensure service is ready for recognition
+  ///
+  /// For system speech: checks and initializes the speech engine
+  /// For WebSocket: checks connection status and reconnects if needed
+  ///
+  /// Returns whether the service is ready to start recognition.
+  /// This is the recommended method to call before startListening().
+  Future<bool> ensureReady();
+
   /// Initialize service
   ///
   /// Returns whether initialization was successful. For system speech, this initializes the speech recognition engine;

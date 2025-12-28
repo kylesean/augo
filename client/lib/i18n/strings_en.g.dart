@@ -1090,6 +1090,7 @@ class _TranslationsChatToolsEn extends TranslationsChatToolsZh {
 	@override String get unknown => 'Processing request...';
 	@override late final _TranslationsChatToolsDoneEn done = _TranslationsChatToolsDoneEn._(_root);
 	@override late final _TranslationsChatToolsFailedEn failed = _TranslationsChatToolsFailedEn._(_root);
+	@override String get cancelled => 'Cancelled';
 }
 
 // Path: chat.transferWizard
@@ -2409,6 +2410,7 @@ extension on TranslationsEn {
 			'chat.tools.done.prepareTransfer' => 'Transfer ready',
 			'chat.tools.done.unknown' => 'Processing complete',
 			'chat.tools.failed.unknown' => 'Action failed',
+			'chat.tools.cancelled' => 'Cancelled',
 			'chat.speechNotRecognized' => 'Speech not recognized, please try again',
 			'chat.currentExpense' => 'Session Expense',
 			'chat.loadingComponent' => 'Loading component...',
@@ -2420,9 +2422,9 @@ extension on TranslationsEn {
 			'chat.noRelatedFound' => 'No related conversations found',
 			'chat.tryOtherKeywords' => 'Try searching with other keywords',
 			'chat.searchFailed' => 'Search failed',
-			'chat.deleteConversation' => 'Delete Conversation',
 			_ => null,
 		} ?? switch (path) {
+			'chat.deleteConversation' => 'Delete Conversation',
 			'chat.deleteConversationConfirm' => 'Are you sure you want to delete this conversation? This action cannot be undone.',
 			'chat.conversationDeleted' => 'Conversation deleted',
 			'chat.deleteConversationFailed' => 'Failed to delete conversation',

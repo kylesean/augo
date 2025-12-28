@@ -127,6 +127,19 @@ class WebSocketSpeechService implements SpeechRecognitionService {
     }
   }
 
+  @override
+  Future<bool> ensureReady() async {
+    // If already connected, return immediately
+    if (_isConnected && _channel != null) {
+      _logger.info('WebSocket already connected, ready for recognition');
+      return true;
+    }
+
+    // Otherwise, try to connect/reconnect
+    _logger.info('WebSocket not connected, attempting to connect...');
+    return await initialize();
+  }
+
   /// Clean up connection resources
   Future<void> _cleanup() async {
     if (_isListening) {
@@ -175,11 +188,8 @@ class WebSocketSpeechService implements SpeechRecognitionService {
         return;
       }
 
-      // 2. 播放开始录音提示音（在录音前播放，避免录到声音）
-      _logger.info('Playing start sound before recording...');
-      await SoundFeedbackService.instance.playStartSound();
-
       // 2. Start recording
+      // 音效已在 ChatInputNotifier 中播放，这里直接开始录音
       final recordingStarted = await _audioRecorder.startRecording();
       if (!recordingStarted) {
         _logger.severe('Failed to start recording');

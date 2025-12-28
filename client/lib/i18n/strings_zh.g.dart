@@ -2366,6 +2366,9 @@ class TranslationsChatToolsZh {
 
 	late final TranslationsChatToolsDoneZh done = TranslationsChatToolsDoneZh.internal(_root);
 	late final TranslationsChatToolsFailedZh failed = TranslationsChatToolsFailedZh.internal(_root);
+
+	/// zh: '已取消'
+	String get cancelled => '已取消';
 }
 
 // Path: chat.transferWizard
@@ -4342,6 +4345,7 @@ extension on Translations {
 			'chat.tools.done.prepareTransfer' => '转账准备完成',
 			'chat.tools.done.unknown' => '处理完成',
 			'chat.tools.failed.unknown' => '操作失败',
+			'chat.tools.cancelled' => '已取消',
 			'chat.speechNotRecognized' => '未识别到语音，请重试',
 			'chat.currentExpense' => '当前支出',
 			'chat.loadingComponent' => '正在加载组件...',
@@ -4352,9 +4356,9 @@ extension on Translations {
 			'chat.viewProfile' => '查看个人资料',
 			'chat.noRelatedFound' => '未找到相关会话',
 			'chat.tryOtherKeywords' => '尝试搜索其他关键词',
-			'chat.searchFailed' => '搜索失败',
 			_ => null,
 		} ?? switch (path) {
+			'chat.searchFailed' => '搜索失败',
 			'chat.deleteConversation' => '删除会话',
 			'chat.deleteConversationConfirm' => '确定要删除这个会话吗？此操作无法撤销。',
 			'chat.conversationDeleted' => '会话已删除',

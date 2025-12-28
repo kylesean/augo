@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import '../services/speech_recognition_service.dart';
 import '../services/speech_service_factory.dart';
 import '../services/file_upload_service.dart';
+import '../services/sound_feedback_service.dart';
 import '../models/message_attachments.dart';
 import 'package:augo/features/profile/providers/speech_settings_provider.dart';
 import 'chat_input_state.dart';
@@ -36,7 +37,6 @@ class ChatInputNotifier extends _$ChatInputNotifier {
 
   final Map<String, UploadedAttachmentInfo> _uploadedInfos = {};
 
-  bool _isSpeechInitialized = false;
   String _textBeforeSpeechSession = '';
   Timer? _noSpeechInputTimer;
   bool _isManualStop = false;
@@ -66,11 +66,10 @@ class ChatInputNotifier extends _$ChatInputNotifier {
         'Speech service type changed from $_serviceType to $newServiceType, reinitializing...',
       );
 
-      // 完全清理旧服务状态
       _cleanupCurrentService();
     }
 
-    // 只在首次初始化或服务类型变化时创建新服务
+    // Only create new service on first init or service type change
     if (isFirstInit || serviceTypeChanged) {
       _serviceType = newServiceType;
       _speechService = SpeechServiceFactory.create(
@@ -80,12 +79,9 @@ class ChatInputNotifier extends _$ChatInputNotifier {
         websocketPath: settings?.websocketPath,
       );
       _logger.info('Created new ${newServiceType.name} speech service');
-
-      // 初始化新服务
-      _initializeSpeech();
     }
 
-    // 只在首次初始化时注册 dispose 回调，避免重复注册
+    // Only register dispose callback on first init to avoid duplicate registration
     if (isFirstInit) {
       ref.onDispose(() {
         _logger.info('Provider disposing, cleaning up...');
@@ -96,11 +92,11 @@ class ChatInputNotifier extends _$ChatInputNotifier {
     return const ChatInputState();
   }
 
-  /// 清理当前服务的所有资源
+  /// Cleanup current service resources
   void _cleanupCurrentService() {
     _logger.info('Cleaning up current speech service...');
 
-    // 取消所有订阅
+    // Cancel all subscriptions
     _resultSubscription?.cancel();
     _statusSubscription?.cancel();
     _errorSubscription?.cancel();
@@ -111,58 +107,35 @@ class ChatInputNotifier extends _$ChatInputNotifier {
     _errorSubscription = null;
     _noSpeechInputTimer = null;
 
-    // 释放旧服务
+    // Release old service
     _speechService?.dispose();
     _speechService = null;
 
-    // 重置状态标志
-    _isSpeechInitialized = false;
+    // Reset state flags
     _textBeforeSpeechSession = '';
     _isManualStop = false;
   }
 
-  Future<void> _initializeSpeech() async {
-    final serviceTypeName = _serviceType == SpeechServiceType.system
-        ? 'System Speech'
-        : 'WebSocket ASR';
-    _logger.info("Initializing $serviceTypeName service...");
+  /// Ensure event subscriptions are set up
+  ///
+  /// Only create new subscriptions if they are not already set up, to avoid duplicate subscriptions
+  void _ensureSubscriptionsSetup() {
+    if (_speechService == null) return;
 
-    try {
-      final available = await _speechService!.initialize();
+    // Skip if subscriptions are already set up
+    if (_resultSubscription != null) return;
 
-      if (available) {
-        // 始终创建新的订阅（旧订阅已在 cleanup 中取消）
-        _resultSubscription = _speechService!.onResult.listen(_onSpeechResult);
-        _statusSubscription = _speechService!.onStatus.listen(_onSpeechStatus);
-        _errorSubscription = _speechService!.onError.listen(_onSpeechError);
-        _isSpeechInitialized = true;
+    _logger.info("Setting up speech service subscriptions...");
+    _resultSubscription = _speechService!.onResult.listen(_onSpeechResult);
+    _statusSubscription = _speechService!.onStatus.listen(_onSpeechStatus);
+    _errorSubscription = _speechService!.onError.listen(_onSpeechError);
 
-        _logger.info("$serviceTypeName service initialized successfully");
-
-        state = state.copyWith(
-          isSpeechAvailable: true,
-          showError: false,
-          errorMessage: '',
-          hintType: HintType.normal,
-        );
-      } else {
-        _logger.warning("$serviceTypeName service not available");
-        state = state.copyWith(
-          isSpeechAvailable: false,
-          showError: false,
-          errorMessage: '',
-          hintType: HintType.normal,
-        );
-      }
-    } catch (e) {
-      _logger.severe("Speech service initialization exception: $e");
-      state = state.copyWith(
-        isSpeechAvailable: false,
-        showError: false,
-        errorMessage: '',
-        hintType: HintType.normal,
-      );
-    }
+    state = state.copyWith(
+      isSpeechAvailable: true,
+      showError: false,
+      errorMessage: '',
+      hintType: HintType.normal,
+    );
   }
 
   void _onSpeechStatus(String status) {
@@ -293,30 +266,40 @@ class ChatInputNotifier extends _$ChatInputNotifier {
   Future<void> _startNewSpeechSession() async {
     _logger.info("Starting new speech recognition session");
 
-    try {
-      // 只在服务未初始化时才初始化
-      if (!_isSpeechInitialized || _speechService == null) {
-        _logger.info("Speech service not initialized, initializing...");
-        await _initializeSpeech();
-      }
-
-      // 使用 _isSpeechInitialized 而不是 state.isSpeechAvailable
-      // 因为 state 更新可能由于异步问题没有及时反映
-      _logger.info(
-        "Checking speech availability: _isSpeechInitialized=$_isSpeechInitialized, "
-        "_speechService=${_speechService != null}",
+    if (_speechService == null) {
+      _logger.warning("Speech service not configured");
+      state = state.copyWith(
+        showError: true,
+        errorMessage: '语音服务未配置',
+        hintType: HintType.normal,
       );
+      return;
+    }
 
-      if (!_isSpeechInitialized || _speechService == null) {
-        _logger.warning("Speech service initialization failed or unavailable");
+    // Play start sound immediately to give user instant feedback
+    // Regardless of the service connection status, the user should be informed
+    // that the system has responded.
+    if (_serviceType == SpeechServiceType.websocket) {
+      await SoundFeedbackService.instance.playStartSound();
+    }
+
+    try {
+      // Use the unified ensureReady() method to ensure service readiness
+      // The service handles its own initialization/reconnection logic
+      final isReady = await _speechService!.ensureReady();
+
+      if (!isReady) {
+        _logger.warning("Speech service not ready");
         state = state.copyWith(
           showError: true,
-          errorMessage:
-              'Speech service initialization failed, please check network connection',
+          errorMessage: '语音服务连接失败，请检查网络',
           hintType: HintType.normal,
         );
         return;
       }
+
+      // Ensure event subscriptions are set up
+      _ensureSubscriptionsSetup();
 
       _textBeforeSpeechSession = state.text.trim();
       state = state.copyWith(
@@ -342,7 +325,7 @@ class ChatInputNotifier extends _$ChatInputNotifier {
         isListening: false,
         showError: true,
         errorMessage:
-            'Cannot connect to ASR service, please check network connection',
+            'Voice service connection failed. Please check your network connection.',
         hintType: HintType.normal,
       );
     }

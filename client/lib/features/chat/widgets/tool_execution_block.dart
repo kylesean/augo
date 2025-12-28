@@ -36,6 +36,7 @@ class _ToolExecutionBlockState extends State<ToolExecutionBlock>
         widget.toolCall.status == ToolExecutionStatus.pending) {
       _controller.repeat();
     }
+    // cancelled/success/error 状态不启动动画
   }
 
   @override
@@ -163,6 +164,8 @@ class _ToolExecutionBlockState extends State<ToolExecutionBlock>
         return _getDoneLabel(semanticName, t);
       case ToolExecutionStatus.error:
         return t.chat.tools.failed.unknown;
+      case ToolExecutionStatus.cancelled:
+        return t.chat.tools.cancelled;
     }
   }
 
@@ -287,6 +290,8 @@ class _ToolExecutionBlockState extends State<ToolExecutionBlock>
           size: 14,
           color: theme.colors.destructive,
         );
+      case ToolExecutionStatus.cancelled:
+        return Icon(FIcons.x, size: 14, color: theme.colors.mutedForeground);
     }
   }
 }

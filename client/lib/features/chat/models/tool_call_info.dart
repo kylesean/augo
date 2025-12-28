@@ -14,6 +14,8 @@ enum ToolExecutionStatus {
   success,
   @JsonValue('error')
   error,
+  @JsonValue('cancelled')
+  cancelled,
 }
 
 /// Tool call information from AI message

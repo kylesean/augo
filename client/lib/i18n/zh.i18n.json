@@ -553,7 +553,8 @@
             },
             "failed": {
                 "unknown": "操作失败"
-            }
+            },
+            "cancelled": "已取消"
         },
         "speechNotRecognized": "未识别到语音，请重试",
         "currentExpense": "当前支出",

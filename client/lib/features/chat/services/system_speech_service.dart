@@ -80,9 +80,18 @@ class SystemSpeechService implements SpeechRecognitionService {
   }
 
   @override
+  Future<bool> ensureReady() async {
+    // For system speech, just ensure initialized
+    if (_isInitialized) return true;
+    return await initialize();
+  }
+
+  @override
   Future<bool> initialize() async {
     if (_isInitialized) {
-      _logger.info('System speech service already initialized, reusing existing instance');
+      _logger.info(
+        'System speech service already initialized, reusing existing instance',
+      );
       return true;
     }
 
@@ -99,11 +108,15 @@ class SystemSpeechService implements SpeechRecognitionService {
       if (available) {
         _isInitialized = true;
         _statusController.add('connected');
-        _logger.info('System speech recognition service initialized successfully');
+        _logger.info(
+          'System speech recognition service initialized successfully',
+        );
 
         // Get available language list
         final locales = await _speech.locales();
-        _logger.info('Available languages: ${locales.map((l) => l.localeId).join(', ')}');
+        _logger.info(
+          'Available languages: ${locales.map((l) => l.localeId).join(', ')}',
+        );
       } else {
         _statusController.add('disconnected');
         _logger.warning('System speech recognition service unavailable');
@@ -111,7 +124,9 @@ class SystemSpeechService implements SpeechRecognitionService {
 
       return available;
     } catch (e) {
-      _logger.severe('System speech recognition service initialization failed: $e');
+      _logger.severe(
+        'System speech recognition service initialization failed: $e',
+      );
       _statusController.add('error');
       _errorController.add('Initialization failed: $e');
       return false;
@@ -139,8 +154,12 @@ class SystemSpeechService implements SpeechRecognitionService {
       await _speech.listen(
         onResult: _onResult,
         localeId: localeId,
-        listenFor: const Duration(seconds: 30), // Maximum listening time 30 seconds
-        pauseFor: const Duration(seconds: 3), // Automatically end after 3 seconds of pause
+        listenFor: const Duration(
+          seconds: 30,
+        ), // Maximum listening time 30 seconds
+        pauseFor: const Duration(
+          seconds: 3,
+        ), // Automatically end after 3 seconds of pause
         listenOptions: SpeechListenOptions(
           listenMode: ListenMode.dictation,
           cancelOnError: false,
@@ -186,7 +205,9 @@ class SystemSpeechService implements SpeechRecognitionService {
 
     if (recognizedWords.isEmpty) return;
 
-    _logger.info('Recognition result: $recognizedWords (final: ${result.finalResult})');
+    _logger.info(
+      'Recognition result: $recognizedWords (final: ${result.finalResult})',
+    );
 
     // Only push on final result
     if (result.finalResult) {
@@ -228,7 +249,9 @@ class SystemSpeechService implements SpeechRecognitionService {
     // Note: no-speech is normal behavior for Android system speech recognition (user timeout),
     // should not be pushed to user as an error, just silently end listening
     if (error.errorMsg.contains('no-speech')) {
-      _logger.info('no-speech: User did not speak or paused, silently end listening');
+      _logger.info(
+        'no-speech: User did not speak or paused, silently end listening',
+      );
       _statusController.add('stopped');
       return; // Don't push error to avoid showing "no speech detected"
     }

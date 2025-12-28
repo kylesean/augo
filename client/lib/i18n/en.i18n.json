@@ -552,7 +552,8 @@
             },
             "failed": {
                 "unknown": "Action failed"
-            }
+            },
+            "cancelled": "Cancelled"
         },
         "speechNotRecognized": "Speech not recognized, please try again",
         "currentExpense": "Session Expense",

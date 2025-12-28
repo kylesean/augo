@@ -37,6 +37,7 @@ const _$ToolExecutionStatusEnumMap = {
   ToolExecutionStatus.running: 'running',
   ToolExecutionStatus.success: 'success',
   ToolExecutionStatus.error: 'error',
+  ToolExecutionStatus.cancelled: 'cancelled',
 };
 
 _UIComponentInfo _$UIComponentInfoFromJson(Map<String, dynamic> json) =>

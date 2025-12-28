@@ -452,4 +452,61 @@ class MessageRepository {
     updatedMessages[messageIndex] = updatedMessage;
     onMessagesChanged(updatedMessages);
   }
+
+  /// Cancel all pending/running tool calls for a message
+  ///
+  /// Called when user cancels the SSE stream to stop loading animations
+  void cancelPendingToolCalls(String messageId) {
+    final messages = getCurrentMessages();
+    final messageIndex = messages.indexWhere((m) => m.id == messageId);
+
+    if (messageIndex == -1) return;
+
+    final message = messages[messageIndex];
+
+    // Check if there are any pending/running tool calls
+    final hasPendingTools = message.toolCalls.any(
+      (tc) =>
+          tc.status == ToolExecutionStatus.pending ||
+          tc.status == ToolExecutionStatus.running,
+    );
+
+    if (!hasPendingTools) return;
+
+    // Update all pending/running tool calls to cancelled
+    final updatedToolCalls = message.toolCalls.map((tc) {
+      if (tc.status == ToolExecutionStatus.pending ||
+          tc.status == ToolExecutionStatus.running) {
+        return tc.copyWith(status: ToolExecutionStatus.cancelled);
+      }
+      return tc;
+    }).toList();
+
+    // Update fullContent as well
+    final updatedFullContent = message.fullContent.map((part) {
+      if (part is ToolCallPart) {
+        final tc = part.toolCall;
+        if (tc.status == ToolExecutionStatus.pending ||
+            tc.status == ToolExecutionStatus.running) {
+          return ToolCallPart(
+            toolCall: tc.copyWith(status: ToolExecutionStatus.cancelled),
+          );
+        }
+      }
+      return part;
+    }).toList();
+
+    final updatedMessage = message.copyWith(
+      toolCalls: updatedToolCalls,
+      fullContent: updatedFullContent,
+    );
+
+    final updatedMessages = [...messages];
+    updatedMessages[messageIndex] = updatedMessage;
+    onMessagesChanged(updatedMessages);
+
+    _logger.info(
+      'MessageRepository: Cancelled pending tool calls for message $messageId',
+    );
+  }
 }

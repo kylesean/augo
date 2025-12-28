@@ -174,6 +174,9 @@ class ChatHistory extends _$ChatHistory {
         _handleStreamError(error);
       },
       onStreamCancelled: (hasContent) {
+        // Cancel all pending/running tool calls to stop loading animations
+        _messageRepository.cancelPendingToolCalls(_currentStreamingAiMessageId);
+
         if (!hasContent) {
           _updateAiMessageState(
             id: _currentStreamingAiMessageId,
