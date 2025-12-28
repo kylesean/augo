@@ -595,6 +595,15 @@
                 "missingId": "交易 ID 缺失，無法更新",
                 "associatedTo": "已關聯到 $name",
                 "updateFailed": "更新失敗: $error"
+            },
+            "cashFlowCard": {
+                "title": "現金流分析",
+                "savingsRate": "儲蓄 $rate%",
+                "totalIncome": "總收入",
+                "totalExpense": "總支出",
+                "essentialExpense": "必要支出",
+                "discretionaryExpense": "可選消費",
+                "aiInsight": "AI 分析"
             }
         }
     },

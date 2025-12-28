@@ -2425,6 +2425,7 @@ class TranslationsChatGenuiZh {
 	late final TranslationsChatGenuiTransactionCardZh transactionCard = TranslationsChatGenuiTransactionCardZh.internal(_root);
 	late final TranslationsChatGenuiTransactionConfirmationZh transactionConfirmation = TranslationsChatGenuiTransactionConfirmationZh.internal(_root);
 	late final TranslationsChatGenuiBudgetAnalysisZh budgetAnalysis = TranslationsChatGenuiBudgetAnalysisZh.internal(_root);
+	late final TranslationsChatGenuiCashFlowCardZh cashFlowCard = TranslationsChatGenuiCashFlowCardZh.internal(_root);
 }
 
 // Path: error.genui
@@ -3407,6 +3408,36 @@ class TranslationsChatGenuiBudgetAnalysisZh {
 	String amountWan({required Object amount}) => '${amount}万';
 }
 
+// Path: chat.genui.cashFlowCard
+class TranslationsChatGenuiCashFlowCardZh {
+	TranslationsChatGenuiCashFlowCardZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '现金流分析'
+	String get title => '现金流分析';
+
+	/// zh: '储蓄 $rate%'
+	String savingsRate({required Object rate}) => '储蓄 ${rate}%';
+
+	/// zh: '总收入'
+	String get totalIncome => '总收入';
+
+	/// zh: '总支出'
+	String get totalExpense => '总支出';
+
+	/// zh: '必要支出'
+	String get essentialExpense => '必要支出';
+
+	/// zh: '可选消费'
+	String get discretionaryExpense => '可选消费';
+
+	/// zh: 'AI 分析'
+	String get aiInsight => 'AI 分析';
+}
+
 // Path: chat.genui.healthScore.status
 class TranslationsChatGenuiHealthScoreStatusZh {
 	TranslationsChatGenuiHealthScoreStatusZh.internal(this._root);
@@ -4086,6 +4117,13 @@ extension on Translations {
 			'chat.genui.budgetAnalysis.categoryDistribution' => '分类占比',
 			'chat.genui.budgetAnalysis.topSpenders' => '大额支出',
 			'chat.genui.budgetAnalysis.amountWan' => ({required Object amount}) => '${amount}万',
+			'chat.genui.cashFlowCard.title' => '现金流分析',
+			'chat.genui.cashFlowCard.savingsRate' => ({required Object rate}) => '储蓄 ${rate}%',
+			'chat.genui.cashFlowCard.totalIncome' => '总收入',
+			'chat.genui.cashFlowCard.totalExpense' => '总支出',
+			'chat.genui.cashFlowCard.essentialExpense' => '必要支出',
+			'chat.genui.cashFlowCard.discretionaryExpense' => '可选消费',
+			'chat.genui.cashFlowCard.aiInsight' => 'AI 分析',
 			'footprint.searchIn' => '搜索',
 			'footprint.searchInAllRecords' => '在所有记录中搜索相关内容',
 			'media.selectPhotos' => '选择照片',

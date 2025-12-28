@@ -5,13 +5,14 @@ import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:augo/shared/providers/amount_theme_provider.dart';
 import 'package:augo/shared/theme/amount_theme.dart';
+import 'package:augo/i18n/strings.g.dart';
 
-/// 现金流分析卡片 - GenUI Template
+/// Cash Flow Analysis Card - GenUI Template
 ///
-/// 用于在 AI 聊天中展示用户的现金流分析结果。
-/// 使用精简版 + 可展开设计，渐进披露详细信息。
+/// Used to display the user's cash flow analysis results in AI chat.
+/// Uses a simplified and expandable design for progressive disclosure of detailed information.
 ///
-/// 支持可选的 ai_insight 字段，用于显示 AI 生成的分析摘要。
+/// Supports an optional `ai_insight` field to display an AI-generated analysis summary.
 class CashFlowAnalysisCard extends StatefulWidget {
   final Map<String, dynamic> data;
 
@@ -96,7 +97,7 @@ class _CashFlowAnalysisCardState extends State<CashFlowAnalysisCard> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '现金流分析',
+                                t.chat.genui.cashFlowCard.title,
                                 style: theme.typography.base.copyWith(
                                   fontWeight: FontWeight.w600,
                                   color: colors.foreground,
@@ -130,7 +131,9 @@ class _CashFlowAnalysisCardState extends State<CashFlowAnalysisCard> {
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
-                                      '储蓄 ${savingsRate.toStringAsFixed(0)}%',
+                                      t.chat.genui.cashFlowCard.savingsRate(
+                                        rate: savingsRate.toStringAsFixed(0),
+                                      ),
                                       style: theme.typography.xs.copyWith(
                                         color: isPositive
                                             ? amountTheme.incomeColor
@@ -165,7 +168,7 @@ class _CashFlowAnalysisCardState extends State<CashFlowAnalysisCard> {
                             child: _buildMetricTile(
                               context,
                               amountTheme,
-                              label: '总收入',
+                              label: t.chat.genui.cashFlowCard.totalIncome,
                               value:
                                   '¥${_formatAmount(widget.data['totalIncome'])}',
                               change: widget.data['incomeChangePercent'],
@@ -177,7 +180,7 @@ class _CashFlowAnalysisCardState extends State<CashFlowAnalysisCard> {
                             child: _buildMetricTile(
                               context,
                               amountTheme,
-                              label: '总支出',
+                              label: t.chat.genui.cashFlowCard.totalExpense,
                               value:
                                   '¥${_formatAmount(widget.data['totalExpense'])}',
                               change: widget.data['expenseChangePercent'],
@@ -195,7 +198,7 @@ class _CashFlowAnalysisCardState extends State<CashFlowAnalysisCard> {
                             child: _buildMetricTile(
                               context,
                               amountTheme,
-                              label: '必要支出',
+                              label: t.chat.genui.cashFlowCard.essentialExpense,
                               value:
                                   '${(widget.data['essentialExpenseRatio'] as num?)?.toStringAsFixed(0) ?? 0}%',
                             ),
@@ -205,7 +208,11 @@ class _CashFlowAnalysisCardState extends State<CashFlowAnalysisCard> {
                             child: _buildMetricTile(
                               context,
                               amountTheme,
-                              label: '可选消费',
+                              label: t
+                                  .chat
+                                  .genui
+                                  .cashFlowCard
+                                  .discretionaryExpense,
                               value:
                                   '${(widget.data['discretionaryExpenseRatio'] as num?)?.toStringAsFixed(0) ?? 0}%',
                             ),
@@ -237,7 +244,7 @@ class _CashFlowAnalysisCardState extends State<CashFlowAnalysisCard> {
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
-                                    'AI 分析',
+                                    t.chat.genui.cashFlowCard.aiInsight,
                                     style: theme.typography.xs.copyWith(
                                       color: colors.primary,
                                       fontWeight: FontWeight.w600,

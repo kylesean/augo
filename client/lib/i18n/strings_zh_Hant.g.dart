@@ -1016,6 +1016,7 @@ class _TranslationsChatGenuiZhHant extends TranslationsChatGenuiZh {
 	@override late final _TranslationsChatGenuiTransactionListZhHant transactionList = _TranslationsChatGenuiTransactionListZhHant._(_root);
 	@override late final _TranslationsChatGenuiTransactionGroupReceiptZhHant transactionGroupReceipt = _TranslationsChatGenuiTransactionGroupReceiptZhHant._(_root);
 	@override late final _TranslationsChatGenuiTransactionCardZhHant transactionCard = _TranslationsChatGenuiTransactionCardZhHant._(_root);
+	@override late final _TranslationsChatGenuiCashFlowCardZhHant cashFlowCard = _TranslationsChatGenuiCashFlowCardZhHant._(_root);
 }
 
 // Path: error.genui
@@ -1212,6 +1213,22 @@ class _TranslationsChatGenuiTransactionCardZhHant extends TranslationsChatGenuiT
 	@override String get missingId => '交易 ID 缺失，無法更新';
 	@override String associatedTo({required Object name}) => '已關聯到 ${name}';
 	@override String updateFailed({required Object error}) => '更新失敗: ${error}';
+}
+
+// Path: chat.genui.cashFlowCard
+class _TranslationsChatGenuiCashFlowCardZhHant extends TranslationsChatGenuiCashFlowCardZh {
+	_TranslationsChatGenuiCashFlowCardZhHant._(TranslationsZhHant root) : this._root = root, super.internal(root);
+
+	final TranslationsZhHant _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => '現金流分析';
+	@override String savingsRate({required Object rate}) => '儲蓄 ${rate}%';
+	@override String get totalIncome => '總收入';
+	@override String get totalExpense => '總支出';
+	@override String get essentialExpense => '必要支出';
+	@override String get discretionaryExpense => '可選消費';
+	@override String get aiInsight => 'AI 分析';
 }
 
 /// The flat map containing all translations for locale <zh-Hant>.
@@ -1757,6 +1774,13 @@ extension on TranslationsZhHant {
 			'chat.genui.transactionCard.missingId' => '交易 ID 缺失，無法更新',
 			'chat.genui.transactionCard.associatedTo' => ({required Object name}) => '已關聯到 ${name}',
 			'chat.genui.transactionCard.updateFailed' => ({required Object error}) => '更新失敗: ${error}',
+			'chat.genui.cashFlowCard.title' => '現金流分析',
+			'chat.genui.cashFlowCard.savingsRate' => ({required Object rate}) => '儲蓄 ${rate}%',
+			'chat.genui.cashFlowCard.totalIncome' => '總收入',
+			'chat.genui.cashFlowCard.totalExpense' => '總支出',
+			'chat.genui.cashFlowCard.essentialExpense' => '必要支出',
+			'chat.genui.cashFlowCard.discretionaryExpense' => '可選消費',
+			'chat.genui.cashFlowCard.aiInsight' => 'AI 分析',
 			'footprint.searchIn' => '搜尋',
 			'footprint.searchInAllRecords' => '在所有記錄中搜尋相關內容',
 			'media.selectPhotos' => '選擇照片',

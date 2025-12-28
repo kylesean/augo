@@ -595,6 +595,15 @@
                 "missingId": "IDがありません",
                 "associatedTo": "$name に関連付け済み",
                 "updateFailed": "更新失敗: $error"
+            },
+            "cashFlowCard": {
+                "title": "キャッシュフロー分析",
+                "savingsRate": "貯蓄率 $rate%",
+                "totalIncome": "総収入",
+                "totalExpense": "総支出",
+                "essentialExpense": "必須支出",
+                "discretionaryExpense": "自由裁量支出",
+                "aiInsight": "AI分析"
             }
         }
     },

@@ -1126,6 +1126,7 @@ class _TranslationsChatGenuiEn extends TranslationsChatGenuiZh {
 	@override late final _TranslationsChatGenuiSpaceSelectorEn spaceSelector = _TranslationsChatGenuiSpaceSelectorEn._(_root);
 	@override late final _TranslationsChatGenuiTransferPathEn transferPath = _TranslationsChatGenuiTransferPathEn._(_root);
 	@override late final _TranslationsChatGenuiTransactionCardEn transactionCard = _TranslationsChatGenuiTransactionCardEn._(_root);
+	@override late final _TranslationsChatGenuiCashFlowCardEn cashFlowCard = _TranslationsChatGenuiCashFlowCardEn._(_root);
 }
 
 // Path: error.genui
@@ -1606,6 +1607,22 @@ class _TranslationsChatGenuiTransactionCardEn extends TranslationsChatGenuiTrans
 	@override String get noSpace => 'No shared spaces available';
 	@override String get selectSpace => 'Select Shared Space';
 	@override String get linkedToSpace => 'Linked to shared space';
+}
+
+// Path: chat.genui.cashFlowCard
+class _TranslationsChatGenuiCashFlowCardEn extends TranslationsChatGenuiCashFlowCardZh {
+	_TranslationsChatGenuiCashFlowCardEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Cash Flow Analysis';
+	@override String savingsRate({required Object rate}) => 'Savings ${rate}%';
+	@override String get totalIncome => 'Total Income';
+	@override String get totalExpense => 'Total Expense';
+	@override String get essentialExpense => 'Essential';
+	@override String get discretionaryExpense => 'Discretionary';
+	@override String get aiInsight => 'AI Insight';
 }
 
 // Path: chat.genui.healthScore.status
@@ -2266,6 +2283,13 @@ extension on TranslationsEn {
 			'chat.genui.transactionCard.noSpace' => 'No shared spaces available',
 			'chat.genui.transactionCard.selectSpace' => 'Select Shared Space',
 			'chat.genui.transactionCard.linkedToSpace' => 'Linked to shared space',
+			'chat.genui.cashFlowCard.title' => 'Cash Flow Analysis',
+			'chat.genui.cashFlowCard.savingsRate' => ({required Object rate}) => 'Savings ${rate}%',
+			'chat.genui.cashFlowCard.totalIncome' => 'Total Income',
+			'chat.genui.cashFlowCard.totalExpense' => 'Total Expense',
+			'chat.genui.cashFlowCard.essentialExpense' => 'Essential',
+			'chat.genui.cashFlowCard.discretionaryExpense' => 'Discretionary',
+			'chat.genui.cashFlowCard.aiInsight' => 'AI Insight',
 			'footprint.searchIn' => 'Search',
 			'footprint.searchInAllRecords' => 'Search in all records',
 			'media.selectPhotos' => 'Select Photos',

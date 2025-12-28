@@ -595,6 +595,15 @@
                 "missingId": "거래 ID가 없습니다",
                 "associatedTo": "$name 계좌 연결됨",
                 "updateFailed": "업데이트 실패: $error"
+            },
+            "cashFlowCard": {
+                "title": "현금 흐름 분석",
+                "savingsRate": "저축률 $rate%",
+                "totalIncome": "총수입",
+                "totalExpense": "총지출",
+                "essentialExpense": "필수 지출",
+                "discretionaryExpense": "선택적 소비",
+                "aiInsight": "AI 분석"
             }
         }
     },

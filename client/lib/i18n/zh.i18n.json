@@ -727,6 +727,15 @@
                 "categoryDistribution": "分类占比",
                 "topSpenders": "大额支出",
                 "amountWan": "$amount万"
+            },
+            "cashFlowCard": {
+                "title": "现金流分析",
+                "savingsRate": "储蓄 $rate%",
+                "totalIncome": "总收入",
+                "totalExpense": "总支出",
+                "essentialExpense": "必要支出",
+                "discretionaryExpense": "可选消费",
+                "aiInsight": "AI 分析"
             }
         }
     },

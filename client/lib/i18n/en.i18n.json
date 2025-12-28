@@ -712,6 +712,15 @@
                 "noSpace": "No shared spaces available",
                 "selectSpace": "Select Shared Space",
                 "linkedToSpace": "Linked to shared space"
+            },
+            "cashFlowCard": {
+                "title": "Cash Flow Analysis",
+                "savingsRate": "Savings $rate%",
+                "totalIncome": "Total Income",
+                "totalExpense": "Total Expense",
+                "essentialExpense": "Essential",
+                "discretionaryExpense": "Discretionary",
+                "aiInsight": "AI Insight"
             }
         }
     },

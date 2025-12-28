@@ -1015,6 +1015,7 @@ class _TranslationsChatGenuiJa extends TranslationsChatGenuiZh {
 	@override late final _TranslationsChatGenuiTransactionListJa transactionList = _TranslationsChatGenuiTransactionListJa._(_root);
 	@override late final _TranslationsChatGenuiTransactionGroupReceiptJa transactionGroupReceipt = _TranslationsChatGenuiTransactionGroupReceiptJa._(_root);
 	@override late final _TranslationsChatGenuiTransactionCardJa transactionCard = _TranslationsChatGenuiTransactionCardJa._(_root);
+	@override late final _TranslationsChatGenuiCashFlowCardJa cashFlowCard = _TranslationsChatGenuiCashFlowCardJa._(_root);
 }
 
 // Path: error.genui
@@ -1211,6 +1212,22 @@ class _TranslationsChatGenuiTransactionCardJa extends TranslationsChatGenuiTrans
 	@override String get missingId => 'IDがありません';
 	@override String associatedTo({required Object name}) => '${name} に関連付け済み';
 	@override String updateFailed({required Object error}) => '更新失敗: ${error}';
+}
+
+// Path: chat.genui.cashFlowCard
+class _TranslationsChatGenuiCashFlowCardJa extends TranslationsChatGenuiCashFlowCardZh {
+	_TranslationsChatGenuiCashFlowCardJa._(TranslationsJa root) : this._root = root, super.internal(root);
+
+	final TranslationsJa _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'キャッシュフロー分析';
+	@override String savingsRate({required Object rate}) => '貯蓄率 ${rate}%';
+	@override String get totalIncome => '総収入';
+	@override String get totalExpense => '総支出';
+	@override String get essentialExpense => '必須支出';
+	@override String get discretionaryExpense => '自由裁量支出';
+	@override String get aiInsight => 'AI分析';
 }
 
 /// The flat map containing all translations for locale <ja>.
@@ -1756,6 +1773,13 @@ extension on TranslationsJa {
 			'chat.genui.transactionCard.missingId' => 'IDがありません',
 			'chat.genui.transactionCard.associatedTo' => ({required Object name}) => '${name} に関連付け済み',
 			'chat.genui.transactionCard.updateFailed' => ({required Object error}) => '更新失敗: ${error}',
+			'chat.genui.cashFlowCard.title' => 'キャッシュフロー分析',
+			'chat.genui.cashFlowCard.savingsRate' => ({required Object rate}) => '貯蓄率 ${rate}%',
+			'chat.genui.cashFlowCard.totalIncome' => '総収入',
+			'chat.genui.cashFlowCard.totalExpense' => '総支出',
+			'chat.genui.cashFlowCard.essentialExpense' => '必須支出',
+			'chat.genui.cashFlowCard.discretionaryExpense' => '自由裁量支出',
+			'chat.genui.cashFlowCard.aiInsight' => 'AI分析',
 			'footprint.searchIn' => '検索',
 			'footprint.searchInAllRecords' => 'すべての記録から検索',
 			'media.selectPhotos' => '写真を選択',

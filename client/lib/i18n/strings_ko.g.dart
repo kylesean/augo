@@ -1015,6 +1015,7 @@ class _TranslationsChatGenuiKo extends TranslationsChatGenuiZh {
 	@override late final _TranslationsChatGenuiTransactionListKo transactionList = _TranslationsChatGenuiTransactionListKo._(_root);
 	@override late final _TranslationsChatGenuiTransactionGroupReceiptKo transactionGroupReceipt = _TranslationsChatGenuiTransactionGroupReceiptKo._(_root);
 	@override late final _TranslationsChatGenuiTransactionCardKo transactionCard = _TranslationsChatGenuiTransactionCardKo._(_root);
+	@override late final _TranslationsChatGenuiCashFlowCardKo cashFlowCard = _TranslationsChatGenuiCashFlowCardKo._(_root);
 }
 
 // Path: error.genui
@@ -1211,6 +1212,22 @@ class _TranslationsChatGenuiTransactionCardKo extends TranslationsChatGenuiTrans
 	@override String get missingId => '거래 ID가 없습니다';
 	@override String associatedTo({required Object name}) => '${name} 계좌 연결됨';
 	@override String updateFailed({required Object error}) => '업데이트 실패: ${error}';
+}
+
+// Path: chat.genui.cashFlowCard
+class _TranslationsChatGenuiCashFlowCardKo extends TranslationsChatGenuiCashFlowCardZh {
+	_TranslationsChatGenuiCashFlowCardKo._(TranslationsKo root) : this._root = root, super.internal(root);
+
+	final TranslationsKo _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => '현금 흐름 분석';
+	@override String savingsRate({required Object rate}) => '저축률 ${rate}%';
+	@override String get totalIncome => '총수입';
+	@override String get totalExpense => '총지출';
+	@override String get essentialExpense => '필수 지출';
+	@override String get discretionaryExpense => '선택적 소비';
+	@override String get aiInsight => 'AI 분석';
 }
 
 /// The flat map containing all translations for locale <ko>.
@@ -1756,6 +1773,13 @@ extension on TranslationsKo {
 			'chat.genui.transactionCard.missingId' => '거래 ID가 없습니다',
 			'chat.genui.transactionCard.associatedTo' => ({required Object name}) => '${name} 계좌 연결됨',
 			'chat.genui.transactionCard.updateFailed' => ({required Object error}) => '업데이트 실패: ${error}',
+			'chat.genui.cashFlowCard.title' => '현금 흐름 분석',
+			'chat.genui.cashFlowCard.savingsRate' => ({required Object rate}) => '저축률 ${rate}%',
+			'chat.genui.cashFlowCard.totalIncome' => '총수입',
+			'chat.genui.cashFlowCard.totalExpense' => '총지출',
+			'chat.genui.cashFlowCard.essentialExpense' => '필수 지출',
+			'chat.genui.cashFlowCard.discretionaryExpense' => '선택적 소비',
+			'chat.genui.cashFlowCard.aiInsight' => 'AI 분석',
 			'footprint.searchIn' => '검색',
 			'footprint.searchInAllRecords' => '모든 기록에서 검색',
 			'media.selectPhotos' => '사진 선택',
