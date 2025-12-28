@@ -96,24 +96,25 @@ class AmountTheme {
       case 'colorBlindFriendly':
         return colorBlindFriendly;
       case 'chinaMarket':
-      default:
         return chinaMarket;
+      default:
+        return international;
     }
   }
 
   /// List of all available themes (for settings page)
   static const List<AmountThemeOption> availableThemes = [
     AmountThemeOption(
-      id: 'chinaMarket',
-      name: 'China Market',
-      description: 'Red increase, Black decrease (Recommended)',
-      theme: chinaMarket,
-    ),
-    AmountThemeOption(
       id: 'international',
       name: 'International',
       description: 'Green increase, Red decrease',
       theme: international,
+    ),
+    AmountThemeOption(
+      id: 'chinaMarket',
+      name: 'China Market',
+      description: 'Red increase, Black decrease',
+      theme: chinaMarket,
     ),
     AmountThemeOption(
       id: 'minimalist',

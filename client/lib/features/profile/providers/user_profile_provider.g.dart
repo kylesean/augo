@@ -44,7 +44,7 @@ final class UserProfileProvider
   }
 }
 
-String _$userProfileHash() => r'4e245a73eebe6ec7ab0a75855e1d1e90c303a542';
+String _$userProfileHash() => r'e180c3b225553570554712865f97679232999915';
 
 /// User profile notifier
 

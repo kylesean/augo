@@ -15,17 +15,17 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CommentModel {
 
- String get id; String get transactionId;// 确保API返回或可以设置
- String get userId;// 发表评论的用户ID
- String get userName;// 发表评论的用户名
- String get userAvatarUrl;// 发表评论的用户头像
- String? get parentCommentId;// 父评论ID，用于回复
- String get commentText;// 回复文本内容
- String? get repliedToUserId;// 被回复的用户的ID (可选，但推荐)
- String? get repliedToUserName;// 被回复的用户的名称 (可选，但推荐)
- DateTime get createdAt;@JsonKey(fromJson: _dateTimeNullableParse, toJson: _dateTimeNullableToIso8601String) DateTime? get updatedAt; List<CommentModel> get replies;// 这个字段现在只用于后端返回数据，UI上不再递归渲染
-// 或者后端直接返回嵌套结构，但要注意层级深度
- int get likeCount;// 可选：评论点赞数
+ String get id; String get transactionId;// Ensure API returns or can set
+ String get userId;// ID of the user who posted the comment
+ String get userName;// Username of the user who posted the comment
+ String get userAvatarUrl;// Avatar URL of the user who posted the comment
+ String? get parentCommentId;// Parent comment ID, used for replies
+ String get commentText;// Reply text content
+ String? get repliedToUserId;// ID of the user being replied to (optional, recommended)
+ String? get repliedToUserName;// Name of the user being replied to (optional, recommended)
+ DateTime get createdAt;@JsonKey(fromJson: _dateTimeNullableParse, toJson: _dateTimeNullableToIso8601String) DateTime? get updatedAt; List<CommentModel> get replies;// Current field only for backend returned data, UI no longer renders recursively
+// Or backend returns nested structure directly, but mind the hierarchy depth
+ int get likeCount;// Optional: comment like count
  bool get likedByCurrentUser;
 /// Create a copy of CommentModel
 /// with the given fields replaced by the non-null parameter values.
@@ -238,21 +238,21 @@ class _CommentModel implements CommentModel {
 
 @override final  String id;
 @override final  String transactionId;
-// 确保API返回或可以设置
+// Ensure API returns or can set
 @override final  String userId;
-// 发表评论的用户ID
+// ID of the user who posted the comment
 @override final  String userName;
-// 发表评论的用户名
+// Username of the user who posted the comment
 @override final  String userAvatarUrl;
-// 发表评论的用户头像
+// Avatar URL of the user who posted the comment
 @override final  String? parentCommentId;
-// 父评论ID，用于回复
+// Parent comment ID, used for replies
 @override final  String commentText;
-// 回复文本内容
+// Reply text content
 @override final  String? repliedToUserId;
-// 被回复的用户的ID (可选，但推荐)
+// ID of the user being replied to (optional, recommended)
 @override final  String? repliedToUserName;
-// 被回复的用户的名称 (可选，但推荐)
+// Name of the user being replied to (optional, recommended)
 @override final  DateTime createdAt;
 @override@JsonKey(fromJson: _dateTimeNullableParse, toJson: _dateTimeNullableToIso8601String) final  DateTime? updatedAt;
  final  List<CommentModel> _replies;
@@ -262,10 +262,10 @@ class _CommentModel implements CommentModel {
   return EqualUnmodifiableListView(_replies);
 }
 
-// 这个字段现在只用于后端返回数据，UI上不再递归渲染
-// 或者后端直接返回嵌套结构，但要注意层级深度
+// Current field only for backend returned data, UI no longer renders recursively
+// Or backend returns nested structure directly, but mind the hierarchy depth
 @override@JsonKey() final  int likeCount;
-// 可选：评论点赞数
+// Optional: comment like count
 @override@JsonKey() final  bool likedByCurrentUser;
 
 /// Create a copy of CommentModel

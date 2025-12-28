@@ -17,6 +17,7 @@ import '../models/chat_message.dart' as app;
 import '../models/message_attachments.dart';
 import '../widgets/enhanced_user_message_bubble.dart';
 import '../widgets/chat_conversation_drawer.dart';
+import '../widgets/welcome/welcome_guide_widget.dart';
 import 'package:augo/i18n/strings.g.dart';
 
 class AIChatPage extends ConsumerStatefulWidget {
@@ -403,14 +404,20 @@ class _AIChatPageState extends ConsumerState<AIChatPage> {
           // --- DEBUG INFO END ---
           Expanded(
             child: messages.isEmpty && !chatHistoryState.isLoadingHistory
-                ? Center(
-                    child: Text(
-                      chatHistoryState.historyError != null
-                          ? '${t.chat.loadingFailed}: ${chatHistoryState.historyError}'
-                          : t.chat.noMessages,
-                      style: theme.typography.base,
-                    ),
-                  )
+                ? chatHistoryState.historyError != null
+                      ? Center(
+                          child: Text(
+                            '${t.chat.loadingFailed}: ${chatHistoryState.historyError}',
+                            style: theme.typography.base,
+                          ),
+                        )
+                      : WelcomeGuideWidget(
+                          onSuggestionTap: (prompt) {
+                            chatHistoryNotifier.addUserMessageAndGetResponse(
+                              prompt,
+                            );
+                          },
+                        )
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     reverse: true,

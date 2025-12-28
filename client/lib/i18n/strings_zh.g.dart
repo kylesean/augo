@@ -895,11 +895,11 @@ class TranslationsAmountThemeZh {
 
 	// Translations
 
-	/// zh: '中国市场习惯'
-	String get chinaMarket => '中国市场习惯';
+	/// zh: '中国市场'
+	String get chinaMarket => '中国市场';
 
-	/// zh: '红涨绿跌/黑跌 (推荐)'
-	String get chinaMarketDesc => '红涨绿跌/黑跌 (推荐)';
+	/// zh: '红涨绿跌/黑跌'
+	String get chinaMarketDesc => '红涨绿跌/黑跌';
 
 	/// zh: '国际标准'
 	String get international => '国际标准';
@@ -1459,6 +1459,7 @@ class TranslationsChatZh {
 
 	late final TranslationsChatTransferWizardZh transferWizard = TranslationsChatTransferWizardZh.internal(_root);
 	late final TranslationsChatGenuiZh genui = TranslationsChatGenuiZh.internal(_root);
+	late final TranslationsChatWelcomeZh welcome = TranslationsChatWelcomeZh.internal(_root);
 }
 
 // Path: footprint
@@ -2426,6 +2427,20 @@ class TranslationsChatGenuiZh {
 	late final TranslationsChatGenuiTransactionConfirmationZh transactionConfirmation = TranslationsChatGenuiTransactionConfirmationZh.internal(_root);
 	late final TranslationsChatGenuiBudgetAnalysisZh budgetAnalysis = TranslationsChatGenuiBudgetAnalysisZh.internal(_root);
 	late final TranslationsChatGenuiCashFlowCardZh cashFlowCard = TranslationsChatGenuiCashFlowCardZh.internal(_root);
+}
+
+// Path: chat.welcome
+class TranslationsChatWelcomeZh {
+	TranslationsChatWelcomeZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsChatWelcomeMorningZh morning = TranslationsChatWelcomeMorningZh.internal(_root);
+	late final TranslationsChatWelcomeMiddayZh midday = TranslationsChatWelcomeMiddayZh.internal(_root);
+	late final TranslationsChatWelcomeAfternoonZh afternoon = TranslationsChatWelcomeAfternoonZh.internal(_root);
+	late final TranslationsChatWelcomeEveningZh evening = TranslationsChatWelcomeEveningZh.internal(_root);
+	late final TranslationsChatWelcomeNightZh night = TranslationsChatWelcomeNightZh.internal(_root);
 }
 
 // Path: error.genui
@@ -3438,6 +3453,92 @@ class TranslationsChatGenuiCashFlowCardZh {
 	String get aiInsight => 'AI 分析';
 }
 
+// Path: chat.welcome.morning
+class TranslationsChatWelcomeMorningZh {
+	TranslationsChatWelcomeMorningZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '新的一天，从记录开始'
+	String get subtitle => '新的一天，从记录开始';
+
+	late final TranslationsChatWelcomeMorningBreakfastZh breakfast = TranslationsChatWelcomeMorningBreakfastZh.internal(_root);
+	late final TranslationsChatWelcomeMorningYesterdayReviewZh yesterdayReview = TranslationsChatWelcomeMorningYesterdayReviewZh.internal(_root);
+	late final TranslationsChatWelcomeMorningTodayBudgetZh todayBudget = TranslationsChatWelcomeMorningTodayBudgetZh.internal(_root);
+}
+
+// Path: chat.welcome.midday
+class TranslationsChatWelcomeMiddayZh {
+	TranslationsChatWelcomeMiddayZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '中午好'
+	String get greeting => '中午好';
+
+	/// zh: '午间时光，顺手记一笔'
+	String get subtitle => '午间时光，顺手记一笔';
+
+	late final TranslationsChatWelcomeMiddayLunchZh lunch = TranslationsChatWelcomeMiddayLunchZh.internal(_root);
+	late final TranslationsChatWelcomeMiddayWeeklyExpenseZh weeklyExpense = TranslationsChatWelcomeMiddayWeeklyExpenseZh.internal(_root);
+	late final TranslationsChatWelcomeMiddayCheckBalanceZh checkBalance = TranslationsChatWelcomeMiddayCheckBalanceZh.internal(_root);
+}
+
+// Path: chat.welcome.afternoon
+class TranslationsChatWelcomeAfternoonZh {
+	TranslationsChatWelcomeAfternoonZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '下午茶时间，理理财'
+	String get subtitle => '下午茶时间，理理财';
+
+	late final TranslationsChatWelcomeAfternoonQuickRecordZh quickRecord = TranslationsChatWelcomeAfternoonQuickRecordZh.internal(_root);
+	late final TranslationsChatWelcomeAfternoonAnalyzeSpendingZh analyzeSpending = TranslationsChatWelcomeAfternoonAnalyzeSpendingZh.internal(_root);
+	late final TranslationsChatWelcomeAfternoonBudgetProgressZh budgetProgress = TranslationsChatWelcomeAfternoonBudgetProgressZh.internal(_root);
+}
+
+// Path: chat.welcome.evening
+class TranslationsChatWelcomeEveningZh {
+	TranslationsChatWelcomeEveningZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '辛苦一天，来理理账'
+	String get subtitle => '辛苦一天，来理理账';
+
+	late final TranslationsChatWelcomeEveningDinnerZh dinner = TranslationsChatWelcomeEveningDinnerZh.internal(_root);
+	late final TranslationsChatWelcomeEveningTodaySummaryZh todaySummary = TranslationsChatWelcomeEveningTodaySummaryZh.internal(_root);
+	late final TranslationsChatWelcomeEveningTomorrowPlanZh tomorrowPlan = TranslationsChatWelcomeEveningTomorrowPlanZh.internal(_root);
+}
+
+// Path: chat.welcome.night
+class TranslationsChatWelcomeNightZh {
+	TranslationsChatWelcomeNightZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '夜深了'
+	String get greeting => '夜深了';
+
+	/// zh: '静心理财，规划未来'
+	String get subtitle => '静心理财，规划未来';
+
+	late final TranslationsChatWelcomeNightMakeupRecordZh makeupRecord = TranslationsChatWelcomeNightMakeupRecordZh.internal(_root);
+	late final TranslationsChatWelcomeNightMonthlyReviewZh monthlyReview = TranslationsChatWelcomeNightMonthlyReviewZh.internal(_root);
+	late final TranslationsChatWelcomeNightFinancialThinkingZh financialThinking = TranslationsChatWelcomeNightFinancialThinkingZh.internal(_root);
+}
+
 // Path: chat.genui.healthScore.status
 class TranslationsChatGenuiHealthScoreStatusZh {
 	TranslationsChatGenuiHealthScoreStatusZh.internal(this._root);
@@ -3460,6 +3561,276 @@ class TranslationsChatGenuiHealthScoreStatusZh {
 
 	/// zh: '财务状况较差'
 	String get poor => '财务状况较差';
+}
+
+// Path: chat.welcome.morning.breakfast
+class TranslationsChatWelcomeMorningBreakfastZh {
+	TranslationsChatWelcomeMorningBreakfastZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '早餐记账'
+	String get title => '早餐记账';
+
+	/// zh: '记一笔早餐'
+	String get prompt => '记一笔早餐';
+
+	/// zh: '快速记录今天的第一笔消费'
+	String get description => '快速记录今天的第一笔消费';
+}
+
+// Path: chat.welcome.morning.yesterdayReview
+class TranslationsChatWelcomeMorningYesterdayReviewZh {
+	TranslationsChatWelcomeMorningYesterdayReviewZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '昨日回顾'
+	String get title => '昨日回顾';
+
+	/// zh: '分析昨天的消费'
+	String get prompt => '分析昨天的消费';
+
+	/// zh: '看看昨天花了多少钱'
+	String get description => '看看昨天花了多少钱';
+}
+
+// Path: chat.welcome.morning.todayBudget
+class TranslationsChatWelcomeMorningTodayBudgetZh {
+	TranslationsChatWelcomeMorningTodayBudgetZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '今日预算'
+	String get title => '今日预算';
+
+	/// zh: '今天还剩多少预算'
+	String get prompt => '今天还剩多少预算';
+
+	/// zh: '规划一天的消费额度'
+	String get description => '规划一天的消费额度';
+}
+
+// Path: chat.welcome.midday.lunch
+class TranslationsChatWelcomeMiddayLunchZh {
+	TranslationsChatWelcomeMiddayLunchZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '午餐记账'
+	String get title => '午餐记账';
+
+	/// zh: '记一笔午餐'
+	String get prompt => '记一笔午餐';
+
+	/// zh: '记录午餐开销'
+	String get description => '记录午餐开销';
+}
+
+// Path: chat.welcome.midday.weeklyExpense
+class TranslationsChatWelcomeMiddayWeeklyExpenseZh {
+	TranslationsChatWelcomeMiddayWeeklyExpenseZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '本周消费'
+	String get title => '本周消费';
+
+	/// zh: '分析本周消费'
+	String get prompt => '分析本周消费';
+
+	/// zh: '了解本周花费情况'
+	String get description => '了解本周花费情况';
+}
+
+// Path: chat.welcome.midday.checkBalance
+class TranslationsChatWelcomeMiddayCheckBalanceZh {
+	TranslationsChatWelcomeMiddayCheckBalanceZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '查看余额'
+	String get title => '查看余额';
+
+	/// zh: '查看账户余额'
+	String get prompt => '查看账户余额';
+
+	/// zh: '看看各账户还剩多少'
+	String get description => '看看各账户还剩多少';
+}
+
+// Path: chat.welcome.afternoon.quickRecord
+class TranslationsChatWelcomeAfternoonQuickRecordZh {
+	TranslationsChatWelcomeAfternoonQuickRecordZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '随手记账'
+	String get title => '随手记账';
+
+	/// zh: '帮我记一笔'
+	String get prompt => '帮我记一笔';
+
+	/// zh: '快速记录一笔消费'
+	String get description => '快速记录一笔消费';
+}
+
+// Path: chat.welcome.afternoon.analyzeSpending
+class TranslationsChatWelcomeAfternoonAnalyzeSpendingZh {
+	TranslationsChatWelcomeAfternoonAnalyzeSpendingZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '分析消费'
+	String get title => '分析消费';
+
+	/// zh: '分析本月消费'
+	String get prompt => '分析本月消费';
+
+	/// zh: '查看消费趋势和构成'
+	String get description => '查看消费趋势和构成';
+}
+
+// Path: chat.welcome.afternoon.budgetProgress
+class TranslationsChatWelcomeAfternoonBudgetProgressZh {
+	TranslationsChatWelcomeAfternoonBudgetProgressZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '预算进度'
+	String get title => '预算进度';
+
+	/// zh: '查看预算执行情况'
+	String get prompt => '查看预算执行情况';
+
+	/// zh: '了解预算使用进度'
+	String get description => '了解预算使用进度';
+}
+
+// Path: chat.welcome.evening.dinner
+class TranslationsChatWelcomeEveningDinnerZh {
+	TranslationsChatWelcomeEveningDinnerZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '晚餐记账'
+	String get title => '晚餐记账';
+
+	/// zh: '记一笔晚餐'
+	String get prompt => '记一笔晚餐';
+
+	/// zh: '记录今天的晚餐消费'
+	String get description => '记录今天的晚餐消费';
+}
+
+// Path: chat.welcome.evening.todaySummary
+class TranslationsChatWelcomeEveningTodaySummaryZh {
+	TranslationsChatWelcomeEveningTodaySummaryZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '今日总结'
+	String get title => '今日总结';
+
+	/// zh: '总结今天的消费'
+	String get prompt => '总结今天的消费';
+
+	/// zh: '看看今天花了多少'
+	String get description => '看看今天花了多少';
+}
+
+// Path: chat.welcome.evening.tomorrowPlan
+class TranslationsChatWelcomeEveningTomorrowPlanZh {
+	TranslationsChatWelcomeEveningTomorrowPlanZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '明日计划'
+	String get title => '明日计划';
+
+	/// zh: '明天有什么固定支出'
+	String get prompt => '明天有什么固定支出';
+
+	/// zh: '提前规划明天的消费'
+	String get description => '提前规划明天的消费';
+}
+
+// Path: chat.welcome.night.makeupRecord
+class TranslationsChatWelcomeNightMakeupRecordZh {
+	TranslationsChatWelcomeNightMakeupRecordZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '补记今日'
+	String get title => '补记今日';
+
+	/// zh: '帮我补记今天的消费'
+	String get prompt => '帮我补记今天的消费';
+
+	/// zh: '把今天忘记的账补上'
+	String get description => '把今天忘记的账补上';
+}
+
+// Path: chat.welcome.night.monthlyReview
+class TranslationsChatWelcomeNightMonthlyReviewZh {
+	TranslationsChatWelcomeNightMonthlyReviewZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '本月回顾'
+	String get title => '本月回顾';
+
+	/// zh: '分析本月消费'
+	String get prompt => '分析本月消费';
+
+	/// zh: '回顾这个月的花费'
+	String get description => '回顾这个月的花费';
+}
+
+// Path: chat.welcome.night.financialThinking
+class TranslationsChatWelcomeNightFinancialThinkingZh {
+	TranslationsChatWelcomeNightFinancialThinkingZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '理财思考'
+	String get title => '理财思考';
+
+	/// zh: '给我一些理财建议'
+	String get prompt => '给我一些理财建议';
+
+	/// zh: 'AI 帮你想想如何理财'
+	String get description => 'AI 帮你想想如何理财';
 }
 
 /// The flat map containing all translations for locale <zh>.
@@ -3734,8 +4105,8 @@ extension on Translations {
 			'speech.enterAddress' => '请输入服务器地址',
 			'speech.enterValidPort' => '请输入有效的端口 (1-65535)',
 			'speech.configSaved' => '配置已保存',
-			'amountTheme.chinaMarket' => '中国市场习惯',
-			'amountTheme.chinaMarketDesc' => '红涨绿跌/黑跌 (推荐)',
+			'amountTheme.chinaMarket' => '中国市场',
+			'amountTheme.chinaMarketDesc' => '红涨绿跌/黑跌',
 			'amountTheme.international' => '国际标准',
 			'amountTheme.internationalDesc' => '绿涨红跌',
 			'amountTheme.minimalist' => '极简模式',
@@ -4124,6 +4495,58 @@ extension on Translations {
 			'chat.genui.cashFlowCard.essentialExpense' => '必要支出',
 			'chat.genui.cashFlowCard.discretionaryExpense' => '可选消费',
 			'chat.genui.cashFlowCard.aiInsight' => 'AI 分析',
+			'chat.welcome.morning.subtitle' => '新的一天，从记录开始',
+			'chat.welcome.morning.breakfast.title' => '早餐记账',
+			'chat.welcome.morning.breakfast.prompt' => '记一笔早餐',
+			'chat.welcome.morning.breakfast.description' => '快速记录今天的第一笔消费',
+			'chat.welcome.morning.yesterdayReview.title' => '昨日回顾',
+			'chat.welcome.morning.yesterdayReview.prompt' => '分析昨天的消费',
+			'chat.welcome.morning.yesterdayReview.description' => '看看昨天花了多少钱',
+			'chat.welcome.morning.todayBudget.title' => '今日预算',
+			'chat.welcome.morning.todayBudget.prompt' => '今天还剩多少预算',
+			'chat.welcome.morning.todayBudget.description' => '规划一天的消费额度',
+			'chat.welcome.midday.greeting' => '中午好',
+			'chat.welcome.midday.subtitle' => '午间时光，顺手记一笔',
+			'chat.welcome.midday.lunch.title' => '午餐记账',
+			'chat.welcome.midday.lunch.prompt' => '记一笔午餐',
+			'chat.welcome.midday.lunch.description' => '记录午餐开销',
+			'chat.welcome.midday.weeklyExpense.title' => '本周消费',
+			'chat.welcome.midday.weeklyExpense.prompt' => '分析本周消费',
+			'chat.welcome.midday.weeklyExpense.description' => '了解本周花费情况',
+			'chat.welcome.midday.checkBalance.title' => '查看余额',
+			'chat.welcome.midday.checkBalance.prompt' => '查看账户余额',
+			'chat.welcome.midday.checkBalance.description' => '看看各账户还剩多少',
+			'chat.welcome.afternoon.subtitle' => '下午茶时间，理理财',
+			'chat.welcome.afternoon.quickRecord.title' => '随手记账',
+			'chat.welcome.afternoon.quickRecord.prompt' => '帮我记一笔',
+			'chat.welcome.afternoon.quickRecord.description' => '快速记录一笔消费',
+			'chat.welcome.afternoon.analyzeSpending.title' => '分析消费',
+			'chat.welcome.afternoon.analyzeSpending.prompt' => '分析本月消费',
+			'chat.welcome.afternoon.analyzeSpending.description' => '查看消费趋势和构成',
+			'chat.welcome.afternoon.budgetProgress.title' => '预算进度',
+			'chat.welcome.afternoon.budgetProgress.prompt' => '查看预算执行情况',
+			'chat.welcome.afternoon.budgetProgress.description' => '了解预算使用进度',
+			'chat.welcome.evening.subtitle' => '辛苦一天，来理理账',
+			'chat.welcome.evening.dinner.title' => '晚餐记账',
+			'chat.welcome.evening.dinner.prompt' => '记一笔晚餐',
+			'chat.welcome.evening.dinner.description' => '记录今天的晚餐消费',
+			'chat.welcome.evening.todaySummary.title' => '今日总结',
+			'chat.welcome.evening.todaySummary.prompt' => '总结今天的消费',
+			'chat.welcome.evening.todaySummary.description' => '看看今天花了多少',
+			'chat.welcome.evening.tomorrowPlan.title' => '明日计划',
+			'chat.welcome.evening.tomorrowPlan.prompt' => '明天有什么固定支出',
+			'chat.welcome.evening.tomorrowPlan.description' => '提前规划明天的消费',
+			'chat.welcome.night.greeting' => '夜深了',
+			'chat.welcome.night.subtitle' => '静心理财，规划未来',
+			'chat.welcome.night.makeupRecord.title' => '补记今日',
+			'chat.welcome.night.makeupRecord.prompt' => '帮我补记今天的消费',
+			'chat.welcome.night.makeupRecord.description' => '把今天忘记的账补上',
+			'chat.welcome.night.monthlyReview.title' => '本月回顾',
+			'chat.welcome.night.monthlyReview.prompt' => '分析本月消费',
+			'chat.welcome.night.monthlyReview.description' => '回顾这个月的花费',
+			'chat.welcome.night.financialThinking.title' => '理财思考',
+			'chat.welcome.night.financialThinking.prompt' => '给我一些理财建议',
+			'chat.welcome.night.financialThinking.description' => 'AI 帮你想想如何理财',
 			'footprint.searchIn' => '搜索',
 			'footprint.searchInAllRecords' => '在所有记录中搜索相关内容',
 			'media.selectPhotos' => '选择照片',

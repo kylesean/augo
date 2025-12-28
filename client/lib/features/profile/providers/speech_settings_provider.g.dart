@@ -68,12 +68,12 @@ abstract class _$SpeechSettingsNotifier extends $Notifier<SpeechSettingsState> {
   }
 }
 
-/// 当前语音服务类型的便捷 Provider
+/// Convenience provider for the current speech service type
 
 @ProviderFor(currentSpeechServiceType)
 const currentSpeechServiceTypeProvider = CurrentSpeechServiceTypeProvider._();
 
-/// 当前语音服务类型的便捷 Provider
+/// Convenience provider for the current speech service type
 
 final class CurrentSpeechServiceTypeProvider
     extends
@@ -83,7 +83,7 @@ final class CurrentSpeechServiceTypeProvider
           SpeechServiceType
         >
     with $Provider<SpeechServiceType> {
-  /// 当前语音服务类型的便捷 Provider
+  /// Convenience provider for the current speech service type
   const CurrentSpeechServiceTypeProvider._()
     : super(
         from: null,

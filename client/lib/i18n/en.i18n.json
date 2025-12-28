@@ -722,6 +722,100 @@
                 "discretionaryExpense": "Discretionary",
                 "aiInsight": "AI Insight"
             }
+        },
+        "welcome": {
+            "morning": {
+                "subtitle": "Start your day by tracking",
+                "breakfast": {
+                    "title": "Breakfast",
+                    "prompt": "Record breakfast expense",
+                    "description": "Log today's first expense"
+                },
+                "yesterdayReview": {
+                    "title": "Yesterday Review",
+                    "prompt": "Analyze yesterday's spending",
+                    "description": "Check how much you spent yesterday"
+                },
+                "todayBudget": {
+                    "title": "Today's Budget",
+                    "prompt": "How much budget left for today",
+                    "description": "Plan your spending for today"
+                }
+            },
+            "midday": {
+                "greeting": "Good Afternoon",
+                "subtitle": "Quick record during lunch",
+                "lunch": {
+                    "title": "Lunch",
+                    "prompt": "Record lunch expense",
+                    "description": "Log your lunch spending"
+                },
+                "weeklyExpense": {
+                    "title": "Weekly Spending",
+                    "prompt": "Analyze this week's spending",
+                    "description": "See your weekly expenses"
+                },
+                "checkBalance": {
+                    "title": "Check Balance",
+                    "prompt": "Check my account balance",
+                    "description": "View your account balances"
+                }
+            },
+            "afternoon": {
+                "subtitle": "Tea time, let's review finances",
+                "quickRecord": {
+                    "title": "Quick Record",
+                    "prompt": "Help me record an expense",
+                    "description": "Quickly log a transaction"
+                },
+                "analyzeSpending": {
+                    "title": "Analyze Spending",
+                    "prompt": "Analyze this month's spending",
+                    "description": "View spending trends and breakdown"
+                },
+                "budgetProgress": {
+                    "title": "Budget Progress",
+                    "prompt": "Check budget status",
+                    "description": "See how your budget is doing"
+                }
+            },
+            "evening": {
+                "subtitle": "End of day, time to balance the books",
+                "dinner": {
+                    "title": "Dinner",
+                    "prompt": "Record dinner expense",
+                    "description": "Log tonight's dinner spending"
+                },
+                "todaySummary": {
+                    "title": "Today's Summary",
+                    "prompt": "Summarize today's spending",
+                    "description": "See what you spent today"
+                },
+                "tomorrowPlan": {
+                    "title": "Tomorrow's Plan",
+                    "prompt": "What fixed expenses tomorrow",
+                    "description": "Plan ahead for tomorrow"
+                }
+            },
+            "night": {
+                "greeting": "Late Night",
+                "subtitle": "Quiet time for financial planning",
+                "makeupRecord": {
+                    "title": "Catch Up",
+                    "prompt": "Help me log any missed expenses",
+                    "description": "Record expenses you forgot today"
+                },
+                "monthlyReview": {
+                    "title": "Monthly Review",
+                    "prompt": "Analyze this month's spending",
+                    "description": "Review your monthly expenses"
+                },
+                "financialThinking": {
+                    "title": "Financial Tips",
+                    "prompt": "Give me some financial advice",
+                    "description": "Get AI-powered financial insights"
+                }
+            }
         }
     },
     "footprint": {

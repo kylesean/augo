@@ -631,6 +631,8 @@ class TransactionDetailPage extends ConsumerWidget {
       if (result['code'] == 0 && context.mounted) {
         // 重新加载交易详情
         ref.read(transactionDetailProvider(transactionId).notifier).reload();
+        // 刷新账户列表以更新余额
+        ref.read(financialAccountProvider.notifier).loadFinancialAccounts();
         ToastService.success(description: Text(t.transaction.linkSuccess));
       }
     } catch (e) {

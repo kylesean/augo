@@ -651,6 +651,7 @@ class _TranslationsChatEn extends TranslationsChatZh {
 	@override String get deleteConversationFailed => 'Failed to delete conversation';
 	@override late final _TranslationsChatTransferWizardEn transferWizard = _TranslationsChatTransferWizardEn._(_root);
 	@override late final _TranslationsChatGenuiEn genui = _TranslationsChatGenuiEn._(_root);
+	@override late final _TranslationsChatWelcomeEn welcome = _TranslationsChatWelcomeEn._(_root);
 }
 
 // Path: footprint
@@ -1127,6 +1128,20 @@ class _TranslationsChatGenuiEn extends TranslationsChatGenuiZh {
 	@override late final _TranslationsChatGenuiTransferPathEn transferPath = _TranslationsChatGenuiTransferPathEn._(_root);
 	@override late final _TranslationsChatGenuiTransactionCardEn transactionCard = _TranslationsChatGenuiTransactionCardEn._(_root);
 	@override late final _TranslationsChatGenuiCashFlowCardEn cashFlowCard = _TranslationsChatGenuiCashFlowCardEn._(_root);
+}
+
+// Path: chat.welcome
+class _TranslationsChatWelcomeEn extends TranslationsChatWelcomeZh {
+	_TranslationsChatWelcomeEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _TranslationsChatWelcomeMorningEn morning = _TranslationsChatWelcomeMorningEn._(_root);
+	@override late final _TranslationsChatWelcomeMiddayEn midday = _TranslationsChatWelcomeMiddayEn._(_root);
+	@override late final _TranslationsChatWelcomeAfternoonEn afternoon = _TranslationsChatWelcomeAfternoonEn._(_root);
+	@override late final _TranslationsChatWelcomeEveningEn evening = _TranslationsChatWelcomeEveningEn._(_root);
+	@override late final _TranslationsChatWelcomeNightEn night = _TranslationsChatWelcomeNightEn._(_root);
 }
 
 // Path: error.genui
@@ -1625,6 +1640,73 @@ class _TranslationsChatGenuiCashFlowCardEn extends TranslationsChatGenuiCashFlow
 	@override String get aiInsight => 'AI Insight';
 }
 
+// Path: chat.welcome.morning
+class _TranslationsChatWelcomeMorningEn extends TranslationsChatWelcomeMorningZh {
+	_TranslationsChatWelcomeMorningEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get subtitle => 'Start your day by tracking';
+	@override late final _TranslationsChatWelcomeMorningBreakfastEn breakfast = _TranslationsChatWelcomeMorningBreakfastEn._(_root);
+	@override late final _TranslationsChatWelcomeMorningYesterdayReviewEn yesterdayReview = _TranslationsChatWelcomeMorningYesterdayReviewEn._(_root);
+	@override late final _TranslationsChatWelcomeMorningTodayBudgetEn todayBudget = _TranslationsChatWelcomeMorningTodayBudgetEn._(_root);
+}
+
+// Path: chat.welcome.midday
+class _TranslationsChatWelcomeMiddayEn extends TranslationsChatWelcomeMiddayZh {
+	_TranslationsChatWelcomeMiddayEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get greeting => 'Good Afternoon';
+	@override String get subtitle => 'Quick record during lunch';
+	@override late final _TranslationsChatWelcomeMiddayLunchEn lunch = _TranslationsChatWelcomeMiddayLunchEn._(_root);
+	@override late final _TranslationsChatWelcomeMiddayWeeklyExpenseEn weeklyExpense = _TranslationsChatWelcomeMiddayWeeklyExpenseEn._(_root);
+	@override late final _TranslationsChatWelcomeMiddayCheckBalanceEn checkBalance = _TranslationsChatWelcomeMiddayCheckBalanceEn._(_root);
+}
+
+// Path: chat.welcome.afternoon
+class _TranslationsChatWelcomeAfternoonEn extends TranslationsChatWelcomeAfternoonZh {
+	_TranslationsChatWelcomeAfternoonEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get subtitle => 'Tea time, let\'s review finances';
+	@override late final _TranslationsChatWelcomeAfternoonQuickRecordEn quickRecord = _TranslationsChatWelcomeAfternoonQuickRecordEn._(_root);
+	@override late final _TranslationsChatWelcomeAfternoonAnalyzeSpendingEn analyzeSpending = _TranslationsChatWelcomeAfternoonAnalyzeSpendingEn._(_root);
+	@override late final _TranslationsChatWelcomeAfternoonBudgetProgressEn budgetProgress = _TranslationsChatWelcomeAfternoonBudgetProgressEn._(_root);
+}
+
+// Path: chat.welcome.evening
+class _TranslationsChatWelcomeEveningEn extends TranslationsChatWelcomeEveningZh {
+	_TranslationsChatWelcomeEveningEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get subtitle => 'End of day, time to balance the books';
+	@override late final _TranslationsChatWelcomeEveningDinnerEn dinner = _TranslationsChatWelcomeEveningDinnerEn._(_root);
+	@override late final _TranslationsChatWelcomeEveningTodaySummaryEn todaySummary = _TranslationsChatWelcomeEveningTodaySummaryEn._(_root);
+	@override late final _TranslationsChatWelcomeEveningTomorrowPlanEn tomorrowPlan = _TranslationsChatWelcomeEveningTomorrowPlanEn._(_root);
+}
+
+// Path: chat.welcome.night
+class _TranslationsChatWelcomeNightEn extends TranslationsChatWelcomeNightZh {
+	_TranslationsChatWelcomeNightEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get greeting => 'Late Night';
+	@override String get subtitle => 'Quiet time for financial planning';
+	@override late final _TranslationsChatWelcomeNightMakeupRecordEn makeupRecord = _TranslationsChatWelcomeNightMakeupRecordEn._(_root);
+	@override late final _TranslationsChatWelcomeNightMonthlyReviewEn monthlyReview = _TranslationsChatWelcomeNightMonthlyReviewEn._(_root);
+	@override late final _TranslationsChatWelcomeNightFinancialThinkingEn financialThinking = _TranslationsChatWelcomeNightFinancialThinkingEn._(_root);
+}
+
 // Path: chat.genui.healthScore.status
 class _TranslationsChatGenuiHealthScoreStatusEn extends TranslationsChatGenuiHealthScoreStatusZh {
 	_TranslationsChatGenuiHealthScoreStatusEn._(TranslationsEn root) : this._root = root, super.internal(root);
@@ -1637,6 +1719,186 @@ class _TranslationsChatGenuiHealthScoreStatusEn extends TranslationsChatGenuiHea
 	@override String get fair => 'Fair';
 	@override String get needsImprovement => 'Needs Improvement';
 	@override String get poor => 'Poor';
+}
+
+// Path: chat.welcome.morning.breakfast
+class _TranslationsChatWelcomeMorningBreakfastEn extends TranslationsChatWelcomeMorningBreakfastZh {
+	_TranslationsChatWelcomeMorningBreakfastEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Breakfast';
+	@override String get prompt => 'Record breakfast expense';
+	@override String get description => 'Log today\'s first expense';
+}
+
+// Path: chat.welcome.morning.yesterdayReview
+class _TranslationsChatWelcomeMorningYesterdayReviewEn extends TranslationsChatWelcomeMorningYesterdayReviewZh {
+	_TranslationsChatWelcomeMorningYesterdayReviewEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Yesterday Review';
+	@override String get prompt => 'Analyze yesterday\'s spending';
+	@override String get description => 'Check how much you spent yesterday';
+}
+
+// Path: chat.welcome.morning.todayBudget
+class _TranslationsChatWelcomeMorningTodayBudgetEn extends TranslationsChatWelcomeMorningTodayBudgetZh {
+	_TranslationsChatWelcomeMorningTodayBudgetEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Today\'s Budget';
+	@override String get prompt => 'How much budget left for today';
+	@override String get description => 'Plan your spending for today';
+}
+
+// Path: chat.welcome.midday.lunch
+class _TranslationsChatWelcomeMiddayLunchEn extends TranslationsChatWelcomeMiddayLunchZh {
+	_TranslationsChatWelcomeMiddayLunchEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Lunch';
+	@override String get prompt => 'Record lunch expense';
+	@override String get description => 'Log your lunch spending';
+}
+
+// Path: chat.welcome.midday.weeklyExpense
+class _TranslationsChatWelcomeMiddayWeeklyExpenseEn extends TranslationsChatWelcomeMiddayWeeklyExpenseZh {
+	_TranslationsChatWelcomeMiddayWeeklyExpenseEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Weekly Spending';
+	@override String get prompt => 'Analyze this week\'s spending';
+	@override String get description => 'See your weekly expenses';
+}
+
+// Path: chat.welcome.midday.checkBalance
+class _TranslationsChatWelcomeMiddayCheckBalanceEn extends TranslationsChatWelcomeMiddayCheckBalanceZh {
+	_TranslationsChatWelcomeMiddayCheckBalanceEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Check Balance';
+	@override String get prompt => 'Check my account balance';
+	@override String get description => 'View your account balances';
+}
+
+// Path: chat.welcome.afternoon.quickRecord
+class _TranslationsChatWelcomeAfternoonQuickRecordEn extends TranslationsChatWelcomeAfternoonQuickRecordZh {
+	_TranslationsChatWelcomeAfternoonQuickRecordEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Quick Record';
+	@override String get prompt => 'Help me record an expense';
+	@override String get description => 'Quickly log a transaction';
+}
+
+// Path: chat.welcome.afternoon.analyzeSpending
+class _TranslationsChatWelcomeAfternoonAnalyzeSpendingEn extends TranslationsChatWelcomeAfternoonAnalyzeSpendingZh {
+	_TranslationsChatWelcomeAfternoonAnalyzeSpendingEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Analyze Spending';
+	@override String get prompt => 'Analyze this month\'s spending';
+	@override String get description => 'View spending trends and breakdown';
+}
+
+// Path: chat.welcome.afternoon.budgetProgress
+class _TranslationsChatWelcomeAfternoonBudgetProgressEn extends TranslationsChatWelcomeAfternoonBudgetProgressZh {
+	_TranslationsChatWelcomeAfternoonBudgetProgressEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Budget Progress';
+	@override String get prompt => 'Check budget status';
+	@override String get description => 'See how your budget is doing';
+}
+
+// Path: chat.welcome.evening.dinner
+class _TranslationsChatWelcomeEveningDinnerEn extends TranslationsChatWelcomeEveningDinnerZh {
+	_TranslationsChatWelcomeEveningDinnerEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Dinner';
+	@override String get prompt => 'Record dinner expense';
+	@override String get description => 'Log tonight\'s dinner spending';
+}
+
+// Path: chat.welcome.evening.todaySummary
+class _TranslationsChatWelcomeEveningTodaySummaryEn extends TranslationsChatWelcomeEveningTodaySummaryZh {
+	_TranslationsChatWelcomeEveningTodaySummaryEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Today\'s Summary';
+	@override String get prompt => 'Summarize today\'s spending';
+	@override String get description => 'See what you spent today';
+}
+
+// Path: chat.welcome.evening.tomorrowPlan
+class _TranslationsChatWelcomeEveningTomorrowPlanEn extends TranslationsChatWelcomeEveningTomorrowPlanZh {
+	_TranslationsChatWelcomeEveningTomorrowPlanEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Tomorrow\'s Plan';
+	@override String get prompt => 'What fixed expenses tomorrow';
+	@override String get description => 'Plan ahead for tomorrow';
+}
+
+// Path: chat.welcome.night.makeupRecord
+class _TranslationsChatWelcomeNightMakeupRecordEn extends TranslationsChatWelcomeNightMakeupRecordZh {
+	_TranslationsChatWelcomeNightMakeupRecordEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Catch Up';
+	@override String get prompt => 'Help me log any missed expenses';
+	@override String get description => 'Record expenses you forgot today';
+}
+
+// Path: chat.welcome.night.monthlyReview
+class _TranslationsChatWelcomeNightMonthlyReviewEn extends TranslationsChatWelcomeNightMonthlyReviewZh {
+	_TranslationsChatWelcomeNightMonthlyReviewEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Monthly Review';
+	@override String get prompt => 'Analyze this month\'s spending';
+	@override String get description => 'Review your monthly expenses';
+}
+
+// Path: chat.welcome.night.financialThinking
+class _TranslationsChatWelcomeNightFinancialThinkingEn extends TranslationsChatWelcomeNightFinancialThinkingZh {
+	_TranslationsChatWelcomeNightFinancialThinkingEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Financial Tips';
+	@override String get prompt => 'Give me some financial advice';
+	@override String get description => 'Get AI-powered financial insights';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -2290,6 +2552,58 @@ extension on TranslationsEn {
 			'chat.genui.cashFlowCard.essentialExpense' => 'Essential',
 			'chat.genui.cashFlowCard.discretionaryExpense' => 'Discretionary',
 			'chat.genui.cashFlowCard.aiInsight' => 'AI Insight',
+			'chat.welcome.morning.subtitle' => 'Start your day by tracking',
+			'chat.welcome.morning.breakfast.title' => 'Breakfast',
+			'chat.welcome.morning.breakfast.prompt' => 'Record breakfast expense',
+			'chat.welcome.morning.breakfast.description' => 'Log today\'s first expense',
+			'chat.welcome.morning.yesterdayReview.title' => 'Yesterday Review',
+			'chat.welcome.morning.yesterdayReview.prompt' => 'Analyze yesterday\'s spending',
+			'chat.welcome.morning.yesterdayReview.description' => 'Check how much you spent yesterday',
+			'chat.welcome.morning.todayBudget.title' => 'Today\'s Budget',
+			'chat.welcome.morning.todayBudget.prompt' => 'How much budget left for today',
+			'chat.welcome.morning.todayBudget.description' => 'Plan your spending for today',
+			'chat.welcome.midday.greeting' => 'Good Afternoon',
+			'chat.welcome.midday.subtitle' => 'Quick record during lunch',
+			'chat.welcome.midday.lunch.title' => 'Lunch',
+			'chat.welcome.midday.lunch.prompt' => 'Record lunch expense',
+			'chat.welcome.midday.lunch.description' => 'Log your lunch spending',
+			'chat.welcome.midday.weeklyExpense.title' => 'Weekly Spending',
+			'chat.welcome.midday.weeklyExpense.prompt' => 'Analyze this week\'s spending',
+			'chat.welcome.midday.weeklyExpense.description' => 'See your weekly expenses',
+			'chat.welcome.midday.checkBalance.title' => 'Check Balance',
+			'chat.welcome.midday.checkBalance.prompt' => 'Check my account balance',
+			'chat.welcome.midday.checkBalance.description' => 'View your account balances',
+			'chat.welcome.afternoon.subtitle' => 'Tea time, let\'s review finances',
+			'chat.welcome.afternoon.quickRecord.title' => 'Quick Record',
+			'chat.welcome.afternoon.quickRecord.prompt' => 'Help me record an expense',
+			'chat.welcome.afternoon.quickRecord.description' => 'Quickly log a transaction',
+			'chat.welcome.afternoon.analyzeSpending.title' => 'Analyze Spending',
+			'chat.welcome.afternoon.analyzeSpending.prompt' => 'Analyze this month\'s spending',
+			'chat.welcome.afternoon.analyzeSpending.description' => 'View spending trends and breakdown',
+			'chat.welcome.afternoon.budgetProgress.title' => 'Budget Progress',
+			'chat.welcome.afternoon.budgetProgress.prompt' => 'Check budget status',
+			'chat.welcome.afternoon.budgetProgress.description' => 'See how your budget is doing',
+			'chat.welcome.evening.subtitle' => 'End of day, time to balance the books',
+			'chat.welcome.evening.dinner.title' => 'Dinner',
+			'chat.welcome.evening.dinner.prompt' => 'Record dinner expense',
+			'chat.welcome.evening.dinner.description' => 'Log tonight\'s dinner spending',
+			'chat.welcome.evening.todaySummary.title' => 'Today\'s Summary',
+			'chat.welcome.evening.todaySummary.prompt' => 'Summarize today\'s spending',
+			'chat.welcome.evening.todaySummary.description' => 'See what you spent today',
+			'chat.welcome.evening.tomorrowPlan.title' => 'Tomorrow\'s Plan',
+			'chat.welcome.evening.tomorrowPlan.prompt' => 'What fixed expenses tomorrow',
+			'chat.welcome.evening.tomorrowPlan.description' => 'Plan ahead for tomorrow',
+			'chat.welcome.night.greeting' => 'Late Night',
+			'chat.welcome.night.subtitle' => 'Quiet time for financial planning',
+			'chat.welcome.night.makeupRecord.title' => 'Catch Up',
+			'chat.welcome.night.makeupRecord.prompt' => 'Help me log any missed expenses',
+			'chat.welcome.night.makeupRecord.description' => 'Record expenses you forgot today',
+			'chat.welcome.night.monthlyReview.title' => 'Monthly Review',
+			'chat.welcome.night.monthlyReview.prompt' => 'Analyze this month\'s spending',
+			'chat.welcome.night.monthlyReview.description' => 'Review your monthly expenses',
+			'chat.welcome.night.financialThinking.title' => 'Financial Tips',
+			'chat.welcome.night.financialThinking.prompt' => 'Give me some financial advice',
+			'chat.welcome.night.financialThinking.description' => 'Get AI-powered financial insights',
 			'footprint.searchIn' => 'Search',
 			'footprint.searchInAllRecords' => 'Search in all records',
 			'media.selectPhotos' => 'Select Photos',

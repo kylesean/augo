@@ -53,10 +53,12 @@ async def get_current_user_info(
         mobile=current_user.mobile,
         username=current_user.username,
         avatarUrl=current_user.avatar_url,
-        createdAt=current_user.created_at.isoformat() + "Z",
-        updatedAt=current_user.updated_at.isoformat() + "Z",
+        createdAt=current_user.created_at.isoformat().replace("+00:00", "Z"),
+        updatedAt=current_user.updated_at.isoformat().replace("+00:00", "Z"),
         clientLastLoginAt=(
-            current_user.client_last_login_at.isoformat() + "Z" if current_user.client_last_login_at else None
+            current_user.client_last_login_at.isoformat().replace("+00:00", "Z")
+            if current_user.client_last_login_at
+            else None
         ),
     )
 
@@ -346,8 +348,8 @@ async def update_user_settings(
         timezone="Asia/Shanghai",  # Placeholder - not in current schema
         estimatedAvgDailySpending=settings.avg_daily_spending,
         safetyBalanceThreshold=settings.safety_balance_threshold,
-        createdAt=settings.created_at.isoformat() + "Z",
-        updatedAt=settings.updated_at.isoformat() + "Z",
+        createdAt=settings.created_at.isoformat().replace("+00:00", "Z"),
+        updatedAt=settings.updated_at.isoformat().replace("+00:00", "Z"),
     )
 
     return success_response(data=settings_response, message="User settings updated successfully")

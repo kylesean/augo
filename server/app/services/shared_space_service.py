@@ -273,8 +273,8 @@ class SharedSpaceService:
         if not space:
             raise NotFoundError("shared space not found")
 
-        # Generate unique code
-        code = secrets.token_urlsafe(8)[:12].upper()
+        # Generate 6-digit numeric invite code
+        code = "".join(secrets.choice("0123456789") for _ in range(6))
         expires_at = datetime.now(timezone.utc) + timedelta(days=expires_days)
 
         # Update space with new invite code

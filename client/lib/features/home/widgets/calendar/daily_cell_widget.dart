@@ -56,28 +56,28 @@ class DailyCellWidget extends StatelessWidget {
         return (
           // Blend small amount of baseHotColor into background (or use low opacity baseHotColor directly)
           backgroundColor: Color.alphaBlend(
-            baseHotColor.withValues(alpha: isDark ? 0.12 : 0.1),
+            baseHotColor.withValues(alpha: isDark ? 0.25 : 0.2),
             colors.background,
           ),
           // Ensure text color is readable on light background
           textColor: isDark
-              ? baseHotForegroundColor.withValues(alpha: 0.7)
-              : baseHotColor.withValues(alpha: 0.7),
+              ? baseHotForegroundColor.withValues(alpha: 0.8)
+              : baseHotColor.withValues(alpha: 0.8),
         );
       case ExpenseHeatLevel.medium:
         return (
           backgroundColor: Color.alphaBlend(
-            baseHotColor.withValues(alpha: isDark ? 0.25 : 0.2),
+            baseHotColor.withValues(alpha: isDark ? 0.4 : 0.35),
             colors.background,
           ),
           textColor: isDark
-              ? baseHotForegroundColor.withValues(alpha: 0.85)
-              : baseHotColor.withValues(alpha: 0.85),
+              ? baseHotForegroundColor.withValues(alpha: 0.9)
+              : baseHotColor.withValues(alpha: 0.9),
         );
       case ExpenseHeatLevel.high:
         return (
           backgroundColor: Color.alphaBlend(
-            baseHotColor.withValues(alpha: isDark ? 0.45 : 0.4),
+            baseHotColor.withValues(alpha: isDark ? 0.6 : 0.55),
             colors.background,
           ),
           textColor: baseHotForegroundColor,
@@ -86,7 +86,7 @@ class DailyCellWidget extends StatelessWidget {
         // For highest heat level, use baseHotColor directly
         return (
           backgroundColor: baseHotColor.withValues(
-            alpha: isDark ? 0.7 : 0.65,
+            alpha: isDark ? 0.85 : 0.8,
           ), // Ensure not fully opaque unless needed
           textColor: baseHotForegroundColor,
         );

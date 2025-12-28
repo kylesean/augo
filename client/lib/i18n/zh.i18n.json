@@ -300,8 +300,8 @@
         "configSaved": "配置已保存"
     },
     "amountTheme": {
-        "chinaMarket": "中国市场习惯",
-        "chinaMarketDesc": "红涨绿跌/黑跌 (推荐)",
+        "chinaMarket": "中国市场",
+        "chinaMarketDesc": "红涨绿跌/黑跌",
         "international": "国际标准",
         "internationalDesc": "绿涨红跌",
         "minimalist": "极简模式",
@@ -736,6 +736,100 @@
                 "essentialExpense": "必要支出",
                 "discretionaryExpense": "可选消费",
                 "aiInsight": "AI 分析"
+            }
+        },
+        "welcome": {
+            "morning": {
+                "subtitle": "新的一天，从记录开始",
+                "breakfast": {
+                    "title": "早餐记账",
+                    "prompt": "记一笔早餐",
+                    "description": "快速记录今天的第一笔消费"
+                },
+                "yesterdayReview": {
+                    "title": "昨日回顾",
+                    "prompt": "分析昨天的消费",
+                    "description": "看看昨天花了多少钱"
+                },
+                "todayBudget": {
+                    "title": "今日预算",
+                    "prompt": "今天还剩多少预算",
+                    "description": "规划一天的消费额度"
+                }
+            },
+            "midday": {
+                "greeting": "中午好",
+                "subtitle": "午间时光，顺手记一笔",
+                "lunch": {
+                    "title": "午餐记账",
+                    "prompt": "记一笔午餐",
+                    "description": "记录午餐开销"
+                },
+                "weeklyExpense": {
+                    "title": "本周消费",
+                    "prompt": "分析本周消费",
+                    "description": "了解本周花费情况"
+                },
+                "checkBalance": {
+                    "title": "查看余额",
+                    "prompt": "查看账户余额",
+                    "description": "看看各账户还剩多少"
+                }
+            },
+            "afternoon": {
+                "subtitle": "下午茶时间，理理财",
+                "quickRecord": {
+                    "title": "随手记账",
+                    "prompt": "帮我记一笔",
+                    "description": "快速记录一笔消费"
+                },
+                "analyzeSpending": {
+                    "title": "分析消费",
+                    "prompt": "分析本月消费",
+                    "description": "查看消费趋势和构成"
+                },
+                "budgetProgress": {
+                    "title": "预算进度",
+                    "prompt": "查看预算执行情况",
+                    "description": "了解预算使用进度"
+                }
+            },
+            "evening": {
+                "subtitle": "辛苦一天，来理理账",
+                "dinner": {
+                    "title": "晚餐记账",
+                    "prompt": "记一笔晚餐",
+                    "description": "记录今天的晚餐消费"
+                },
+                "todaySummary": {
+                    "title": "今日总结",
+                    "prompt": "总结今天的消费",
+                    "description": "看看今天花了多少"
+                },
+                "tomorrowPlan": {
+                    "title": "明日计划",
+                    "prompt": "明天有什么固定支出",
+                    "description": "提前规划明天的消费"
+                }
+            },
+            "night": {
+                "greeting": "夜深了",
+                "subtitle": "静心理财，规划未来",
+                "makeupRecord": {
+                    "title": "补记今日",
+                    "prompt": "帮我补记今天的消费",
+                    "description": "把今天忘记的账补上"
+                },
+                "monthlyReview": {
+                    "title": "本月回顾",
+                    "prompt": "分析本月消费",
+                    "description": "回顾这个月的花费"
+                },
+                "financialThinking": {
+                    "title": "理财思考",
+                    "prompt": "给我一些理财建议",
+                    "description": "AI 帮你想想如何理财"
+                }
             }
         }
     },

@@ -13,6 +13,20 @@ part 'conversation_service.g.dart';
 
 final _logger = Logger('ConversationService');
 
+/// Parse datetime string with compatibility for non-standard ISO 8601 formats.
+/// Handles formats like "2025-12-27T07:07:20.586784+00:00Z" where both offset and Z are present.
+DateTime _parseDateTime(String dateStr) {
+  // Remove redundant trailing 'Z' if offset is already present (e.g., +00:00Z -> +00:00)
+  String normalized = dateStr;
+  if (dateStr.contains('+') || dateStr.contains('-', 10)) {
+    // Has timezone offset, remove trailing Z if present
+    if (dateStr.endsWith('Z')) {
+      normalized = dateStr.substring(0, dateStr.length - 1);
+    }
+  }
+  return DateTime.parse(normalized);
+}
+
 class ConversationService {
   final NetworkClient _networkClient;
 
@@ -71,7 +85,7 @@ class ConversationService {
                 if (session['created_at'] != null &&
                     session['created_at'].toString().isNotEmpty) {
                   try {
-                    createdAt = DateTime.parse(session['created_at'] as String);
+                    createdAt = _parseDateTime(session['created_at'] as String);
                   } catch (e) {
                     _logger.warning('Error parsing created_at: $e');
                   }
@@ -80,7 +94,7 @@ class ConversationService {
                 if (session['updated_at'] != null &&
                     session['updated_at'].toString().isNotEmpty) {
                   try {
-                    updatedAt = DateTime.parse(session['updated_at'] as String);
+                    updatedAt = _parseDateTime(session['updated_at'] as String);
                   } catch (e) {
                     _logger.warning('Error parsing updated_at: $e');
                   }

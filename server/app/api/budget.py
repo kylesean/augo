@@ -64,11 +64,13 @@ async def create_budget(
     for budget in existing:
         if request.scope == BudgetScope.TOTAL and budget.is_total_budget:
             raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT, detail="已存在活跃的总预算。请先暂停或归档现有预算。"
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Active total budget already exists. Please pause or archive it first.",
             )
         if request.scope == BudgetScope.CATEGORY and budget.category_key == request.category_key:
             raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT, detail=f"已存在 {request.category_key} 分类的活跃预算。"
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"Active budget for category '{request.category_key}' already exists.",
             )
 
     budget = await service.create_budget(current_user.uuid, request)
@@ -169,7 +171,7 @@ async def get_budget(
 
     budget = await service.get_budget(budget_id, current_user.uuid)
     if not budget:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="预算不存在")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Budget not found")
 
     period = await service.get_or_create_current_period(budget)
     period = await service.update_period_spent_amount(budget, period)
@@ -189,7 +191,7 @@ async def update_budget(
 
     budget = await service.update_budget(budget_id, current_user.uuid, request)
     if not budget:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="预算不存在")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Budget not found")
 
     period = await service.get_or_create_current_period(budget)
     period = await service.update_period_spent_amount(budget, period)
@@ -208,7 +210,7 @@ async def delete_budget(
 
     success = await service.delete_budget(budget_id, current_user.uuid)
     if not success:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="预算不存在")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Budget not found")
 
 
 # ============================================================================
@@ -237,9 +239,9 @@ async def rebalance_budgets(
     )
 
     if not success:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="一个或多个预算不存在")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="One or more budgets not found")
 
-    return success_response(message="预算调拨成功")
+    return success_response(message="Budget rebalanced successfully")
 
 
 # ============================================================================

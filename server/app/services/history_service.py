@@ -227,7 +227,7 @@ class HistoryService:
                         "filename": attachment.filename,
                         "mime_type": attachment.mime_type,
                         "size": attachment.size,
-                        "created_at": attachment.created_at.isoformat() + "Z",
+                        "created_at": attachment.created_at.isoformat().replace("+00:00", "Z"),
                         "expires_at": (datetime.now(timezone.utc).timestamp() + expire_seconds),
                     }
                 )

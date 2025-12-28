@@ -15,8 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserModel {
 
- String get id;// Usually UUID or numeric string
- String? get username; String? get email; String? get phone; String? get avatarUrl; String? get timezone;
+ String get id; String? get username; String? get email; String? get phone; String? get avatarUrl; String? get timezone;
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -219,7 +218,6 @@ class _UserModel implements UserModel {
   factory _UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
 
 @override final  String id;
-// Usually UUID or numeric string
 @override final  String? username;
 @override final  String? email;
 @override final  String? phone;

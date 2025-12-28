@@ -520,8 +520,17 @@ async def get_user_sessions(
                 {
                     "session_id": session.id,
                     "name": session.name or "",
-                    "created_at": session.created_at.isoformat() + "Z" if session.created_at else "",
-                    "updated_at": session.updated_at.isoformat() + "Z" if session.updated_at else "",
+                    # Use standard ISO 8601 format: replace +00:00 with Z for UTC
+                    "created_at": (
+                        session.created_at.isoformat().replace("+00:00", "Z")
+                        if session.created_at
+                        else ""
+                    ),
+                    "updated_at": (
+                        session.updated_at.isoformat().replace("+00:00", "Z")
+                        if session.updated_at
+                        else ""
+                    ),
                 }
                 for session in items
             ],

@@ -108,8 +108,8 @@ async def create_storage_config(
             "basePath": config.base_path,
             "credentials": service.mask_credentials(config),
             "isReadonly": config.is_readonly,
-            "createdAt": config.created_at.isoformat() + "Z",
-            "updatedAt": config.updated_at.isoformat() + "Z",
+            "createdAt": config.created_at.isoformat().replace("+00:00", "Z"),
+            "updatedAt": config.updated_at.isoformat().replace("+00:00", "Z"),
         },
         message="存储配置创建成功",
     )
@@ -143,8 +143,8 @@ async def list_storage_configs(
                 "basePath": c.base_path,
                 "credentials": service.mask_credentials(c),
                 "isReadonly": c.is_readonly,
-                "createdAt": c.created_at.isoformat() + "Z",
-                "updatedAt": c.updated_at.isoformat() + "Z",
+                "createdAt": c.created_at.isoformat().replace("+00:00", "Z"),
+                "updatedAt": c.updated_at.isoformat().replace("+00:00", "Z"),
             }
             for c in configs
         ]
@@ -181,8 +181,8 @@ async def get_storage_config(
             "basePath": config.base_path,
             "credentials": service.mask_credentials(config),
             "isReadonly": config.is_readonly,
-            "createdAt": config.created_at.isoformat() + "Z",
-            "updatedAt": config.updated_at.isoformat() + "Z",
+            "createdAt": config.created_at.isoformat().replace("+00:00", "Z"),
+            "updatedAt": config.updated_at.isoformat().replace("+00:00", "Z"),
         }
     )
 
@@ -226,8 +226,8 @@ async def update_storage_config(
             "basePath": config.base_path,
             "credentials": service.mask_credentials(config),
             "isReadonly": config.is_readonly,
-            "createdAt": config.created_at.isoformat() + "Z",
-            "updatedAt": config.updated_at.isoformat() + "Z",
+            "createdAt": config.created_at.isoformat().replace("+00:00", "Z"),
+            "updatedAt": config.updated_at.isoformat().replace("+00:00", "Z"),
         },
         message="存储配置更新成功",
     )

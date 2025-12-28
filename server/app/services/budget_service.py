@@ -68,10 +68,11 @@ class BudgetService:
         name = request.name
         if not name:
             if request.scope == BudgetScope.TOTAL:
-                name = "总预算"
+                # Use English key, frontend handles localization (e.g., t.budget.totalBudget)
+                name = "Total Budget"
             else:
                 # Use category key as fallback name (frontend should ideally provide localized name)
-                name = request.category_key or "分类预算"
+                name = request.category_key or "Category Budget"
 
         budget = Budget(
             owner_uuid=user_uuid,
@@ -524,7 +525,8 @@ class BudgetService:
                         budget_name=budget.name,
                         category_key=budget.category_key,
                         alert_type="exceeded",
-                        message=f"{budget.name}已超支 ¥{period.spent_amount - period.adjusted_target:.2f}",
+                        # Message is a key for frontend to translate, with data for interpolation
+                        message=f"budget.alert.exceeded:{period.spent_amount - period.adjusted_target:.2f}",
                         usage_percentage=period.usage_percentage,
                         remaining_amount=float(period.remaining_amount),
                     )
@@ -536,7 +538,8 @@ class BudgetService:
                         budget_name=budget.name,
                         category_key=budget.category_key,
                         alert_type="warning",
-                        message=f"{budget.name}已用 {period.usage_percentage:.0f}%，还剩 ¥{period.remaining_amount:.2f}",
+                        # Message is a key for frontend to translate, with data for interpolation
+                        message=f"budget.alert.warning:{period.usage_percentage:.0f}:{period.remaining_amount:.2f}",
                         usage_percentage=period.usage_percentage,
                         remaining_amount=float(period.remaining_amount),
                     )
@@ -633,13 +636,14 @@ class BudgetService:
         tx_count = row.count or 0
 
         if tx_count == 0:
-            # No historical data
+            # No historical data - return structured reasoning for frontend to translate
             return BudgetSuggestion(
                 scope=BudgetScope.CATEGORY.value if category_key else BudgetScope.TOTAL.value,
                 category_key=category_key,
                 suggested_amount=0,
                 confidence=0.0,
-                reasoning="没有足够的历史数据来生成建议。请先记录一些支出后再试。",
+                # Structured format: key|data for frontend interpolation
+                reasoning="budget.suggestion.noData",
                 based_on_months=months,
             )
 
@@ -655,13 +659,10 @@ class BudgetService:
         confidence = min(0.95, 0.5 + (tx_count / 100) * 0.45)
 
         scope = BudgetScope.CATEGORY.value if category_key else BudgetScope.TOTAL.value
-        category_name = category_key or "总支出"
 
-        reasoning = (
-            f"基于过去 {months} 个月的数据分析，"
-            f"你的{category_name}月均消费约 ¥{monthly_avg:.0f}。"
-            f"建议预算设为 ¥{suggested_amount:.0f}（含 15% 弹性空间）。"
-        )
+        # Return structured reasoning with numeric data
+        # Frontend can use: t.budget.suggestion.reasoning({months, monthlyAvg, suggestedAmount})
+        reasoning = f"budget.suggestion.reasoning|months={months}|monthlyAvg={monthly_avg:.0f}|suggestedAmount={suggested_amount:.0f}"
 
         return BudgetSuggestion(
             scope=scope,

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SharedUserInfo {
 
- String get userId; String get avatarUrl;// 用户头像URL
+ String get userId; String get avatarUrl;// User avatar URL
  String? get username;
 /// Create a copy of SharedUserInfo
 /// with the given fields replaced by the non-null parameter values.
@@ -217,7 +217,7 @@ class _SharedUserInfo implements SharedUserInfo {
 
 @override final  String userId;
 @override final  String avatarUrl;
-// 用户头像URL
+// User avatar URL
 @override final  String? username;
 
 /// Create a copy of SharedUserInfo
@@ -1386,25 +1386,25 @@ as DateTime?,
 /// @nodoc
 mixin _$TransactionModel {
 
- String get id;// 唯一ID
- TransactionType get type;// 交易类型 (支出/收入/转账)
- String get category;// 类别 (例如：餐饮, 交通, 工资)
- String? get categoryKey;// 分类ID
- String? get categoryText;// 服务端本地化的分类名称
- String get iconUrl;// 类别对应的图标URL (或本地资源路径)
- double get amount;// 换算后的展示金额
- DateTime get timestamp;// 交易时间
-// 原始金额信息（历史数据，不可变）
- double? get amountOriginal;// 原始记录金额
- String? get originalCurrency;// 原始记录货币（如 USD, CNY）
- String? get exchangeRate;// 记账时的汇率快照
-// 其他字段
- String? get description;// 备注
- bool get isShared; List<SharedUserInfo> get sharedWith; String? get paymentMethod; String? get paymentMethodText;// 服务端本地化的支付方式名称
- String? get location; List<String> get tags; String? get rawInput; FinancialAccountInfo? get financialAccount; AmountDisplay? get display; DateTime? get createdAt; DateTime? get updatedAt; String? get photoPath; String? get geoLocation; List<TransactionCommentModel> get comments;// 评论列表
-// 关联账户和空间信息
- String? get sourceAccountId;// 支出账户ID
- String? get targetAccountId;// 收入账户ID
+ String get id;// Unique ID
+ TransactionType get type;// Transaction type (expense/income/transfer)
+ String get category;// Category (e.g., Dining, Transport, Salary)
+ String? get categoryKey;// Category ID
+ String? get categoryText;// Server-side localized category name
+ String get iconUrl;// Category icon URL (or local path)
+ double get amount;// Display amount after conversion
+ DateTime get timestamp;// Transaction time
+// Original amount information (historical data, immutable)
+ double? get amountOriginal;// Original recorded amount
+ String? get originalCurrency;// Original recorded currency (e.g., USD, CNY)
+ String? get exchangeRate;// Exchange rate snapshot at time of recording
+// Other fields
+ String? get description;// Note
+ bool get isShared; List<SharedUserInfo> get sharedWith; String? get paymentMethod; String? get paymentMethodText;// Server-side localized payment method name
+ String? get location; List<String> get tags; String? get rawInput; FinancialAccountInfo? get financialAccount; AmountDisplay? get display; DateTime? get createdAt; DateTime? get updatedAt; String? get photoPath; String? get geoLocation; List<TransactionCommentModel> get comments;// Comment list
+// Associated account and space information
+ String? get sourceAccountId;// Source account ID
+ String? get targetAccountId;// Target account ID
  List<SpaceInfo> get spaces;
 /// Create a copy of TransactionModel
 /// with the given fields replaced by the non-null parameter values.
@@ -1655,31 +1655,31 @@ class _TransactionModel implements TransactionModel {
   factory _TransactionModel.fromJson(Map<String, dynamic> json) => _$TransactionModelFromJson(json);
 
 @override final  String id;
-// 唯一ID
+// Unique ID
 @override final  TransactionType type;
-// 交易类型 (支出/收入/转账)
+// Transaction type (expense/income/transfer)
 @override final  String category;
-// 类别 (例如：餐饮, 交通, 工资)
+// Category (e.g., Dining, Transport, Salary)
 @override final  String? categoryKey;
-// 分类ID
+// Category ID
 @override final  String? categoryText;
-// 服务端本地化的分类名称
+// Server-side localized category name
 @override final  String iconUrl;
-// 类别对应的图标URL (或本地资源路径)
+// Category icon URL (or local path)
 @override final  double amount;
-// 换算后的展示金额
+// Display amount after conversion
 @override final  DateTime timestamp;
-// 交易时间
-// 原始金额信息（历史数据，不可变）
+// Transaction time
+// Original amount information (historical data, immutable)
 @override final  double? amountOriginal;
-// 原始记录金额
+// Original recorded amount
 @override final  String? originalCurrency;
-// 原始记录货币（如 USD, CNY）
+// Original recorded currency (e.g., USD, CNY)
 @override final  String? exchangeRate;
-// 记账时的汇率快照
-// 其他字段
+// Exchange rate snapshot at time of recording
+// Other fields
 @override final  String? description;
-// 备注
+// Note
 @override@JsonKey() final  bool isShared;
  final  List<SharedUserInfo> _sharedWith;
 @override@JsonKey() List<SharedUserInfo> get sharedWith {
@@ -1690,7 +1690,7 @@ class _TransactionModel implements TransactionModel {
 
 @override final  String? paymentMethod;
 @override final  String? paymentMethodText;
-// 服务端本地化的支付方式名称
+// Server-side localized payment method name
 @override final  String? location;
  final  List<String> _tags;
 @override@JsonKey() List<String> get tags {
@@ -1713,14 +1713,14 @@ class _TransactionModel implements TransactionModel {
   return EqualUnmodifiableListView(_comments);
 }
 
-// 评论列表
-// 关联账户和空间信息
+// Comment list
+// Associated account and space information
 @override final  String? sourceAccountId;
-// 支出账户ID
+// Source account ID
 @override final  String? targetAccountId;
-// 收入账户ID
+// Target account ID
  final  List<SpaceInfo> _spaces;
-// 收入账户ID
+// Target account ID
 @override@JsonKey() List<SpaceInfo> get spaces {
   if (_spaces is EqualUnmodifiableListView) return _spaces;
   // ignore: implicit_dynamic_type
