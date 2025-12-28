@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logging/logging.dart';
 import 'core/utils/logger_setup.dart';
 import 'core/services/server_config_service.dart';
+import 'features/chat/services/sound_feedback_service.dart';
 
 final _logger = Logger('Main');
 
@@ -43,6 +44,15 @@ void main() async {
     // Initialize GenUI event registry
     GenUiEventRegistry.initialize();
     _logger.info('GenUI event registry initialization completed');
+
+    // Initialize sound feedback service (for self-hosted ASR)
+    // Wrapped in try-catch to not block app launch if assets are missing
+    try {
+      await SoundFeedbackService.instance.initialize();
+      _logger.info('Sound feedback service initialization completed');
+    } catch (e) {
+      _logger.warning('Sound feedback service initialization failed: $e');
+    }
 
     _logger.info('Application initialization completed, launching app');
   } catch (e, stackTrace) {

@@ -19,28 +19,41 @@ class WelcomeGuideWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final guideState = ref.watch(welcomeGuideProvider);
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // 问候语头部
-          GreetingHeader(
-            greeting: guideState.greeting,
-            subtitle: guideState.subtitle,
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+        child: ConstrainedBox(
+          // 限制最大宽度，在大屏幕上保持居中紧凑
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 问候语头部
+              GreetingHeader(
+                greeting: guideState.greeting,
+                subtitle: guideState.subtitle,
+              ),
+              const SizedBox(height: 28),
+              // 场景化建议卡片 - 使用 Column + gap
+              ...guideState.suggestions.asMap().entries.map((entry) {
+                final index = entry.key;
+                final suggestion = entry.value;
+                return Padding(
+                  padding: EdgeInsets.only(
+                    bottom: index < guideState.suggestions.length - 1 ? 10 : 0,
+                  ),
+                  child: SuggestionCard(
+                    emoji: suggestion.emoji,
+                    title: suggestion.title,
+                    prompt: suggestion.prompt,
+                    description: suggestion.description,
+                    onTap: () => onSuggestionTap(suggestion.prompt),
+                  ),
+                );
+              }),
+            ],
           ),
-          const SizedBox(height: 32),
-          // 场景化建议卡片
-          ...guideState.suggestions.map(
-            (suggestion) => SuggestionCard(
-              emoji: suggestion.emoji,
-              title: suggestion.title,
-              prompt: suggestion.prompt,
-              description: suggestion.description,
-              onTap: () => onSuggestionTap(suggestion.prompt),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

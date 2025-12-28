@@ -107,8 +107,8 @@ class _SplashScreen extends StatelessWidget {
           children: [
             // Splash SVG illustration
             SizedBox(
-              width: 150,
-              height: 150,
+              width: 300,
+              height: 300,
               child: SvgPicture.asset(AppVectors.splash, fit: BoxFit.contain),
             ),
             const SizedBox(height: 24),

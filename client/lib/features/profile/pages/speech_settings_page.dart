@@ -258,14 +258,10 @@ class _SpeechSettingsPageState extends ConsumerState<SpeechSettingsPage> {
       onPress: state.isSaving
           ? null
           : () async {
+              // 切换服务类型，即时生效，无需提示
               await ref
                   .read(speechSettingsProvider.notifier)
                   .updateServiceType(type);
-              if (context.mounted) {
-                ToastService.success(
-                  description: Text(t.settings.appearanceUpdated),
-                );
-              }
             },
     );
   }

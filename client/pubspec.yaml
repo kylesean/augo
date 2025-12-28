@@ -61,6 +61,7 @@ dependencies:
   google_fonts: ^6.3.3
   flutter_launcher_icons: ^0.14.4
   mobile_scanner: ^7.1.4
+  just_audio: ^0.10.5
 
 dev_dependencies:
   flutter_test:
@@ -82,6 +83,7 @@ flutter:
     - assets/vectors/
     - assets/icons/
     - assets/animations/
+    - assets/sounds/
 
 flutter_launcher_icons:
   android: "launcher_icon"

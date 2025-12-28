@@ -9,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../config/speech_config.dart';
 import 'audio_recorder_service.dart';
 import 'speech_recognition_service.dart';
+import 'sound_feedback_service.dart';
 
 class WebSocketSpeechService implements SpeechRecognitionService {
   static final _logger = Logger('WebSocketSpeechService');
@@ -174,6 +175,10 @@ class WebSocketSpeechService implements SpeechRecognitionService {
         return;
       }
 
+      // 2. 播放开始录音提示音（在录音前播放，避免录到声音）
+      _logger.info('Playing start sound before recording...');
+      await SoundFeedbackService.instance.playStartSound();
+
       // 2. Start recording
       final recordingStarted = await _audioRecorder.startRecording();
       if (!recordingStarted) {
@@ -250,6 +255,10 @@ class WebSocketSpeechService implements SpeechRecognitionService {
       _isListening = false;
       _statusController.add('stopped');
       _logger.info('Speech recognition stopped');
+
+      // 播放结束录音提示音（不等待，避免阻塞）
+      _logger.info('Playing stop sound...');
+      SoundFeedbackService.instance.playStopSound();
     } catch (e) {
       _logger.severe('Failed to stop listening: $e');
       _errorController.add('Failed to stop listening: $e');

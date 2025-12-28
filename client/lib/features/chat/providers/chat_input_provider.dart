@@ -50,27 +50,75 @@ class ChatInputNotifier extends _$ChatInputNotifier {
     _fileUploadService = ref.watch(fileUploadServiceProvider);
 
     final settings = ref.watch(speechSettingsProvider).settings;
-    final serviceType = settings?.serviceType ?? SpeechServiceType.system;
-    _serviceType = serviceType;
+    final newServiceType = settings?.serviceType ?? SpeechServiceType.system;
 
-    _speechService = SpeechServiceFactory.create(
-      serviceType,
-      websocketHost: settings?.websocketHost,
-      websocketPort: settings?.websocketPort,
-      websocketPath: settings?.websocketPath,
+    // 检测服务类型是否变化
+    final isFirstInit = _serviceType == null;
+    final serviceTypeChanged = !isFirstInit && _serviceType != newServiceType;
+
+    _logger.info(
+      'build() called: isFirstInit=$isFirstInit, serviceTypeChanged=$serviceTypeChanged, '
+      'currentType=$_serviceType, newType=$newServiceType',
     );
 
-    ref.onDispose(() {
-      _resultSubscription?.cancel();
-      _statusSubscription?.cancel();
-      _errorSubscription?.cancel();
-      _noSpeechInputTimer?.cancel();
-      _speechService?.dispose();
-    });
+    if (serviceTypeChanged) {
+      _logger.info(
+        'Speech service type changed from $_serviceType to $newServiceType, reinitializing...',
+      );
 
-    _initializeSpeech();
+      // 完全清理旧服务状态
+      _cleanupCurrentService();
+    }
+
+    // 只在首次初始化或服务类型变化时创建新服务
+    if (isFirstInit || serviceTypeChanged) {
+      _serviceType = newServiceType;
+      _speechService = SpeechServiceFactory.create(
+        newServiceType,
+        websocketHost: settings?.websocketHost,
+        websocketPort: settings?.websocketPort,
+        websocketPath: settings?.websocketPath,
+      );
+      _logger.info('Created new ${newServiceType.name} speech service');
+
+      // 初始化新服务
+      _initializeSpeech();
+    }
+
+    // 只在首次初始化时注册 dispose 回调，避免重复注册
+    if (isFirstInit) {
+      ref.onDispose(() {
+        _logger.info('Provider disposing, cleaning up...');
+        _cleanupCurrentService();
+      });
+    }
 
     return const ChatInputState();
+  }
+
+  /// 清理当前服务的所有资源
+  void _cleanupCurrentService() {
+    _logger.info('Cleaning up current speech service...');
+
+    // 取消所有订阅
+    _resultSubscription?.cancel();
+    _statusSubscription?.cancel();
+    _errorSubscription?.cancel();
+    _noSpeechInputTimer?.cancel();
+
+    _resultSubscription = null;
+    _statusSubscription = null;
+    _errorSubscription = null;
+    _noSpeechInputTimer = null;
+
+    // 释放旧服务
+    _speechService?.dispose();
+    _speechService = null;
+
+    // 重置状态标志
+    _isSpeechInitialized = false;
+    _textBeforeSpeechSession = '';
+    _isManualStop = false;
   }
 
   Future<void> _initializeSpeech() async {
@@ -78,20 +126,18 @@ class ChatInputNotifier extends _$ChatInputNotifier {
         ? 'System Speech'
         : 'WebSocket ASR';
     _logger.info("Initializing $serviceTypeName service...");
+
     try {
       final available = await _speechService!.initialize();
 
       if (available) {
-        if (!_isSpeechInitialized) {
-          _resultSubscription = _speechService!.onResult.listen(
-            _onSpeechResult,
-          );
-          _statusSubscription = _speechService!.onStatus.listen(
-            _onSpeechStatus,
-          );
-          _errorSubscription = _speechService!.onError.listen(_onSpeechError);
-          _isSpeechInitialized = true;
-        }
+        // 始终创建新的订阅（旧订阅已在 cleanup 中取消）
+        _resultSubscription = _speechService!.onResult.listen(_onSpeechResult);
+        _statusSubscription = _speechService!.onStatus.listen(_onSpeechStatus);
+        _errorSubscription = _speechService!.onError.listen(_onSpeechError);
+        _isSpeechInitialized = true;
+
+        _logger.info("$serviceTypeName service initialized successfully");
 
         state = state.copyWith(
           isSpeechAvailable: true,
@@ -100,6 +146,7 @@ class ChatInputNotifier extends _$ChatInputNotifier {
           hintType: HintType.normal,
         );
       } else {
+        _logger.warning("$serviceTypeName service not available");
         state = state.copyWith(
           isSpeechAvailable: false,
           showError: false,
@@ -247,10 +294,21 @@ class ChatInputNotifier extends _$ChatInputNotifier {
     _logger.info("Starting new speech recognition session");
 
     try {
-      await _initializeSpeech();
+      // 只在服务未初始化时才初始化
+      if (!_isSpeechInitialized || _speechService == null) {
+        _logger.info("Speech service not initialized, initializing...");
+        await _initializeSpeech();
+      }
 
-      if (!state.isSpeechAvailable) {
-        _logger.warning("Speech service initialization failed");
+      // 使用 _isSpeechInitialized 而不是 state.isSpeechAvailable
+      // 因为 state 更新可能由于异步问题没有及时反映
+      _logger.info(
+        "Checking speech availability: _isSpeechInitialized=$_isSpeechInitialized, "
+        "_speechService=${_speechService != null}",
+      );
+
+      if (!_isSpeechInitialized || _speechService == null) {
+        _logger.warning("Speech service initialization failed or unavailable");
         state = state.copyWith(
           showError: true,
           errorMessage:
@@ -268,7 +326,7 @@ class ChatInputNotifier extends _$ChatInputNotifier {
         hintType: HintType.listening,
       );
 
-      await _speechService?.startListening();
+      await _speechService!.startListening();
       _noSpeechInputTimer?.cancel();
       _noSpeechInputTimer = Timer(const Duration(seconds: 30), () {
         if (state.isListening && state.text == _textBeforeSpeechSession) {

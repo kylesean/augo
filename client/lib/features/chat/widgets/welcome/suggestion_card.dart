@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
 /// 建议卡片组件
-/// 展示单个场景化建议，点击后触发回调
+/// 紧凑设计，点击后发送 prompt 给 AI
 class SuggestionCard extends StatelessWidget {
   final String emoji;
   final String title;
@@ -24,58 +24,70 @@ class SuggestionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.theme;
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              // 使用 muted 颜色作为背景，透明度降低
-              color: theme.colors.muted.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: theme.colors.border),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: theme.colors.muted.withValues(alpha: 0.25),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: theme.colors.border.withValues(alpha: 0.6),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 标题行：emoji + 标题
-                Row(
+          ),
+          child: Row(
+            children: [
+              // Emoji 图标容器
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: theme.colors.background,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                alignment: Alignment.center,
+                child: Text(emoji, style: const TextStyle(fontSize: 20)),
+              ),
+              const SizedBox(width: 12),
+              // 文字内容
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(emoji, style: const TextStyle(fontSize: 20)),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: theme.typography.lg.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                    // 标题
+                    Text(
+                      title,
+                      style: theme.typography.sm.copyWith(
+                        fontWeight: FontWeight.w600,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    // 描述
+                    Text(
+                      description,
+                      style: theme.typography.xs.copyWith(
+                        color: theme.colors.mutedForeground,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                // 提示语（用户点击后发送的内容）
-                Text(
-                  '"$prompt"',
-                  style: theme.typography.base.copyWith(
-                    color: theme.colors.primary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                // 描述说明
-                Text(
-                  description,
-                  style: theme.typography.sm.copyWith(
-                    color: theme.colors.mutedForeground,
-                  ),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 8),
+              // 箭头指示
+              Icon(
+                FIcons.chevronRight,
+                size: 16,
+                color: theme.colors.mutedForeground.withValues(alpha: 0.6),
+              ),
+            ],
           ),
         ),
       ),
