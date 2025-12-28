@@ -141,6 +141,7 @@ abstract class TransactionModel with _$TransactionModel {
     String? sourceAccountId, // Source account ID
     String? targetAccountId, // Target account ID
     @Default([]) List<SpaceInfo> spaces, // Associated shared spaces
+    String? sourceThreadId, // Source AI chat session ID for message anchor
   }) = _TransactionModel;
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) =>
@@ -248,6 +249,7 @@ abstract class TransactionModel with _$TransactionModel {
       sourceAccountId: json['sourceAccountId']?.toString(),
       targetAccountId: json['targetAccountId']?.toString(),
       spaces: spaces,
+      sourceThreadId: json['sourceThreadId']?.toString(),
     );
   }
 }

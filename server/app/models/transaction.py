@@ -94,6 +94,11 @@ class Transaction(BaseModel, table=True):
     category_key: str = Field(max_length=25, default="")
     subject: str = Field(max_length=20, default="SELF")  # 交易受益人
     intent: str = Field(max_length=20, default="SURVIVAL")  # 交易动机
+    source_thread_id: Optional[UUID] = Field(
+        default=None,
+        sa_column=Column(PGUUID(as_uuid=True), nullable=True, index=True),
+        description="Source AI chat session ID for message anchor navigation",
+    )
 
     # Relationships
     comments: List["TransactionComment"] = Relationship(

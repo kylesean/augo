@@ -240,16 +240,40 @@ class TransactionDetailPage extends ConsumerWidget {
                                 context,
                                 icon: FIcons.messageSquareText,
                                 label: t.transaction.rawInput,
-                                valueWidget: Text(
-                                  transaction.rawInput ??
-                                      t.transaction.noRawInput,
-                                  style: theme.typography.sm.copyWith(
-                                    color: colors.foreground,
-                                    fontWeight: FontWeight.normal,
-                                    height: 1.5, // 增加行高，长文更易读
+                                valueWidget: GestureDetector(
+                                  onTap: transaction.sourceThreadId != null
+                                      ? () {
+                                          HapticFeedback.lightImpact();
+                                          context.go(
+                                            '/ai/${transaction.sourceThreadId}',
+                                          );
+                                        }
+                                      : null,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          transaction.rawInput ??
+                                              t.transaction.noRawInput,
+                                          style: theme.typography.sm.copyWith(
+                                            color: colors.foreground,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      if (transaction.sourceThreadId !=
+                                          null) ...[
+                                        const SizedBox(width: 4),
+                                        Icon(
+                                          FIcons.externalLink,
+                                          size: 14,
+                                          color: colors.primary,
+                                        ),
+                                      ],
+                                    ],
                                   ),
-                                  softWrap: true, // 支持自动换行
-                                  maxLines: null, // 不限制行数
                                 ),
                               ),
 

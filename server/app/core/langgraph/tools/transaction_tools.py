@@ -45,6 +45,11 @@ def _get_user_uuid_str(config: RunnableConfig) -> Optional[str]:
     return str(val) if isinstance(val, uuid.UUID) else val
 
 
+def _get_thread_id(config: RunnableConfig) -> Optional[str]:
+    """Extract thread_id (session_id) from configuration for message anchor"""
+    return config.get("configurable", {}).get("thread_id")
+
+
 def _parse_time(time_str: Optional[str]) -> datetime:
     """Parse time string, return current time if failed"""
     if not time_str:
@@ -189,6 +194,7 @@ async def record_transactions(
                     "target_account_id": target_account_id,
                     "transaction_at": tx_time.isoformat(),
                 },
+                source_thread_id=_get_thread_id(config),
             )
 
             if isinstance(result, dict) and result.get("success"):

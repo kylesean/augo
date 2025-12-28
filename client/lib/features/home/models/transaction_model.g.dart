@@ -149,6 +149,7 @@ _TransactionModel _$TransactionModelFromJson(Map<String, dynamic> json) =>
               ?.map((e) => SpaceInfo.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      sourceThreadId: json['sourceThreadId'] as String?,
     );
 
 Map<String, dynamic> _$TransactionModelToJson(_TransactionModel instance) =>
@@ -182,6 +183,7 @@ Map<String, dynamic> _$TransactionModelToJson(_TransactionModel instance) =>
       'sourceAccountId': instance.sourceAccountId,
       'targetAccountId': instance.targetAccountId,
       'spaces': instance.spaces,
+      'sourceThreadId': instance.sourceThreadId,
     };
 
 const _$TransactionTypeEnumMap = {

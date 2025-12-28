@@ -340,6 +340,7 @@ class TransactionService:
             "comments": comments_data,
             "commentCount": len(comments_data),
             "spaces": spaces_data,
+            "sourceThreadId": str(transaction.source_thread_id) if transaction.source_thread_id else None,
             "display": TransactionDisplayValue.from_params(
                 amount=amount_val, tx_type=transaction.type, currency=display_currency
             ).model_dump(),
@@ -391,6 +392,7 @@ class TransactionService:
         self,
         user_uuid: UUID,
         data: dict,
+        source_thread_id: Optional[str] = None,
     ) -> dict:
         """批量创建交易
 
@@ -462,6 +464,10 @@ class TransactionService:
                 transaction_timezone="Asia/Shanghai",
                 source="AI",
                 status="CLEARED",
+                source_thread_id=(
+                    source_thread_id if isinstance(source_thread_id, PyUUID)
+                    else PyUUID(source_thread_id) if source_thread_id else None
+                ),
             )
             self.db.add(tx)
             created_transactions.append(tx)
