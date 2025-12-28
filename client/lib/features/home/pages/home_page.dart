@@ -256,8 +256,8 @@ class _WelcomeHeaderState extends ConsumerState<_WelcomeHeader> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min, // 关键：让 Column 尽可能小
                     children: [
-                      const Spacer(), // 使用 Spacer 推送内容到底部
                       // 总消费金额标签和眼睛图标
                       Row(
                         children: [
@@ -289,12 +289,12 @@ class _WelcomeHeaderState extends ConsumerState<_WelcomeHeader> {
                         ],
                       ),
 
-                      const SizedBox(height: 8),
-
+                      const SizedBox(height: 6), // 减少间距：8 -> 6
                       // 总消费金额
                       totalExpenseAsync.when(
                         data: (data) => Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
                               _isAmountVisible
@@ -305,7 +305,7 @@ class _WelcomeHeaderState extends ConsumerState<_WelcomeHeader> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 12), // 减少间距：16 -> 12
                             Row(
                               children: [
                                 _QuickStatItem(
@@ -343,8 +343,7 @@ class _WelcomeHeaderState extends ConsumerState<_WelcomeHeader> {
                         ),
                       ),
 
-                      const SizedBox(height: 16),
-
+                      const SizedBox(height: 12), // 减少间距：16 -> 12
                       // 年度时间进度条 - 简化版本
                       Row(
                         children: [
@@ -393,7 +392,7 @@ class _WelcomeHeaderState extends ConsumerState<_WelcomeHeader> {
                         ],
                       ),
 
-                      const SizedBox(height: 8), // 减少底部间距
+                      const SizedBox(height: 6), // 减少底部间距：8 -> 6
                     ],
                   ),
                 ),
