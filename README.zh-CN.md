@@ -1,8 +1,34 @@
-# Augo: Self-Hosted & Privacy-First AI Financial Assistant
+<p align="center">
+  <img src="client/assets/images/logo.png" width="120" alt="Augo Logo">
+</p>
+
+<h1 align="center">Augo</h1>
+
+<p align="center">
+  <ins><b>私有化部署、隐私至上的开源 AI 财务助手</b></ins>
+</p>
+
+<p align="center">
+  <a href="https://github.com/kylesean/augo/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="License: AGPL v3"></a>
+  <a href="https://www.python.org/downloads/release/python-3130/"><img src="https://img.shields.io/badge/Python-3.13-blue.svg" alt="Python 3.13"></a>
+  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-Environment-02569B.svg" alt="Flutter"></a>
+  <a href="https://github.com/kylesean/augo/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
+</p>
+
+<p align="center">
+  <a href="./README.md">English</a> | <a href="./README.zh-CN.md">简体中文</a>
+</p>
+
+<p align="center">
+  <img src="client/assets/images/record-transactions.png" width="24%" />
+  <img src="client/assets/images/analysis.png" width="24%" />
+  <img src="client/assets/images/skills.png" width="24%" />
+  <img src="client/assets/images/transfer.png" width="24%" />
+</p>
+
+---
 
 Augo 是一款专注于 **数据主权** 和 **绝对隐私** 的开源 AI 财务助手。与中心化财务应用不同，Augo 专为 **私有化部署** 设计，让您 100% 掌控自己的财务记录和资产数据。
-
-[English Edition](./README.md)
 
 ## 🛡️ 隐私与主权至上
 

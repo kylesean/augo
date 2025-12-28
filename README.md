@@ -1,13 +1,34 @@
-# Augo: Self-Hosted & Privacy-First AI Financial Assistant
+<p align="center">
+  <img src="client/assets/images/logo.png" width="120" alt="Augo Logo">
+</p>
 
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
-[![Python 3.13](https://img.shields.io/badge/Python-3.13-blue.svg)](https://www.python.org/downloads/release/python-3130/)
-[![Flutter](https://img.shields.io/badge/Flutter-Environment-02569B.svg)](https://flutter.dev)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+<h1 align="center">Augo</h1>
+
+<p align="center">
+  <ins><b>Self-Hosted & Privacy-First AI Financial Assistant</b></ins>
+</p>
+
+<p align="center">
+  <a href="https://github.com/kylesean/augo/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="License: AGPL v3"></a>
+  <a href="https://www.python.org/downloads/release/python-3130/"><img src="https://img.shields.io/badge/Python-3.13-blue.svg" alt="Python 3.13"></a>
+  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-Environment-02569B.svg" alt="Flutter"></a>
+  <a href="https://github.com/kylesean/augo/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
+</p>
+
+<p align="center">
+  <a href="./README.md">English</a> | <a href="./README.zh-CN.md">简体中文</a>
+</p>
+
+<p align="center">
+  <img src="client/assets/images/record-transactions.png" width="24%" />
+  <img src="client/assets/images/analysis.png" width="24%" />
+  <img src="client/assets/images/skills.png" width="24%" />
+  <img src="client/assets/images/transfer.png" width="24%" />
+</p>
+
+---
 
 **Augo** is a premium, open-source AI financial assistant designed for individuals and families who prioritize **data sovereignty** and **absolute privacy**. Unlike centralized financial apps, Augo is built to be **self-hosted**, giving you 100% ownership of your financial records and personal intelligence.
-
-[中文版 (Chinese Edition)](./README.zh-CN.md)
 
 ---
 
