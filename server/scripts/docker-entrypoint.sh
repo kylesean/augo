@@ -88,8 +88,8 @@ if command -v python &> /dev/null; then
     echo "Checking Database..."
     python scripts/check_db.py || (echo "DB check failed. Waiting 5s and retrying..." && sleep 5 && python scripts/check_db.py) || exit 1
     
-    echo "Checking Redis..."
-    python scripts/check_redis.py || (echo "Redis check failed. Waiting 5s and retrying..." && sleep 5 && python scripts/check_redis.py) || exit 1
+    echo "Checking Redis (optional)..."
+    python scripts/check_redis.py || echo "Redis not available - continuing without cache (optional)"
 else
     echo "Warning: python not found, skipping connectivity checks"
 fi

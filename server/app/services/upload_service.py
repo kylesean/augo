@@ -25,7 +25,9 @@ from app.core.config import settings
 from app.core.exceptions import BusinessException
 from app.core.logging import logger
 from app.models.attachment import Attachment
-from app.models.storage_config import StorageConfig
+from app.models.storage_config import StorageConfig, ProviderType
+from app.services.storage.adapters.factory import StorageAdapterFactory
+from app.services.storage.adapters.base import StorageAdapter
 
 # ============================================================================
 # 文件类型配置
@@ -89,7 +91,12 @@ COMPRESSIBLE_FORMATS = {"jpg", "jpeg", "png", "webp"}
 
 
 class UploadService:
-    """本地文件上传服务。"""
+    """文件上传服务（支持本地存储和 S3 兼容存储）。
+
+    根据 settings.STORAGE_PROVIDER 自动选择存储后端：
+    - local_uploads: 本地文件系统
+    - s3_compatible: S3 兼容存储（Supabase、MinIO、AWS S3）
+    """
 
     MAX_FILE_SIZE: int = settings.MAX_UPLOAD_SIZE
     UPLOAD_DIR: Path = settings.UPLOAD_DIR
@@ -99,6 +106,7 @@ class UploadService:
 
     def __init__(self, db: AsyncSession):
         self.db = db
+        self._adapter: Optional[StorageAdapter] = None
 
     async def upload_files(
         self,
@@ -128,9 +136,10 @@ class UploadService:
         user_uuid = uuid_lib.UUID(user_uuid) if isinstance(user_uuid, str) else user_uuid
 
         # ====================================================================
-        # 阶段 1：获取存储配置（数据库操作）
+        # 阶段 1：获取存储配置并初始化适配器
         # ====================================================================
-        storage_config_id = await self._get_or_create_storage_config(user_uuid)
+        storage_config_id, storage_config = await self._get_or_create_storage_config(user_uuid)
+        self._adapter = await StorageAdapterFactory.create(storage_config)
 
         # ====================================================================
         # 阶段 2：处理所有文件（纯文件 I/O，无数据库操作）
@@ -228,36 +237,66 @@ class UploadService:
 
         return successful, failed
 
-    async def _get_or_create_storage_config(self, user_uuid) -> int:
+    async def _get_or_create_storage_config(self, user_uuid) -> Tuple[int, StorageConfig]:
         """获取或创建用户的默认存储配置。
+
+        根据 settings.STORAGE_PROVIDER 确定存储后端类型。
 
         Args:
             user_uuid: User UUID (str or UUID object)
+
+        Returns:
+            Tuple[config_id, StorageConfig]
         """
+        target_provider = settings.STORAGE_PROVIDER
+
         stmt = select(StorageConfig).where(
             StorageConfig.user_uuid == user_uuid,
-            StorageConfig.provider_type == "local_uploads",
+            StorageConfig.provider_type == target_provider,
         )
         result = await self.db.execute(stmt)
         config = result.scalar_one_or_none()
 
         if config:
-            return config.id
+            return config.id, config
 
         # 创建新配置
-        new_config = StorageConfig(
-            user_uuid=user_uuid,
-            provider_type="local_uploads",
-            name="本地存储",
-            base_path=str(self.UPLOAD_DIR),
-            is_readonly=False,
-        )
+        if target_provider == ProviderType.S3_COMPATIBLE.value:
+            # S3 兼容存储配置
+            new_config = StorageConfig(
+                user_uuid=user_uuid,
+                provider_type=target_provider,
+                name="S3 存储",
+                base_path=settings.S3_BUCKET,
+                credentials={
+                    "endpoint_url": settings.S3_ENDPOINT,
+                    "access_key": settings.S3_ACCESS_KEY,
+                    "secret_key": settings.S3_SECRET_KEY,
+                    "region": settings.S3_REGION,
+                },
+                is_readonly=False,
+            )
+        else:
+            # 默认本地存储
+            new_config = StorageConfig(
+                user_uuid=user_uuid,
+                provider_type=ProviderType.LOCAL_UPLOADS.value,
+                name="本地存储",
+                base_path=str(self.UPLOAD_DIR),
+                is_readonly=False,
+            )
+
         self.db.add(new_config)
         await self.db.commit()
         await self.db.refresh(new_config)
 
-        logger.info("storage_config_created", user_uuid=user_uuid, config_id=new_config.id)
-        return new_config.id
+        logger.info(
+            "storage_config_created",
+            user_uuid=user_uuid,
+            config_id=new_config.id,
+            provider=target_provider,
+        )
+        return new_config.id, new_config
 
     async def _process_and_save_file(
         self,
@@ -265,7 +304,7 @@ class UploadService:
         user_uuid: str,
         compress: bool,
     ) -> dict:
-        """处理并保存单个文件到磁盘（不涉及数据库）。
+        """处理并保存单个文件（支持本地存储和 S3 适配器）。
 
         Returns:
             包含文件信息的字典
@@ -293,19 +332,37 @@ class UploadService:
 
         # 5. 生成存储路径
         object_key = self._generate_object_key(extension, upload_id)
-        file_path = self.UPLOAD_DIR / object_key
 
-        # 6. 写入文件
-        await aiofiles.os.makedirs(file_path.parent, exist_ok=True)
-        async with aiofiles.open(file_path, "wb") as f:
-            await f.write(content)
+        # 6. 保存文件（根据适配器类型选择方式）
+        if self._adapter and settings.STORAGE_PROVIDER != "local_uploads":
+            # 使用适配器保存到远程存储（S3/Supabase）
+            async def content_generator():
+                yield content
 
-        logger.debug(
-            "file_saved",
-            upload_id=upload_id,
-            filename=file.filename,
-            size=len(content),
-        )
+            object_key = await self._adapter.save(
+                file_stream=content_generator(),
+                filename=file.filename,
+                content_type=mime_type,
+            )
+            logger.debug(
+                "file_saved_via_adapter",
+                upload_id=upload_id,
+                filename=file.filename,
+                size=len(content),
+                provider=settings.STORAGE_PROVIDER,
+            )
+        else:
+            # 本地存储：直接写入磁盘
+            file_path = self.UPLOAD_DIR / object_key
+            await aiofiles.os.makedirs(file_path.parent, exist_ok=True)
+            async with aiofiles.open(file_path, "wb") as f:
+                await f.write(content)
+            logger.debug(
+                "file_saved_locally",
+                upload_id=upload_id,
+                filename=file.filename,
+                size=len(content),
+            )
 
         return {
             "filename": file.filename,

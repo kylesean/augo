@@ -172,6 +172,18 @@ class Settings(BaseSettings):
     MAX_UPLOAD_SIZE: int = 10485760  # 10MB
     ALLOWED_MIME_TYPES: str = "image/jpeg,image/png,image/webp,application/pdf"
 
+    # Storage Provider Configuration
+    # Options: local_uploads (default), s3_compatible
+    STORAGE_PROVIDER: str = "local_uploads"
+
+    # S3 Compatible Storage (Supabase, MinIO, AWS S3)
+    # Required when STORAGE_PROVIDER=s3_compatible
+    S3_ENDPOINT: Optional[str] = None
+    S3_ACCESS_KEY: Optional[str] = None
+    S3_SECRET_KEY: Optional[str] = None
+    S3_BUCKET: str = "augo-data"
+    S3_REGION: str = "us-east-1"
+
     # Storage System Configuration
     ENCRYPTION_KEY: Optional[str] = None  # Fernet key for credential encryption
     FILE_URL_EXPIRE_SECONDS: int = 3600  # Signed URL expiration time

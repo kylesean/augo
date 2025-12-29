@@ -425,7 +425,7 @@ async def health_check(request: Request) -> JSONResponse:
 
     scheduler_running = recurring_scheduler._scheduler is not None and recurring_scheduler._scheduler.running
 
-    all_healthy = db_healthy and redis_healthy
+    all_healthy = db_healthy  # Redis is optional, don't block health check
 
     health_data = {
         "status": "healthy" if all_healthy else "degraded",
