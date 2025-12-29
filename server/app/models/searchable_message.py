@@ -9,7 +9,6 @@ import uuid as uuid_lib
 from sqlalchemy import Column, Text
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlmodel import Field
-from uuid_utils import uuid7
 
 from app.models.base import BaseModel
 
@@ -21,7 +20,7 @@ class SearchableMessage(BaseModel, table=True):
     checkpoint storage. Messages are dual-written here during chat processing.
 
     Attributes:
-        id: UUID primary key (uuid7 for time-ordered IDs)
+        id: UUID primary key
         thread_id: LangGraph thread_id (same as session_id)
         user_uuid: Owner's UUID for access control
         role: Message role - 'user' or 'assistant'
@@ -33,7 +32,7 @@ class SearchableMessage(BaseModel, table=True):
     __tablename__ = "searchable_messages"
 
     id: uuid_lib.UUID = Field(
-        default_factory=uuid7,
+        default_factory=uuid_lib.uuid4,
         sa_type=PG_UUID(as_uuid=True),
         primary_key=True,
         description="UUID primary key",
@@ -64,3 +63,4 @@ class SearchableMessage(BaseModel, table=True):
     # CREATE INDEX idx_searchable_messages_search ON searchable_messages USING GIN(search_vector);
     #
     # For now, we use jieba tokenization in Python + ILIKE for Chinese support.
+

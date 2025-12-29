@@ -718,6 +718,8 @@ class SimpleLangChainAgent:
         Args:
             session_id: 会话 ID
         """
+        from app.services.message_index_service import message_index_service
+
         # 获取 checkpointer 实例
         checkpointer = await self._get_checkpointer()
 
@@ -726,16 +728,13 @@ class SimpleLangChainAgent:
         await checkpointer.adelete_thread(config)
 
         # 2. 删除业务表中的消息索引 (searchable_messages)
-        async with self._conn_pool.connection() as conn:
-            await conn.execute(
-                "DELETE FROM searchable_messages WHERE thread_id = %s",
-                (session_id,),
-            )
+        deleted_count = await message_index_service.delete_thread_messages(session_id)
 
         logger.info(
             "session_history_deleted_cascade",
             session_id=session_id,
             cleared_tables=["langgraph_checkpoints", "searchable_messages"],
+            deleted_message_count=deleted_count,
         )
 
     async def clear_chat_history(self, session_id: str) -> None:

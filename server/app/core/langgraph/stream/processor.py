@@ -4,6 +4,7 @@
 - 协调 LangGraph 流与 GenUI 事件生成
 - 编排策略执行（渲染策略、文本过滤策略）
 - 管理事件缓冲和释放
+- 双写消息到 searchable_messages 表（全文搜索支持）
 
 设计原则：
 - 编排者模式：只负责协调，不负责具体逻辑
@@ -11,6 +12,7 @@
 - 开闭原则：通过更换策略扩展行为
 """
 
+import asyncio
 from typing import Any, AsyncGenerator, Optional
 
 from app.core.langgraph.stream.event_generator import EventGenerator
@@ -25,6 +27,7 @@ from app.core.langgraph.stream.text_filter_policy import (
 )
 from app.core.logging import logger
 from app.schemas.genui import GenUIEvent
+from app.services.message_index_service import message_index_service
 
 
 class StreamProcessor:
@@ -87,6 +90,9 @@ class StreamProcessor:
         self._event_generator.reset()
         event_buffer: list[GenUIEvent] = []
 
+        # Extract user message for indexing
+        user_message_content = self._extract_user_message(input_data)
+
         logger.info("stream_processor_start", session_id=session_id)
 
         try:
@@ -124,11 +130,112 @@ class StreamProcessor:
             # 2. 发送完成事件
             yield GenUIEvent(type="done")
 
+            # 3. 双写消息到 searchable_messages 表（异步，不阻塞响应）
+            if user_uuid and session_id:
+                asyncio.create_task(
+                    self._index_messages(
+                        session_id=session_id,
+                        user_uuid=user_uuid,
+                        user_message=user_message_content,
+                        ai_response=self._event_generator.get_collected_response(),
+                    )
+                )
+
             logger.info(
                 "stream_processor_complete",
                 session_id=session_id,
                 buffered_events=len(event_buffer),
             )
+
+    def _extract_user_message(self, input_data: dict[str, Any] | None) -> str:
+        """从输入数据中提取用户消息内容
+
+        Args:
+            input_data: 图输入数据
+
+        Returns:
+            用户消息文本内容
+        """
+        if not input_data:
+            return ""
+
+        messages = input_data.get("messages", [])
+        if not messages:
+            return ""
+
+        # 取最后一条消息（通常是用户消息）
+        last_msg = messages[-1]
+
+        # 支持多种消息格式
+        if hasattr(last_msg, "content"):
+            content = last_msg.content
+        elif isinstance(last_msg, dict):
+            content = last_msg.get("content", "")
+        else:
+            content = str(last_msg)
+
+        # 处理多模态内容
+        if isinstance(content, list):
+            text_parts = []
+            for item in content:
+                if isinstance(item, dict) and item.get("type") == "text":
+                    text_parts.append(item.get("text", ""))
+                elif isinstance(item, str):
+                    text_parts.append(item)
+            return " ".join(text_parts)
+
+        return str(content) if content else ""
+
+    async def _index_messages(
+        self,
+        session_id: str,
+        user_uuid: str,
+        user_message: str,
+        ai_response: str,
+    ) -> None:
+        """异步索引用户消息和 AI 回复到 searchable_messages 表
+
+        这是双写模式的核心：将消息同时写入 LangGraph checkpoints 和
+        searchable_messages 表，以支持高效的全文搜索。
+
+        Args:
+            session_id: 会话 ID
+            user_uuid: 用户 UUID
+            user_message: 用户消息内容
+            ai_response: AI 回复内容
+        """
+        try:
+            # Index user message
+            if user_message and user_message.strip():
+                await message_index_service.index_user_message(
+                    thread_id=session_id,
+                    user_uuid=user_uuid,
+                    content=user_message,
+                )
+
+            # Index AI response
+            if ai_response and ai_response.strip():
+                await message_index_service.index_assistant_message(
+                    thread_id=session_id,
+                    user_uuid=user_uuid,
+                    content=ai_response,
+                )
+
+            logger.debug(
+                "messages_indexed",
+                session_id=session_id,
+                user_message_length=len(user_message) if user_message else 0,
+                ai_response_length=len(ai_response) if ai_response else 0,
+            )
+
+        except Exception as e:
+            # 索引失败不应影响主流程
+            logger.warning(
+                "message_indexing_failed",
+                session_id=session_id,
+                error=str(e),
+            )
+
 
     async def _process_chunk(
         self,
