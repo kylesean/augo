@@ -306,11 +306,15 @@ class _CashFlowAnalysisCardState extends State<CashFlowAnalysisCard> {
           const SizedBox(height: 4),
           Row(
             children: [
-              Text(
-                value,
-                style: theme.typography.sm.copyWith(
-                  color: valueColor ?? colors.foreground,
-                  fontWeight: FontWeight.w600,
+              Flexible(
+                child: Text(
+                  value,
+                  style: theme.typography.sm.copyWith(
+                    color: valueColor ?? colors.foreground,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
               ),
               if (change != null) ...[

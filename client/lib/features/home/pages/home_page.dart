@@ -34,93 +34,108 @@ class HomePage extends ConsumerWidget {
       child: Scaffold(
         // 将 Scaffold 背景设为白色(background)，彻底解决底部 overscroll 露黑线的问题
         backgroundColor: theme.colors.background,
-        body: RefreshIndicator(
-          color: theme.colors.primary,
-          // 下拉刷新指示器的背景色，保持白色
-          backgroundColor: theme.colors.background,
-          onRefresh: () async {
-            await ref.read(transactionFeedProvider.notifier).refreshFeed();
-          },
-          child: CustomScrollView(
-            slivers: [
-              // Header - SliverAppBar (黑色)
-              SliverAppBar(
-                expandedHeight: 250.0,
-                floating: false,
-                pinned: false,
-                backgroundColor: theme.colors.primary,
-                flexibleSpace: const _WelcomeHeader(),
-                actions: const [NotificationIcon(), SizedBox(width: 16)],
-              ),
-              // 主要内容区域
-              SliverToBoxAdapter(
-                child: Container(
-                  // 关键：外层容器设为黑色 (primary)，以无缝衔接 Header
-                  color: theme.colors.primary,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: theme.colors.background, // 内部内容设为白色
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(
-                          theme.style.borderRadius.topLeft.x + 4,
+        body: Stack(
+          children: [
+            // 底层：顶部黑色背景，覆盖 iOS 下拉 overscroll 区域
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: Container(color: theme.colors.primary),
+            ),
+            // 主内容层
+            RefreshIndicator(
+              color: theme.colors.primary,
+              // 下拉刷新指示器的背景色，保持白色
+              backgroundColor: theme.colors.background,
+              onRefresh: () async {
+                await ref.read(transactionFeedProvider.notifier).refreshFeed();
+              },
+              child: CustomScrollView(
+                slivers: [
+                  // Header - SliverAppBar (黑色)
+                  SliverAppBar(
+                    expandedHeight: 250.0,
+                    floating: false,
+                    pinned: false,
+                    backgroundColor: theme.colors.primary,
+                    flexibleSpace: const _WelcomeHeader(),
+                    actions: const [NotificationIcon(), SizedBox(width: 16)],
+                  ),
+                  // 主要内容区域
+                  SliverToBoxAdapter(
+                    child: Container(
+                      // 关键：外层容器设为黑色 (primary)，以无缝衔接 Header
+                      color: theme.colors.primary,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: theme.colors.background, // 内部内容设为白色
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(
+                              theme.style.borderRadius.topLeft.x + 4,
+                            ),
+                            topRight: Radius.circular(
+                              theme.style.borderRadius.topRight.x + 4,
+                            ),
+                          ),
                         ),
-                        topRight: Radius.circular(
-                          theme.style.borderRadius.topRight.x + 4,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // 日历组件
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8, bottom: 4),
+                              child: const MonthlyCalendarView(),
+                            ),
+                            // Tab 按钮栏
+                            const _FixedTabBar(),
+                            // 移除底部的 padding，因为现在列表紧接在后面
+                          ],
                         ),
                       ),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // 日历组件
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8, bottom: 4),
-                          child: const MonthlyCalendarView(),
-                        ),
-                        // Tab 按钮栏
-                        const _FixedTabBar(),
-                        // 移除底部的 padding，因为现在列表紧接在后面
-                      ],
                     ),
                   ),
-                ),
-              ),
-              // 交易列表 - 使用 Sliver 版本
-              // 包装在 SliverMainAxisGroup 中以确保背景色一致（如果需要）
-              // 或者直接放置。我们需要为列表设置背景色，这可以通过
-              // SliverToBoxAdapter 绘制一个背景，或者在 SliverTransactionFeedView 中处理。
-              // 由于 SliverList 没有 backgroundColor 属性，通常的做法是
-              // 让整个 CustomScrollView 背景一致，或者使用 DecoratedSliver (Flutter 3.13+)
+                  // 交易列表 - 使用 Sliver 版本
+                  // 包装在 SliverMainAxisGroup 中以确保背景色一致（如果需要）
+                  // 或者直接放置。我们需要为列表设置背景色，这可以通过
+                  // SliverToBoxAdapter 绘制一个背景，或者在 SliverTransactionFeedView 中处理。
+                  // 由于 SliverList 没有 backgroundColor 属性，通常的做法是
+                  // 让整个 CustomScrollView 背景一致，或者使用 DecoratedSliver (Flutter 3.13+)
 
-              // 为了确保列表背景是白色（theme.colors.background），
-              // 我们可以在这之前放一个 DecoratedSliver，包裹 FeedView。
-              // 但 DecoratedSliver 需要特定 Flutter 版本。
-              // 简单的做法是：Scaffold 已经在 Header 下方设置了背景色（通过主要内容区域的 Container）。
-              // 但对于 Infinite List，我们需要确保延伸到底部。
-              // 我们使用一个 Consumer 来根据当前 Tab 类型构建 SliverTransactionFeedView
-              Consumer(
-                builder: (context, ref, child) {
-                  final currentSelectedType = ref.watch(
-                    currentTransactionFeedTypeProvider,
-                  );
-                  // 使用 DecoratedSliver 确保列表区域背景为白色
-                  return DecoratedSliver(
-                    decoration: BoxDecoration(color: theme.colors.background),
-                    sliver: SliverPadding(
-                      padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).padding.bottom + 16,
-                      ),
-                      sliver: SliverTransactionFeedView(
-                        key: ValueKey(currentSelectedType),
-                        intendedFeedType: currentSelectedType,
-                      ),
-                    ),
-                  );
-                },
+                  // 为了确保列表背景是白色（theme.colors.background），
+                  // 我们可以在这之前放一个 DecoratedSliver，包裹 FeedView。
+                  // 但 DecoratedSliver 需要特定 Flutter 版本。
+                  // 简单的做法是：Scaffold 已经在 Header 下方设置了背景色（通过主要内容区域的 Container）。
+                  // 但对于 Infinite List，我们需要确保延伸到底部。
+                  // 我们使用一个 Consumer 来根据当前 Tab 类型构建 SliverTransactionFeedView
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final currentSelectedType = ref.watch(
+                        currentTransactionFeedTypeProvider,
+                      );
+                      // 使用 DecoratedSliver 确保列表区域背景为白色
+                      return DecoratedSliver(
+                        decoration: BoxDecoration(
+                          color: theme.colors.background,
+                        ),
+                        sliver: SliverPadding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).padding.bottom + 16,
+                          ),
+                          sliver: SliverTransactionFeedView(
+                            key: ValueKey(currentSelectedType),
+                            intendedFeedType: currentSelectedType,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
+          ], // Stack children
+        ), // Stack
       ),
     );
   }
