@@ -71,7 +71,7 @@ class MessageIndexService:
                 await db.commit()
                 await db.refresh(message)
 
-            logger.info(
+            logger.debug(
                 "message_indexed",
                 thread_id=thread_id,
                 role=role,
