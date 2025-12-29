@@ -8,6 +8,7 @@ import yaml
 @dataclass
 class SkillMetadata:
     """Metadata representing a skill loaded from a script."""
+
     name: str
     description: str
     location: str

@@ -64,7 +64,6 @@ class AuthService:
         from app.core.exceptions import BusinessError, ErrorCode
         from app.services.code_manager import code_manager
 
-        # 检查账号是否已存在（与 PHP 逻辑一致）
         if await self.is_account_exists(account_type, account):
             if account_type == "email":
                 raise BusinessError(message="Email already registered", error_code=ErrorCode.EMAIL_REGISTERED)
@@ -73,7 +72,6 @@ class AuthService:
                     message="Mobile number already registered", error_code=ErrorCode.PHONE_NUMBER_REGISTERED
                 )
 
-        # 异步发送验证码（类似 PHP 的 AsyncQueue push）
         await background_task_manager.run_in_background(code_manager.send_code, account_type, account)
 
         logger.info(
@@ -82,13 +80,10 @@ class AuthService:
             account=account[:3] + "***",  # Mask account for privacy
         )
 
-        # 立即返回 True（与 PHP 逻辑一致）
         return True
 
     async def verify_code(self, account: str, code: str) -> bool:
         """Verify the verification code for an account.
-
-        使用统一的 code_manager 进行验证（与 PHP 逻辑一致）
 
         Args:
             account: Email address or mobile number
@@ -99,7 +94,6 @@ class AuthService:
         """
         from app.services.code_manager import code_manager
 
-        # 使用 code_manager 验证（与 PHP 的 CodeManager::verifyCode 一致）
         return await code_manager.verify_code(account, code)
 
     async def register(

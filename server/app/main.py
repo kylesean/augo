@@ -27,6 +27,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.v1.api import api_router
 from app.core.config import settings
+from app.core.database import db_manager
 from app.core.exceptions import (
     AppException,
     AuthenticationError,
@@ -43,7 +44,6 @@ from app.core.middleware import (
     MetricsMiddleware,
 )
 from app.core.responses import error_response, get_error_code_int, success_response
-from app.services.database import database_service
 
 load_dotenv()
 
@@ -413,7 +413,7 @@ async def health_check(request: Request) -> JSONResponse:
     logger.info("health_check_called")
 
     # Check database connectivity
-    db_healthy = await database_service.health_check()
+    db_healthy = await db_manager.health_check()
 
     # Check Redis connectivity
     from app.core.cache import cache_manager

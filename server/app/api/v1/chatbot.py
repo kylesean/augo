@@ -25,6 +25,7 @@ from app.api.v1.auth import (
     get_current_user,
 )
 from app.core.config import settings
+from app.core.database import get_session_context, session_repository
 from app.core.langgraph.simple_agent import SimpleLangChainAgent as LangGraphAgent
 from app.core.limiter import limiter
 from app.core.logging import logger
@@ -38,7 +39,6 @@ from app.schemas.chat import (
     Message,
 )
 from app.schemas.genui import GenUIEvent
-from app.services.database import database_service
 
 router = APIRouter(prefix="/chatbot", tags=["chatbot"])
 agent = LangGraphAgent()
@@ -76,7 +76,8 @@ async def resolve_chat_session(
     else:
         # Create new session
         new_session_id = str(uuid.uuid4())
-        session = await database_service.create_session(new_session_id, current_user.uuid, name="New Chat")
+        async with get_session_context() as db:
+            session = await session_repository.create(db, new_session_id, str(current_user.uuid), name="New Chat")
         logger.info(
             "created_new_session",
             session_id=new_session_id,
@@ -258,7 +259,8 @@ async def chat_stream(
                         try:
                             title = title_task.result()
                             # Update session name in database
-                            await database_service.update_session_name(session.id, title)
+                            async with get_session_context() as db:
+                                await session_repository.update_name(db, session.id, title)
                             # Send title update event
                             title_event = GenUIEvent(type="title_update", title=title)
                             yield f"data: {json.dumps(title_event.model_dump(mode='json', exclude_none=True), ensure_ascii=False)}\n\n"
@@ -275,7 +277,8 @@ async def chat_stream(
                 if title_task and not title_sent:
                     try:
                         title = await title_task
-                        await database_service.update_session_name(session.id, title)
+                        async with get_session_context() as db:
+                            await session_repository.update_name(db, session.id, title)
                         title_event = GenUIEvent(type="title_update", title=title)
                         yield f"data: {json.dumps(title_event.model_dump(mode='json', exclude_none=True), ensure_ascii=False)}\n\n"
                         logger.info("title_update_sent_after_stream", session_id=session.id, title=title)

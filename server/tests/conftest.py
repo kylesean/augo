@@ -4,8 +4,8 @@ from uuid import uuid4
 
 import pytest
 import pytest_asyncio
-from appmain import app
-from appmodels.user import User
+from app.main import app
+from app.models.user import User
 from fastapi.testclient import TestClient
 from sqlalchemy import text
 from sqlalchemy.dialects import postgresql

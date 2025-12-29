@@ -63,4 +63,3 @@ class SearchableMessage(BaseModel, table=True):
     # CREATE INDEX idx_searchable_messages_search ON searchable_messages USING GIN(search_vector);
     #
     # For now, we use jieba tokenization in Python + ILIKE for Chinese support.
-

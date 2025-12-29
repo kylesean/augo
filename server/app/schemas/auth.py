@@ -121,9 +121,6 @@ class SessionResponse(BaseModel):
         return sanitized
 
 
-# New schemas for PHP API compatibility
-
-
 def _validate_email(email: str) -> bool:
     """Validate email format."""
     return "@" in email and "." in email.split("@")[-1]

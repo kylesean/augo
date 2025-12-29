@@ -135,6 +135,7 @@ class DynamicContextMiddleware(BaseMiddleware):
         # Fallback to session language from ContextVar (set by chatbot.py from Accept-Language header)
         if detected_lang == "unknown":
             from app.core.langgraph.tools import current_session_language
+
             session_lang = current_session_language.get()
             if session_lang and session_lang != "zh":  # "zh" is the default, might not be explicitly set
                 detected_lang = session_lang
@@ -161,4 +162,3 @@ class DynamicContextMiddleware(BaseMiddleware):
             )
 
         return messages, config
-

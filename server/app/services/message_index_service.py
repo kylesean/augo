@@ -12,11 +12,11 @@ import uuid as uuid_lib
 from datetime import datetime, timezone
 from typing import Optional
 
-from sqlmodel import Session as SQLSession
+from sqlalchemy import delete
 
+from app.core.database import get_session_context
 from app.core.logging import logger
 from app.models.searchable_message import SearchableMessage
-from app.services.database import database_service
 
 
 class MessageIndexService:
@@ -66,10 +66,10 @@ class MessageIndexService:
             )
 
             # Write to database
-            with database_service.get_session_maker() as session:
-                session.add(message)
-                session.commit()
-                session.refresh(message)
+            async with get_session_context() as db:
+                db.add(message)
+                await db.commit()
+                await db.refresh(message)
 
             logger.info(
                 "message_indexed",
@@ -159,14 +159,10 @@ class MessageIndexService:
         try:
             thread_uuid = uuid_lib.UUID(thread_id) if isinstance(thread_id, str) else thread_id
 
-            with database_service.get_session_maker() as session:
-                from sqlmodel import delete
-
-                stmt = delete(SearchableMessage).where(
-                    SearchableMessage.thread_id == thread_uuid
-                )
-                result = session.exec(stmt)
-                session.commit()
+            async with get_session_context() as db:
+                stmt = delete(SearchableMessage).where(SearchableMessage.thread_id == thread_uuid)
+                result = await db.execute(stmt)
+                await db.commit()
                 deleted_count = result.rowcount
 
             logger.info(

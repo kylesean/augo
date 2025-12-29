@@ -17,19 +17,17 @@ from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.database import get_session
+from app.core.database import get_session, get_session_context, session_repository
 from app.core.logging import bind_context, logger
 from app.models.session import Session as ChatSession
 from app.models.user import User
 from app.schemas.auth import AuthResponse, LoginRequest, RegisterRequest, SendCodeRequest, SessionResponse, UserInfo
 from app.services.auth_service import AuthService
-from app.services.database import DatabaseService
 from app.utils.auth import create_access_token, verify_token
 from app.utils.sanitization import sanitize_string
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 security = HTTPBearer()
-db_service = DatabaseService()
 
 
 class SessionItem(BaseModel):
@@ -52,11 +50,13 @@ class SessionItem(BaseModel):
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: AsyncSession = Depends(get_session),
 ) -> User:
     """Get the current user from JWT token.
 
     Args:
         credentials: HTTP authorization credentials
+        db: Database session
 
     Returns:
         User: The authenticated user
@@ -75,8 +75,9 @@ async def get_current_user(
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
-        # Get user from database by UUID (login tokens contain user.uuid)
-        user = await db_service.get_user_by_uuid(user_uuid)
+        # Get user from database by UUID
+        result = await db.execute(select(User).where(User.uuid == user_uuid))
+        user = result.scalar_one_or_none()
         if user is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -97,6 +98,7 @@ async def get_current_user(
 async def get_authorized_session(
     session_id: str,
     current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_session),
 ) -> ChatSession:
     """Get session with ownership verification.
 
@@ -107,6 +109,7 @@ async def get_authorized_session(
     Args:
         session_id: The session ID from path/body parameter
         current_user: The authenticated user from access token
+        db: Database session
 
     Returns:
         ChatSession: The verified session
@@ -117,8 +120,8 @@ async def get_authorized_session(
     # Sanitize session_id
     sanitized_session_id = sanitize_string(session_id)
 
-    # Verify session exists
-    session = await db_service.get_session(sanitized_session_id)
+    # Verify session exists using repository
+    session = await session_repository.get(db, sanitized_session_id)
     if session is None:
         logger.error("session_not_found", session_id=sanitized_session_id)
         raise HTTPException(
@@ -362,7 +365,8 @@ async def create_session(user: User = Depends(get_current_user)):
         session_id = str(uuid.uuid4())
 
         # Create session in database with default name "New Chat"
-        session = await db_service.create_session(session_id, user.uuid, name="New Chat")
+        async with get_session_context() as db:
+            session = await session_repository.create(db, session_id, str(user.uuid), name="New Chat")
 
         logger.info(
             "session_created",
@@ -388,6 +392,7 @@ async def update_session_name(
     session_id: str,
     name: str = Form(...),
     current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_session),
 ):
     """Update a session's name.
 
@@ -395,20 +400,21 @@ async def update_session_name(
         session_id: The ID of the session to update
         name: The new name for the session
         current_user: The authenticated user
+        db: Database session
 
     Returns:
         SessionResponse: The updated session information
     """
     from app.core.responses import success_response
 
-    # Verify session ownership
-    session = await get_authorized_session(session_id, current_user)
+    # Verify session ownership (this will use the same db session via Depends)
+    session = await get_authorized_session(session_id, current_user, db)
 
     # Sanitize name
     sanitized_name = sanitize_string(name)
 
     # Update the session name
-    updated_session = await db_service.update_session_name(session.id, sanitized_name)
+    updated_session = await session_repository.update_name(db, session.id, sanitized_name)
 
     logger.info(
         "session_name_updated",
@@ -451,7 +457,10 @@ async def delete_session(
     from app.core.responses import error_response, get_error_code_int, success_response
 
     # Verify session ownership
-    session = await get_authorized_session(session_id, current_user)
+    async with get_session_context() as db:
+        session = await session_repository.get(db, session_id)
+        if session is None or session.user_uuid != str(current_user.uuid):
+            raise HTTPException(status_code=404, detail="Session not found")
 
     try:
         # 1. Use the chatbot agent to cascade delete history
@@ -459,7 +468,8 @@ async def delete_session(
         await chatbot_agent.delete_session_history(str(session.id))
 
         # 2. Delete the session metadata
-        await db_service.delete_session(session.id)
+        async with get_session_context() as db:
+            await session_repository.delete(db, session.id)
 
         logger.info(
             "session_deleted_with_history",
@@ -522,14 +532,10 @@ async def get_user_sessions(
                     "name": session.name or "",
                     # Use standard ISO 8601 format: replace +00:00 with Z for UTC
                     "created_at": (
-                        session.created_at.isoformat().replace("+00:00", "Z")
-                        if session.created_at
-                        else ""
+                        session.created_at.isoformat().replace("+00:00", "Z") if session.created_at else ""
                     ),
                     "updated_at": (
-                        session.updated_at.isoformat().replace("+00:00", "Z")
-                        if session.updated_at
-                        else ""
+                        session.updated_at.isoformat().replace("+00:00", "Z") if session.updated_at else ""
                     ),
                 }
                 for session in items

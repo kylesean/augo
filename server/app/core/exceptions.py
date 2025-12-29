@@ -1,23 +1,14 @@
 """Custom exception classes for the application.
 
 This module provides a comprehensive exception hierarchy for handling
-various error scenarios in the application, with PHP error code mapping
-for backward compatibility.
+various error scenarios in the application.
 """
 
 from typing import Any, Dict, Optional
 
-# ============================================================================
-# Error Code Constants - PHP to Python Mapping
-# ============================================================================
-
 
 class ErrorCode:
-    """Error code constants mapping from PHP to Python.
-
-    These codes maintain compatibility with the PHP Hyperf application
-    while providing a Pythonic interface.
-    """
+    """Error code constants"""
 
     # Success
     SUCCESS = "SUCCESS"

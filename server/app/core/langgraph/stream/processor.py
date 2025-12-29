@@ -236,7 +236,6 @@ class StreamProcessor:
                 error=str(e),
             )
 
-
     async def _process_chunk(
         self,
         mode: str,

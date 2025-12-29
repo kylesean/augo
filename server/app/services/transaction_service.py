@@ -465,8 +465,11 @@ class TransactionService:
                 source="AI",
                 status="CLEARED",
                 source_thread_id=(
-                    source_thread_id if isinstance(source_thread_id, PyUUID)
-                    else PyUUID(source_thread_id) if source_thread_id else None
+                    source_thread_id
+                    if isinstance(source_thread_id, PyUUID)
+                    else PyUUID(source_thread_id)
+                    if source_thread_id
+                    else None
                 ),
             )
             self.db.add(tx)

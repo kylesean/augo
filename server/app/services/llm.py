@@ -79,7 +79,7 @@ class LLMRegistry:
                 api_key=settings.OPENAI_API_KEY,
                 base_url=settings.OPENAI_BASE_URL,
                 max_tokens=settings.MAX_TOKENS,
-                reasoning={"effort": "minimal"}
+                reasoning={"effort": "minimal"},
             ),
         },
         {

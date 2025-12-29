@@ -10,9 +10,9 @@ The two pools connect to the same database but use different drivers:
 """
 
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
+from typing import TYPE_CHECKING, AsyncGenerator, Optional
 
-from sqlalchemy import text
+from sqlalchemy import delete, select, text
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
@@ -212,3 +212,168 @@ async def init_db():
 async def close_db():
     """Close database connections on application shutdown."""
     await db_manager.close()
+
+
+# ============================================================================
+# Session Repository - Async CRUD for ChatSession
+# ============================================================================
+
+
+class SessionRepository:
+    """Repository for ChatSession CRUD operations.
+
+    Provides async database operations for session management.
+    Uses dependency injection pattern - receives session from caller.
+
+    Example:
+        ```python
+        async with get_session_context() as db:
+            session = await session_repository.create(db, session_id, user_uuid)
+        ```
+    """
+
+    @staticmethod
+    async def create(
+        db: AsyncSession,
+        session_id: str,
+        user_uuid: str,
+        name: str = "",
+    ) -> "ChatSession":
+        """Create a new chat session.
+
+        Args:
+            db: Async database session
+            session_id: Unique session identifier
+            user_uuid: Owner's UUID
+            name: Optional session name (defaults to empty string)
+
+        Returns:
+            ChatSession: The created session
+        """
+        from app.models.session import Session as ChatSession
+
+        chat_session = ChatSession(
+            id=session_id,
+            user_uuid=user_uuid,
+            name=name,
+        )
+        db.add(chat_session)
+        await db.commit()
+        await db.refresh(chat_session)
+
+        logger.info(
+            "session_created",
+            session_id=session_id,
+            user_uuid=user_uuid,
+            name=name,
+        )
+
+        return chat_session
+
+    @staticmethod
+    async def get(
+        db: AsyncSession,
+        session_id: str,
+    ) -> Optional["ChatSession"]:
+        """Get a session by ID.
+
+        Args:
+            db: Async database session
+            session_id: Session identifier
+
+        Returns:
+            ChatSession if found, None otherwise
+        """
+        from app.models.session import Session as ChatSession
+
+        result = await db.execute(select(ChatSession).where(ChatSession.id == session_id))
+        return result.scalar_one_or_none()
+
+    @staticmethod
+    async def get_by_user(
+        db: AsyncSession,
+        user_uuid: str,
+    ) -> list["ChatSession"]:
+        """Get all sessions for a user.
+
+        Args:
+            db: Async database session
+            user_uuid: User's UUID
+
+        Returns:
+            List of ChatSession objects
+        """
+        from app.models.session import Session as ChatSession
+
+        result = await db.execute(
+            select(ChatSession).where(ChatSession.user_uuid == user_uuid).order_by(ChatSession.created_at.desc())
+        )
+        return list(result.scalars().all())
+
+    @staticmethod
+    async def update_name(
+        db: AsyncSession,
+        session_id: str,
+        name: str,
+    ) -> Optional["ChatSession"]:
+        """Update a session's name.
+
+        Args:
+            db: Async database session
+            session_id: Session identifier
+            name: New session name
+
+        Returns:
+            Updated ChatSession if found, None otherwise
+        """
+        from app.models.session import Session as ChatSession
+
+        result = await db.execute(select(ChatSession).where(ChatSession.id == session_id))
+        chat_session = result.scalar_one_or_none()
+
+        if chat_session:
+            chat_session.name = name
+            await db.commit()
+            await db.refresh(chat_session)
+
+            logger.info(
+                "session_name_updated",
+                session_id=session_id,
+                name=name,
+            )
+
+        return chat_session
+
+    @staticmethod
+    async def delete(
+        db: AsyncSession,
+        session_id: str,
+    ) -> bool:
+        """Delete a session by ID.
+
+        Args:
+            db: Async database session
+            session_id: Session identifier
+
+        Returns:
+            True if deleted, False if not found
+        """
+        from app.models.session import Session as ChatSession
+
+        result = await db.execute(delete(ChatSession).where(ChatSession.id == session_id))
+        await db.commit()
+
+        deleted = result.rowcount > 0
+        if deleted:
+            logger.info("session_deleted", session_id=session_id)
+
+        return deleted
+
+
+# Singleton repository instance
+session_repository = SessionRepository()
+
+
+# Type hint for forward reference
+if TYPE_CHECKING:
+    from app.models.session import Session as ChatSession

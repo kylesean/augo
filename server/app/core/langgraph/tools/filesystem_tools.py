@@ -89,6 +89,7 @@ fs_backend = LocalFilesystemBackend(root_dir=PROJECT_ROOT, virtual_mode=False)
 # --- read_file ---
 class ReadFileInput(BaseModel):
     """Input for reading a file."""
+
     path: str = Field(..., description="Path of the file to read")
 
 
@@ -105,6 +106,7 @@ def read_file_tool(path: str):
 # --- ls ---
 class LsInput(BaseModel):
     """Input for listing directory contents."""
+
     path: str = Field(".", description="Directory path to list (defaults to current directory)")
 
 
@@ -132,6 +134,7 @@ def ls_tool(path: str = "."):
 # --- write_file ---
 class WriteFileInput(BaseModel):
     """Input for writing a file to the artifact directory."""
+
     path: str = Field(..., description="Relative path for the output file (e.g., 'landing-page.html')")
     content: str = Field(..., description="Content to write to the file")
 
@@ -179,6 +182,7 @@ def write_file_tool(path: str, content: str):
 # --- execute (bash) ---
 class ExecuteInput(BaseModel):
     """Input for executing a bash command."""
+
     command: str = Field(..., description="The bash command to execute")
 
 

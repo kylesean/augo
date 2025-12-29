@@ -9,10 +9,10 @@ from typing import Optional
 import jieba
 from sqlmodel import select
 
+from app.core.database import get_session_context
 from app.core.logging import logger
 from app.models.session import Session
 from app.schemas.search import HighlightRange, SearchResult
-from app.services.database import database_service
 from app.utils.types import UUIDLike
 
 
@@ -157,13 +157,11 @@ class SearchService:
         try:
             # Build ILIKE patterns for each token
             # Search sessions where title contains any of the tokens
-            with database_service.get_session_maker() as session:
-                # Use raw SQL for ILIKE with multiple patterns
-                # This is more efficient than multiple separate queries
-                base_query = select(Session).where(Session.user_uuid == user_uuid)
+            from sqlalchemy import or_
 
-                # Add OR conditions for each token
-                from sqlalchemy import or_
+            async with get_session_context() as db:
+                # Build query with OR conditions for each token
+                base_query = select(Session).where(Session.user_uuid == str(user_uuid))
 
                 conditions = []
                 for token in tokens:
@@ -177,7 +175,8 @@ class SearchService:
                 # Order by updated_at descending and limit
                 base_query = base_query.order_by(Session.updated_at.desc()).limit(limit)
 
-                results = session.exec(base_query).all()
+                result = await db.execute(base_query)
+                results = result.scalars().all()
 
             # Convert to SearchResult with highlights
             search_results = []
@@ -248,12 +247,12 @@ class SearchService:
         )
 
         try:
-            from sqlalchemy import or_, text
+            from sqlalchemy import or_
 
             from app.models.searchable_message import SearchableMessage
 
-            with database_service.get_session_maker() as session:
-                base_query = select(SearchableMessage).where(SearchableMessage.user_uuid == user_uuid)
+            async with get_session_context() as db:
+                base_query = select(SearchableMessage).where(SearchableMessage.user_uuid == str(user_uuid))
 
                 conditions = []
                 for token in tokens:
@@ -266,7 +265,8 @@ class SearchService:
                 # Order by created_at descending and limit
                 base_query = base_query.order_by(SearchableMessage.created_at.desc()).limit(limit)
 
-                results = session.exec(base_query).all()
+                result = await db.execute(base_query)
+                results = result.scalars().all()
 
             # Convert to SearchResult with snippets
             search_results = []
@@ -349,12 +349,10 @@ class SearchService:
             if msg_result.id not in seen_sessions:
                 # Try to get session title
                 try:
-                    import uuid as uuid_lib
-
-                    with database_service.get_session_maker() as session:
-                        session_uuid = uuid_lib.UUID(msg_result.id)
-                        stmt = select(Session).where(Session.id == session_uuid)
-                        session_obj = session.exec(stmt).first()
+                    async with get_session_context() as db:
+                        stmt = select(Session).where(Session.id == msg_result.id)
+                        result = await db.execute(stmt)
+                        session_obj = result.scalar_one_or_none()
                         if session_obj:
                             msg_result.title = session_obj.name
                 except Exception:
