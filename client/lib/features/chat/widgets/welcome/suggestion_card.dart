@@ -5,7 +5,7 @@ import 'package:forui/forui.dart';
 /// 建议卡片组件
 /// 紧凑设计，点击后发送 prompt 给 AI
 class SuggestionCard extends StatelessWidget {
-  final String emoji;
+  final IconData icon;
   final String title;
   final String prompt;
   final String description;
@@ -13,7 +13,7 @@ class SuggestionCard extends StatelessWidget {
 
   const SuggestionCard({
     super.key,
-    required this.emoji,
+    required this.icon,
     required this.title,
     required this.prompt,
     required this.description,
@@ -40,7 +40,7 @@ class SuggestionCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              // Emoji 图标容器
+              // Icon 图标容器
               Container(
                 width: 40,
                 height: 40,
@@ -49,7 +49,7 @@ class SuggestionCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 alignment: Alignment.center,
-                child: Text(emoji, style: const TextStyle(fontSize: 20)),
+                child: Icon(icon, size: 20, color: theme.colors.foreground),
               ),
               const SizedBox(width: 12),
               // 文字内容

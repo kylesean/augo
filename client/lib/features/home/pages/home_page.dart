@@ -45,7 +45,7 @@ class HomePage extends ConsumerWidget {
             slivers: [
               // Header - SliverAppBar (黑色)
               SliverAppBar(
-                expandedHeight: 220.0,
+                expandedHeight: 250.0,
                 floating: false,
                 pinned: false,
                 backgroundColor: theme.colors.primary,
@@ -249,151 +249,152 @@ class _WelcomeHeaderState extends ConsumerState<_WelcomeHeader> {
             children: [
               SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0,
-                    vertical: 12.0,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.min, // 关键：让 Column 尽可能小
-                    children: [
-                      // 总消费金额标签和眼睛图标
-                      Row(
-                        children: [
-                          Text(
-                            t.home.totalExpense,
-                            style: theme.typography.sm.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: colors.primaryForeground.withValues(
-                                alpha: 0.9,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          FButton.icon(
-                            style: FButtonStyle.ghost(),
-                            onPress: () {
-                              setState(() {
-                                _isAmountVisible = !_isAmountVisible;
-                              });
-                            },
-                            child: Icon(
-                              _isAmountVisible ? FIcons.eye : FIcons.eyeOff,
-                              color: colors.primaryForeground.withValues(
-                                alpha: 0.8,
-                              ),
-                              size: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 6), // 减少间距：8 -> 6
-                      // 总消费金额
-                      totalExpenseAsync.when(
-                        data: (data) => Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // 总消费金额标签和眼睛图标
+                        Row(
                           children: [
                             Text(
-                              _isAmountVisible
-                                  ? _formatAmount(data)
-                                  : t.home.amountHidden,
-                              style: theme.typography.xl2.copyWith(
-                                color: colors.primaryForeground,
-                                fontWeight: FontWeight.bold,
+                              t.home.totalExpense,
+                              style: theme.typography.sm.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: colors.primaryForeground.withValues(
+                                  alpha: 0.9,
+                                ),
                               ),
                             ),
-                            const SizedBox(height: 12), // 减少间距：16 -> 12
-                            Row(
-                              children: [
-                                _QuickStatItem(
-                                  label: t.home.todayExpense,
-                                  amount: data.todayExpense,
-                                  currency: data.currency,
-                                  isVisible: _isAmountVisible,
+                            const SizedBox(width: 8),
+                            FButton.icon(
+                              style: FButtonStyle.ghost(),
+                              onPress: () {
+                                setState(() {
+                                  _isAmountVisible = !_isAmountVisible;
+                                });
+                              },
+                              child: Icon(
+                                _isAmountVisible ? FIcons.eye : FIcons.eyeOff,
+                                color: colors.primaryForeground.withValues(
+                                  alpha: 0.8,
                                 ),
-                                const SizedBox(width: 24),
-                                _QuickStatItem(
-                                  label: t.home.monthExpense,
-                                  amount: data.monthExpense,
-                                  currency: data.currency,
-                                  isVisible: _isAmountVisible,
-                                ),
-                              ],
+                                size: 16,
+                              ),
                             ),
                           ],
                         ),
-                        loading: () => Text(
-                          t.common.loading,
-                          style: theme.typography.xl2.copyWith(
-                            color: colors.primaryForeground.withValues(
-                              alpha: 0.6,
-                            ),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        error: (error, _) => Text(
-                          _isAmountVisible ? '¥0.00' : t.home.amountHidden,
-                          style: theme.typography.xl2.copyWith(
-                            color: colors.primaryForeground,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
 
-                      const SizedBox(height: 12), // 减少间距：16 -> 12
-                      // 年度时间进度条 - 简化版本
-                      Row(
-                        children: [
-                          Text(
-                            t.home.yearProgress(year: now.year),
-                            style: theme.typography.xs.copyWith(
-                              color: colors.primaryForeground.withValues(
-                                alpha: 0.8,
+                        const SizedBox(height: 8),
+                        // 总消费金额
+                        totalExpenseAsync.when(
+                          data: (data) => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _isAmountVisible
+                                    ? _formatAmount(data)
+                                    : t.home.amountHidden,
+                                style: theme.typography.xl2.copyWith(
+                                  color: colors.primaryForeground,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  _QuickStatItem(
+                                    label: t.home.todayExpense,
+                                    amount: data.todayExpense,
+                                    currency: data.currency,
+                                    isVisible: _isAmountVisible,
+                                  ),
+                                  const SizedBox(width: 24),
+                                  _QuickStatItem(
+                                    label: t.home.monthExpense,
+                                    amount: data.monthExpense,
+                                    currency: data.currency,
+                                    isVisible: _isAmountVisible,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          loading: () => Text(
+                            t.common.loading,
+                            style: theme.typography.xl2.copyWith(
+                              color: colors.primaryForeground.withValues(
+                                alpha: 0.6,
+                              ),
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Container(
-                              height: 3,
-                              decoration: BoxDecoration(
+                          error: (error, _) => Text(
+                            _isAmountVisible ? '¥0.00' : t.home.amountHidden,
+                            style: theme.typography.xl2.copyWith(
+                              color: colors.primaryForeground,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 16),
+                        // 年度时间进度条 - 简化版本
+                        Row(
+                          children: [
+                            Text(
+                              t.home.yearProgress(year: now.year),
+                              style: theme.typography.xs.copyWith(
                                 color: colors.primaryForeground.withValues(
-                                  alpha: 0.2,
+                                  alpha: 0.8,
                                 ),
-                                borderRadius: BorderRadius.circular(1.5),
                               ),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: FractionallySizedBox(
-                                  widthFactor: yearProgress,
-                                  child: Container(
-                                    height: 3,
-                                    decoration: BoxDecoration(
-                                      color: colors.primaryForeground,
-                                      borderRadius: BorderRadius.circular(1.5),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Container(
+                                height: 3,
+                                decoration: BoxDecoration(
+                                  color: colors.primaryForeground.withValues(
+                                    alpha: 0.2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(1.5),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: FractionallySizedBox(
+                                    widthFactor: yearProgress,
+                                    child: Container(
+                                      height: 3,
+                                      decoration: BoxDecoration(
+                                        color: colors.primaryForeground,
+                                        borderRadius: BorderRadius.circular(
+                                          1.5,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '$progressPercentage%',
-                            style: theme.typography.xs.copyWith(
-                              color: colors.primaryForeground.withValues(
-                                alpha: 0.7,
+                            const SizedBox(width: 8),
+                            Text(
+                              '$progressPercentage%',
+                              style: theme.typography.xs.copyWith(
+                                color: colors.primaryForeground.withValues(
+                                  alpha: 0.7,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
 
-                      const SizedBox(height: 6), // 减少底部间距：8 -> 6
-                    ],
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
                 ),
               ),

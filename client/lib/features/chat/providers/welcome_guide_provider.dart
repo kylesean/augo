@@ -1,21 +1,24 @@
 // features/chat/providers/welcome_guide_provider.dart
+import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:augo/i18n/strings.g.dart';
 
+import 'package:forui/forui.dart';
+
 part 'welcome_guide_provider.g.dart';
 
-/// 时段枚举
+/// Time slot enum
 enum TimeSlot { morning, midday, afternoon, evening, night }
 
-/// 场景化建议模型
+/// Contextual suggestion model
 class ContextualSuggestion {
-  final String emoji;
+  final IconData icon;
   final String Function() titleGetter;
   final String Function() promptGetter;
   final String Function() descriptionGetter;
 
   const ContextualSuggestion({
-    required this.emoji,
+    required this.icon,
     required this.titleGetter,
     required this.promptGetter,
     required this.descriptionGetter,
@@ -26,7 +29,7 @@ class ContextualSuggestion {
   String get description => descriptionGetter();
 }
 
-/// 欢迎引导状态
+/// Welcome guide state
 class WelcomeGuideState {
   final TimeSlot timeSlot;
   final String greeting;
@@ -41,7 +44,7 @@ class WelcomeGuideState {
   });
 }
 
-/// 根据小时数获取时段
+/// Get time slot based on hour
 TimeSlot _getTimeSlot(int hour) {
   if (hour >= 5 && hour < 11) {
     return TimeSlot.morning;
@@ -56,7 +59,7 @@ TimeSlot _getTimeSlot(int hour) {
   }
 }
 
-/// 根据时段获取问候语
+/// Get greeting based on time slot
 String _getGreeting(TimeSlot slot) {
   switch (slot) {
     case TimeSlot.morning:
@@ -72,7 +75,7 @@ String _getGreeting(TimeSlot slot) {
   }
 }
 
-/// 根据时段获取副标题
+/// Get subtitle based on time slot
 String _getSubtitle(TimeSlot slot) {
   switch (slot) {
     case TimeSlot.morning:
@@ -88,26 +91,26 @@ String _getSubtitle(TimeSlot slot) {
   }
 }
 
-/// 根据时段获取场景化建议
+/// Get contextual suggestions based on time slot
 List<ContextualSuggestion> _getSuggestionsForSlot(TimeSlot slot) {
   switch (slot) {
     case TimeSlot.morning:
       return [
         ContextualSuggestion(
-          emoji: '🥐',
+          icon: FIcons.coffee,
           titleGetter: () => t.chat.welcome.morning.breakfast.title,
           promptGetter: () => t.chat.welcome.morning.breakfast.prompt,
           descriptionGetter: () => t.chat.welcome.morning.breakfast.description,
         ),
         ContextualSuggestion(
-          emoji: '📊',
+          icon: FIcons.chartBarBig,
           titleGetter: () => t.chat.welcome.morning.yesterdayReview.title,
           promptGetter: () => t.chat.welcome.morning.yesterdayReview.prompt,
           descriptionGetter: () =>
               t.chat.welcome.morning.yesterdayReview.description,
         ),
         ContextualSuggestion(
-          emoji: '💡',
+          icon: FIcons.lightbulb,
           titleGetter: () => t.chat.welcome.morning.todayBudget.title,
           promptGetter: () => t.chat.welcome.morning.todayBudget.prompt,
           descriptionGetter: () =>
@@ -118,20 +121,20 @@ List<ContextualSuggestion> _getSuggestionsForSlot(TimeSlot slot) {
     case TimeSlot.midday:
       return [
         ContextualSuggestion(
-          emoji: '🍜',
+          icon: FIcons.utensils,
           titleGetter: () => t.chat.welcome.midday.lunch.title,
           promptGetter: () => t.chat.welcome.midday.lunch.prompt,
           descriptionGetter: () => t.chat.welcome.midday.lunch.description,
         ),
         ContextualSuggestion(
-          emoji: '📈',
+          icon: FIcons.trendingUp,
           titleGetter: () => t.chat.welcome.midday.weeklyExpense.title,
           promptGetter: () => t.chat.welcome.midday.weeklyExpense.prompt,
           descriptionGetter: () =>
               t.chat.welcome.midday.weeklyExpense.description,
         ),
         ContextualSuggestion(
-          emoji: '💰',
+          icon: FIcons.wallet,
           titleGetter: () => t.chat.welcome.midday.checkBalance.title,
           promptGetter: () => t.chat.welcome.midday.checkBalance.prompt,
           descriptionGetter: () =>
@@ -142,21 +145,21 @@ List<ContextualSuggestion> _getSuggestionsForSlot(TimeSlot slot) {
     case TimeSlot.afternoon:
       return [
         ContextualSuggestion(
-          emoji: '☕',
+          icon: FIcons.clock,
           titleGetter: () => t.chat.welcome.afternoon.quickRecord.title,
           promptGetter: () => t.chat.welcome.afternoon.quickRecord.prompt,
           descriptionGetter: () =>
               t.chat.welcome.afternoon.quickRecord.description,
         ),
         ContextualSuggestion(
-          emoji: '📊',
+          icon: FIcons.chartSpline,
           titleGetter: () => t.chat.welcome.afternoon.analyzeSpending.title,
           promptGetter: () => t.chat.welcome.afternoon.analyzeSpending.prompt,
           descriptionGetter: () =>
               t.chat.welcome.afternoon.analyzeSpending.description,
         ),
         ContextualSuggestion(
-          emoji: '🎯',
+          icon: FIcons.target,
           titleGetter: () => t.chat.welcome.afternoon.budgetProgress.title,
           promptGetter: () => t.chat.welcome.afternoon.budgetProgress.prompt,
           descriptionGetter: () =>
@@ -167,20 +170,20 @@ List<ContextualSuggestion> _getSuggestionsForSlot(TimeSlot slot) {
     case TimeSlot.evening:
       return [
         ContextualSuggestion(
-          emoji: '🍽️',
+          icon: FIcons.utensils,
           titleGetter: () => t.chat.welcome.evening.dinner.title,
           promptGetter: () => t.chat.welcome.evening.dinner.prompt,
           descriptionGetter: () => t.chat.welcome.evening.dinner.description,
         ),
         ContextualSuggestion(
-          emoji: '📋',
+          icon: FIcons.clipboardList,
           titleGetter: () => t.chat.welcome.evening.todaySummary.title,
           promptGetter: () => t.chat.welcome.evening.todaySummary.prompt,
           descriptionGetter: () =>
               t.chat.welcome.evening.todaySummary.description,
         ),
         ContextualSuggestion(
-          emoji: '📆',
+          icon: FIcons.calendar,
           titleGetter: () => t.chat.welcome.evening.tomorrowPlan.title,
           promptGetter: () => t.chat.welcome.evening.tomorrowPlan.prompt,
           descriptionGetter: () =>
@@ -191,21 +194,21 @@ List<ContextualSuggestion> _getSuggestionsForSlot(TimeSlot slot) {
     case TimeSlot.night:
       return [
         ContextualSuggestion(
-          emoji: '📝',
+          icon: FIcons.fileText,
           titleGetter: () => t.chat.welcome.night.makeupRecord.title,
           promptGetter: () => t.chat.welcome.night.makeupRecord.prompt,
           descriptionGetter: () =>
               t.chat.welcome.night.makeupRecord.description,
         ),
         ContextualSuggestion(
-          emoji: '📊',
+          icon: FIcons.chartBarBig,
           titleGetter: () => t.chat.welcome.night.monthlyReview.title,
           promptGetter: () => t.chat.welcome.night.monthlyReview.prompt,
           descriptionGetter: () =>
               t.chat.welcome.night.monthlyReview.description,
         ),
         ContextualSuggestion(
-          emoji: '🌙',
+          icon: FIcons.moon,
           titleGetter: () => t.chat.welcome.night.financialThinking.title,
           promptGetter: () => t.chat.welcome.night.financialThinking.prompt,
           descriptionGetter: () =>
@@ -215,7 +218,7 @@ List<ContextualSuggestion> _getSuggestionsForSlot(TimeSlot slot) {
   }
 }
 
-/// 欢迎引导 Provider - 根据当前时段返回问候语和场景化建议
+/// Welcome Guide Provider - returns greetings and contextual suggestions based on current time
 @riverpod
 WelcomeGuideState welcomeGuide(Ref ref) {
   final hour = DateTime.now().hour;

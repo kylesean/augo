@@ -43,7 +43,7 @@ class WelcomeGuideWidget extends ConsumerWidget {
                     bottom: index < guideState.suggestions.length - 1 ? 10 : 0,
                   ),
                   child: SuggestionCard(
-                    emoji: suggestion.emoji,
+                    icon: suggestion.icon,
                     title: suggestion.title,
                     prompt: suggestion.prompt,
                     description: suggestion.description,
