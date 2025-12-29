@@ -13,6 +13,7 @@ from app.core.logging import logger
 from app.models.session import Session
 from app.schemas.search import HighlightRange, SearchResult
 from app.services.database import database_service
+from app.utils.types import UUIDLike
 
 
 class SearchService:
@@ -120,7 +121,7 @@ class SearchService:
 
     async def search_sessions(
         self,
-        user_uuid: str,
+        user_uuid: UUIDLike,
         query: str,
         limit: int = 20,
     ) -> list[SearchResult]:
@@ -130,7 +131,7 @@ class SearchService:
         Tokenizes query for better Chinese language support.
 
         Args:
-            user_uuid: User's UUID
+            user_uuid: User's UUID (UUID or string)
             query: Search query string
             limit: Maximum number of results
 
@@ -214,7 +215,7 @@ class SearchService:
 
     async def search_messages(
         self,
-        user_uuid: str,
+        user_uuid: UUIDLike,
         query: str,
         limit: int = 20,
     ) -> list[SearchResult]:
@@ -224,7 +225,7 @@ class SearchService:
         Returns message content snippets with highlights.
 
         Args:
-            user_uuid: User's UUID
+            user_uuid: User's UUID (UUID or string)
             query: Search query string
             limit: Maximum number of results
 
@@ -309,7 +310,7 @@ class SearchService:
 
     async def combined_search(
         self,
-        user_uuid: str,
+        user_uuid: UUIDLike,
         query: str,
         limit: int = 20,
     ) -> list[SearchResult]:
@@ -319,7 +320,7 @@ class SearchService:
         deduplicating by session_id and prioritizing title matches.
 
         Args:
-            user_uuid: User's UUID
+            user_uuid: User's UUID (UUID or string)
             query: Search query string
             limit: Maximum number of results
 
@@ -351,7 +352,6 @@ class SearchService:
                     import uuid as uuid_lib
 
                     with database_service.get_session_maker() as session:
-                        # 将字符串 id 转换为 UUID 进行查询
                         session_uuid = uuid_lib.UUID(msg_result.id)
                         stmt = select(Session).where(Session.id == session_uuid)
                         session_obj = session.exec(stmt).first()

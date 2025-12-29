@@ -1,6 +1,6 @@
 """This file contains the database service for the application."""
 
-from typing import List, Optional, Sequence
+from typing import Optional, Sequence
 
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
@@ -19,6 +19,7 @@ from app.core.config import (
 from app.core.logging import logger
 from app.models.session import Session as ChatSession
 from app.models.user import User
+from app.utils.types import UUIDLike
 
 
 class DatabaseService:
@@ -141,87 +142,87 @@ class DatabaseService:
             logger.info("user_deleted", email=email)
             return True
 
-    async def create_session(self, session_id: str, user_uuid: str, name: str = "") -> ChatSession:
+    async def create_session(self, session_id: UUIDLike, user_uuid: UUIDLike, name: str = "") -> ChatSession:
         """Create a new chat session.
 
         Args:
-            session_id: The ID for the new session
-            user_uuid: The UUID of the user who owns the session
+            session_id: The ID for the new session (UUID or string)
+            user_uuid: The UUID of the user who owns the session (UUID or string)
             name: Optional name for the session (defaults to empty string)
 
         Returns:
             ChatSession: The created session
         """
         with SQLModelSession(self.engine) as session:
-            chat_session = ChatSession(id=session_id, user_uuid=user_uuid, name=name)
+            chat_session = ChatSession(id=str(session_id), user_uuid=str(user_uuid), name=name)
             session.add(chat_session)
             session.commit()
             session.refresh(chat_session)
-            logger.info("session_created", session_id=session_id, user_uuid=user_uuid, name=name)
+            logger.info("session_created", session_id=str(session_id), user_uuid=str(user_uuid), name=name)
             return chat_session
 
-    async def delete_session(self, session_id: str) -> bool:
+    async def delete_session(self, session_id: UUIDLike) -> bool:
         """Delete a session by ID.
 
         Args:
-            session_id: The ID of the session to delete
+            session_id: The ID of the session to delete (UUID or string)
 
         Returns:
             bool: True if deletion was successful, False if session not found
         """
         with SQLModelSession(self.engine) as session:
-            chat_session = session.get(ChatSession, session_id)
+            chat_session = session.get(ChatSession, str(session_id))
             if not chat_session:
                 return False
 
             session.delete(chat_session)
             session.commit()
-            logger.info("session_deleted", session_id=session_id)
+            logger.info("session_deleted", session_id=str(session_id))
             return True
 
-    async def get_session(self, session_id: str) -> Optional[ChatSession]:
+    async def get_session(self, session_id: UUIDLike) -> Optional[ChatSession]:
         """Get a session by ID.
 
         Args:
-            session_id: The ID of the session to retrieve
+            session_id: The ID of the session to retrieve (UUID or string)
 
         Returns:
             Optional[ChatSession]: The session if found, None otherwise
         """
         with SQLModelSession(self.engine) as session:
-            chat_session = session.get(ChatSession, session_id)
+            chat_session = session.get(ChatSession, str(session_id))
             return chat_session
 
-    def get_user_sessions_query(self, user_uuid: str):
+    def get_user_sessions_query(self, user_uuid: UUIDLike):
         """Get SQLAlchemy query for user sessions (for pagination).
 
         Args:
-            user_uuid: The UUID of the user
+            user_uuid: The UUID of the user (UUID or string)
 
         Returns:
             Select: SQLAlchemy select statement for pagination
         """
-        return select(ChatSession).where(ChatSession.user_uuid == user_uuid).order_by(ChatSession.created_at.desc())
+        return select(ChatSession).where(ChatSession.user_uuid == str(user_uuid)).order_by(ChatSession.created_at.desc())
 
-    async def get_user_sessions(self, user_uuid: str) -> Sequence[ChatSession]:
+    async def get_user_sessions(self, user_uuid: UUIDLike) -> Sequence[ChatSession]:
         """Get all sessions for a user.
 
         Args:
-            user_uuid: The UUID of the user
+            user_uuid: The UUID of the user (UUID or string)
 
         Returns:
-            List[ChatSession]: List of user's sessions
+            Sequence[ChatSession]: List of user's sessions
         """
         with SQLModelSession(self.engine) as session:
-            statement = select(ChatSession).where(ChatSession.user_uuid == user_uuid).order_by(ChatSession.created_at)
+            statement = select(ChatSession).where(ChatSession.user_uuid == str(user_uuid)).order_by(ChatSession.created_at)
             sessions = session.exec(statement).all()
             return sessions
 
-    async def update_session_name(self, session_id: str, name: str) -> ChatSession:
+    async def update_session_name(self, session_id: UUIDLike, name: str) -> ChatSession:
         """Update a session's name.
 
         Args:
-            session_id: The ID of the session to update
+            session_id: The ID of the session to update (UUID or string)
             name: The new name for the session
 
         Returns:
@@ -231,7 +232,7 @@ class DatabaseService:
             HTTPException: If session is not found
         """
         with SQLModelSession(self.engine) as session:
-            chat_session = session.get(ChatSession, session_id)
+            chat_session = session.get(ChatSession, str(session_id))
             if not chat_session:
                 raise HTTPException(status_code=404, detail="Session not found")
 
@@ -239,7 +240,7 @@ class DatabaseService:
             session.add(chat_session)
             session.commit()
             session.refresh(chat_session)
-            logger.info("session_name_updated", session_id=session_id, name=name)
+            logger.info("session_name_updated", session_id=str(session_id), name=name)
             session.expunge(chat_session)
 
         return chat_session
