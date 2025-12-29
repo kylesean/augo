@@ -59,5 +59,12 @@
         <true />
         <key>UIApplicationSupportsIndirectInputEvents</key>
         <true />
+        <key>NSAppTransportSecurity</key>
+        <dict>
+            <key>NSAllowsArbitraryLoads</key>
+            <true/>
+        </dict>
+        <key>NSLocalNetworkUsageDescription</key>
+        <string>我们需要访问您的本地网络以连接服务器进行测试。</string>
     </dict>
 </plist>
