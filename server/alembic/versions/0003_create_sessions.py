@@ -24,20 +24,22 @@ def upgrade() -> None:
     """Create sessions table."""
     op.create_table(
         "sessions",
+        # Model uses: id: uuid (primary key)
         sa.Column(
             "id",
             postgresql.UUID(as_uuid=True),
             primary_key=True,
             server_default=sa.text("gen_random_uuid()"),
         ),
+        # Model uses: user_uuid
         sa.Column(
             "user_uuid",
             postgresql.UUID(as_uuid=True),
             sa.ForeignKey("users.uuid", ondelete="CASCADE"),
             nullable=False,
         ),
-        sa.Column("title", sa.String(255), nullable=True),
-        sa.Column("is_active", sa.Boolean, nullable=False, server_default="true"),
+        # Model uses: name (NOT title)
+        sa.Column("name", sa.String(255), nullable=False, server_default=""),
         sa.Column(
             "created_at",
             sa.DateTime(timezone=True),

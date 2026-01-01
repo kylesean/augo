@@ -28,7 +28,7 @@ class TransactionCRUDService:
         self.db = db
 
     async def get_financial_account(self, account_id: UUID, user_uuid: UUID) -> Optional[FinancialAccount]:
-        """获取并验证财务账户"""
+        """Get and validate financial account."""
         query = select(FinancialAccount).where(
             and_(FinancialAccount.id == account_id, FinancialAccount.user_uuid == user_uuid)
         )
@@ -52,7 +52,7 @@ class TransactionCRUDService:
     ) -> dict:
         """Create a single transaction record
 
-        Follow the principle of "record first, then link" and default to not联动余额.
+        Follow the principle of "record first, then link" and defaults to not linking balance.
         """
         tx_type = transaction_type.lower()
         transfer_amount = Decimal(str(amount))
@@ -280,7 +280,7 @@ class TransactionCRUDService:
 
         # Verify ownership
         if transaction.user_uuid != user_uuid:
-            raise BusinessError("无权限删除此交易", "PERMISSION_DENIED")
+            raise BusinessError("Permission denied to delete this transaction", "PERMISSION_DENIED")
 
         # Delete transaction record (associated comments and shares will be automatically deleted through ORM cascade)
         await self.db.delete(transaction)
@@ -458,7 +458,7 @@ class TransactionCRUDService:
 
         # Verify ownership
         if transaction.user_uuid != user_uuid:
-            raise BusinessError("无权限修改此交易", "PERMISSION_DENIED")
+            raise BusinessError("Permission denied to modify this transaction", "PERMISSION_DENIED")
 
         # Get transaction type
         is_expense = transaction.type == "EXPENSE"
@@ -567,7 +567,7 @@ class TransactionCRUDService:
                 )
                 if converted is None:
                     raise BusinessError(
-                        f"无法获取 {tx_currency} 到 {new_account_currency} 的汇率，请稍后重试",
+                        f"Unable to get exchange rate from {tx_currency} to {new_account_currency}, please try again later",
                         "EXCHANGE_RATE_UNAVAILABLE",
                     )
                 deduct_amount = Decimal(str(converted))
@@ -713,7 +713,7 @@ class TransactionCRUDService:
                 user_uuid=user_uuid,
                 transaction_id=transaction_id,
             )
-            raise BusinessError("评论内容不能为空", "TRANSACTION_COMMENT_NULL")
+            raise BusinessError("Comment content cannot be empty", "TRANSACTION_COMMENT_NULL")
 
         # Validate transaction exists
         tx_query = select(Transaction).where(Transaction.id == transaction_id)
@@ -740,11 +740,11 @@ class TransactionCRUDService:
             parent_comment = parent_result.scalar_one_or_none()
 
             if not parent_comment:
-                raise BusinessError("父评论不存在", "INVALID_PARENT_COMMENT_ID")
+                raise BusinessError("Parent comment does not exist", "INVALID_PARENT_COMMENT_ID")
 
             # Ensure the parent comment is not a child comment (single-level reply structure)
             if parent_comment.parent_comment_id is not None:
-                raise BusinessError("不能回复子评论", "INVALID_PARENT_COMMENT_ID")
+                raise BusinessError("Cannot reply to a child comment", "INVALID_PARENT_COMMENT_ID")
 
         # Create new comment
         new_comment = TransactionComment(
@@ -781,7 +781,7 @@ class TransactionCRUDService:
         comment_data = result.first()
 
         if not comment_data:
-            raise BusinessError("获取新评论数据失败", "STORE_COMMENT_FAILED")
+            raise BusinessError("Failed to retrieve new comment data", "STORE_COMMENT_FAILED")
 
         comment, user_name, user_avatar_url = comment_data
 
@@ -807,7 +807,7 @@ class TransactionCRUDService:
             "id": str(comment.id),
             "transactionId": str(comment.transaction_id),
             "userId": str(comment.user_uuid),
-            "userName": user_name or "匿名用户",
+            "userName": user_name or "Anonymous",
             "userAvatarUrl": user_avatar_url or "assets/images/avatars/default_avatar.png",
             "parentCommentId": str(comment.parent_comment_id) if comment.parent_comment_id else None,
             "commentText": comment.comment_text,
@@ -837,7 +837,7 @@ class TransactionCRUDService:
 
         # Verify permissions
         if comment.user_uuid != user_uuid:
-            raise BusinessError("你没有权限删除该评论", "PERMISSION_DENIED")
+            raise BusinessError("You do not have permission to delete this comment", "PERMISSION_DENIED")
 
         # Delete comment (if foreign key cascade delete, child comments will be automatically deleted)
         await self.db.delete(comment)

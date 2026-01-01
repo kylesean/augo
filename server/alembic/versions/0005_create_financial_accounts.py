@@ -24,12 +24,11 @@ def upgrade() -> None:
     """Create financial_accounts table."""
     op.create_table(
         "financial_accounts",
-        sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
+        # Primary key is UUID (matches model: id: UUID)
         sa.Column(
-            "uuid",
+            "id",
             postgresql.UUID(as_uuid=True),
-            nullable=False,
-            unique=True,
+            primary_key=True,
             server_default=sa.text("gen_random_uuid()"),
         ),
         sa.Column(
@@ -39,12 +38,10 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column("name", sa.String(100), nullable=False),
-        sa.Column(
-            "account_type",
-            sa.String(20),
-            nullable=False,
-            server_default="ASSET",
-        ),
+        # Model uses: nature: str (ASSET/LIABILITY)
+        sa.Column("nature", sa.String(20), nullable=False),
+        # Model uses: type: Optional[str]
+        sa.Column("type", sa.String(50), nullable=True),
         sa.Column("currency_code", sa.String(3), nullable=False, server_default="CNY"),
         sa.Column(
             "initial_balance",
@@ -58,12 +55,10 @@ def upgrade() -> None:
             nullable=False,
             server_default="0",
         ),
-        sa.Column("icon", sa.String(50), nullable=True),
-        sa.Column("color", sa.String(20), nullable=True),
-        sa.Column("description", sa.Text, nullable=True),
-        sa.Column("is_included_in_total", sa.Boolean, nullable=False, server_default="true"),
-        sa.Column("is_archived", sa.Boolean, nullable=False, server_default="false"),
-        sa.Column("display_order", sa.Integer, nullable=False, server_default="0"),
+        # Model uses: include_in_net_worth, include_in_cash_flow, status
+        sa.Column("include_in_net_worth", sa.Boolean, nullable=False, server_default="true"),
+        sa.Column("include_in_cash_flow", sa.Boolean, nullable=False, server_default="false"),
+        sa.Column("status", sa.String(20), nullable=False, server_default="ACTIVE"),
         sa.Column(
             "created_at",
             sa.DateTime(timezone=True),
@@ -76,14 +71,15 @@ def upgrade() -> None:
             nullable=False,
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
+        # Constraints
+        sa.CheckConstraint("nature IN ('ASSET', 'LIABILITY')", name="check_nature"),
+        sa.CheckConstraint("status IN ('ACTIVE', 'INACTIVE', 'CLOSED')", name="check_status"),
     )
     
     op.create_index("ix_financial_accounts_user_uuid", "financial_accounts", ["user_uuid"])
-    op.create_index("ix_financial_accounts_type", "financial_accounts", ["account_type"])
 
 
 def downgrade() -> None:
     """Drop financial_accounts table."""
-    op.drop_index("ix_financial_accounts_type")
     op.drop_index("ix_financial_accounts_user_uuid")
     op.drop_table("financial_accounts")

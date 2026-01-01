@@ -25,8 +25,8 @@ async def get_notifications(
     """Get user notifications with pagination."""
     # Base filters
     filters = [
-        Notification.user_uuid == current_user.id
-    ]  # Wait, let me check if user.id is what notification.user_uuid expects
+        Notification.user_uuid == current_user.uuid
+    ]
     if unread_only:
         filters.append(Notification.is_read.is_(False))
 
@@ -37,7 +37,7 @@ async def get_notifications(
 
     # Get unread count
     unread_count_query = select(func.count(Notification.id)).where(
-        and_(Notification.user_uuid == current_user.id, Notification.is_read.is_(False))
+        and_(Notification.user_uuid == current_user.uuid, Notification.is_read.is_(False))
     )
     unread_result = await db.execute(unread_count_query)
     unread_count = unread_result.scalar() or 0
@@ -82,7 +82,7 @@ async def get_unread_count(
 ):
     """Get unread notifications count."""
     query = select(func.count(Notification.id)).where(
-        and_(Notification.user_uuid == current_user.id, Notification.is_read.is_(False))
+        and_(Notification.user_uuid == current_user.uuid, Notification.is_read.is_(False))
     )
     result = await db.execute(query)
     count = result.scalar() or 0
@@ -97,7 +97,7 @@ async def mark_as_read(
 ):
     """Mark notification as read."""
     query = select(Notification).where(
-        and_(Notification.id == notification_id, Notification.user_uuid == current_user.id)
+        and_(Notification.id == notification_id, Notification.user_uuid == current_user.uuid)
     )
     result = await db.execute(query)
     notification = result.scalar_one_or_none()
@@ -120,7 +120,7 @@ async def mark_all_read(
 
     query = (
         update(Notification)
-        .where(and_(Notification.user_uuid == current_user.id, Notification.is_read.is_(False)))
+        .where(and_(Notification.user_uuid == current_user.uuid, Notification.is_read.is_(False)))
         .values(is_read=True, read_at=func.now())
     )
     await db.execute(query)
@@ -136,7 +136,7 @@ async def delete_notification(
 ):
     """Delete a notification."""
     query = select(Notification).where(
-        and_(Notification.id == notification_id, Notification.user_uuid == current_user.id)
+        and_(Notification.id == notification_id, Notification.user_uuid == current_user.uuid)
     )
     result = await db.execute(query)
     notification = result.scalar_one_or_none()

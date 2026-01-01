@@ -2,9 +2,11 @@
 
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
+from uuid import UUID
 
+import sqlalchemy as sa
 from pydantic import field_validator
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB, UUID as PGUUID
 from sqlmodel import Column, Field, Relationship
 
 from app.models.base import BaseModel
@@ -18,7 +20,7 @@ class Notification(BaseModel, table=True):
 
     Attributes:
         id: The primary key
-        user_uuid: Foreign key to users table
+        user_uuid: Foreign key to users.uuid
         type: Notification type
         title: Notification title
         content: Notification content (optional)
@@ -33,7 +35,11 @@ class Notification(BaseModel, table=True):
     __tablename__ = "notifications"
 
     id: Optional[int] = Field(default=None, primary_key=True, sa_column_kwargs={"autoincrement": True})
-    user_uuid: int = Field(foreign_key="users.id", index=True)
+    user_uuid: UUID = Field(
+        sa_column=Column(
+            PGUUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False, index=True
+        )
+    )
     type: str = Field(max_length=50)
     title: str = Field(max_length=255)
     content: Optional[str] = None
@@ -42,7 +48,12 @@ class Notification(BaseModel, table=True):
     read_at: Optional[datetime] = None
 
     # Relationship
-    user: Optional["User"] = Relationship()
+    user: Optional["User"] = Relationship(
+        sa_relationship_kwargs={
+            "foreign_keys": "[Notification.user_uuid]",
+            "primaryjoin": "Notification.user_uuid == User.uuid",
+        }
+    )
 
     @field_validator("title")
     @classmethod

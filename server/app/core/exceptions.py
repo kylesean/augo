@@ -103,15 +103,15 @@ class ErrorCode:
 
 
 class AppException(Exception):
-    """应用基础异常类
+    """Base application exception.
 
-    所有自定义异常的基类，提供统一的错误处理接口。
+    Base class for all custom exceptions, providing a unified error handling interface.
 
     Attributes:
-        message: 错误消息
-        status_code: HTTP 状态码
-        error_code: 错误代码（用于客户端识别错误类型）
-        details: 额外的错误详情（可选）
+        message: Error message
+        status_code: HTTP status code
+        error_code: Error code (for client-side error type identification)
+        details: Additional error details (optional)
     """
 
     def __init__(
@@ -139,12 +139,12 @@ class AppException(Exception):
 
 
 class AuthenticationError(AppException):
-    """认证错误
+    """Authentication error.
 
-    当用户身份验证失败时抛出，例如：
-    - 无效的凭据
-    - 过期的 token
-    - 缺少认证信息
+    Raised when user authentication fails, for example:
+    - Invalid credentials
+    - Expired token
+    - Missing authentication information
     """
 
     def __init__(
@@ -157,9 +157,9 @@ class AuthenticationError(AppException):
 
 
 class AuthorizationError(AppException):
-    """授权错误
+    """Authorization error.
 
-    当用户没有权限访问资源时抛出。
+    Raised when user does not have permission to access a resource.
     """
 
     def __init__(
@@ -172,12 +172,12 @@ class AuthorizationError(AppException):
 
 
 class ValidationError(AppException):
-    """验证错误
+    """Validation error.
 
-    当请求数据验证失败时抛出。
+    Raised when request data validation fails.
 
     Attributes:
-        field_errors: 字段级别的错误信息
+        field_errors: Field-level error information
     """
 
     def __init__(
@@ -192,9 +192,9 @@ class ValidationError(AppException):
 
 
 class NotFoundError(AppException):
-    """资源未找到错误
+    """Resource not found error.
 
-    当请求的资源不存在时抛出。
+    Raised when the requested resource does not exist.
     """
 
     def __init__(
@@ -208,12 +208,12 @@ class NotFoundError(AppException):
 
 
 class BusinessError(AppException):
-    """业务逻辑错误
+    """Business logic error.
 
-    当业务规则验证失败时抛出，例如：
-    - 重复注册
-    - 余额不足
-    - 状态不允许的操作
+    Raised when business rule validation fails, for example:
+    - Duplicate registration
+    - Insufficient balance
+    - Operation not allowed in current state
     """
 
     def __init__(
@@ -227,9 +227,9 @@ class BusinessError(AppException):
 
 
 class FileUploadError(AppException):
-    """文件上传错误
+    """File upload error.
 
-    当文件上传过程中发生错误时抛出。
+    Raised when an error occurs during file upload.
     """
 
     def __init__(
@@ -242,9 +242,9 @@ class FileUploadError(AppException):
 
 
 class AIServiceError(AppException):
-    """AI 服务错误
+    """AI service error.
 
-    当 AI/LLM 服务调用失败时抛出。
+    Raised when AI/LLM service call fails.
     """
 
     def __init__(
@@ -257,9 +257,9 @@ class AIServiceError(AppException):
 
 
 class DatabaseError(AppException):
-    """数据库错误
+    """Database error.
 
-    当数据库操作失败时抛出。
+    Raised when database operation fails.
     """
 
     def __init__(

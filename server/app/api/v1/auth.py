@@ -17,7 +17,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.database import get_session, get_session_context, session_repository
+from app.core.database import SessionRepository, get_session, get_session_context
 from app.core.logging import bind_context, logger
 from app.models.session import Session as ChatSession
 from app.models.user import User
@@ -121,7 +121,8 @@ async def get_authorized_session(
     sanitized_session_id = sanitize_string(session_id)
 
     # Verify session exists using repository
-    session = await session_repository.get(db, sanitized_session_id)
+    repo = SessionRepository(db)
+    session = await repo.get(sanitized_session_id)
     if session is None:
         logger.error("session_not_found", session_id=sanitized_session_id)
         raise HTTPException(
@@ -130,7 +131,7 @@ async def get_authorized_session(
         )
 
     # Verify ownership
-    if session.user_uuid != current_user.uuid:
+    if str(session.user_uuid) != str(current_user.uuid):
         logger.warning(
             "session_access_denied",
             session_id=sanitized_session_id,
@@ -237,7 +238,7 @@ async def register(
             avatarUrl=user.avatar_url,
             createdAt=user.created_at.isoformat(),
             updatedAt=user.updated_at.isoformat(),
-            clientLastLoginAt=user.client_last_login_at.isoformat() if user.client_last_login_at else None,
+            clientLastLoginAt=user.last_login_at.isoformat() if user.last_login_at else None,
         )
 
         logger.info(
@@ -316,7 +317,7 @@ async def login(
             avatarUrl=user.avatar_url,
             createdAt=user.created_at.isoformat(),
             updatedAt=user.updated_at.isoformat(),
-            clientLastLoginAt=user.client_last_login_at.isoformat() if user.client_last_login_at else None,
+            clientLastLoginAt=user.last_login_at.isoformat() if user.last_login_at else None,
         )
 
         logger.info(
@@ -366,7 +367,8 @@ async def create_session(user: User = Depends(get_current_user)):
 
         # Create session in database with default name "New Chat"
         async with get_session_context() as db:
-            session = await session_repository.create(db, session_id, str(user.uuid), name="New Chat")
+            repo = SessionRepository(db)
+            session = await repo.create(session_id, current_user.uuid, name="New Chat")
 
         logger.info(
             "session_created",
@@ -414,7 +416,8 @@ async def update_session_name(
     sanitized_name = sanitize_string(name)
 
     # Update the session name
-    updated_session = await session_repository.update_name(db, session.id, sanitized_name)
+    repo = SessionRepository(db)
+    updated_session = await repo.update_name(session.id, sanitized_name)
 
     logger.info(
         "session_name_updated",
@@ -458,9 +461,19 @@ async def delete_session(
 
     # Verify session ownership
     async with get_session_context() as db:
-        session = await session_repository.get(db, session_id)
-        if session is None or session.user_uuid != str(current_user.uuid):
+        repo = SessionRepository(db)
+        session = await repo.get(session_id)
+        if session is None:
             raise HTTPException(status_code=404, detail="Session not found")
+            
+        if str(session.user_uuid) != str(current_user.uuid):
+            logger.warning(
+                "session_delete_unauthorized",
+                session_id=session_id,
+                user_uuid=current_user.uuid,
+                owner_uuid=session.user_uuid,
+            )
+            raise HTTPException(status_code=403, detail="Access denied to this session")
 
     try:
         # 1. Use the chatbot agent to cascade delete history
@@ -469,7 +482,8 @@ async def delete_session(
 
         # 2. Delete the session metadata
         async with get_session_context() as db:
-            await session_repository.delete(db, session.id)
+            repo = SessionRepository(db)
+            await repo.delete(session.id)
 
         logger.info(
             "session_deleted_with_history",

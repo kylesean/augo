@@ -49,7 +49,7 @@ async def init_langgraph():
     try:
         from app.core.langgraph.simple_agent import SimpleLangChainAgent
         agent = SimpleLangChainAgent()
-        checkpointer = agent._get_checkpointer()
+        checkpointer = await agent._get_checkpointer()
         if checkpointer:
             await checkpointer.setup()
         logger.info("bootstrap_langgraph_tables_initialized")

@@ -13,53 +13,53 @@ from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
 
 # ============================================================================
-# 事件类型枚举
+# Event Type Enums
 # ============================================================================
 
 
 class GenUIEventType(str, Enum):
-    """GenUI 事件类型枚举
+    """GenUI event type enum.
 
-    消除魔法字符串，提供类型安全的事件类型引用。
+    Eliminates magic strings and provides type-safe event type references.
     """
 
-    # 会话生命周期
+    # Session lifecycle
     SESSION_INIT = "session_init"
     DONE = "done"
     ERROR = "error"
 
-    # 文本流
+    # Text stream
     TEXT_DELTA = "text_delta"
     REASONING_DELTA = "reasoning_delta"
 
-    # 工具调用
+    # Tool calls
     TOOL_CALL_START = "tool_call_start"
     TOOL_CALL_END = "tool_call_end"
 
-    # UI 组件
+    # UI components
     A2UI_MESSAGE = "a2ui_message"
 
-    # 元数据
+    # Metadata
     TITLE_UPDATE = "title_update"
 
 
 class SilentMode(str, Enum):
-    """静默模式枚举"""
+    """Silent mode enum."""
 
-    NONE = "none"  # 正常模式：文本和 UI 都输出
-    TEXT_ONLY = "text_only"  # 只静默文本，UI 正常
-    FULL = "full"  # 完全静默
+    NONE = "none"  # Normal mode: both text and UI output
+    TEXT_ONLY = "text_only"  # Only silence text, UI normal
+    FULL = "full"  # Completely silent
 
 
 class UIComponentMode(str, Enum):
-    """UI 组件渲染模式"""
+    """UI component rendering mode."""
 
     LIVE = "live"
     HISTORICAL = "historical"
 
 
 # ============================================================================
-# 核心数据模型
+# Core Data Models
 # ============================================================================
 
 
@@ -82,12 +82,12 @@ class GenUIEvent(BaseModel):
     """GenUI streaming event.
 
     Attributes:
-        type: 事件类型（推荐使用 GenUIEventType 枚举）
-        content: 文本内容（用于 text_delta 等）
-        data: 结构化数据（用于 tool_call_start, a2ui_message 等）
+        type: Event type (recommend using GenUIEventType enum)
+        content: Text content (for text_delta, etc.)
+        data: Structured data (for tool_call_start, a2ui_message, etc.)
         surface_id: Surface ID
-        title: 标题（用于 title_update）
-        metadata: 额外元数据
+        title: Title (for title_update)
+        metadata: Additional metadata
     """
 
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)

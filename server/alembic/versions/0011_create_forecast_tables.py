@@ -27,15 +27,17 @@ def upgrade() -> None:
     
     # =========================================================================
     # account_daily_snapshots - Daily balance snapshots for charts
+    # Composite primary key: (snapshot_date, account_id)
     # =========================================================================
     op.create_table(
         "account_daily_snapshots",
-        sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column("snapshot_date", sa.Date, nullable=False),
+        # Model uses composite primary key: (snapshot_date, account_id)
+        sa.Column("snapshot_date", sa.Date, primary_key=True, nullable=False),
         sa.Column(
             "account_id",
-            sa.Integer,
+            postgresql.UUID(as_uuid=True),
             sa.ForeignKey("financial_accounts.id", ondelete="CASCADE"),
+            primary_key=True,
             nullable=False,
         ),
         sa.Column(
@@ -45,11 +47,7 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column("currency", sa.String(3), nullable=False),
-        sa.Column(
-            "balance",
-            sa.Numeric(precision=20, scale=8),
-            nullable=False,
-        ),
+        sa.Column("balance", sa.Numeric(precision=20, scale=8), nullable=False),
         sa.Column(
             "total_incoming",
             sa.Numeric(precision=20, scale=8),
@@ -62,9 +60,15 @@ def upgrade() -> None:
             nullable=False,
             server_default="0",
         ),
-        sa.Column("exchange_rate_snapshot", postgresql.JSONB, nullable=True),
+        sa.Column("exchange_rate_snapshot", sa.Numeric(precision=20, scale=8), nullable=True),
         sa.Column(
             "created_at",
+            sa.DateTime(timezone=True),
+            nullable=False,
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+        ),
+        sa.Column(
+            "updated_at",
             sa.DateTime(timezone=True),
             nullable=False,
             server_default=sa.text("CURRENT_TIMESTAMP"),
@@ -74,23 +78,17 @@ def upgrade() -> None:
     op.create_index("ix_account_daily_snapshots_user_uuid", "account_daily_snapshots", ["user_uuid"])
     op.create_index("ix_account_daily_snapshots_account_id", "account_daily_snapshots", ["account_id"])
     op.create_index("ix_account_daily_snapshots_date", "account_daily_snapshots", ["snapshot_date"])
-    op.create_unique_constraint(
-        "uq_account_daily_snapshot",
-        "account_daily_snapshots",
-        ["account_id", "snapshot_date"],
-    )
     
     # =========================================================================
     # ai_feedback_memory - User feedback on AI predictions for RAG
     # =========================================================================
     op.create_table(
         "ai_feedback_memory",
-        sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
+        # Model uses: id: Optional[UUID]
         sa.Column(
-            "uuid",
+            "id",
             postgresql.UUID(as_uuid=True),
-            nullable=False,
-            unique=True,
+            primary_key=True,
             server_default=sa.text("gen_random_uuid()"),
         ),
         sa.Column(
@@ -100,11 +98,15 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column("insight_type", sa.String(50), nullable=False),
-        sa.Column("user_action", sa.String(50), nullable=False),
-        sa.Column("ai_content_snapshot", sa.Text, nullable=True),
+        # Model uses: target_table, target_id
+        sa.Column("target_table", sa.String(50), nullable=True),
+        sa.Column("target_id", postgresql.UUID(as_uuid=True), nullable=True),
+        # Model uses: ai_content_snapshot (JSONB, NOT NULL)
+        sa.Column("ai_content_snapshot", postgresql.JSONB, nullable=False, server_default=sa.text("'{}'::jsonb")),
+        sa.Column("user_action", sa.String(20), nullable=False),
         sa.Column("user_correction_data", postgresql.JSONB, nullable=True),
-        sa.Column("preference_rule", sa.Text, nullable=True),
-        sa.Column("context_tags", postgresql.JSONB, nullable=True),
+        sa.Column("preference_rule", postgresql.JSONB, nullable=True),
+        sa.Column("is_processed", sa.Boolean, nullable=False, server_default="false"),
         sa.Column(
             "created_at",
             sa.DateTime(timezone=True),
@@ -131,7 +133,6 @@ def downgrade() -> None:
     op.drop_index("ix_ai_feedback_memory_user_uuid")
     op.drop_table("ai_feedback_memory")
     
-    op.drop_constraint("uq_account_daily_snapshot", "account_daily_snapshots")
     op.drop_index("ix_account_daily_snapshots_date")
     op.drop_index("ix_account_daily_snapshots_account_id")
     op.drop_index("ix_account_daily_snapshots_user_uuid")

@@ -75,8 +75,8 @@ class SimpleLangChainAgent:
             logger.info("memory_service_initialized")
         return self._memory_service
 
-    async def _get_checkpointer(self) -> AsyncPostgresSaver:
-        """获取 PostgreSQL checkpointer（短期记忆）"""
+    async def _get_checkpointer(self):
+        """获取 LangGraph checkpointer"""
         if self._conn_pool is None:
             connection_url = (
                 "postgresql://"
@@ -97,7 +97,9 @@ class SimpleLangChainAgent:
             await self._conn_pool.open()
 
         checkpointer = AsyncPostgresSaver(self._conn_pool)
-        await checkpointer.setup()
+        # Note: We skip checkpointer.setup() here to avoid runtime deadlocks
+        # during concurrent app initialization. Database tables and indexes
+        # are managed by scripts/bootstrap.py.
         return checkpointer
 
     async def _initialize_middlewares(self) -> list:

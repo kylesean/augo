@@ -32,7 +32,7 @@ class ExecuteTransferInput(BaseModel):
 
 
 def _get_user_uuid(config: RunnableConfig) -> Optional[uuid.UUID]:
-    """从配置中提取用户 UUID，返回 UUID 对象"""
+    """Extract user UUID from config, return UUID object."""
     val = config.get("configurable", {}).get("user_uuid")
     if val is None:
         return None
@@ -40,7 +40,7 @@ def _get_user_uuid(config: RunnableConfig) -> Optional[uuid.UUID]:
 
 
 def _parse_time(time_str: Optional[str]) -> datetime:
-    """解析时间字符串，失败则返回当前时间"""
+    """Parse time string, return current time if failed."""
     if not time_str:
         return datetime.now(timezone.utc)
     try:
@@ -68,16 +68,16 @@ async def execute_transfer(
     """
     user_uuid = _get_user_uuid(config)
     if not user_uuid:
-        return {"success": False, "message": "用户未认证"}
+        return {"success": False, "message": "User not authenticated"}
 
-    # 验证账户 ID
+    # Validate account IDs
     if source_account_id == target_account_id:
-        return {"success": False, "message": "转出和转入账户不能相同"}
+        return {"success": False, "message": "Source and target accounts cannot be the same"}
 
     tx_time = _parse_time(transaction_at)
 
-    # 构建 tags（转账通常用 memo 作为描述）
-    tags = ["转账"]
+    # Build tags (transfer usually uses memo as description)
+    tags = ["transfer"]
     if memo:
         tags.append(memo)
 
@@ -86,12 +86,12 @@ async def execute_transfer(
 
         try:
             result = await service.create_transaction(
-                user_uuid=user_uuid,  # 已是 UUID 对象
+                user_uuid=user_uuid,  # Already UUID object
                 amount=amount,
                 transaction_type="transfer",
                 transaction_at=tx_time,
                 category_key="GENERAL_TRANSFER",
-                raw_input=memo or "转账",
+                raw_input=memo or "Transfer",
                 source_account_id=uuid.UUID(source_account_id),
                 target_account_id=uuid.UUID(target_account_id),
                 tags=tags,
@@ -103,8 +103,9 @@ async def execute_transfer(
 
         except Exception as e:
             logger.error("execute_transfer_failed", error=str(e), exc_info=True)
-            return {"success": False, "message": f"转账失败: {str(e)}"}
+            return {"success": False, "message": f"Transfer failed: {str(e)}"}
 
 
 # Export
 transfer_tools = [execute_transfer]
+

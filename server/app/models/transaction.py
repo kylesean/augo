@@ -92,8 +92,8 @@ class Transaction(BaseModel, table=True):
     description: Optional[str] = None
     raw_input: str = Field(default="")  # NOT NULL in DDL
     category_key: str = Field(max_length=25, default="")
-    subject: str = Field(max_length=20, default="SELF")  # 交易受益人
-    intent: str = Field(max_length=20, default="SURVIVAL")  # 交易动机
+    subject: str = Field(max_length=20, default="SELF")  # Transaction beneficiary
+    intent: str = Field(max_length=20, default="SURVIVAL")  # Transaction motivation
     source_thread_id: Optional[UUID] = Field(
         default=None,
         sa_column=Column(PGUUID(as_uuid=True), nullable=True, index=True),

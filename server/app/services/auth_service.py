@@ -151,12 +151,12 @@ class AuthService:
             "password": hashed_password,
             "timezone": timezone,
             "registration_type": account_type,
-            "client_last_login_at": utc_now(),
+            "last_login_at": utc_now(),
         }
 
         # Set client IP if provided (validation happens in model)
         if client_ip:
-            user_data["client_last_ip"] = client_ip
+            user_data["last_login_ip"] = client_ip
 
         # Set email or mobile based on type
         if account_type == "email":
@@ -170,28 +170,25 @@ class AuthService:
         await self.db.commit()
         await self.db.refresh(user)
 
-        # Create default financial settings for the new user (with locale-aware currency)
-        await self._create_default_financial_settings(user.uuid, locale)
+        # Create default financial settings for the new user
+        await self._create_default_financial_settings(user.uuid)
 
-        logger.info("user_registered", user_uuid=user.uuid, account_type=account_type, locale=locale or "not_provided")
+        logger.info("user_registered", user_uuid=user.uuid, account_type=account_type)
 
         return user
 
-    async def _create_default_financial_settings(self, user_uuid, locale: Optional[str] = None) -> None:
+    async def _create_default_financial_settings(self, user_uuid) -> None:
         """Create default financial settings for a new user.
 
         Args:
             user_uuid: The user's UUID
-            locale: Device locale for smart currency defaults (e.g., 'zh_CN', 'en_US')
         """
         from app.services.user_service import UserService
 
         try:
             user_service = UserService(self.db)
-            await user_service.create_default_financial_settings(user_uuid, locale)
-            logger.info(
-                "default_financial_settings_created", user_uuid=str(user_uuid), locale=locale or "not_provided"
-            )
+            await user_service.create_default_financial_settings(user_uuid)
+            logger.info("default_financial_settings_created", user_uuid=str(user_uuid))
         except Exception as e:
             # Log error but don't fail registration
             logger.error("failed_to_create_financial_settings", user_uuid=str(user_uuid), error=str(e))
@@ -239,11 +236,11 @@ class AuthService:
             needs_update = True
 
         if client_ip:
-            user.client_last_ip = client_ip
+            user.last_login_ip = client_ip
             needs_update = True
 
         # Always update last login time
-        user.client_last_login_at = utc_now()
+        user.last_login_at = utc_now()
         needs_update = True
 
         if needs_update:

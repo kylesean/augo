@@ -168,7 +168,7 @@ class UserService:
             "avatarUrl": user.avatar_url,
             "createdAt": _format_iso_datetime(user.created_at),
             "updatedAt": _format_iso_datetime(user.updated_at),
-            "clientLastLoginAt": _format_iso_datetime(user.client_last_login_at),
+            "lastLoginAt": _format_iso_datetime(user.last_login_at),
         }
 
     async def save_financial_accounts(self, user_uuid: UUID, accounts: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -240,11 +240,11 @@ class UserService:
             total_balance=str(total_balance),
         )
 
-        # 获取显示币种
+        # get user display currency
         display_currency = await get_user_display_currency(self.db, user_uuid)
 
-        # 重新汇总所有账户资产，并按用户显示币种换算
-        # 注意：这里需要考虑每个账户自己的 currency_code
+        # re-calculate total balance and convert to display currency
+        # note: here we need to consider each account's own currency_code
         result = await self.db.execute(
             select(FinancialAccount)
             .where(FinancialAccount.user_uuid == user_uuid)
@@ -637,96 +637,24 @@ class UserService:
 
         return settings
 
-    async def create_default_financial_settings(
-        self, user_uuid: UUID, locale: Optional[str] = None
-    ) -> FinancialSettings:
+    async def create_default_financial_settings(self, user_uuid: UUID) -> FinancialSettings:
         """Create default financial settings for a user.
 
         Called during user registration or when settings don't exist.
-        Uses device locale to intelligently set the default currency.
+        Uses USD as the default currency. Users can change this in settings.
 
         Args:
             user_uuid: The user's UUID
-            locale: Device locale (e.g., 'zh_CN', 'en_US', 'ja_JP')
 
         Returns:
             FinancialSettings: The created settings object
         """
-        # Locale to currency mapping (based on country/region code)
-        locale_currency_map = {
-            # China
-            "CN": "CNY",
-            "zh_CN": "CNY",
-            "zh_Hans_CN": "CNY",
-            # United States
-            "US": "USD",
-            "en_US": "USD",
-            # Japan
-            "JP": "JPY",
-            "ja_JP": "JPY",
-            # United Kingdom
-            "GB": "GBP",
-            "en_GB": "GBP",
-            # European Union countries
-            "DE": "EUR",
-            "FR": "EUR",
-            "IT": "EUR",
-            "ES": "EUR",
-            "NL": "EUR",
-            "de_DE": "EUR",
-            "fr_FR": "EUR",
-            # Canada
-            "CA": "CAD",
-            "en_CA": "CAD",
-            "fr_CA": "CAD",
-            # Australia
-            "AU": "AUD",
-            "en_AU": "AUD",
-            # Hong Kong
-            "HK": "HKD",
-            "zh_HK": "HKD",
-            "zh_Hant_HK": "HKD",
-            # Taiwan
-            "TW": "TWD",
-            "zh_TW": "TWD",
-            "zh_Hant_TW": "TWD",
-            # India
-            "IN": "INR",
-            "hi_IN": "INR",
-            "en_IN": "INR",
-            # Russia / fallback
-            "RU": "RUB",
-            "ru_RU": "RUB",
-        }
-
-        # Determine default currency from locale
-        default_currency = "USD"  # Fallback default USD
-
-        if locale:
-            # Try full locale match first (e.g., "zh_CN")
-            if locale in locale_currency_map:
-                default_currency = locale_currency_map[locale]
-            else:
-                # Try extracting country code (last 2 chars)
-                parts = locale.replace("-", "_").split("_")
-                if len(parts) >= 2:
-                    country_code = parts[-1].upper()
-                    if len(country_code) == 2 and country_code in locale_currency_map:
-                        default_currency = locale_currency_map[country_code]
-
-        logger.info(
-            "creating_financial_settings_with_locale",
-            user_uuid=str(user_uuid),
-            locale=locale or "not_provided",
-            resolved_currency=default_currency,
-        )
-
         settings = FinancialSettings(
             user_uuid=user_uuid,
             safety_threshold=Decimal("1000.00"),
             daily_burn_rate=Decimal("100.00"),
             burn_rate_mode="AI_AUTO",
-            primary_currency=default_currency,
+            primary_currency="USD",
             month_start_day=1,
             updated_at=utc_now(),
         )
@@ -734,7 +662,7 @@ class UserService:
         await self.db.commit()
         await self.db.refresh(settings)
 
-        logger.info("financial_settings_created", user_uuid=str(user_uuid), primary_currency=default_currency)
+        logger.info("financial_settings_created", user_uuid=str(user_uuid), primary_currency="USD")
 
         return settings
 

@@ -39,7 +39,7 @@ def upgrade() -> None:
         sa.Column("username", sa.String(50), nullable=True),
         sa.Column("email", sa.String(255), nullable=True, unique=True),
         sa.Column("mobile", sa.String(20), nullable=True, unique=True),
-        sa.Column("hashed_password", sa.String(255), nullable=True),
+        sa.Column("password", sa.String(255), nullable=True),
         sa.Column("avatar_url", sa.String(500), nullable=True),
         sa.Column("timezone", sa.String(50), nullable=True, server_default="UTC"),
         sa.Column(
@@ -49,7 +49,7 @@ def upgrade() -> None:
             server_default="email",
         ),
         sa.Column("last_login_at", sa.DateTime(timezone=True), nullable=True),
-        sa.Column("last_login_ip", sa.String(45), nullable=True),
+        sa.Column("last_login_ip", postgresql.INET, nullable=True),
         sa.Column(
             "created_at",
             sa.DateTime(timezone=True),

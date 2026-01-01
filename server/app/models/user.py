@@ -38,8 +38,8 @@ class User(BaseModel, table=True):
         avatar_url: URL to user's avatar image
         timezone: User's timezone (default: Asia/Shanghai)
         registration_type: How user registered ('email' or 'mobile')
-        client_last_ip: Last IP address used by client
-        client_last_login_at: Last login timestamp
+        last_login_ip: Last IP address used by client
+        last_login_at: Last login timestamp
         created_at: When the user was created
         updated_at: When the user was last updated
         settings: Relationship to user settings
@@ -57,8 +57,8 @@ class User(BaseModel, table=True):
     avatar_url: Optional[str] = Field(default=None, max_length=500)
     timezone: str = Field(default="Asia/Shanghai", max_length=100)
     registration_type: str = Field(max_length=20)  # 'email' or 'mobile'
-    client_last_ip: Optional[str] = Field(default=None, sa_column=Column(postgresql.INET, nullable=True))
-    client_last_login_at: Optional[datetime] = Field(default=None, sa_type=DateTime(timezone=True))
+    last_login_ip: Optional[str] = Field(default=None, sa_column=Column(postgresql.INET, nullable=True))
+    last_login_at: Optional[datetime] = Field(default=None, sa_type=DateTime(timezone=True))
     # Relationships
     settings: Optional["UserSettings"] = Relationship(
         sa_relationship_kwargs={
@@ -126,7 +126,7 @@ class User(BaseModel, table=True):
             return cleaned
         return v
 
-    @field_validator("client_last_ip")
+    @field_validator("last_login_ip")
     @classmethod
     def validate_ip_address(cls, v: Optional[str]) -> Optional[str]:
         """Validate IP address format for PostgresSQL INET type.

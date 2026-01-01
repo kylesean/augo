@@ -91,7 +91,9 @@ case $COMMAND in
         done
 
         uv sync
-        echo -e "${GREEN}Bootstrapping database...${NC}"
+        echo -e "${GREEN}Running database migrations...${NC}"
+        uv run alembic upgrade head
+        echo -e "${GREEN}Bootstrapping external components...${NC}"
         export PYTHONPATH=$PYTHONPATH:.
         uv run python scripts/bootstrap.py
         echo -e "${GREEN}Setup complete!${NC}"
@@ -110,7 +112,9 @@ case $COMMAND in
         uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
         ;;
     bootstrap)
-        echo -e "${GREEN}Initializing database components...${NC}"
+        echo -e "${GREEN}Running database migrations...${NC}"
+        uv run alembic upgrade head
+        echo -e "${GREEN}Initializing external components...${NC}"
         export PYTHONPATH=$PYTHONPATH:.
         uv run python scripts/bootstrap.py
         ;;

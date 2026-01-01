@@ -90,9 +90,9 @@ async def convert_to_display_currency(
         return amount
 
 
-# 系统默认的基础货币（本位币），用于数据库存储和聚合统计。
-# 所有存储在 Transaction.amount 中的数值均以此货币为准。
-# 使用 USD 作为国际标准基准货币，与汇率 API 的 base_code 保持一致。
+# System default base currency for database storage and aggregate statistics.
+# All values stored in Transaction.amount use this currency.
+# Using USD as the international standard base currency, consistent with exchange rate API base_code.
 BASE_CURRENCY = "USD"
 
 

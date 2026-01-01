@@ -223,18 +223,26 @@ class SessionRepository:
     """Repository for ChatSession CRUD operations.
 
     Provides async database operations for session management.
-    Uses dependency injection pattern - receives session from caller.
+    Uses dependency injection pattern - receives session in constructor.
 
     Example:
         ```python
         async with get_session_context() as db:
-            session = await session_repository.create(db, session_id, user_uuid)
+            repo = SessionRepository(db)
+            session = await repo.create(session_id, user_uuid)
         ```
     """
 
-    @staticmethod
+    def __init__(self, db: AsyncSession):
+        """Initialize repository with database session.
+
+        Args:
+            db: Async database session
+        """
+        self.db = db
+
     async def create(
-        db: AsyncSession,
+        self,
         session_id: str,
         user_uuid: str,
         name: str = "",
@@ -242,7 +250,6 @@ class SessionRepository:
         """Create a new chat session.
 
         Args:
-            db: Async database session
             session_id: Unique session identifier
             user_uuid: Owner's UUID
             name: Optional session name (defaults to empty string)
@@ -257,9 +264,9 @@ class SessionRepository:
             user_uuid=user_uuid,
             name=name,
         )
-        db.add(chat_session)
-        await db.commit()
-        await db.refresh(chat_session)
+        self.db.add(chat_session)
+        await self.db.commit()
+        await self.db.refresh(chat_session)
 
         logger.info(
             "session_created",
@@ -270,15 +277,13 @@ class SessionRepository:
 
         return chat_session
 
-    @staticmethod
     async def get(
-        db: AsyncSession,
+        self,
         session_id: str,
     ) -> Optional["ChatSession"]:
         """Get a session by ID.
 
         Args:
-            db: Async database session
             session_id: Session identifier
 
         Returns:
@@ -286,18 +291,16 @@ class SessionRepository:
         """
         from app.models.session import Session as ChatSession
 
-        result = await db.execute(select(ChatSession).where(ChatSession.id == session_id))
+        result = await self.db.execute(select(ChatSession).where(ChatSession.id == session_id))
         return result.scalar_one_or_none()
 
-    @staticmethod
     async def get_by_user(
-        db: AsyncSession,
+        self,
         user_uuid: str,
     ) -> list["ChatSession"]:
         """Get all sessions for a user.
 
         Args:
-            db: Async database session
             user_uuid: User's UUID
 
         Returns:
@@ -305,21 +308,19 @@ class SessionRepository:
         """
         from app.models.session import Session as ChatSession
 
-        result = await db.execute(
+        result = await self.db.execute(
             select(ChatSession).where(ChatSession.user_uuid == user_uuid).order_by(ChatSession.created_at.desc())
         )
         return list(result.scalars().all())
 
-    @staticmethod
     async def update_name(
-        db: AsyncSession,
+        self,
         session_id: str,
         name: str,
     ) -> Optional["ChatSession"]:
         """Update a session's name.
 
         Args:
-            db: Async database session
             session_id: Session identifier
             name: New session name
 
@@ -328,13 +329,13 @@ class SessionRepository:
         """
         from app.models.session import Session as ChatSession
 
-        result = await db.execute(select(ChatSession).where(ChatSession.id == session_id))
+        result = await self.db.execute(select(ChatSession).where(ChatSession.id == session_id))
         chat_session = result.scalar_one_or_none()
 
         if chat_session:
             chat_session.name = name
-            await db.commit()
-            await db.refresh(chat_session)
+            await self.db.commit()
+            await self.db.refresh(chat_session)
 
             logger.info(
                 "session_name_updated",
@@ -344,15 +345,13 @@ class SessionRepository:
 
         return chat_session
 
-    @staticmethod
     async def delete(
-        db: AsyncSession,
+        self,
         session_id: str,
     ) -> bool:
         """Delete a session by ID.
 
         Args:
-            db: Async database session
             session_id: Session identifier
 
         Returns:
@@ -360,19 +359,14 @@ class SessionRepository:
         """
         from app.models.session import Session as ChatSession
 
-        result = await db.execute(delete(ChatSession).where(ChatSession.id == session_id))
-        await db.commit()
+        result = await self.db.execute(delete(ChatSession).where(ChatSession.id == session_id))
+        await self.db.commit()
 
         deleted = result.rowcount > 0
         if deleted:
             logger.info("session_deleted", session_id=session_id)
 
         return deleted
-
-
-# Singleton repository instance
-session_repository = SessionRepository()
-
 
 # Type hint for forward reference
 if TYPE_CHECKING:
