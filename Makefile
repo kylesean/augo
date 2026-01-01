@@ -22,6 +22,13 @@ help:
 	@echo "  make format    - Format code"
 	@echo "  make test      - Run tests"
 	@echo ""
+	@echo "Database Migrations:"
+	@echo "  make db-migrate MSG='description' - Generate migration from model changes"
+	@echo "  make db-upgrade                   - Apply pending migrations"
+	@echo "  make db-downgrade                 - Rollback last migration"
+	@echo "  make db-current                   - Show current migration version"
+	@echo "  make db-check                     - Check if schema is in sync"
+	@echo ""
 	@echo "Docker:"
 	@echo "  make docker-up   - Build and start all Docker services"
 	@echo "  make docker-down - Stop all Docker services"
@@ -63,6 +70,46 @@ format:
 
 bootstrap:
 	cd server && ./manage.sh bootstrap
+
+# ============================================================
+# Database Migration Commands
+# ============================================================
+
+# Generate a new migration from model changes
+# Usage: make db-migrate MSG="add_user_avatar_field"
+db-migrate:
+ifndef MSG
+	$(error MSG is required. Usage: make db-migrate MSG="description")
+endif
+	cd server && uv run alembic revision --autogenerate -m "$(MSG)"
+
+# Apply all pending migrations
+db-upgrade:
+	cd server && uv run alembic upgrade head
+
+# Rollback the last migration
+db-downgrade:
+	cd server && uv run alembic downgrade -1
+
+# Show migration history
+db-history:
+	cd server && uv run alembic history --verbose
+
+# Show current migration version
+db-current:
+	cd server && uv run alembic current
+
+# Check if models match database schema
+db-check:
+	cd server && uv run alembic check
+
+# Stamp database with a specific revision without running migrations
+# Usage: make db-stamp REV="001"
+db-stamp:
+ifndef REV
+	$(error REV is required. Usage: make db-stamp REV="001")
+endif
+	cd server && uv run alembic stamp $(REV)
 
 # ============================================================
 # Docker Commands

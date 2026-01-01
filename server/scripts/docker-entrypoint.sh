@@ -1,54 +1,50 @@
 #!/bin/bash
+# ==============================================================================
+# Docker Entrypoint Script
+# ==============================================================================
+# This script handles application initialization:
+# 1. Environment variable loading
+# 2. Service connectivity checks
+# 3. Database migrations (Alembic)
+# 4. External component initialization (LangGraph, Mem0)
+# ==============================================================================
+
 set -e
 
-# Print initial environment values (before loading .env)
-echo "Starting with these environment variables:"
-echo "APP_ENV: ${APP_ENV:-development}"
-echo "Initial Database Host: $( [[ -n ${POSTGRES_HOST:-${DB_HOST:-}} ]] && echo 'set' || echo 'Not set' )"
-echo "Initial Database Port: $( [[ -n ${POSTGRES_PORT:-${DB_PORT:-}} ]] && echo 'set' || echo 'Not set' )"
-echo "Initial Database Name: $( [[ -n ${POSTGRES_DB:-${DB_NAME:-}} ]] && echo 'set' || echo 'Not set' )"
-echo "Initial Database User: $( [[ -n ${POSTGRES_USER:-${DB_USER:-}} ]] && echo 'set' || echo 'Not set' )"
+# ==============================================================================
+# Environment Loading
+# ==============================================================================
 
-# Load environment variables from the appropriate .env file
-if [ -f ".env.${APP_ENV}" ]; then
-    echo "Loading environment from .env.${APP_ENV}"
-    while IFS= read -r line || [[ -n "$line" ]]; do
-        # Skip comments and empty lines
-        [[ "$line" =~ ^[[:space:]]*# ]] && continue
-        [[ -z "$line" ]] && continue
+echo "Starting with environment: ${APP_ENV:-development}"
 
-        # Extract the key
-        key=$(echo "$line" | cut -d '=' -f 1)
+# Load environment variables from .env files
+load_env_file() {
+    local env_file=$1
+    if [ -f "$env_file" ]; then
+        echo "Loading environment from $env_file"
+        while IFS= read -r line || [[ -n "$line" ]]; do
+            [[ "$line" =~ ^[[:space:]]*# ]] && continue
+            [[ -z "$line" ]] && continue
+            key=$(echo "$line" | cut -d '=' -f 1)
+            if [[ -z "${!key}" ]]; then
+                export "$line"
+            fi
+        done <"$env_file"
+        return 0
+    fi
+    return 1
+}
 
-        # Only set if not already set in environment
-        if [[ -z "${!key}" ]]; then
-            export "$line"
-        else
-            echo "Keeping existing value for $key"
-        fi
-    done <".env.${APP_ENV}"
-elif [ -f ".env" ]; then
-    echo "Loading environment from .env"
-    while IFS= read -r line || [[ -n "$line" ]]; do
-        # Skip comments and empty lines
-        [[ "$line" =~ ^[[:space:]]*# ]] && continue
-        [[ -z "$line" ]] && continue
-
-        # Extract the key
-        key=$(echo "$line" | cut -d '=' -f 1)
-
-        # Only set if not already set in environment
-        if [[ -z "${!key}" ]]; then
-            export "$line"
-        else
-            echo "Keeping existing value for $key"
-        fi
-    done <".env"
-else
-    echo "Warning: No .env file found. Using system environment variables."
+if ! load_env_file ".env.${APP_ENV}"; then
+    if ! load_env_file ".env"; then
+        echo "Warning: No .env file found. Using system environment variables."
+    fi
 fi
 
-# Check required sensitive environment variables
+# ==============================================================================
+# Required Environment Variables Check
+# ==============================================================================
+
 required_vars=("JWT_SECRET_KEY" "OPENAI_API_KEY")
 missing_vars=()
 
@@ -59,50 +55,56 @@ for var in "${required_vars[@]}"; do
 done
 
 if [[ ${#missing_vars[@]} -gt 0 ]]; then
-    echo "ERROR: The following required environment variables are missing:"
+    echo "ERROR: Missing required environment variables:"
     for var in "${missing_vars[@]}"; do
         echo "  - $var"
     done
-    echo "Please provide these variables through environment or .env files."
     exit 1
 fi
 
-# Print final environment info
-echo -e "\nFinal environment configuration:"
-echo "Environment: ${APP_ENV:-development}"
+echo ""
+echo "Configuration:"
+echo "  Environment: ${APP_ENV:-development}"
+echo "  LLM Model: ${DEFAULT_LLM_MODEL:-Not set}"
 
-echo "Database Host: $( [[ -n ${POSTGRES_HOST:-${DB_HOST:-}} ]] && echo 'set' || echo 'Not set' )"
-echo "Database Port: $( [[ -n ${POSTGRES_PORT:-${DB_PORT:-}} ]] && echo 'set' || echo 'Not set' )"
-echo "Database Name: $( [[ -n ${POSTGRES_DB:-${DB_NAME:-}} ]] && echo 'set' || echo 'Not set' )"
-echo "Database User: $( [[ -n ${POSTGRES_USER:-${DB_USER:-}} ]] && echo 'set' || echo 'Not set' )"
+# ==============================================================================
+# Service Connectivity Checks
+# ==============================================================================
 
-echo "LLM Model: ${DEFAULT_LLM_MODEL:-Not set}"
-echo "Debug Mode: ${DEBUG:-false}"
-
-# 1. Check Connectivity (Postgres & Redis)
-echo -e "\nVerifying service connectivity..."
+echo ""
+echo "Verifying service connectivity..."
 export PYTHONPATH=.
 
-if command -v python &> /dev/null; then
-    # Give the database a bit of time to initialize just in case
+if command -v python &>/dev/null; then
     echo "Checking Database..."
-    python scripts/check_db.py || (echo "DB check failed. Waiting 5s and retrying..." && sleep 5 && python scripts/check_db.py) || exit 1
-    
+    python scripts/check_db.py || (sleep 5 && python scripts/check_db.py) || exit 1
+
     echo "Checking Redis (optional)..."
-    python scripts/check_redis.py || echo "Redis not available - continuing without cache (optional)"
-else
-    echo "Warning: python not found, skipping connectivity checks"
+    python scripts/check_redis.py || echo "Redis not available - continuing without cache"
 fi
 
-# 2. Run database migrations and bootstrap initialization
-echo -e "\nRunning database bootstrap..."
-if command -v python &> /dev/null; then
-    python scripts/bootstrap.py
-else
-    echo "Warning: python not found, skipping bootstrap"
-fi
+# ==============================================================================
+# Database Migrations (Alembic)
+# ==============================================================================
 
+echo ""
+echo "Running database migrations..."
+alembic upgrade head
+echo "Database migrations completed."
 
-# Execute the CMD
-echo -e "\nStarting application..."
+# ==============================================================================
+# External Component Initialization
+# ==============================================================================
+
+echo ""
+echo "Initializing external components (LangGraph, Mem0)..."
+python scripts/bootstrap.py
+echo "Bootstrap completed."
+
+# ==============================================================================
+# Start Application
+# ==============================================================================
+
+echo ""
+echo "Starting application..."
 exec "$@"
