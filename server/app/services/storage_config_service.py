@@ -54,10 +54,12 @@ class StorageConfigService:
         Raises:
             ValueError: If provider_type is invalid
         """
+        from app.core.exceptions import ValidationError
+
         # Validate provider type
         valid_types = [pt.value for pt in ProviderType]
         if provider_type not in valid_types:
-            raise ValueError(f"Invalid provider_type: {provider_type}. Must be one of: {valid_types}")
+            raise ValidationError(message=f"Invalid provider_type: {provider_type}. Must be one of: {valid_types}")
 
         # Encrypt credentials if provided
         encrypted_creds = {}

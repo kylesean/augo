@@ -123,17 +123,21 @@ class AuthService:
         Raises:
             ValueError: If verification code is invalid or account already exists
         """
+        from app.core.exceptions import BusinessError, ErrorCode
+
         # Check if account already exists first (before verifying code)
         if await self.is_account_exists(account_type, account):
             if account_type == "email":
-                raise ValueError("EMAIL_REGISTERED: Email already registered")
+                raise BusinessError(message="Email already registered", error_code=ErrorCode.EMAIL_REGISTERED)
             else:
-                raise ValueError("PHONE_NUMBER_REGISTERED: Mobile number already registered")
+                raise BusinessError(message="Mobile number already registered", error_code=ErrorCode.PHONE_NUMBER_REGISTERED)
 
-        # Verify the code (Commented out for now as requested)
-        # if not await self.verify_code(account, code):
-        #     raise ValueError(
-        #         "CODE_EXPIRED: Verification code is invalid or expired")
+        # Verify the code
+        if not await self.verify_code(account, code):
+            raise BusinessError(
+                "Verification code is invalid or expired", 
+                error_code=ErrorCode.CODE_EXPIRED
+            )
 
         # Generate unique UUID
         user_uuid = self._generate_uuid()
@@ -211,6 +215,8 @@ class AuthService:
         Raises:
             ValueError: If credentials are invalid
         """
+        from app.core.exceptions import AuthenticationError, ErrorCode
+
         # Find user by account
         query = select(User)
         if account_type == "email":
@@ -222,11 +228,11 @@ class AuthService:
         user = result.scalar_one_or_none()
 
         if not user:
-            raise ValueError("USER_NOT_EXIST: User does not exist")
+            raise AuthenticationError(message="User does not exist", error_code=ErrorCode.USER_NOT_EXIST)
 
         # Verify password
         if not user.verify_password(password):
-            raise ValueError("USER_NOT_MATCH_PASSWORD: Invalid password")
+            raise AuthenticationError(message="Invalid password", error_code=ErrorCode.USER_NOT_MATCH_PASSWORD)
 
         # Update user login information
         needs_update = False

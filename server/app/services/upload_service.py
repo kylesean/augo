@@ -22,7 +22,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.core.exceptions import BusinessException
+from app.core.exceptions import AppException, BusinessException, ErrorCode
+from starlette.concurrency import run_in_threadpool
 from app.core.logging import logger
 from app.models.attachment import Attachment
 from app.models.storage_config import StorageConfig, ProviderType
@@ -324,7 +325,8 @@ class UploadService:
         # 3. 压缩图片（如果需要）
         compressed = False
         if compress and extension.lower() in COMPRESSIBLE_FORMATS:
-            content, _ = self._compress_image(content, extension)
+            # Run blocking image compression in threadpool to avoid blocking event loop
+            content, _ = await run_in_threadpool(self._compress_image, content, extension)
             compressed = True
 
         # 4. 计算哈希

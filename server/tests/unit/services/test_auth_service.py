@@ -5,6 +5,7 @@ import pytest
 
 from app.models.user import User
 from app.services.auth_service import AuthService
+from app.core.exceptions import AuthenticationError, BusinessError
 
 
 @pytest.mark.asyncio
@@ -45,7 +46,7 @@ async def test_register_invalid_code(db_session):
         mock_verify.return_value = False
 
         # Action & Assert
-        with pytest.raises(ValueError, match="CODE_EXPIRED"):
+        with pytest.raises(BusinessError, match="Verification code is invalid or expired"):
             await service.register("email", email, password, code)
 
 
@@ -94,12 +95,12 @@ async def test_login_failure_wrong_password(db_session):
     await db_session.commit()
 
     # Action & Assert
-    with pytest.raises(ValueError, match="USER_NOT_MATCH_PASSWORD"):
+    with pytest.raises(AuthenticationError, match="Invalid password"):
         await service.login("email", email, "wrongpass", "UTC")
 
 
 @pytest.mark.asyncio
 async def test_login_failure_user_not_found(db_session):
     service = AuthService(db_session)
-    with pytest.raises(ValueError, match="USER_NOT_EXIST"):
+    with pytest.raises(AuthenticationError, match="User does not exist"):
         await service.login("email", "nonexistent@example.com", "pass", "UTC")
