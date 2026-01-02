@@ -1,52 +1,25 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
-.swiftpm/
-migrate_working_dir/
+# ==============================================================================
+# Client Specific Rules (Flutter)
+# ==============================================================================
 
-# IntelliJ / Android Studio
-*.iml
-*.ipr
-*.iws
-.idea/
-
-# Visual Studio Code
-.vscode/
-
-# Flutter/Dart/Pub
-.dart_tool/
+# 1. Flutter/Dart Specific (Root handles .dart_tool)
 .flutter-plugins
 .flutter-plugins-dependencies
-.pub-cache/
+.packages
 .pub/
-/build/
 
-# Generated files (Uncomment if you want to keep repo small, but requires 'dart run build_runner build' after clone)
-# *.g.dart
-# *.freezed.dart
+# 2. Mobile Specific
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+android/app/debug
+android/app/profile
+android/app/release
 
-# Symbolication
-app.*.symbols
-
-# Obfuscation
-app.*.map.json
-
-# Android Studio local files (Defensive)
-/android/app/debug
-/android/app/profile
-/android/app/release
-local.properties
-
-# Signing & Credentials (Critical for Open Source)
-*.keystore
-*.jks
+# 3. Signing (Already in root but keeping here for extra safety)
 key.properties
 google-services.json
 GoogleService-Info.plist
+
+# 4. Generated Code (Keep if you use build_runner)
+# *.g.dart
+# *.freezed.dart

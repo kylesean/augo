@@ -1,26 +1,52 @@
 # ==============================================================================
-# Global Ignore Rules
+# Global Ignore Rules (Augo Project)
 # ==============================================================================
 
-# OS & System Files
+# 1. Core Environments & Dependencies (CRITICAL for AI scan)
+.venv/
+venv/
+ENV/
+node_modules/
+.pub-cache/
+.dart_tool/
+
+# 2. Build & Cache Artifacts
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.pytest_cache/
+**/.ruff_cache/
+**/.mypy_cache/
+**/.ipynb_checkpoints/
+build/
+dist/
+bin/
+obj/
+
+# 3. OS & IDE
 .DS_Store
 Thumbs.db
-ehthumbs.db
-._*
-
-# Editors & IDEs
-.idea/
 .vscode/
+.idea/
 *.swp
 *.swo
-*.swn
+.history
 
-# Environment & Secrets
-.env*
+# 4. Secrets & Environments
+.env
+.env.*
 !.env.example
+*.pem
+*.key
+*.keystore
+*.jks
+local.properties
 
-# Python Global Caches (in case scripts run from root)
-__pycache__/
-.pytest_cache/
-.ruff_cache/
-.mypy_cache/
+# 5. Data & Logistics (Generated at runtime)
+logs/
+*.log
+storage/data/
+prometheus/data/
+grafana/data/
+evals/reports/

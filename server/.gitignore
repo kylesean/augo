@@ -2,22 +2,23 @@
 # Server Specific Rules
 # ==============================================================================
 
-# 1. Virtual Environments (Local only)
-.venv/
-venv/
-ENV/
+# 1. Local Python Artifacts (Root handles .venv)
+.uv/
+.python-version
+__pycache__/
 
-# 2. Application Runtime Data
-# These directories contain runtime generated data (logs, uploads, db files)
-logs/
-storage/
+# 2. Application Data & Runtime
+# We keep the directory structure but ignore content
+logs/*.log
+storage/*
+!storage/.gitkeep
 evals/reports/
 
-# 3. Build & Dist Artifacts (Python Packaging)
-build/
-dist/
-wheels/
-*.egg-info
+# 3. Database
+*.db
+*.sqlite
+alembic/versions/__pycache__/
 
-# 4. Jupyter Notebooks (Often used for scratching/testing, exclude by default)
-*.ipynb
+# 4. Testing
+.coverage
+htmlcov/
