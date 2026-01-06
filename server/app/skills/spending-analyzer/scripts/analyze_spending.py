@@ -238,6 +238,7 @@ async def main():
             output = {
                 "success": True,
                 "componentType": "BudgetAnalysisCard",
+                "title": "消费支出分析",  # 显式指定标题，解决职责正交化后的语意对齐
                 **analysis,
             }
 

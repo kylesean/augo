@@ -790,9 +790,9 @@
                     "description": "查看消费趋势和构成"
                 },
                 "budgetProgress": {
-                    "title": "预算进度",
-                    "prompt": "查看预算执行情况",
-                    "description": "了解预算使用进度"
+                    "title": "财务健康",
+                    "prompt": "评估我的财务健康",
+                    "description": "收支平衡评分与建议"
                 }
             },
             "evening": {
@@ -822,14 +822,14 @@
                     "description": "把今天忘记的账补上"
                 },
                 "monthlyReview": {
-                    "title": "本月回顾",
-                    "prompt": "分析本月消费",
-                    "description": "回顾这个月的花费"
+                    "title": "本月分析",
+                    "prompt": "详细分析本月支出",
+                    "description": "回顾这个月的钱花哪了"
                 },
                 "financialThinking": {
-                    "title": "理财思考",
-                    "prompt": "给我一些理财建议",
-                    "description": "AI 帮你想想如何理财"
+                    "title": "未来预测",
+                    "prompt": "预测未来 30 天余额",
+                    "description": "看清未来的财务趋势"
                 }
             }
         }

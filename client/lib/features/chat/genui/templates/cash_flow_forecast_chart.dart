@@ -193,7 +193,8 @@ class _CashFlowForecastChartState extends State<CashFlowForecastChart> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    t.chat.genui.cashFlowForecast.title,
+                    widget.data['title'] as String? ??
+                        t.chat.genui.cashFlowForecast.title,
                     style: theme.typography.sm.copyWith(
                       fontWeight: FontWeight.w600,
                     ),

@@ -3778,14 +3778,14 @@ class TranslationsChatWelcomeAfternoonBudgetProgressZh {
 
 	// Translations
 
-	/// zh: '预算进度'
-	String get title => '预算进度';
+	/// zh: '财务健康'
+	String get title => '财务健康';
 
-	/// zh: '查看预算执行情况'
-	String get prompt => '查看预算执行情况';
+	/// zh: '评估我的财务健康'
+	String get prompt => '评估我的财务健康';
 
-	/// zh: '了解预算使用进度'
-	String get description => '了解预算使用进度';
+	/// zh: '收支平衡评分与建议'
+	String get description => '收支平衡评分与建议';
 }
 
 // Path: chat.welcome.evening.dinner
@@ -3868,14 +3868,14 @@ class TranslationsChatWelcomeNightMonthlyReviewZh {
 
 	// Translations
 
-	/// zh: '本月回顾'
-	String get title => '本月回顾';
+	/// zh: '本月分析'
+	String get title => '本月分析';
 
-	/// zh: '分析本月消费'
-	String get prompt => '分析本月消费';
+	/// zh: '详细分析本月支出'
+	String get prompt => '详细分析本月支出';
 
-	/// zh: '回顾这个月的花费'
-	String get description => '回顾这个月的花费';
+	/// zh: '回顾这个月的钱花哪了'
+	String get description => '回顾这个月的钱花哪了';
 }
 
 // Path: chat.welcome.night.financialThinking
@@ -3886,14 +3886,14 @@ class TranslationsChatWelcomeNightFinancialThinkingZh {
 
 	// Translations
 
-	/// zh: '理财思考'
-	String get title => '理财思考';
+	/// zh: '未来预测'
+	String get title => '未来预测';
 
-	/// zh: '给我一些理财建议'
-	String get prompt => '给我一些理财建议';
+	/// zh: '预测未来 30 天余额'
+	String get prompt => '预测未来 30 天余额';
 
-	/// zh: 'AI 帮你想想如何理财'
-	String get description => 'AI 帮你想想如何理财';
+	/// zh: '看清未来的财务趋势'
+	String get description => '看清未来的财务趋势';
 }
 
 /// The flat map containing all translations for locale <zh>.
@@ -4587,9 +4587,9 @@ extension on Translations {
 			'chat.welcome.afternoon.analyzeSpending.title' => '分析消费',
 			'chat.welcome.afternoon.analyzeSpending.prompt' => '分析本月消费',
 			'chat.welcome.afternoon.analyzeSpending.description' => '查看消费趋势和构成',
-			'chat.welcome.afternoon.budgetProgress.title' => '预算进度',
-			'chat.welcome.afternoon.budgetProgress.prompt' => '查看预算执行情况',
-			'chat.welcome.afternoon.budgetProgress.description' => '了解预算使用进度',
+			'chat.welcome.afternoon.budgetProgress.title' => '财务健康',
+			'chat.welcome.afternoon.budgetProgress.prompt' => '评估我的财务健康',
+			'chat.welcome.afternoon.budgetProgress.description' => '收支平衡评分与建议',
 			'chat.welcome.evening.subtitle' => '辛苦一天，来理理账',
 			'chat.welcome.evening.dinner.title' => '晚餐记账',
 			'chat.welcome.evening.dinner.prompt' => '记一笔晚餐',
@@ -4605,12 +4605,12 @@ extension on Translations {
 			'chat.welcome.night.makeupRecord.title' => '补记今日',
 			'chat.welcome.night.makeupRecord.prompt' => '帮我补记今天的消费',
 			'chat.welcome.night.makeupRecord.description' => '把今天忘记的账补上',
-			'chat.welcome.night.monthlyReview.title' => '本月回顾',
-			'chat.welcome.night.monthlyReview.prompt' => '分析本月消费',
-			'chat.welcome.night.monthlyReview.description' => '回顾这个月的花费',
-			'chat.welcome.night.financialThinking.title' => '理财思考',
-			'chat.welcome.night.financialThinking.prompt' => '给我一些理财建议',
-			'chat.welcome.night.financialThinking.description' => 'AI 帮你想想如何理财',
+			'chat.welcome.night.monthlyReview.title' => '本月分析',
+			'chat.welcome.night.monthlyReview.prompt' => '详细分析本月支出',
+			'chat.welcome.night.monthlyReview.description' => '回顾这个月的钱花哪了',
+			'chat.welcome.night.financialThinking.title' => '未来预测',
+			'chat.welcome.night.financialThinking.prompt' => '预测未来 30 天余额',
+			'chat.welcome.night.financialThinking.description' => '看清未来的财务趋势',
 			'footprint.searchIn' => '搜索',
 			'footprint.searchInAllRecords' => '在所有记录中搜索相关内容',
 			'media.selectPhotos' => '选择照片',

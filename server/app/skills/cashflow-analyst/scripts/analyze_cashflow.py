@@ -109,6 +109,7 @@ async def main():
                 "success": True,
                 # GenUI signal - CamelCase naming
                 "type": "CashFlowCard",
+                "title": "收支平衡与健康报告",
                 # Cash flow data (for GenUI component)
                 "netCashFlow": cash_flow.get("netCashFlow", 0),
                 "savingsRate": cash_flow.get("savingsRate", 0),

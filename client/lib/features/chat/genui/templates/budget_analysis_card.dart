@@ -106,7 +106,7 @@ class BudgetAnalysisCard extends ConsumerWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              t.chat.genui.budgetAnalysis.title,
+              data['title'] as String? ?? t.chat.genui.budgetAnalysis.title,
               style: theme.typography.base.copyWith(
                 color: colors.primary,
                 fontWeight: FontWeight.w700,

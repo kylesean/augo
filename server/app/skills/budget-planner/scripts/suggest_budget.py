@@ -238,6 +238,7 @@ async def main():
             output = {
                 "success": True,
                 "componentType": "BudgetAnalysisCard",
+                "title": "预算规划方案",  # 显式指定标题
                 **analysis,
             }
 

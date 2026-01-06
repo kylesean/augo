@@ -107,6 +107,7 @@ async def main():
                 "success": True,
                 # GenUI signal - CamelCase naming
                 "type": "CashFlowForecastChart",
+                "title": "未来财务趋势预测",
                 # Forecast data
                 **result_dict,
             }
