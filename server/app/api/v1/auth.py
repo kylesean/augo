@@ -345,6 +345,13 @@ async def login(
 
         return error_response(code=get_error_code_int(error_code_str), message=message, http_status=401)
     except Exception as e:
+        # Check if it's an AuthenticationError (custom exception with error_code)
+        from app.core.exceptions import AuthenticationError
+
+        if isinstance(e, AuthenticationError):
+            logger.warning("login_auth_error", error=e.message, error_code=e.error_code, account_type=data.type)
+            return error_response(code=get_error_code_int(e.error_code), message=e.message, http_status=401)
+
         logger.exception("login_unexpected_error", error=str(e))
         return error_response(code=get_error_code_int("INTERNAL_ERROR"), message="Login failed", http_status=500)
 
