@@ -21,16 +21,14 @@ from app.core.logging import logger
 from .budget_tools import budget_tools
 from .duckduckgo_search import duckduckgo_search_tool
 from .filesystem_tools import filesystem_tools
+from .memory_tools import memory_tools
 
 # 统一的交易工具（记录 + 查询）
 from .transaction_tools import transaction_tools as record_tools
 from .transfer_tools import execute_transfer, transfer_tools  # execute_transfer 单独导出供内部使用
 
-# 用于在请求生命周期内存储用户身份
-current_user_id: ContextVar[str] = ContextVar("current_user_id", default="")
-
-# 用于在请求生命周期内存储会话语言
-current_session_language: ContextVar[str] = ContextVar("current_session_language", default="zh")
+# 用于在请求生命周期内存储用户身份和语言
+from .context import current_session_language, current_user_id
 
 
 # 1. LLM 可见的业务工具
@@ -51,7 +49,7 @@ utility_tools: List[BaseTool] = [
 # 包含 read_file, ls, execute
 
 # 4. 最终暴露给 LLM 的工具集（日常对话）
-tools: List[BaseTool] = utility_tools + business_tools + filesystem_tools
+tools: List[BaseTool] = utility_tools + business_tools + filesystem_tools + memory_tools
 
 # 5. 技能专属工具（已迁移到脚本模式，不再需要）
 # - finance-analyst: 通过 analyze_finance.py, forecast_finance.py 脚本

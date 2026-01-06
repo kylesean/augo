@@ -191,42 +191,41 @@ class MemoryService:
         category: str = "conversation",
         additional_metadata: Optional[dict] = None,
     ) -> dict:
-        """Add memories from a conversation.
+        """Add memories from a conversation with proactive fact extraction.
 
-        Mem0 will automatically extract key facts, preferences, and decisions
-        from the conversation and store them with conflict resolution.
+        Instead of storing the raw conversation, this method extracts salient
+        facts and preferences to maintain a clean and valuable memory base.
 
         Args:
             user_uuid: User identifier
             messages: List of message dicts with 'role' and 'content'
             session_id: Optional session identifier for context
-            category: Memory category (conversation, preference, financial, etc.)
+            category: Memory category hint
             additional_metadata: Extra metadata to store with memories
 
         Returns:
-            dict with operation result including extracted memories
-
-        Example:
-            await service.add_conversation_memory(
-                user_uuid="user-123",
-                messages=[
-                    {"role": "user", "content": "I want to save 20% of my income"},
-                    {"role": "assistant", "content": "Great goal! I'll remember that."}
-                ],
-                session_id="session-456",
-                category="financial_goal",
-            )
+            dict with operation result
         """
         if not messages:
             return {"success": False, "message": "No messages provided"}
 
         user_id = str(user_uuid)
+        
+        # 1. Extract salient facts from the messages
+        # We only care about the latest exchange usually, but can look at context
+        full_text = "\n".join([f"{m['role']}: {m['content']}" for m in messages])
+        facts = await self.extract_salient_facts(full_text)
+        
+        if not facts:
+            logger.debug("no_salient_facts_extracted", user_uuid=user_id)
+            return {"success": True, "extracted": False}
 
-        # Build rich metadata
+        # 2. Build rich metadata
         metadata = {
             "category": category,
             "timestamp": datetime.now(timezone.utc).isoformat(),
-            "message_count": len(messages),
+            "original_message_count": len(messages),
+            "memory_type": "extracted_fact"
         }
 
         if session_id:
@@ -236,36 +235,100 @@ class MemoryService:
             metadata.update(additional_metadata)
 
         try:
-            result = await self._memory.add(
-                messages,
-                user_id=user_id,
-                metadata=metadata,
-            )
+            # Store each fact as a separate memory entry for better retrieval granularity
+            results = []
+            for fact in facts:
+                # Mem0's add can handle conflict resolution and updates
+                # We use the fact text directly as the data to store
+                result = await self._memory.add(
+                    fact,
+                    user_id=user_id,
+                    metadata=metadata,
+                )
+                results.append(result)
 
             logger.info(
-                "memory_added",
+                "salient_memories_added",
                 user_uuid=user_id,
-                category=category,
+                fact_count=len(facts),
                 session_id=session_id,
-                result_count=len(result.get("results", [])) if isinstance(result, dict) else 0,
             )
 
             return {
                 "success": True,
-                "result": result,
+                "extracted": True,
+                "fact_count": len(facts),
+                "results": results
             }
 
         except Exception as e:
             logger.warning(
                 "memory_add_failed",
                 user_uuid=user_id,
-                category=category,
                 error=str(e),
             )
             return {
                 "success": False,
                 "error": str(e),
             }
+
+    async def extract_salient_facts(self, text: str) -> list[str]:
+        """Extract important financial facts and preferences from text.
+        
+        Uses LLM to filter noise and retain only long-term valuable information.
+        
+        Args:
+            text: Single string or conversation transcript
+            
+        Returns:
+            List of extracted fact strings
+        """
+        try:
+            from app.services.llm import llm_service
+            
+            prompt = (
+                "You are a Senior Financial Memory Analyst for an AI Personal Finance Agent. "
+                "Your task is to analyze the conversation and extract ONLY high-value, long-term salient facts. "
+                "\n\n--- CRITYERIA FOR RETENTION ---"
+                "\n1. Personal Identity & Context: 'I have 2 kids', 'I work at Google', 'My partner is Alice'."
+                "\n2. Financial Goals: 'I want to save for a house', 'Retirement goal is 2M by 2040'."
+                "\n3. Persistent Preferences: 'Always categorize Meituan as Dining', 'I prefer conservative investments'."
+                "\n4. Account/Asset Info: 'My mortgage is with HSBC', 'I have a hidden savings account'."
+                "\n5. Explicit Decisions & Overrides: 'Set my monthly food budget to $500 from now on', 'I no longer work at Google, I moved to Tesla'."
+                "\n\n--- WHAT TO IGNORE (NOISE) ---"
+                "\n- Temporary queries: 'How much did I spend yesterday?'"
+                "\n- Generic small talk: 'Hello', 'Thanks'."
+                "\n- Technical instructions: 'Show me the chart', 'Open settings'."
+                "\n- Individual transaction details unless they imply a pattern."
+                "\n--- FORMAT & CONFLICTS ---"
+                "\n- Logic: If the user explicitly changes a previous fact (e.g., a new job or a new budget goal), extract the NEW fact as a standalone statement."
+                "\n- Language: MUST match the user's primary language."
+                "\n- Output: List of standalone concise facts. If nothing found, return exactly 'NONE'."
+                "\n\nConversation Content:\n"
+                f"{text}\n\n"
+                "Extracted Facts:"
+            )
+            
+            # Use the default LLM (typically a capable one for reasoning)
+            from langchain_core.messages import HumanMessage
+            response = await llm_service.call(
+                messages=[HumanMessage(content=prompt)]
+            )
+            
+            if not response or not response.content:
+                return []
+                
+            content = response.content.strip()
+            if content.upper() == "NONE":
+                return []
+                
+            # Split lines and clean up
+            facts = [f.strip("* ").strip("- ").strip() for f in content.split("\n") if f.strip()]
+            return [f for f in facts if len(f) > 5] # Basic filter for noise
+
+        except Exception as e:
+            logger.error("fact_extraction_failed", error=str(e))
+            return []
 
     async def search_memories(
         self,
