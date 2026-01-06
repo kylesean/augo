@@ -1052,6 +1052,22 @@
             "serverError": "Server error"
         }
     },
+    "sharedSpace": {
+        "dashboard": {
+            "cumulativeTotalExpense": "Cumulative Total Expense",
+            "participatingMembers": "Participating Members",
+            "membersCount": "$count people",
+            "averagePerMember": "Avg per member",
+            "spendingDistribution": "Spending Distribution",
+            "realtimeUpdates": "Real-time updates",
+            "paid": "Paid"
+        },
+        "roles": {
+            "owner": "Owner",
+            "admin": "Admin",
+            "member": "Member"
+        }
+    },
     "errorMapping": {
         "generic": {
             "badRequest": "Bad Request",

@@ -71,6 +71,7 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _TranslationsCurrencyEn currency = _TranslationsCurrencyEn._(_root);
 	@override late final _TranslationsBudgetSuggestionEn budgetSuggestion = _TranslationsBudgetSuggestionEn._(_root);
 	@override late final _TranslationsServerEn server = _TranslationsServerEn._(_root);
+	@override late final _TranslationsSharedSpaceEn sharedSpace = _TranslationsSharedSpaceEn._(_root);
 	@override late final _TranslationsErrorMappingEn errorMapping = _TranslationsErrorMappingEn._(_root);
 }
 
@@ -922,6 +923,17 @@ class _TranslationsServerEn extends TranslationsServerZh {
 	@override late final _TranslationsServerErrorEn error = _TranslationsServerErrorEn._(_root);
 }
 
+// Path: sharedSpace
+class _TranslationsSharedSpaceEn extends TranslationsSharedSpaceZh {
+	_TranslationsSharedSpaceEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _TranslationsSharedSpaceDashboardEn dashboard = _TranslationsSharedSpaceDashboardEn._(_root);
+	@override late final _TranslationsSharedSpaceRolesEn roles = _TranslationsSharedSpaceRolesEn._(_root);
+}
+
 // Path: errorMapping
 class _TranslationsErrorMappingEn extends TranslationsErrorMappingZh {
 	_TranslationsErrorMappingEn._(TranslationsEn root) : this._root = root, super.internal(root);
@@ -1271,6 +1283,34 @@ class _TranslationsServerErrorEn extends TranslationsServerErrorZh {
 	@override String get connectionRefused => 'Could not connect to server';
 	@override String get sslError => 'SSL certificate error';
 	@override String get serverError => 'Server error';
+}
+
+// Path: sharedSpace.dashboard
+class _TranslationsSharedSpaceDashboardEn extends TranslationsSharedSpaceDashboardZh {
+	_TranslationsSharedSpaceDashboardEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get cumulativeTotalExpense => 'Cumulative Total Expense';
+	@override String get participatingMembers => 'Participating Members';
+	@override String membersCount({required Object count}) => '${count} people';
+	@override String get averagePerMember => 'Avg per member';
+	@override String get spendingDistribution => 'Spending Distribution';
+	@override String get realtimeUpdates => 'Real-time updates';
+	@override String get paid => 'Paid';
+}
+
+// Path: sharedSpace.roles
+class _TranslationsSharedSpaceRolesEn extends TranslationsSharedSpaceRolesZh {
+	_TranslationsSharedSpaceRolesEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get owner => 'Owner';
+	@override String get admin => 'Admin';
+	@override String get member => 'Member';
 }
 
 // Path: errorMapping.generic
@@ -2795,6 +2835,16 @@ extension on TranslationsEn {
 			'server.error.connectionRefused' => 'Could not connect to server',
 			'server.error.sslError' => 'SSL certificate error',
 			'server.error.serverError' => 'Server error',
+			'sharedSpace.dashboard.cumulativeTotalExpense' => 'Cumulative Total Expense',
+			'sharedSpace.dashboard.participatingMembers' => 'Participating Members',
+			'sharedSpace.dashboard.membersCount' => ({required Object count}) => '${count} people',
+			'sharedSpace.dashboard.averagePerMember' => 'Avg per member',
+			'sharedSpace.dashboard.spendingDistribution' => 'Spending Distribution',
+			'sharedSpace.dashboard.realtimeUpdates' => 'Real-time updates',
+			'sharedSpace.dashboard.paid' => 'Paid',
+			'sharedSpace.roles.owner' => 'Owner',
+			'sharedSpace.roles.admin' => 'Admin',
+			'sharedSpace.roles.member' => 'Member',
 			'errorMapping.generic.badRequest' => 'Bad Request',
 			'errorMapping.generic.authFailed' => 'Authentication failed, please login again',
 			'errorMapping.generic.permissionDenied' => 'Permission denied',

@@ -285,9 +285,9 @@ class BudgetReceipt extends StatelessWidget {
     if (amount >= 10000) {
       final wan = amount / 10000;
       if (wan == wan.truncate()) {
-        return '${wan.truncate()}万';
+        return '${wan.truncate()}${t.budget.tenThousandSuffix}';
       }
-      return '${wan.toStringAsFixed(1)}万';
+      return '${wan.toStringAsFixed(1)}${t.budget.tenThousandSuffix}';
     }
     if (amount == amount.truncate()) {
       return amount.truncate().toString();

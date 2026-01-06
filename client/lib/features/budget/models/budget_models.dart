@@ -162,17 +162,17 @@ class Budget {
   bool get isCategoryBudget => scope == BudgetScope.category;
 
   String get displayName {
+    if (isTotalBudget) {
+      return t.budget.totalBudget;
+    }
+
     if (categoryKey != null) {
       final category = TransactionCategory.fromKey(categoryKey);
-      if (name.contains(categoryKey!)) {
-        return name.replaceAll(categoryKey!, category.displayText);
+      if (name == categoryKey || name == category.key) {
+        return category.displayText;
       }
     }
 
-    final category = TransactionCategory.fromKey(name);
-    if (category.key == name.toUpperCase()) {
-      return category.displayText;
-    }
     return name;
   }
 }

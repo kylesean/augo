@@ -434,7 +434,7 @@ class BudgetStatusCard extends StatelessWidget {
 
   String _formatAmount(double amount) {
     if (amount >= 10000) {
-      return '${(amount / 10000).toStringAsFixed(1)}万';
+      return '${(amount / 10000).toStringAsFixed(1)}${t.budget.tenThousandSuffix}';
     }
     return amount.toStringAsFixed(0);
   }

@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
+import 'package:augo/features/auth/providers/auth_provider.dart';
 import '../models/shared_space_models.dart';
 
-class SharedSpaceCard extends StatelessWidget {
+class SharedSpaceCard extends ConsumerWidget {
   final SharedSpace space;
   final VoidCallback onTap;
 
   const SharedSpaceCard({super.key, required this.space, required this.onTap});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = context.theme;
     final colorScheme = theme.colors;
 
@@ -33,7 +35,7 @@ class SharedSpaceCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           child: Stack(
             children: [
-              // 背景装饰
+              // background decoration
               Positioned(
                 right: -20,
                 top: -20,
@@ -53,7 +55,7 @@ class SharedSpaceCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        // 空间图标
+                        // space icon
                         Container(
                           width: 52,
                           height: 52,
@@ -85,7 +87,7 @@ class SharedSpaceCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 16),
 
-                        // 空间信息
+                        // space info
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +114,7 @@ class SharedSpaceCard extends StatelessWidget {
                           ),
                         ),
 
-                        // 箭头图标
+                        // arrow icon
                         Icon(
                           FIcons.chevronRight,
                           size: 18,
@@ -125,10 +127,10 @@ class SharedSpaceCard extends StatelessWidget {
 
                     const SizedBox(height: 24),
 
-                    // 底部信息
+                    // bottom info
                     Row(
                       children: [
-                        // 成员数量
+                        // member count
                         _buildInfoChip(
                           context,
                           icon: FIcons.users,
@@ -136,7 +138,7 @@ class SharedSpaceCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 12),
 
-                        // 交易数量
+                        // transaction count
                         _buildInfoChip(
                           context,
                           icon: FIcons.receipt,
@@ -145,8 +147,8 @@ class SharedSpaceCard extends StatelessWidget {
 
                         const Spacer(),
 
-                        // 角色标识
-                        _buildRoleBadge(context),
+                        // role badge
+                        _buildRoleBadge(context, ref),
                       ],
                     ),
                   ],
@@ -183,27 +185,53 @@ class SharedSpaceCard extends StatelessWidget {
     );
   }
 
-  Widget _buildRoleBadge(BuildContext context) {
+  Widget _buildRoleBadge(BuildContext context, WidgetRef ref) {
     final theme = context.theme;
     final colorScheme = theme.colors;
 
-    // TODO: 这里需要从认证状态获取当前用户ID来判断是否是创建者
-    // 暂时显示创建者信息
+    // Get current user ID from auth state
+    final currentUser = ref.watch(currentUserProvider);
+    final currentUserId = currentUser?.id;
+
+    // Check if current user is the creator of this space
+    final isCreator =
+        currentUserId != null && currentUserId == space.creator.id;
+
+    // Determine badge appearance based on role
+    final (
+      IconData icon,
+      String label,
+      Color bgColor,
+      Color fgColor,
+    ) = isCreator
+        ? (
+            FIcons.crown,
+            '创建者',
+            colorScheme.primary.withValues(alpha: 0.1),
+            colorScheme.primary,
+          )
+        : (
+            FIcons.user,
+            '成员',
+            colorScheme.secondary.withValues(alpha: 0.1),
+            colorScheme.secondaryForeground,
+          );
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: colorScheme.primary.withValues(alpha: 0.1),
+        color: bgColor,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(FIcons.crown, size: 12, color: colorScheme.primary),
+          Icon(icon, size: 12, color: fgColor),
           const SizedBox(width: 4),
           Text(
-            '创建者',
+            label,
             style: theme.typography.sm.copyWith(
-              color: colorScheme.primary,
+              color: fgColor,
               fontWeight: FontWeight.w500,
             ),
           ),

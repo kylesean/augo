@@ -69,6 +69,7 @@ class TranslationsJa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _TranslationsAppJa app = _TranslationsAppJa._(_root);
 	@override late final _TranslationsStatisticsJa statistics = _TranslationsStatisticsJa._(_root);
 	@override late final _TranslationsCurrencyJa currency = _TranslationsCurrencyJa._(_root);
+	@override late final _TranslationsSharedSpaceJa sharedSpace = _TranslationsSharedSpaceJa._(_root);
 }
 
 // Path: common
@@ -850,6 +851,17 @@ class _TranslationsCurrencyJa extends TranslationsCurrencyZh {
 	@override String get inr => 'インドルピー';
 }
 
+// Path: sharedSpace
+class _TranslationsSharedSpaceJa extends TranslationsSharedSpaceZh {
+	_TranslationsSharedSpaceJa._(TranslationsJa root) : this._root = root, super.internal(root);
+
+	final TranslationsJa _root; // ignore: unused_field
+
+	// Translations
+	@override late final _TranslationsSharedSpaceDashboardJa dashboard = _TranslationsSharedSpaceDashboardJa._(_root);
+	@override late final _TranslationsSharedSpaceRolesJa roles = _TranslationsSharedSpaceRolesJa._(_root);
+}
+
 // Path: auth.email
 class _TranslationsAuthEmailJa extends TranslationsAuthEmailZh {
 	_TranslationsAuthEmailJa._(TranslationsJa root) : this._root = root, super.internal(root);
@@ -1090,6 +1102,34 @@ class _TranslationsStatisticsSortJa extends TranslationsStatisticsSortZh {
 	// Translations
 	@override String get amount => '金額順';
 	@override String get date => '日付順';
+}
+
+// Path: sharedSpace.dashboard
+class _TranslationsSharedSpaceDashboardJa extends TranslationsSharedSpaceDashboardZh {
+	_TranslationsSharedSpaceDashboardJa._(TranslationsJa root) : this._root = root, super.internal(root);
+
+	final TranslationsJa _root; // ignore: unused_field
+
+	// Translations
+	@override String get cumulativeTotalExpense => '累計総支出';
+	@override String get participatingMembers => '参加メンバー';
+	@override String membersCount({required Object count}) => '${count} 人';
+	@override String get averagePerMember => 'メンバー平均';
+	@override String get spendingDistribution => 'メンバー別支出割合';
+	@override String get realtimeUpdates => 'リアルタイム更新';
+	@override String get paid => '支払い済み';
+}
+
+// Path: sharedSpace.roles
+class _TranslationsSharedSpaceRolesJa extends TranslationsSharedSpaceRolesZh {
+	_TranslationsSharedSpaceRolesJa._(TranslationsJa root) : this._root = root, super.internal(root);
+
+	final TranslationsJa _root; // ignore: unused_field
+
+	// Translations
+	@override String get owner => 'オーナー';
+	@override String get admin => '管理者';
+	@override String get member => 'メンバー';
 }
 
 // Path: chat.tools.done
@@ -1919,6 +1959,16 @@ extension on TranslationsJa {
 			'currency.hkd' => '香港ドル',
 			'currency.twd' => '新台湾ドル',
 			'currency.inr' => 'インドルピー',
+			'sharedSpace.dashboard.cumulativeTotalExpense' => '累計総支出',
+			'sharedSpace.dashboard.participatingMembers' => '参加メンバー',
+			'sharedSpace.dashboard.membersCount' => ({required Object count}) => '${count} 人',
+			'sharedSpace.dashboard.averagePerMember' => 'メンバー平均',
+			'sharedSpace.dashboard.spendingDistribution' => 'メンバー別支出割合',
+			'sharedSpace.dashboard.realtimeUpdates' => 'リアルタイム更新',
+			'sharedSpace.dashboard.paid' => '支払い済み',
+			'sharedSpace.roles.owner' => 'オーナー',
+			'sharedSpace.roles.admin' => '管理者',
+			'sharedSpace.roles.member' => 'メンバー',
 			_ => null,
 		};
 	}

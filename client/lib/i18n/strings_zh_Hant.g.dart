@@ -69,6 +69,7 @@ class TranslationsZhHant extends Translations with BaseTranslations<AppLocale, T
 	@override late final _TranslationsAppZhHant app = _TranslationsAppZhHant._(_root);
 	@override late final _TranslationsStatisticsZhHant statistics = _TranslationsStatisticsZhHant._(_root);
 	@override late final _TranslationsCurrencyZhHant currency = _TranslationsCurrencyZhHant._(_root);
+	@override late final _TranslationsSharedSpaceZhHant sharedSpace = _TranslationsSharedSpaceZhHant._(_root);
 }
 
 // Path: common
@@ -851,6 +852,17 @@ class _TranslationsCurrencyZhHant extends TranslationsCurrencyZh {
 	@override String get inr => '印度盧比';
 }
 
+// Path: sharedSpace
+class _TranslationsSharedSpaceZhHant extends TranslationsSharedSpaceZh {
+	_TranslationsSharedSpaceZhHant._(TranslationsZhHant root) : this._root = root, super.internal(root);
+
+	final TranslationsZhHant _root; // ignore: unused_field
+
+	// Translations
+	@override late final _TranslationsSharedSpaceDashboardZhHant dashboard = _TranslationsSharedSpaceDashboardZhHant._(_root);
+	@override late final _TranslationsSharedSpaceRolesZhHant roles = _TranslationsSharedSpaceRolesZhHant._(_root);
+}
+
 // Path: auth.email
 class _TranslationsAuthEmailZhHant extends TranslationsAuthEmailZh {
 	_TranslationsAuthEmailZhHant._(TranslationsZhHant root) : this._root = root, super.internal(root);
@@ -1091,6 +1103,34 @@ class _TranslationsStatisticsSortZhHant extends TranslationsStatisticsSortZh {
 	// Translations
 	@override String get amount => '按金額排序';
 	@override String get date => '按時間排序';
+}
+
+// Path: sharedSpace.dashboard
+class _TranslationsSharedSpaceDashboardZhHant extends TranslationsSharedSpaceDashboardZh {
+	_TranslationsSharedSpaceDashboardZhHant._(TranslationsZhHant root) : this._root = root, super.internal(root);
+
+	final TranslationsZhHant _root; // ignore: unused_field
+
+	// Translations
+	@override String get cumulativeTotalExpense => '累計總支出';
+	@override String get participatingMembers => '參與成員';
+	@override String membersCount({required Object count}) => '${count} 人';
+	@override String get averagePerMember => '成員人均';
+	@override String get spendingDistribution => '成員消費分佈';
+	@override String get realtimeUpdates => '實時更新';
+	@override String get paid => '已支付';
+}
+
+// Path: sharedSpace.roles
+class _TranslationsSharedSpaceRolesZhHant extends TranslationsSharedSpaceRolesZh {
+	_TranslationsSharedSpaceRolesZhHant._(TranslationsZhHant root) : this._root = root, super.internal(root);
+
+	final TranslationsZhHant _root; // ignore: unused_field
+
+	// Translations
+	@override String get owner => '主理人';
+	@override String get admin => '管理員';
+	@override String get member => '成員';
 }
 
 // Path: chat.tools.done
@@ -1921,6 +1961,16 @@ extension on TranslationsZhHant {
 			'currency.hkd' => '港幣',
 			'currency.twd' => '新台幣',
 			'currency.inr' => '印度盧比',
+			'sharedSpace.dashboard.cumulativeTotalExpense' => '累計總支出',
+			'sharedSpace.dashboard.participatingMembers' => '參與成員',
+			'sharedSpace.dashboard.membersCount' => ({required Object count}) => '${count} 人',
+			'sharedSpace.dashboard.averagePerMember' => '成員人均',
+			'sharedSpace.dashboard.spendingDistribution' => '成員消費分佈',
+			'sharedSpace.dashboard.realtimeUpdates' => '實時更新',
+			'sharedSpace.dashboard.paid' => '已支付',
+			'sharedSpace.roles.owner' => '主理人',
+			'sharedSpace.roles.admin' => '管理員',
+			'sharedSpace.roles.member' => '成員',
 			_ => null,
 		};
 	}

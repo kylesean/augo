@@ -68,11 +68,11 @@ class BudgetService:
         name = request.name
         if not name:
             if request.scope == BudgetScope.TOTAL:
-                # Use English key, frontend handles localization (e.g., t.budget.totalBudget)
-                name = "Total Budget"
+                # Use a stable key instead of a human-readable English string
+                name = "TOTAL"
             else:
-                # Use category key as fallback name (frontend should ideally provide localized name)
-                name = request.category_key or "Category Budget"
+                # Use category key as the default name
+                name = request.category_key or "CATEGORY"
 
         budget = Budget(
             owner_uuid=user_uuid,

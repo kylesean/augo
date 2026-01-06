@@ -72,6 +72,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsCurrencyZh currency = TranslationsCurrencyZh.internal(_root);
 	late final TranslationsBudgetSuggestionZh budgetSuggestion = TranslationsBudgetSuggestionZh.internal(_root);
 	late final TranslationsServerZh server = TranslationsServerZh.internal(_root);
+	late final TranslationsSharedSpaceZh sharedSpace = TranslationsSharedSpaceZh.internal(_root);
 	late final TranslationsErrorMappingZh errorMapping = TranslationsErrorMappingZh.internal(_root);
 }
 
@@ -2019,6 +2020,17 @@ class TranslationsServerZh {
 	late final TranslationsServerErrorZh error = TranslationsServerErrorZh.internal(_root);
 }
 
+// Path: sharedSpace
+class TranslationsSharedSpaceZh {
+	TranslationsSharedSpaceZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsSharedSpaceDashboardZh dashboard = TranslationsSharedSpaceDashboardZh.internal(_root);
+	late final TranslationsSharedSpaceRolesZh roles = TranslationsSharedSpaceRolesZh.internal(_root);
+}
+
 // Path: errorMapping
 class TranslationsErrorMappingZh {
 	TranslationsErrorMappingZh.internal(this._root);
@@ -2666,6 +2678,54 @@ class TranslationsServerErrorZh {
 
 	/// zh: '服务器错误'
 	String get serverError => '服务器错误';
+}
+
+// Path: sharedSpace.dashboard
+class TranslationsSharedSpaceDashboardZh {
+	TranslationsSharedSpaceDashboardZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '累计总支出'
+	String get cumulativeTotalExpense => '累计总支出';
+
+	/// zh: '参与成员'
+	String get participatingMembers => '参与成员';
+
+	/// zh: '$count 人'
+	String membersCount({required Object count}) => '${count} 人';
+
+	/// zh: '成员人均'
+	String get averagePerMember => '成员人均';
+
+	/// zh: '成员消费分布'
+	String get spendingDistribution => '成员消费分布';
+
+	/// zh: '实时更新'
+	String get realtimeUpdates => '实时更新';
+
+	/// zh: '已支付'
+	String get paid => '已支付';
+}
+
+// Path: sharedSpace.roles
+class TranslationsSharedSpaceRolesZh {
+	TranslationsSharedSpaceRolesZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '主理人'
+	String get owner => '主理人';
+
+	/// zh: '管理员'
+	String get admin => '管理员';
+
+	/// zh: '成员'
+	String get member => '成员';
 }
 
 // Path: errorMapping.generic
@@ -4740,6 +4800,16 @@ extension on Translations {
 			'server.error.connectionRefused' => '无法连接到服务器',
 			'server.error.sslError' => 'SSL 证书错误',
 			'server.error.serverError' => '服务器错误',
+			'sharedSpace.dashboard.cumulativeTotalExpense' => '累计总支出',
+			'sharedSpace.dashboard.participatingMembers' => '参与成员',
+			'sharedSpace.dashboard.membersCount' => ({required Object count}) => '${count} 人',
+			'sharedSpace.dashboard.averagePerMember' => '成员人均',
+			'sharedSpace.dashboard.spendingDistribution' => '成员消费分布',
+			'sharedSpace.dashboard.realtimeUpdates' => '实时更新',
+			'sharedSpace.dashboard.paid' => '已支付',
+			'sharedSpace.roles.owner' => '主理人',
+			'sharedSpace.roles.admin' => '管理员',
+			'sharedSpace.roles.member' => '成员',
 			'errorMapping.generic.badRequest' => '请求无效',
 			'errorMapping.generic.authFailed' => '认证失败，请重新登录',
 			'errorMapping.generic.permissionDenied' => '权限不足',

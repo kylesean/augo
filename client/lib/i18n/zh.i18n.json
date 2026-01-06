@@ -1067,6 +1067,22 @@
             "serverError": "服务器错误"
         }
     },
+    "sharedSpace": {
+        "dashboard": {
+            "cumulativeTotalExpense": "累计总支出",
+            "participatingMembers": "参与成员",
+            "membersCount": "$count 人",
+            "averagePerMember": "成员人均",
+            "spendingDistribution": "成员消费分布",
+            "realtimeUpdates": "实时更新",
+            "paid": "已支付"
+        },
+        "roles": {
+            "owner": "主理人",
+            "admin": "管理员",
+            "member": "成员"
+        }
+    },
     "errorMapping": {
         "generic": {
             "badRequest": "请求无效",

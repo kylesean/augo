@@ -69,6 +69,7 @@ class TranslationsKo extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _TranslationsAppKo app = _TranslationsAppKo._(_root);
 	@override late final _TranslationsStatisticsKo statistics = _TranslationsStatisticsKo._(_root);
 	@override late final _TranslationsCurrencyKo currency = _TranslationsCurrencyKo._(_root);
+	@override late final _TranslationsSharedSpaceKo sharedSpace = _TranslationsSharedSpaceKo._(_root);
 }
 
 // Path: common
@@ -850,6 +851,17 @@ class _TranslationsCurrencyKo extends TranslationsCurrencyZh {
 	@override String get inr => '인도 루피';
 }
 
+// Path: sharedSpace
+class _TranslationsSharedSpaceKo extends TranslationsSharedSpaceZh {
+	_TranslationsSharedSpaceKo._(TranslationsKo root) : this._root = root, super.internal(root);
+
+	final TranslationsKo _root; // ignore: unused_field
+
+	// Translations
+	@override late final _TranslationsSharedSpaceDashboardKo dashboard = _TranslationsSharedSpaceDashboardKo._(_root);
+	@override late final _TranslationsSharedSpaceRolesKo roles = _TranslationsSharedSpaceRolesKo._(_root);
+}
+
 // Path: auth.email
 class _TranslationsAuthEmailKo extends TranslationsAuthEmailZh {
 	_TranslationsAuthEmailKo._(TranslationsKo root) : this._root = root, super.internal(root);
@@ -1090,6 +1102,34 @@ class _TranslationsStatisticsSortKo extends TranslationsStatisticsSortZh {
 	// Translations
 	@override String get amount => '금액순';
 	@override String get date => '날짜순';
+}
+
+// Path: sharedSpace.dashboard
+class _TranslationsSharedSpaceDashboardKo extends TranslationsSharedSpaceDashboardZh {
+	_TranslationsSharedSpaceDashboardKo._(TranslationsKo root) : this._root = root, super.internal(root);
+
+	final TranslationsKo _root; // ignore: unused_field
+
+	// Translations
+	@override String get cumulativeTotalExpense => '누적 총 지출';
+	@override String get participatingMembers => '참여 멤버';
+	@override String membersCount({required Object count}) => '${count} 명';
+	@override String get averagePerMember => '멤버별 평균';
+	@override String get spendingDistribution => '멤버별 소비 분포';
+	@override String get realtimeUpdates => '실시간 업데이트';
+	@override String get paid => '결제 완료';
+}
+
+// Path: sharedSpace.roles
+class _TranslationsSharedSpaceRolesKo extends TranslationsSharedSpaceRolesZh {
+	_TranslationsSharedSpaceRolesKo._(TranslationsKo root) : this._root = root, super.internal(root);
+
+	final TranslationsKo _root; // ignore: unused_field
+
+	// Translations
+	@override String get owner => '공간장';
+	@override String get admin => '관리자';
+	@override String get member => '멤버';
 }
 
 // Path: chat.tools.done
@@ -1919,6 +1959,16 @@ extension on TranslationsKo {
 			'currency.hkd' => '홍콩 달러',
 			'currency.twd' => '대만 달러',
 			'currency.inr' => '인도 루피',
+			'sharedSpace.dashboard.cumulativeTotalExpense' => '누적 총 지출',
+			'sharedSpace.dashboard.participatingMembers' => '참여 멤버',
+			'sharedSpace.dashboard.membersCount' => ({required Object count}) => '${count} 명',
+			'sharedSpace.dashboard.averagePerMember' => '멤버별 평균',
+			'sharedSpace.dashboard.spendingDistribution' => '멤버별 소비 분포',
+			'sharedSpace.dashboard.realtimeUpdates' => '실시간 업데이트',
+			'sharedSpace.dashboard.paid' => '결제 완료',
+			'sharedSpace.roles.owner' => '공간장',
+			'sharedSpace.roles.admin' => '관리자',
+			'sharedSpace.roles.member' => '멤버',
 			_ => null,
 		};
 	}

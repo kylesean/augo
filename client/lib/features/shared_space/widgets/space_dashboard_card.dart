@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
+import 'package:augo/i18n/strings.g.dart';
 import '../models/shared_space_models.dart';
 
 class SpaceDashboardCard extends StatelessWidget {
@@ -49,7 +50,7 @@ class SpaceDashboardCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '累计总支出',
+                      t.sharedSpace.dashboard.cumulativeTotalExpense,
                       style: theme.typography.xs.copyWith(
                         color: colors.primaryForeground.withValues(alpha: 0.7),
                         fontWeight: FontWeight.w500,
@@ -77,11 +78,17 @@ class SpaceDashboardCard extends StatelessWidget {
                   children: [
                     _buildQuickStat(
                       context,
-                      '参与成员',
-                      '${space.members?.length ?? 0} 人',
+                      t.sharedSpace.dashboard.participatingMembers,
+                      t.sharedSpace.dashboard.membersCount(
+                        count: space.members?.length ?? 0,
+                      ),
                     ),
                     const SizedBox(width: 32),
-                    _buildQuickStat(context, '成员人均', '¥${_calculateAverage()}'),
+                    _buildQuickStat(
+                      context,
+                      t.sharedSpace.dashboard.averagePerMember,
+                      '¥${_calculateAverage()}',
+                    ),
                   ],
                 ),
               ],
@@ -96,7 +103,7 @@ class SpaceDashboardCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      '成员消费分布',
+                      t.sharedSpace.dashboard.spendingDistribution,
                       style: theme.typography.sm.copyWith(
                         fontWeight: FontWeight.w600,
                         color: colors.foreground,
@@ -104,7 +111,7 @@ class SpaceDashboardCard extends StatelessWidget {
                     ),
                     const Spacer(),
                     Text(
-                      '实时更新',
+                      t.sharedSpace.dashboard.realtimeUpdates,
                       style: theme.typography.xs.copyWith(
                         color: colors.mutedForeground,
                       ),
@@ -195,7 +202,9 @@ class SpaceDashboardCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    member.role == MemberRole.owner ? '主理人' : '成员',
+                    member.role == MemberRole.owner
+                        ? t.sharedSpace.roles.owner
+                        : t.sharedSpace.roles.member,
                     style: theme.typography.xs.copyWith(
                       color: colors.mutedForeground,
                     ),
@@ -214,7 +223,7 @@ class SpaceDashboardCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '已支付',
+                  t.sharedSpace.dashboard.paid,
                   style: theme.typography.xs.copyWith(
                     color: colors.mutedForeground,
                   ),

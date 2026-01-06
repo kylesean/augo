@@ -779,5 +779,21 @@
         "hkd": "香港ドル",
         "twd": "新台湾ドル",
         "inr": "インドルピー"
+    },
+    "sharedSpace": {
+        "dashboard": {
+            "cumulativeTotalExpense": "累計総支出",
+            "participatingMembers": "参加メンバー",
+            "membersCount": "$count 人",
+            "averagePerMember": "メンバー平均",
+            "spendingDistribution": "メンバー別支出割合",
+            "realtimeUpdates": "リアルタイム更新",
+            "paid": "支払い済み"
+        },
+        "roles": {
+            "owner": "オーナー",
+            "admin": "管理者",
+            "member": "メンバー"
+        }
     }
 }

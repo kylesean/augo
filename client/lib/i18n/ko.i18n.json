@@ -779,5 +779,21 @@
         "hkd": "홍콩 달러",
         "twd": "대만 달러",
         "inr": "인도 루피"
+    },
+    "sharedSpace": {
+        "dashboard": {
+            "cumulativeTotalExpense": "누적 총 지출",
+            "participatingMembers": "참여 멤버",
+            "membersCount": "$count 명",
+            "averagePerMember": "멤버별 평균",
+            "spendingDistribution": "멤버별 소비 분포",
+            "realtimeUpdates": "실시간 업데이트",
+            "paid": "결제 완료"
+        },
+        "roles": {
+            "owner": "공간장",
+            "admin": "관리자",
+            "member": "멤버"
+        }
     }
 }
