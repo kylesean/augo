@@ -218,6 +218,8 @@ def setup_logging() -> None:
     logging.getLogger("duckduckgo_search").setLevel(logging.WARNING)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
     logging.getLogger("requests").setLevel(logging.WARNING)
+    logging.getLogger("mem0").setLevel(logging.WARNING)
+    logging.getLogger("openai").setLevel(logging.WARNING)
 
     # Configure structlog with separate formatters for console and file
     # File always uses JSON, console uses colors in development

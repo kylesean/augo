@@ -235,17 +235,14 @@ class MemoryService:
             metadata.update(additional_metadata)
 
         try:
-            # Store each fact as a separate memory entry for better retrieval granularity
-            results = []
-            for fact in facts:
-                # Mem0's add can handle conflict resolution and updates
-                # We use the fact text directly as the data to store
-                result = await self._memory.add(
-                    fact,
-                    user_id=user_id,
-                    metadata=metadata,
-                )
-                results.append(result)
+            # 3. Store consolidated facts in Mem0
+            # Join facts into one block so Mem0 only calls its internal LLM once.
+            consolidated_text = "\n".join(facts)
+            result = await self._memory.add(
+                consolidated_text,
+                user_id=user_id,
+                metadata=metadata,
+            )
 
             logger.info(
                 "salient_memories_added",
@@ -258,7 +255,7 @@ class MemoryService:
                 "success": True,
                 "extracted": True,
                 "fact_count": len(facts),
-                "results": results
+                "result": result
             }
 
         except Exception as e:
@@ -295,7 +292,8 @@ class MemoryService:
                 "\n3. Persistent Preferences: 'Always categorize Meituan as Dining', 'I prefer conservative investments'."
                 "\n4. Account/Asset Info: 'My mortgage is with HSBC', 'I have a hidden savings account'."
                 "\n5. Explicit Decisions & Overrides: 'Set my monthly food budget to $500 from now on', 'I no longer work at Google, I moved to Tesla'."
-                "\n\n--- WHAT TO IGNORE (NOISE) ---"
+                "\n- AI SELF-DESCRIPTION: Descriptions about your own capabilities, 'I have memory function', 'My principles are...', 'How can I help'."
+                "\n- AI INSTRUCTIONS: Directions given to the AI, or AI explaining its own code/logic."
                 "\n- Temporary queries: 'How much did I spend yesterday?'"
                 "\n- Generic small talk: 'Hello', 'Thanks'."
                 "\n- Technical instructions: 'Show me the chart', 'Open settings'."
