@@ -223,6 +223,32 @@ class _ChatMessageWidgetState extends ConsumerState<ChatMessageWidget>
             color: theme.colors.foreground,
             height: 1.5,
           ),
+          // Custom ordered list builder for proper number alignment
+          orderedListBuilder: (ctx, no, child, config) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 4.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Fixed-width container for right-aligned numbers
+                  SizedBox(
+                    width: 28,
+                    child: Text(
+                      '$no.',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: theme.colors.foreground,
+                        height: 1.5,
+                      ),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(child: child),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
