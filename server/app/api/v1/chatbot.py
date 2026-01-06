@@ -268,9 +268,16 @@ async def chat_stream(
                         pass
 
                 # Update long-term memory after conversation completes
+                # Include both user message and AI response for better context extraction
                 if user_message and session.user_uuid:
                     try:
-                        memory_messages = [{"role": "user", "content": user_message}]
+                        ai_response = agent.get_last_response()
+                        memory_messages = [
+                            {"role": "user", "content": user_message},
+                        ]
+                        if ai_response:
+                            memory_messages.append({"role": "assistant", "content": ai_response})
+                        
                         await agent._update_long_term_memory(
                             user_uuid=str(session.user_uuid),
                             messages=memory_messages,

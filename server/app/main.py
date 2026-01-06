@@ -75,8 +75,8 @@ async def lifespan(app: FastAPI):
 
     await init_cache()
 
-    # Initialize recurring transaction scheduler
-    from app.services.scheduler_service import init_scheduler, shutdown_scheduler
+    # Initialize application scheduler
+    from app.services.scheduler import init_scheduler, shutdown_scheduler
 
     await init_scheduler()
 
@@ -421,9 +421,9 @@ async def health_check(request: Request) -> JSONResponse:
     redis_healthy = await cache_manager.health_check()
 
     # Check scheduler status
-    from app.services.scheduler_service import recurring_scheduler
+    from app.services.scheduler import app_scheduler
 
-    scheduler_running = recurring_scheduler._scheduler is not None and recurring_scheduler._scheduler.running
+    scheduler_running = app_scheduler.is_running()
 
     all_healthy = db_healthy  # Redis is optional, don't block health check
 

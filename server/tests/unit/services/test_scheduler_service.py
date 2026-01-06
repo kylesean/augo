@@ -9,7 +9,7 @@ from sqlalchemy import select
 
 from app.models.transaction import RecurringTransaction, Transaction
 from app.models.user import User
-from app.services.scheduler_service import RecurringTransactionScheduler
+from app.services.recurring_transaction_jobs import process_due_transactions
 
 
 @pytest.mark.asyncio
@@ -49,11 +49,9 @@ async def test_process_due_transactions(db_session):
         with patch.object(db_session, "commit", side_effect=db_session.flush):
             yield db_session
 
-    with patch("app.services.scheduler_service.get_session_context", side_effect=mock_ctx):
-        scheduler = RecurringTransactionScheduler()
-
-        # 4. Action
-        await scheduler.process_due_transactions()
+    with patch("app.services.recurring_transaction_jobs.get_session_context", side_effect=mock_ctx):
+        # 4. Action - Call the function directly
+        await process_due_transactions()
 
         # 5. Assert
         # Check transaction created

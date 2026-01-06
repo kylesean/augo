@@ -127,6 +127,14 @@ class SimpleLangChainAgent:
 
         return self._middlewares
 
+    def get_last_response(self) -> str:
+        """Get the AI response text from the last stream.
+        
+        Returns:
+            str: The collected AI response text from the most recent stream
+        """
+        return self._stream_processor.get_last_response()
+
     # =========================================================================
     # Agent 生命周期
     # =========================================================================

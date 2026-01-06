@@ -238,10 +238,14 @@ class MemoryService:
             # 3. Store consolidated facts in Mem0
             # Join facts into one block so Mem0 only calls its internal LLM once.
             consolidated_text = "\n".join(facts)
+            # Use infer=False to skip Mem0's internal LLM processing
+            # We've already extracted facts via extract_salient_facts()
+            # This saves ~50% token cost and reduces latency
             result = await self._memory.add(
                 consolidated_text,
                 user_id=user_id,
                 metadata=metadata,
+                infer=False,
             )
 
             logger.info(
@@ -352,9 +356,21 @@ class MemoryService:
 
         try:
             # Build filters if categories specified
+            # Mem0 filter format: {"AND": [{"category": "value"}]} for multiple conditions
+            # or {"category": "value"} for single category
             filters = None
             if categories:
-                filters = {"category": {"$in": categories}}
+                if len(categories) == 1:
+                    filters = {"category": categories[0]}
+                else:
+                    # Use OR logic for multiple categories
+                    filters = {"OR": [{"category": cat} for cat in categories]}
+                
+                logger.debug(
+                    "memory_search_filters",
+                    categories=categories,
+                    filters=filters,
+                )
 
             result = await self._memory.search(
                 query=query,
@@ -588,6 +604,112 @@ class MemoryService:
             "total_count": len(memories),
             "categories": categories,
         }
+
+    # =========================================================================
+    # Memory Lifecycle Management
+    # =========================================================================
+
+    async def cleanup_old_memories(
+        self,
+        user_uuid: str | UUID,
+        days_old: int = 180,
+        max_memories: int = 500,
+    ) -> dict:
+        """Clean up old or excess memories for a user.
+        
+        Implements two cleanup strategies:
+        1. Delete memories older than days_old
+        2. Keep only max_memories most recent memories
+        
+        This method is safe to call periodically (e.g., via a scheduled job)
+        to prevent unbounded memory growth.
+        
+        Args:
+            user_uuid: User identifier
+            days_old: Delete memories older than this (default 180 days)
+            max_memories: Maximum memories to keep (default 500)
+        
+        Returns:
+            dict with cleanup statistics:
+            - deleted_count: Number of memories deleted
+            - remaining_count: Number of memories after cleanup
+            - error: Error message if cleanup failed
+        """
+        from datetime import timedelta
+        
+        user_id = str(user_uuid)
+        deleted_count = 0
+        
+        try:
+            memories = await self.get_user_memories(user_id, limit=1000)
+            
+            if not memories:
+                return {"deleted_count": 0, "remaining_count": 0}
+            
+            cutoff_date = datetime.now(timezone.utc) - timedelta(days=days_old)
+            
+            # Sort by created_at descending (newest first)
+            sorted_memories = sorted(
+                memories,
+                key=lambda x: x.get("created_at", ""),
+                reverse=True
+            )
+            
+            # Identify memories to delete
+            memories_to_delete = []
+            
+            for i, mem in enumerate(sorted_memories):
+                # Strategy 1: Exceed max count (always delete excess)
+                if i >= max_memories:
+                    memories_to_delete.append(mem)
+                    continue
+                
+                # Strategy 2: Older than cutoff date
+                created_at_str = mem.get("created_at", "")
+                if created_at_str:
+                    try:
+                        # Handle various ISO format variations
+                        created_at_str = created_at_str.replace("Z", "+00:00")
+                        created_at = datetime.fromisoformat(created_at_str)
+                        if created_at < cutoff_date:
+                            memories_to_delete.append(mem)
+                    except ValueError:
+                        pass
+            
+            # Delete identified memories
+            for mem in memories_to_delete:
+                mem_id = mem.get("id")
+                if mem_id:
+                    success = await self.delete_memory(mem_id)
+                    if success:
+                        deleted_count += 1
+            
+            remaining_count = len(memories) - deleted_count
+            
+            logger.info(
+                "memory_cleanup_completed",
+                user_uuid=user_id,
+                deleted_count=deleted_count,
+                remaining_count=remaining_count,
+                days_threshold=days_old,
+                max_memories=max_memories,
+            )
+            
+            return {
+                "deleted_count": deleted_count,
+                "remaining_count": remaining_count,
+            }
+            
+        except Exception as e:
+            logger.error(
+                "memory_cleanup_failed",
+                user_uuid=user_id,
+                error=str(e),
+            )
+            return {
+                "deleted_count": deleted_count,
+                "error": str(e),
+            }
 
 
 # Convenience function for quick access

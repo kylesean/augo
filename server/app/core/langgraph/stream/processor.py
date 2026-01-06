@@ -67,6 +67,14 @@ class StreamProcessor:
         self._text_filter_policy = text_filter_policy or DefaultTextFilterPolicy()
         self._event_generator = EventGenerator()
 
+    def get_last_response(self) -> str:
+        """Get the AI response text from the last stream processing.
+        
+        Returns:
+            str: The collected AI response text
+        """
+        return self._event_generator.get_collected_response()
+
     async def process_stream(
         self,
         agent,
