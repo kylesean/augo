@@ -2,6 +2,9 @@
 
 LangGraph conditional edge routing functions, determining the flow of execution.
 Reference: https://docs.langchain.com/oss/python/langgraph/graph-api#conditional-edges
+
+Routing is now declarative based on tool metadata's `continuation` property,
+with minimal override rules for special modes like `direct_execute`.
 """
 
 from typing import Literal
@@ -54,13 +57,33 @@ def route_after_agent(state: AgentState) -> Literal["tools", "__end__"]:
     return END
 
 
-def route_after_tools(state: AgentState) -> Literal["agent", "__end__"]:
-    """Tool post-routing: Write operation/GenUI directly ends, read operation returns Agent
+# ============================================================================
+# Direct Execute Mode Overrides
+# ============================================================================
+# When ui_mode=direct_execute, these rules override the tool's declared continuation.
+# This centralizes special-case logic instead of scattering it in conditionals.
 
-    Based on dynamic：
-    - WRITE type → directly ends after successful execution
-    - GENUI type → directly ends after successful execution, waiting for user interaction
-    - READONLY type → returns Agent to continue conversation
+from app.core.langgraph.tools.tool_metadata import Continuation
+
+DIRECT_EXECUTE_OVERRIDES: dict[Continuation, str] = {
+    # WRITE tools: need agent to provide summary/confirmation after direct execution
+    Continuation.END: "agent",
+    # WAIT_USER tools: UI handles the rest, terminate graph
+    Continuation.WAIT_USER: END,
+    # AGENT tools: continue as normal
+    Continuation.AGENT: "agent",
+}
+
+
+def route_after_tools(state: AgentState) -> Literal["agent", "__end__"]:
+    """Tool post-routing based on declarative continuation policy.
+
+    Routing is determined by the tool's `continuation` metadata:
+    - AGENT: Return to agent for further processing
+    - END: Terminate execution
+    - WAIT_USER: Terminate and wait for user UI interaction
+
+    In `direct_execute` mode, DIRECT_EXECUTE_OVERRIDES may modify the behavior.
 
     Args:
         state: Agent state
@@ -70,65 +93,70 @@ def route_after_tools(state: AgentState) -> Literal["agent", "__end__"]:
     """
     from langchain_core.messages import ToolMessage
 
-    from app.core.langgraph.tools.tool_metadata import ToolType, get_tool_metadata
+    from app.core.langgraph.tools.tool_metadata import Continuation, get_tool_metadata
 
     messages = state.get("messages", [])
 
     if not messages:
         return END
 
-    # Check the last executed tool
     last_message = messages[-1]
 
-    if isinstance(last_message, ToolMessage):
-        tool_name = getattr(last_message, "name", "")
-        tool_meta = get_tool_metadata(tool_name)
+    if not isinstance(last_message, ToolMessage):
+        return END
 
-        if tool_meta:
-            # Check if we are in GenUI atomic direct execute mode
-            ui_mode = state.get("ui_mode", "idle")
+    tool_name = getattr(last_message, "name", "")
+    tool_meta = get_tool_metadata(tool_name)
 
-            # WRITE type:
-            # - If normal: ends (Agent will summarize)
-            # - If direct_execute: must go to AGENT to provide final summary/confirmation
-            if tool_meta.tool_type == ToolType.WRITE:
-                if ui_mode == "direct_execute":
-                    logger.info("route_after_tools_to_agent_for_summary", tool_name=tool_name, ui_mode=ui_mode)
-                    return "agent"
+    if not tool_meta:
+        # Unknown tool: default to continue
+        logger.debug("route_after_tools_unknown", tool_name=tool_name)
+        return "agent"
 
-                logger.info(
-                    "route_after_tools_end",
-                    tool_name=tool_name,
-                    tool_type=tool_meta.tool_type.value,
-                    reason="write_operation_complete",
-                )
-                return END
+    continuation = tool_meta.continuation
+    ui_mode = state.get("ui_mode", "idle")
 
-            # GENUI type:
-            # - If direct_execute: ends (UI will handle interaction/wizard)
-            # - If normal agent flow: return to AGENT for synthesis (e.g. Skill analysis)
-            if tool_meta.tool_type == ToolType.GENUI:
-                if ui_mode == "direct_execute":
-                    logger.info("route_after_tools_end_direct_genui", tool_name=tool_name)
-                    return END
+    # Apply direct_execute overrides if applicable
+    if ui_mode == "direct_execute":
+        override = DIRECT_EXECUTE_OVERRIDES.get(continuation)
+        if override is not None:
+            logger.info(
+                "route_after_tools_direct_execute_override",
+                tool_name=tool_name,
+                original_continuation=continuation.value,
+                override=override if override != END else "END",
+            )
+            return override
 
-                logger.info("route_after_tools_continue_for_synthesis", tool_name=tool_name)
-                return "agent"
-
-            # Data query tools (like search_transactions):
-            # - End to let UI display results, avoid redundant text.
-            if tool_name == "search_transactions":
-                logger.info("route_after_tools_end_data_query", tool_name=tool_name)
-                return END
-
-        # READONLY type or unknown tool: returns Agent to continue conversation
+    # Normal mode: use declared continuation
+    if continuation == Continuation.AGENT:
         logger.debug(
             "route_after_tools_to_agent",
             tool_name=tool_name,
-            tool_type=tool_meta.tool_type.value if tool_meta else "unknown",
-            reason="read_operation_continue",
+            continuation=continuation.value,
         )
         return "agent"
 
-    # DEFAULT：END
+    elif continuation == Continuation.END:
+        logger.info(
+            "route_after_tools_end",
+            tool_name=tool_name,
+            continuation=continuation.value,
+        )
+        return END
+
+    elif continuation == Continuation.WAIT_USER:
+        logger.info(
+            "route_after_tools_wait_user",
+            tool_name=tool_name,
+            continuation=continuation.value,
+        )
+        return END
+
+    # Fallback: should not reach here
+    logger.warning(
+        "route_after_tools_fallback",
+        tool_name=tool_name,
+        continuation=continuation.value,
+    )
     return END

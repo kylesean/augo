@@ -43,14 +43,6 @@ class GenUIEventType(str, Enum):
     TITLE_UPDATE = "title_update"
 
 
-class SilentMode(str, Enum):
-    """Silent mode enum."""
-
-    NONE = "none"  # Normal mode: both text and UI output
-    TEXT_ONLY = "text_only"  # Only silence text, UI normal
-    FULL = "full"  # Completely silent
-
-
 class UIComponentMode(str, Enum):
     """UI component rendering mode."""
 

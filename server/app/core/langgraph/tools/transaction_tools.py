@@ -282,10 +282,13 @@ async def search_transactions(
     *,
     config: RunnableConfig,
 ) -> Dict[str, Any]:
-    """Simple transaction record list query. Suitable for quick queries like "check recent expenses".
-    Financial analysis/cash flow/health assessment should use finance-analyst skill.
+    """Retrieve a raw list of transaction records. Best for finding specific orders or viewing history.
 
-    Defaults to last 7 days. Use start_date for earlier data.
+    IMPORTANT: This tool ONLY lists transactions. For any "analysis", "spending breakdown",
+    "patterns", or "financial health", you MUST use the specialized skills in the catalog
+    (e.g., spending-analyzer, cashflow-analyst).
+
+    Defaults to last 7 days.
     """
     from app.core.database import db_manager as search_db_manager
     from app.services.transaction_query_service import (
