@@ -45,6 +45,32 @@ router = APIRouter(prefix="/chatbot", tags=["chatbot"])
 agent = LangGraphAgent()
 
 
+async def _update_memory_background(
+    agent: LangGraphAgent,
+    user_uuid: str,
+    messages: list[dict],
+    session_id: str,
+) -> None:
+    """Update long-term memory in background (fire-and-forget).
+    
+    This function runs as a background task to avoid blocking
+    the HTTP response after streaming completes.
+    """
+    try:
+        await agent._update_long_term_memory(
+            user_uuid=user_uuid,
+            messages=messages,
+            session_id=session_id,
+            category="conversation",
+        )
+    except Exception as e:
+        logger.warning(
+            "background_memory_update_failed",
+            session_id=session_id,
+            error=str(e),
+        )
+
+
 async def resolve_chat_session(
     session_id: Optional[str],
     current_user: User,
@@ -267,29 +293,27 @@ async def chat_stream(
                     except ValueError:
                         pass
 
-                # Update long-term memory after conversation completes
-                # Include both user message and AI response for better context extraction
+                # Update long-term memory in background (fire-and-forget)
+                # IMPORTANT: Don't await here to avoid blocking HTTP response
                 if user_message and session.user_uuid:
-                    try:
-                        ai_response = agent.get_last_response()
-                        memory_messages = [
-                            {"role": "user", "content": user_message},
-                        ]
-                        if ai_response:
-                            memory_messages.append({"role": "assistant", "content": ai_response})
-                        
-                        await agent._update_long_term_memory(
+                    import asyncio
+                    
+                    ai_response = agent.get_last_response()
+                    memory_messages = [
+                        {"role": "user", "content": user_message},
+                    ]
+                    if ai_response:
+                        memory_messages.append({"role": "assistant", "content": ai_response})
+                    
+                    # Create background task - this won't block the response
+                    asyncio.create_task(
+                        _update_memory_background(
+                            agent=agent,
                             user_uuid=str(session.user_uuid),
                             messages=memory_messages,
                             session_id=str(session.id),
-                            category="conversation",
                         )
-                    except Exception as mem_error:
-                        logger.warning(
-                            "memory_update_in_stream_failed",
-                            session_id=str(session.id),
-                            error=str(mem_error),
-                        )
+                    )
 
         except Exception as e:
             logger.error(f"Stream error: {e}", exc_info=True)
