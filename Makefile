@@ -160,3 +160,19 @@ clean:
 gen-keys:
 	@echo "JWT_SECRET_KEY=$$(cd server && uv run python -c 'import secrets; print(secrets.token_hex(32))')"
 	@echo "ENCRYPTION_KEY=$$(cd server && uv run python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')"
+
+# ============================================================
+# Security & Quality Commands
+# ============================================================
+
+# Run dependency security audit
+audit:
+	cd server && uv run pip-audit --strict
+
+# Run type checking with mypy
+typecheck:
+	cd server && uv run mypy .
+
+# Run all quality checks (lint, typecheck, audit)
+check-all: lint typecheck audit
+	@echo "All quality checks passed!"

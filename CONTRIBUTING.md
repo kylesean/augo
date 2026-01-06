@@ -49,11 +49,43 @@ By participating in this project, you are expected to uphold our [Code of Conduc
 - Use type hints for all function signatures.
 - Follow Google-style docstrings.
 - Use `ruff` for linting and formatting.
+- **All code comments and docstrings must be in English.**
+  - This ensures international contributors can understand the codebase.
+  - Existing Chinese comments are being gradually translated (tracked as tech debt).
 
 ### Frontend
 - Follow the official [Effective Dart](https://dart.dev/guides/language/effective-dart) guidelines.
 - Use Riverpod for state management.
 - Ensure UI components align with the Forui design system.
+- All code comments must be in English.
+
+## Changelog Policy
+
+During the **alpha/beta phase**, we use a lightweight changelog process:
+
+- **DO NOT** update `CHANGELOG.md` for every commit or PR.
+- Use clear, descriptive commit messages following [Conventional Commits](https://www.conventionalcommits.org/).
+- The changelog will be generated from commit history when releasing a new version.
+
+**Commit message format:**
+```
+<type>(<scope>): <description>
+
+Examples:
+feat(auth): add rate limiting for login endpoint
+fix(budget): correct monthly calculation logic
+docs: update self-hosting guide
+refactor(agent): simplify middleware chain
+test(services): add auth security tests
+```
+
+**Commit types:**
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation only
+- `refactor`: Code refactoring
+- `test`: Adding or updating tests
+- `chore`: Maintenance tasks
 
 ## License
 

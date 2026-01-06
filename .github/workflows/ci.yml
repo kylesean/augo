@@ -65,6 +65,11 @@ jobs:
         run: |
           # Check app directory recursively, skip tests, only report High severity issues
           uv run bandit -r app -x tests -lll
+
+      - name: Dependency Audit with pip-audit
+        run: |
+          uv run pip-audit --strict --progress-spinner off
+        continue-on-error: true  # TODO: Remove after fixing known vulnerabilities
           
       - name: Test with Pytest
         env:

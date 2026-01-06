@@ -72,6 +72,7 @@ dev = [
     "aiosqlite>=0.22.0",
     "mypy>=1.0.0",
     "bandit>=1.7.0",
+    "pip-audit>=2.7.0",  # Dependency security audit
     "types-requests>=2.31.0",
     "types-python-dateutil>=2.8.0",
     "types-aiofiles>=23.2.0",
@@ -87,7 +88,8 @@ test = [
 ]
 [tool.mypy]
 python_version = "3.13"
-# Relaxed settings for gradual adoption
+# Gradual adoption strategy - Phase 1
+# See: https://mypy.readthedocs.io/en/stable/existing_code.html
 warn_return_any = false          # Disabled: too noisy with dynamic typing
 warn_unused_configs = true
 ignore_missing_imports = true
@@ -96,15 +98,17 @@ disallow_untyped_defs = false    # Keep disabled for gradual adoption
 disallow_incomplete_defs = false
 no_implicit_optional = false     # Allow `def foo(x: str = None)` without explicit Optional
 strict_optional = false          # Relaxed None checking
+
+# Phase 1: Enabled checks - arg-type, return-value (removed from disable list)
+# Phase 2 (future): Enable assignment, valid-type, operator
+# Phase 3 (future): Enable remaining checks
 disable_error_code = [
-    "arg-type",                  # Too many false positives with UUID/str mixup
     "call-arg",                  # Third-party library type issues
     "call-overload",             # SQLModel Field overload issues
     "attr-defined",              # Dynamic attribute access
     "var-annotated",             # Skip variable annotation checks
     "annotation-unchecked",      # Skip annotation unchecked warnings
     "operator",                  # Operator type mismatches
-    "return-value",              # Return value type issues
     "assignment",                # Assignment type issues
     "valid-type",                # Type validity checks
     "union-attr",                # Union attribute access
