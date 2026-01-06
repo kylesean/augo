@@ -151,8 +151,6 @@ async def chat_stream(
     - If session_id in request: use existing session (with ownership verification)
     - If no session_id: create new session, return session_id in first SSE frame
 
-    For new sessions, title is generated concurrently and streamed via title_update event.
-
     Args:
         request: The FastAPI request object for rate limiting.
         chat_request: The chat request containing messages and optional session_id.
@@ -161,8 +159,6 @@ async def chat_stream(
     Returns:
         StreamingResponse: A streaming response of the chat completion.
     """
-    import asyncio
-
     from app.services.title_service import generate_session_title
 
     # Get session_id from request
@@ -181,10 +177,18 @@ async def chat_stream(
         original_request_session_id=session_id,
     )
 
-    # Extract user message for title generation
+    # Extract user message
     user_message = ""
     if chat_request.messages:
         user_message = chat_request.messages[-1].content
+
+    # For new sessions, generate and save title synchronously (fast, no LLM)
+    if is_new and user_message:
+        title = generate_session_title(user_message)
+        async with get_session_context() as db:
+            repo = SessionRepository(db)
+            await repo.update_name(session.id, title)
+        logger.info("session_title_set", session_id=session.id, title=title)
 
     # Extract attachment IDs from messages
     attachment_ids = []
@@ -193,15 +197,9 @@ async def chat_stream(
             attachment_ids.extend([att.id for att in msg.attachments])
 
     async def event_generator():
-        title_task = None
-        title_sent = False
-
         try:
             # 1. Session init event (only for new sessions)
             if is_new:
-                # Start title generation task concurrently
-                title_task = asyncio.create_task(generate_session_title(user_message))
-
                 init_event = GenUIEvent(
                     type="session_init",
                     metadata={
@@ -210,8 +208,7 @@ async def chat_stream(
                 )
                 yield f"data: {json.dumps(init_event.model_dump(mode='json', exclude_none=True), ensure_ascii=False)}\n\n"
 
-            # 2. GenUI 原子模式：直接传递 client_state 给 get_genui_stream
-            # 状态校验在 simple_agent 层处理
+            # 2. GenUI atomic mode: pass client_state to get_genui_stream
             client_state = chat_request.client_state
             if client_state:
                 logger.info(
@@ -220,17 +217,16 @@ async def chat_stream(
                     ui_mode=client_state.ui_mode,
                 )
 
-            # 2.5 设置会话语言（用于技能脚本本地化）
+            # 2.5 Set session language for skill script localization
             from app.core.langgraph.tools import current_session_language, current_user_id
 
-            # 优先使用 X-App-Language 头，否则从 Accept-Language 解析
+            # Prefer X-App-Language header, fallback to Accept-Language
             app_language = request.headers.get("X-App-Language")
             if not app_language:
                 accept_language = request.headers.get("Accept-Language", "zh")
-                # 解析 Accept-Language: zh-CN,zh;q=0.9,en;q=0.8
                 app_language = accept_language.split(",")[0].split(";")[0].strip()
 
-            # 规范化语言代码
+            # Normalize language code
             if app_language.startswith("zh-TW") or app_language.startswith("zh-Hant"):
                 app_language = "zh-Hant"
             elif app_language.startswith("zh"):
@@ -242,13 +238,13 @@ async def chat_stream(
             elif app_language.startswith("en"):
                 app_language = "en"
             else:
-                app_language = "zh"  # 默认中文
+                app_language = "zh"  # Default to Chinese
 
             lang_token = current_session_language.set(app_language)
             user_token = current_user_id.set(str(session.user_uuid)) if session.user_uuid else None
 
             try:
-                # 3. Stream agent events with concurrent title check
+                # 3. Stream agent events
                 async for event in agent.get_genui_stream(
                     chat_request.messages,
                     session.id,
@@ -256,42 +252,10 @@ async def chat_stream(
                     attachment_ids=attachment_ids,
                     client_state=client_state,
                 ):
-                    # Check if title task is ready (non-blocking)
-                    if title_task and not title_sent and title_task.done():
-                        try:
-                            title = title_task.result()
-                            # Update session name in database
-                            async with get_session_context() as db:
-                                repo = SessionRepository(db)
-                                await repo.update_name(session.id, title)
-                            # Send title update event
-                            title_event = GenUIEvent(type="title_update", title=title)
-                            yield f"data: {json.dumps(title_event.model_dump(mode='json', exclude_none=True), ensure_ascii=False)}\n\n"
-                            title_sent = True
-                            logger.info("title_update_sent", session_id=session.id, title=title)
-                        except Exception as e:
-                            logger.error("title_update_failed", error=str(e))
-                            title_sent = True  # Mark as sent to avoid retry
-
-                    # Yield main stream event
                     yield f"data: {json.dumps(event.model_dump(mode='json', exclude_none=True), ensure_ascii=False)}\n\n"
 
-                # 3. If title task not yet finished, wait and send before closing
-                if title_task and not title_sent:
-                    try:
-                        title = await title_task
-                        async with get_session_context() as db:
-                            repo = SessionRepository(db)
-                            await repo.update_name(session.id, title)
-                        title_event = GenUIEvent(type="title_update", title=title)
-                        yield f"data: {json.dumps(title_event.model_dump(mode='json', exclude_none=True), ensure_ascii=False)}\n\n"
-                        logger.info("title_update_sent_after_stream", session_id=session.id, title=title)
-                    except Exception as e:
-                        logger.error("title_update_failed_after_stream", error=str(e))
             finally:
-                # 重置 ContextVar
-                # 注意：如果连接断开触发 GeneratorExit，清理操作可能在不同 Context 中执行，
-                # 这种情况下 reset 会抛出 ValueError，我们捕获它以保证稳定性。
+                # Reset ContextVar
                 try:
                     current_session_language.reset(lang_token)
                 except ValueError:
@@ -304,13 +268,9 @@ async def chat_stream(
                         pass
 
                 # Update long-term memory after conversation completes
-                # This runs in background to not block response
                 if user_message and session.user_uuid:
                     try:
-                        # Build conversation messages for memory extraction
                         memory_messages = [{"role": "user", "content": user_message}]
-                        # Note: We don't have AI response here as it's streamed
-                        # Memory extraction will work with user message context
                         await agent._update_long_term_memory(
                             user_uuid=str(session.user_uuid),
                             messages=memory_messages,
@@ -318,7 +278,6 @@ async def chat_stream(
                             category="conversation",
                         )
                     except Exception as mem_error:
-                        # Don't fail the response if memory update fails
                         logger.warning(
                             "memory_update_in_stream_failed",
                             session_id=str(session.id),
@@ -331,6 +290,8 @@ async def chat_stream(
             yield f"data: {json.dumps(error_event.model_dump(mode='json'), ensure_ascii=False)}\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+
 
 
 @router.post("/sessions/{session_id}/state")
