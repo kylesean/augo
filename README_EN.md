@@ -5,7 +5,7 @@
 <h1 align="center">Augo</h1>
 
 <p align="center">
-  <ins><b>Future-Ready Agentic AI Financial Hub</b></ins>
+  <ins><b>Self-Hosted AI Financial Assistant</b></ins>
 </p>
 
 <p align="center">
@@ -28,79 +28,77 @@
 
 ---
 
-**Augo** is an open-source financial management hub natively built for the **Agentic AI** era. It is not just a ledger, but your personal financial "brain."
-
-As edge computing power becomes more accessible and local models evolve rapidly, we believe that every individual and family will eventually have their own **"Private AI Compute Center."** Augo is designed for this future: anchoring complex AI orchestration, user memory, and sensitive data in your private environment (e.g., NAS, home server) while flexibly connecting to any cloud or local LLM.
+Augo is an open-source AI financial assistant that supports self-hosting. It helps you manage personal or family finances while keeping data and AI memory on your own infrastructure. It can be flexibly connected to various cloud or local LLMs.
 
 ---
 
-## 🚀 Why Augo?
+## 🛠️ Features
 
-### 🧠 Agentic AI Native Architecture
-Augo deeply integrates **LangGraph** for multi-step financial reasoning. It goes beyond simple keyword matching, understanding your intent like a human expert, with self-correction and long-term financial memory loops.
+### Agent-Based Financial Processing
+Powered by **LangGraph**, Augo goes beyond simple transaction logging. It understands your intent through natural conversation, supporting multi-step financial queries, self-correction, and long-term context retention.
 
-### 🧩 Model-Agnostic Flexibility
-Switch models as you see fit:
-- **Hybrid Intelligence**: Route sensitive tasks to private local models and general requests to high-performance cloud LLMs.
-- **Future-Ready**: Built-in support for local inference frameworks like **Ollama** and **LocalAI**, perfectly matching the upcoming trend of edge AI compute clusters.
+### Model-Agnostic Connectivity
+Augo doesn't lock you into a single AI provider:
+- **Cloud Models**: Connect to OpenAI, DeepSeek, and other mainstream providers.
+- **Local Models**: Use **Ollama** or other frameworks to run models on your own hardware for maximum privacy.
 
-### 🎙️ Privacy-First Voice Interaction
-Augo supports integration with the [asr_server](https://github.com/kylesean/asr_server) open-source project:
-- **Self-Hosted ASR**: Deploy your own ASR (Automatic Speech Recognition) service on NAS or local hardware for offline processing.
-- **Engine Switching**: Seamlessly switch between system-native voice engines and your self-hosted ASR service. The latter is lightweight, ultra-private, and keeps your voice data entirely within your local network.
+### Voice & Privacy
+Integrates with the [asr_server](https://github.com/kylesean/asr_server) open-source project:
+- **Self-Hosted ASR**: Deploy your own voice recognition service.
+- **Switchable Engines**: Easily switch between system-native and local ASR services to keep voice data within your network.
 
-### 🛠️ Standardized Skill Extensions
-Leverages a plugin mechanism inspired by **Anthropic Skills**. Developers and power users can easily define new financial skills—such as "Investment Risk Assessment" or "Tax Planning"—giving the AI infinite specialized depth.
+### Skill-Based Extensions
+Uses a plugin mechanism inspired by **Anthropic Skills**. You can add specialized Skill scripts to give the assistant advanced capabilities like spending analysis or budget planning.
 
-### 🎨 Interaction Revolution: Google A2UI
-Powered by the **Generative UI (A2UI)** protocol, your interface is no longer a static set of forms. The AI generates the most relevant UI components (e.g., budget analysis cards, cashflow trend charts) in real-time based on the conversation context.
+### User Interaction
+Implements the **Google A2UI** protocol, where UI components (charts, detail cards) are pushed dynamically by the AI based on the conversation context. The frontend is built with the [forui](https://github.com/duobaseio/forui) UI library.
 
-## 🌎 Deployment & Scenarios
+## 🏠 Deployment Scenarios
 
-- **Home AI Hub**: Optimized for **Synology**, **QNAP**, and other NAS systems. Use Docker to turn your NAS into a private financial AI server.
-- **Data Sovereignty with Power**: Enjoy top-tier AI capabilities while keeping core financial records and user profiles within your own database.
-- **Geeks & Developers**: A comprehensive Makefile-driven toolchain for rapid experimentation with AI Agent logic.
+- **NAS Self-Hosting**: Optimized for **Synology**, **QNAP**, and other common NAS systems using one-click Docker deployment.
+- **Family Sharing**: Supports multiple members with centralized data storage under your full control.
+- **Developer Friendly**: Includes a full Makefile toolchain for local development.
 
-## ⚙️ Core Technology
+## ⚙️ Tech Stack
 
-- **Intelligence**: **LangGraph** orchestration + **Mem0** intelligent memory.
-- **Back-end**: **Python 3.13** + **FastAPI**, with **uv** for high-performance package management.
-- **Front-end**: Premium **Flutter** app built with the [forui](https://github.com/duobaseio/forui) UI component library.
-- **Data Foundation**: **PostgreSQL (pgvector)** for unified structured records and vector knowledge storage.
+- **Backend**: **Python 3.13** + **FastAPI**, with **uv** for dependency management.
+- **Orchestration**: **LangGraph** + **Mem0**.
+- **Frontend**: **Flutter** + [forui](https://github.com/duobaseio/forui).
+- **Storage**: **PostgreSQL (pgvector)** for financial records and vector data.
 
 ---
 
-## 🛠️ Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
 - **Docker & Docker Compose** (Recommended)
-- **Model API Keys** (DeepSeek, OpenAI, Claude) or **Local LLM Entry** (Ollama)
+- **AI Model API Key** or **Local LLM endpoint**
 
 ---
 
-### 🐳 One-Click Deployment (Docker)
+### 🐳 Docker Deployment
 
-1. **Clone the Repo**:
+1. **Clone the repo**:
    ```bash
    git clone https://github.com/kylesean/augo.git && cd augo
    ```
 2. **Configure Environment**:
    ```bash
    cp server/.env.example server/.env
-   # Update server/.env with your LLM configuration
+   # Update server/.env with your Keys or local endpoint
    ```
-3. **Launch**:
+3. **Start**:
    ```bash
    make docker-up
    ```
-   *Scan the QR code in the terminal with your mobile app to start your private AI financial journey.*
+   *Scan the terminal QR code with your mobile app to connect.*
 
 ---
 
 ## 🗺️ Project Structure
-- `/client`: Premium Flutter App source code (powered by [forui](https://github.com/duobaseio/forui)).
-- `/server`: FastAPI backend with Agentic orchestration.
-- `/docker-compose.yml`: Production-ready orchestration.
+- `/client`: Flutter client source code.
+- `/server`: FastAPI backend source code.
+- `/docker-compose.yml`: Docker orchestration configuration.
 
 ## 📄 License
 Licensed under AGPLv3.
