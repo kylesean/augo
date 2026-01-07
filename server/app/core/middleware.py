@@ -103,9 +103,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
 
         # Permissions Policy - disable unnecessary browser features
-        response.headers["Permissions-Policy"] = (
-            "geolocation=(), " "microphone=(), " "camera=(), " "payment=(), " "usb=()"
-        )
+        response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=(), payment=(), usb=()"
 
         # Cache control for API responses - prevent caching of sensitive data
         # Only apply to API routes, not static files
