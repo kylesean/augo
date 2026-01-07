@@ -38,7 +38,7 @@ class SkillLoader:
         if not os.path.exists(self.skills_dir):
             return []
 
-        def scan_directory(directory: str, depth: int = 0):
+        def scan_directory(directory: str, depth: int = 0) -> None:
             if depth > max_depth:
                 return
 

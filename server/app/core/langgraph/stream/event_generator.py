@@ -29,14 +29,14 @@ class EventGenerator:
     将 LangGraph 流输出转换为 GenUI 协议事件。
 
     职责边界：
-    - ✅ 事件格式转换
-    - ✅ Surface ID 生成
-    - ✅ 时间戳追踪
-    - ❌ 渲染策略决策 (→ RenderPolicy)
-    - ❌ 文本过滤决策 (→ TextFilterPolicy)
+    - 事件格式转换
+    - Surface ID 生成
+    - 时间戳追踪
+    - 渲染策略决策 (RenderPolicy)
+    - 文本过滤决策 (TextFilterPolicy)
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         # 工具调用时间追踪（用于计算 duration_ms）
         self._tool_start_times: dict[str, float] = {}
         # 工具 ID 到名称的映射
@@ -46,7 +46,7 @@ class EventGenerator:
         # 流式 AI 回复积累（用于历史记录）
         self._ai_response_parts: list[str] = []
 
-    def reset(self):
+    def reset(self) -> None:
         """重置状态（每次新请求前调用）"""
         self._tool_start_times.clear()
         self._tool_id_to_name.clear()
@@ -88,12 +88,14 @@ class EventGenerator:
                 yield event
 
         # 2. 处理工具调用意图
-        if isinstance(msg_chunk, AIMessage) and getattr(msg_chunk, "tool_call_chunks", None):
-            async for event in self._process_tool_call_chunks(
-                msg_chunk.tool_call_chunks,
-                session_id,
-            ):
-                yield event
+        if isinstance(msg_chunk, AIMessage) and hasattr(msg_chunk, "tool_call_chunks"):
+            tool_chunks = getattr(msg_chunk, "tool_call_chunks", None)
+            if tool_chunks:
+                async for event in self._process_tool_call_chunks(
+                    tool_chunks,
+                    session_id,
+                ):
+                    yield event
 
     async def _process_text_content(
         self,

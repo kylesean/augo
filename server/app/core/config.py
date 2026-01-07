@@ -48,7 +48,7 @@ def get_environment() -> Environment:
 
 
 # Load appropriate .env file based on environment
-def load_env_file():
+def load_env_file() -> str | None:
     """Load environment-specific .env file with priority:
     1. .env (the main user-config)
     2. .env.{env} (environment-specific override)
@@ -249,7 +249,7 @@ class Settings(BaseSettings):
 
     @field_validator("LOG_DIR", "UPLOAD_DIR", mode="before")
     @classmethod
-    def parse_path(cls, v) -> Path:
+    def parse_path(cls, v: str | Path) -> Path:
         """Convert string to Path object."""
         if isinstance(v, Path):
             return v
@@ -278,7 +278,7 @@ class Settings(BaseSettings):
             return f"redis://:{self.REDIS_PASSWORD}@{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
 
-    def model_post_init(self, __context) -> None:
+    def model_post_init(self, __context: dict | None) -> None:
         """Apply environment-specific settings after initialization."""
         # Handle aliases for LLM settings if not established by Pydantic
         # This provides a fallback if the user uses legacy naming like OPENAI_API_BASE
@@ -286,7 +286,7 @@ class Settings(BaseSettings):
             self.OPENAI_BASE_URL = os.getenv("OPENAI_API_BASE")
 
         if not self.OPENAI_API_KEY:
-            self.OPENAI_API_KEY = os.getenv("DEEPSEEK_API_KEY") or os.getenv("LLM_API_KEY")
+            self.OPENAI_API_KEY = os.getenv("DEEPSEEK_API_KEY") or os.getenv("LLM_API_KEY") or ""
 
         # Apply environment-specific overrides
         if self.ENVIRONMENT == Environment.DEVELOPMENT:

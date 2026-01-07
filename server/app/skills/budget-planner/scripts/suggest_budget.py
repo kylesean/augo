@@ -69,8 +69,10 @@ def analyze_spending(transactions: List[Dict[str, Any]], days: int = 90) -> Dict
         }
 
     # Group by category and month
-    by_category = defaultdict(lambda: {"total": Decimal("0"), "count": 0, "transactions": []})
-    by_month = defaultdict(lambda: {"total": Decimal("0"), "count": 0})
+    by_category: Dict[str, Dict[str, Any]] = defaultdict(
+        lambda: {"total": Decimal("0"), "count": 0, "transactions": []}
+    )
+    by_month: Dict[str, Dict[str, Any]] = defaultdict(lambda: {"total": Decimal("0"), "count": 0})
 
     all_expenses = []
 
@@ -106,7 +108,7 @@ def analyze_spending(transactions: List[Dict[str, Any]], days: int = 90) -> Dict
         )
 
     # Calculate totals and trends
-    total_expense = sum(c["total"] for c in by_category.values())
+    total_expense = sum((c["total"] for c in by_category.values()), Decimal("0"))
 
     # Format category breakdown
     category_breakdown = {}
@@ -126,8 +128,10 @@ def analyze_spending(transactions: List[Dict[str, Any]], days: int = 90) -> Dict
     # Trend calculation
     trends = {}
     if len(months) >= 2:
-        last_month = by_month[months[-1]]["total"]
-        prev_month = by_month[months[-2]]["total"]
+        from typing import cast
+
+        last_month = cast(Decimal, by_month[months[-1]]["total"])
+        prev_month = cast(Decimal, by_month[months[-2]]["total"])
         change = last_month - prev_month
         change_pct = float(change / prev_month * 100) if prev_month > 0 else 0
         trends["month_over_month"] = {
@@ -151,12 +155,12 @@ def analyze_spending(transactions: List[Dict[str, Any]], days: int = 90) -> Dict
             )
 
     if trends.get("month_over_month", {}).get("direction") == "up":
-        pct = trends["month_over_month"]["change_percent"]
+        pct = float(trends["month_over_month"]["change_percent"])
         if pct > 20:
             suggestions.append({"type": "monthly_increase", "percentage": pct})
 
     # Find high-frequency small expenses
-    small_frequent = defaultdict(int)
+    small_frequent: Dict[str, int] = defaultdict(int)
     for tx in all_expenses:
         if tx["amount"] < 50:
             small_frequent[tx["category"]] += 1
@@ -177,7 +181,7 @@ def analyze_spending(transactions: List[Dict[str, Any]], days: int = 90) -> Dict
     }
 
 
-async def main():
+async def main() -> None:
     """Execution entry point for the skill script."""
     """Main entry point."""
     user_uuid_str = os.environ.get("USER_ID")
@@ -215,7 +219,7 @@ async def main():
             )
 
             if category:
-                params.categories = [category]
+                params.category_keys = [category]
 
             result = await service.search(str(user_uuid), params)
 

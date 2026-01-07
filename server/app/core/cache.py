@@ -7,7 +7,7 @@ and cache invalidation strategies for the application.
 import functools
 import json
 import pickle
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, Union, cast
 
 from redis import asyncio as redis_async
 from redis.asyncio import Redis
@@ -20,7 +20,7 @@ from app.core.logging import logger
 class CacheManager:
     """Manages Redis connections and caching operations."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize cache manager."""
         self._pool: Optional[ConnectionPool] = None
         self._redis: Optional[Redis] = None
@@ -65,7 +65,7 @@ class CacheManager:
 
         return self._redis
 
-    async def close(self):
+    async def close(self) -> None:
         """Close Redis connections and cleanup."""
         if self._redis is not None:
             await self._redis.aclose()
@@ -85,7 +85,7 @@ class CacheManager:
         """
         try:
             client = self.get_client()
-            await client.ping()
+            await cast(Any, client.ping())
             return True
         except Exception as e:
             logger.error("redis_health_check_failed", error=str(e))
@@ -146,7 +146,7 @@ class CacheManager:
             if serialize:
                 try:
                     # Try JSON first (for simple types)
-                    serialized_value = json.dumps(value)
+                    serialized_value: Union[str, bytes] = json.dumps(value)
                 except (TypeError, ValueError):
                     # Fall back to pickle for complex objects
                     serialized_value = pickle.dumps(value)
@@ -201,7 +201,7 @@ class CacheManager:
             if keys:
                 deleted = await client.delete(*keys)
                 logger.info("cache_pattern_delete", pattern=pattern, count=deleted)
-                return deleted
+                return int(deleted)
 
             return 0
 
@@ -239,7 +239,7 @@ class CacheManager:
         try:
             client = self.get_client()
             result = await client.incrby(key, amount)
-            return result
+            return int(result)
         except Exception as e:
             logger.error("cache_increment_failed", key=key, error=str(e))
             return None
@@ -267,7 +267,7 @@ class CacheManager:
 cache_manager = CacheManager()
 
 
-def cache_key(*args, **kwargs) -> str:
+def cache_key(*args: Any, **kwargs: Any) -> str:
     """Generate cache key from function arguments.
 
     Args:
@@ -292,8 +292,8 @@ def cache_key(*args, **kwargs) -> str:
 def cached(
     ttl: Optional[int] = 300,
     key_prefix: Optional[str] = None,
-    key_builder: Optional[Callable] = None,
-):
+    key_builder: Optional[Callable[..., str]] = None,
+) -> Callable[[Callable], Callable]:
     """Decorator for caching function results.
 
     Args:
@@ -315,7 +315,7 @@ def cached(
 
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
-        async def wrapper(*args, **kwargs):
+        async def wrapper(*args: Any, **kwargs: Any) -> Any:
             # Build cache key
             if key_builder:
                 key = key_builder(*args, **kwargs)
@@ -345,7 +345,7 @@ def cached(
     return decorator
 
 
-def cache_invalidate(key_pattern: str):
+def cache_invalidate(key_pattern: str) -> Callable[[Callable], Callable]:
     """Decorator for invalidating cache after function execution.
 
     Args:
@@ -362,7 +362,7 @@ def cache_invalidate(key_pattern: str):
 
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
-        async def wrapper(*args, **kwargs):
+        async def wrapper(*args: Any, **kwargs: Any) -> Any:
             result = await func(*args, **kwargs)
 
             # Invalidate cache after successful execution
@@ -376,7 +376,7 @@ def cache_invalidate(key_pattern: str):
     return decorator
 
 
-async def init_cache():
+async def init_cache() -> None:
     """Initialize Redis cache on application startup."""
     cache_manager.init_pool()
 
@@ -389,6 +389,6 @@ async def init_cache():
         logger.info("redis_initialized_successfully")
 
 
-async def close_cache():
+async def close_cache() -> None:
     """Close Redis connections on application shutdown."""
     await cache_manager.close()

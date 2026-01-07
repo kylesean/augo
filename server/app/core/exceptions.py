@@ -8,7 +8,6 @@ for type-safe error codes organized by domain.
 from enum import StrEnum, auto
 from typing import Any
 
-
 # ============================================================================
 # Domain-Specific Error Code Enums
 # ============================================================================
@@ -18,7 +17,7 @@ class _AutoName(StrEnum):
     """Base class for auto-generating enum values from member names."""
 
     @staticmethod
-    def _generate_next_value_(name, start, count, last_values):
+    def _generate_next_value_(name: str, start: int, count: int, last_values: list[str]) -> str:
         return name
 
 
@@ -244,7 +243,7 @@ class AppException(Exception):
 
     def to_dict(self) -> dict[str, Any]:
         """Convert exception to dictionary for JSON response."""
-        result = {"code": self.error_code, "message": self.message}
+        result: dict[str, Any] = {"code": self.error_code, "message": self.message}
         if self.details:
             result["details"] = self.details
         return result

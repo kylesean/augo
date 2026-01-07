@@ -10,6 +10,9 @@ jobs:
   backend-test:
     name: Backend (Test & Lint)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
     services:
       postgres:
         image: pgvector/pgvector:pg16
@@ -59,7 +62,6 @@ jobs:
       - name: Type Check with Mypy
         run: |
           uv run mypy .
-        continue-on-error: true
 
       - name: Security Check with Bandit
         run: |

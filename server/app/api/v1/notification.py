@@ -1,7 +1,8 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy import and_, func, select
+from fastapi.responses import JSONResponse
+from sqlalchemy import and_, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_session
@@ -21,14 +22,12 @@ async def get_notifications(
     unread_only: bool = False,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Get user notifications with pagination."""
     # Base filters
-    filters = [
-        Notification.user_uuid == current_user.uuid
-    ]
+    filters = [Notification.user_uuid == current_user.uuid]
     if unread_only:
-        filters.append(Notification.is_read.is_(False))
+        filters.append(Notification.is_read == False)  # noqa: E712
 
     # Count total
     count_query = select(func.count(Notification.id)).where(and_(*filters))
@@ -37,7 +36,7 @@ async def get_notifications(
 
     # Get unread count
     unread_count_query = select(func.count(Notification.id)).where(
-        and_(Notification.user_uuid == current_user.uuid, Notification.is_read.is_(False))
+        and_(Notification.user_uuid == current_user.uuid, Notification.is_read == False)  # noqa: E712
     )
     unread_result = await db.execute(unread_count_query)
     unread_count = unread_result.scalar() or 0
@@ -46,7 +45,7 @@ async def get_notifications(
     query = (
         select(Notification)
         .where(and_(*filters))
-        .order_by(Notification.created_at.desc())
+        .order_by(desc(Notification.created_at))
         .offset((page - 1) * limit)
         .limit(limit)
     )
@@ -79,10 +78,10 @@ async def get_notifications(
 async def get_unread_count(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Get unread notifications count."""
     query = select(func.count(Notification.id)).where(
-        and_(Notification.user_uuid == current_user.uuid, Notification.is_read.is_(False))
+        and_(Notification.user_uuid == current_user.uuid, Notification.is_read == False)  # noqa: E712
     )
     result = await db.execute(query)
     count = result.scalar() or 0
@@ -94,7 +93,7 @@ async def mark_as_read(
     notification_id: int,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Mark notification as read."""
     query = select(Notification).where(
         and_(Notification.id == notification_id, Notification.user_uuid == current_user.uuid)
@@ -114,13 +113,13 @@ async def mark_as_read(
 async def mark_all_read(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Mark all notifications as read."""
     from sqlalchemy import update
 
     query = (
         update(Notification)
-        .where(and_(Notification.user_uuid == current_user.uuid, Notification.is_read.is_(False)))
+        .where(and_(Notification.user_uuid == current_user.uuid, Notification.is_read == False))  # noqa: E712
         .values(is_read=True, read_at=func.now())
     )
     await db.execute(query)
@@ -133,7 +132,7 @@ async def delete_notification(
     notification_id: int,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Delete a notification."""
     query = select(Notification).where(
         and_(Notification.id == notification_id, Notification.user_uuid == current_user.uuid)

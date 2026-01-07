@@ -39,7 +39,7 @@ class MetricsMiddleware(BaseHTTPMiddleware):
         start_time = time.time()
 
         try:
-            response = await call_next(request)
+            response: Response = await call_next(request)
             status_code = response.status_code
         except Exception:
             status_code = 500
@@ -107,7 +107,7 @@ class LoggingContextMiddleware(BaseHTTPMiddleware):
                     pass
 
             # Process the request
-            response = await call_next(request)
+            response: Response = await call_next(request)
 
             # After request processing, check if user info was added to request state
             if hasattr(request.state, "user_uuid"):

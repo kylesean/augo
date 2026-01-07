@@ -3,7 +3,7 @@
 This module provides utility functions for message processing in LangGraph workflows.
 """
 
-from typing import Union
+from typing import Any, Union
 
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import (
@@ -107,7 +107,7 @@ def prepare_messages(
     message_dicts = dump_messages(messages)
 
     try:
-        trimmed_messages = _trim_messages(
+        trimmed_messages: Any = _trim_messages(
             message_dicts,
             strategy="last",
             token_counter=llm,
@@ -128,4 +128,4 @@ def prepare_messages(
         else:
             raise
 
-    return [{"role": "system", "content": system_prompt}] + trimmed_messages
+    return [{"role": "system", "content": system_prompt}] + dump_messages(trimmed_messages)

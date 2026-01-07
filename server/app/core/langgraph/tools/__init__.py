@@ -19,6 +19,9 @@ from langchain_core.tools.base import BaseTool
 from app.core.logging import logger
 
 from .budget_tools import budget_tools
+
+# 用于在请求生命周期内存储用户身份和语言
+from .context import current_session_language, current_user_id
 from .duckduckgo_search import duckduckgo_search_tool
 from .filesystem_tools import filesystem_tools
 from .memory_tools import memory_tools
@@ -26,10 +29,6 @@ from .memory_tools import memory_tools
 # 统一的交易工具（记录 + 查询）
 from .transaction_tools import transaction_tools as record_tools
 from .transfer_tools import execute_transfer, transfer_tools  # execute_transfer 单独导出供内部使用
-
-# 用于在请求生命周期内存储用户身份和语言
-from .context import current_session_language, current_user_id
-
 
 # 1. LLM 可见的业务工具
 # - record_transactions: 记录交易（支持混合类型批量）

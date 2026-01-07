@@ -64,7 +64,7 @@ def sanitize_dict(data: Dict[str, Any]) -> Dict[str, Any]:
     Returns:
         Dict[str, Any]: The sanitized dictionary
     """
-    sanitized = {}
+    sanitized: Dict[str, Any] = {}
     for key, value in data.items():
         if isinstance(value, str):
             sanitized[key] = sanitize_string(value)

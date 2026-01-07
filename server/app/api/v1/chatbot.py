@@ -9,7 +9,7 @@ Authorization: Session ownership is verified via get_authorized_session.
 
 import json
 import uuid
-from typing import Optional
+from typing import AsyncGenerator, Optional
 
 from fastapi import (
     APIRouter,
@@ -18,7 +18,7 @@ from fastapi import (
     Query,
     Request,
 )
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.auth import (
@@ -52,7 +52,7 @@ async def _update_memory_background(
     session_id: str,
 ) -> None:
     """Update long-term memory in background (fire-and-forget).
-    
+
     This function runs as a background task to avoid blocking
     the HTTP response after streaming completes.
     """
@@ -120,7 +120,7 @@ async def chat(
     request: Request,
     chat_request: ChatRequest,
     current_user: User = Depends(get_current_user),
-):
+) -> ChatResponse:
     """Process a chat request using LangGraph.
 
     Args:
@@ -145,7 +145,7 @@ async def chat(
 
         # If we created a new session, include the session_id in the response
         if is_new:
-            response.session_id = session.id
+            response.session_id = str(session.id)
             logger.info(
                 "new_session_info_in_response",
                 session_id=session.id,
@@ -170,7 +170,7 @@ async def chat_stream(
     request: Request,
     chat_request: ChatRequestWithAttachments,
     current_user: User = Depends(get_current_user),
-):
+) -> StreamingResponse:
     """Process a chat request with streaming response.
 
     Session handling:
@@ -222,7 +222,7 @@ async def chat_stream(
         if msg.attachments:
             attachment_ids.extend([att.id for att in msg.attachments])
 
-    async def event_generator():
+    async def event_generator() -> AsyncGenerator[str, None]:
         try:
             # 1. Session init event (only for new sessions)
             if is_new:
@@ -297,14 +297,14 @@ async def chat_stream(
                 # IMPORTANT: Don't await here to avoid blocking HTTP response
                 if user_message and session.user_uuid:
                     import asyncio
-                    
+
                     ai_response = agent.get_last_response()
                     memory_messages = [
                         {"role": "user", "content": user_message},
                     ]
                     if ai_response:
                         memory_messages.append({"role": "assistant", "content": ai_response})
-                    
+
                     # Create background task - this won't block the response
                     asyncio.create_task(
                         _update_memory_background(
@@ -323,8 +323,6 @@ async def chat_stream(
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 
-
-
 @router.post("/sessions/{session_id}/state")
 @limiter.limit(settings.RATE_LIMIT_ENDPOINTS["messages"][0])
 async def update_session_state(
@@ -333,7 +331,7 @@ async def update_session_state(
     updates: dict,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Update session state directly.
 
     Args:
@@ -380,7 +378,7 @@ async def get_session_messages(
     session_id: str,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Get detailed messages for a session including tool calls and UI components.
 
     Returns complete message history with:
@@ -433,7 +431,7 @@ async def clear_session_messages(
     session_id: str,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Clear all messages for a session.
 
     Args:
@@ -479,7 +477,7 @@ async def cancel_last_turn(
     session_id: str,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Cancel the last turn and remove incomplete messages from checkpoint.
 
     This endpoint is called when user cancels an ongoing SSE stream.
@@ -532,7 +530,7 @@ async def get_resume_status(
     session_id: str,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """检查会话是否有可恢复的未完成执行。
 
     利用 LangGraph checkpoint 机制，检查 state.next 是否有待执行节点。
@@ -590,7 +588,7 @@ async def resume_session(
     session_id: str,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> StreamingResponse:
     """从 checkpoint 恢复会话的未完成执行。
 
     返回 SSE 流，继续接收剩余的流式响应。
@@ -607,7 +605,7 @@ async def resume_session(
     # Verify session ownership
     session = await get_authorized_session(session_id, current_user, db)
 
-    async def event_generator():
+    async def event_generator() -> AsyncGenerator[str, None]:
         try:
             async for event in agent.resume_stream(
                 str(session.id),
@@ -629,7 +627,7 @@ async def search_conversations(
     q: str = Query(..., min_length=1, description="Search query"),
     limit: int = Query(20, ge=1, le=50, description="Maximum results to return"),
     current_user: User = Depends(get_current_user),
-):
+) -> JSONResponse:
     """Search user's conversation history.
 
     Currently searches session titles with Chinese tokenization support.

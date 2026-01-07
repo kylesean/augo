@@ -29,7 +29,7 @@ class SkillConstraintMiddleware(BaseMiddleware):
     - 调用 read_file 读取 SKILL.md 获取完整指导
     """
 
-    def __init__(self, tools: Optional[List] = None):
+    def __init__(self, tools: Optional[List[Any]] = None) -> None:
         """初始化技能约束中间件
 
         Args:
@@ -40,7 +40,7 @@ class SkillConstraintMiddleware(BaseMiddleware):
         self._allowed_tools: Optional[Set[str]] = None
         self._all_tools: Optional[List] = tools  # 完整工具列表
 
-    def set_tools(self, tools: List):
+    def set_tools(self, tools: List[Any]) -> None:
         """设置完整工具列表（延迟初始化用）"""
         self._all_tools = tools
 

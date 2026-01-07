@@ -10,10 +10,12 @@ Providing core system tools via DeepAgents' FilesystemBackend:
 Mapped to the project root directory for accessing skills and other project files.
 """
 
+import json
 import os
 import subprocess
+import uuid
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 from deepagents.backends.filesystem import FilesystemBackend
 from deepagents.backends.protocol import ExecuteResponse
@@ -38,7 +40,6 @@ class LocalFilesystemBackend(FilesystemBackend, SandboxBackendProtocol):
         """Execute a bash command in the local environment (synchronous).
 
         NOTE: In production, a restricted SandboxBackend (like Docker) should be used.
-        Direct execution on the host is for development convenience.
         """
         try:
             # 注入 USER_ID 和 LANG 环境变量
@@ -94,11 +95,11 @@ class ReadFileInput(BaseModel):
 
 
 @tool("read_file", args_schema=ReadFileInput)
-def read_file_tool(path: str):
+def read_file_tool(path: str) -> str:
     """Read the content of a file."""
     try:
         content = fs_backend.read(path)
-        return content
+        return cast(str, content)
     except Exception as e:
         return f"Error reading file: {str(e)}"
 
@@ -111,7 +112,7 @@ class LsInput(BaseModel):
 
 
 @tool("ls", args_schema=LsInput)
-def ls_tool(path: str = "."):
+def ls_tool(path: str = ".") -> str:
     """List directory contents."""
     try:
         # 使用 ls_info 获取详细信息，或者简单的 list
@@ -140,7 +141,7 @@ class WriteFileInput(BaseModel):
 
 
 @tool("write_file", args_schema=WriteFileInput)
-def write_file_tool(path: str, content: str):
+def write_file_tool(path: str, content: str) -> Any:
     """Write content to a file in user's artifact directory.
 
     Files are automatically saved to: artifacts/{user_id}/{path}
@@ -187,13 +188,12 @@ class ExecuteInput(BaseModel):
 
 
 @tool("execute", args_schema=ExecuteInput)
-def execute_tool(command: str):
+def execute_tool(command: str) -> Any:
     """Execute a bash command (typically within the app/skills/ directory)."""
     # 直接调用我们自定义 backend 的 execute 方法
     response = fs_backend.execute(command)
 
     # 尝试从输出中提取 JSON 以触发 GenUI
-    import json
 
     result_data = {"output": response.output, "exit_code": response.exit_code, "success": response.exit_code == 0}
 

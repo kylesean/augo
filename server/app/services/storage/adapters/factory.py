@@ -7,7 +7,7 @@ based on StorageConfig provider type.
 from typing import Dict, Type
 
 from app.core.logging import logger
-from app.models.storage_config import StorageConfig, ProviderType
+from app.models.storage_config import ProviderType, StorageConfig
 from app.services.storage.adapters.base import StorageAdapter, StorageError
 
 
@@ -57,8 +57,7 @@ class StorageAdapterFactory:
 
         if adapter_class is None:
             raise StorageError(
-                f"Unsupported storage provider: {config.provider_type}. "
-                f"Supported: {list(cls._adapters.keys())}"
+                f"Unsupported storage provider: {config.provider_type}. Supported: {list(cls._adapters.keys())}"
             )
 
         # Create and initialize adapter
@@ -69,7 +68,7 @@ class StorageAdapterFactory:
             "adapter_created",
             provider_type=config.provider_type,
             storage_name=config.name,
-            is_readonly=config.is_readonly
+            is_readonly=config.is_readonly,
         )
 
         return adapter

@@ -18,7 +18,7 @@ def create_agent_node(
     llm: BaseChatModel,
     tools: List[BaseTool],
     system_prompt: str,
-) -> Callable[[AgentState], Dict[str, List[BaseMessage]]]:
+) -> Callable[[AgentState, RunnableConfig], Any]:
     """创建 Agent 节点
 
     Agent 节点调用 LLM 生成响应，支持动态工具过滤。
@@ -63,7 +63,7 @@ def _get_internal_tools() -> Dict[str, BaseTool]:
 
 def create_direct_execute_node(
     tools: List[BaseTool],  # 保留参数以兼容图构建接口
-) -> Callable[[AgentState, RunnableConfig], Dict[str, Any]]:
+) -> Callable[[AgentState, RunnableConfig], Any]:
     """创建直接执行节点
 
     用于 GenUI 场景：用户在 UI 上操作完成后，跳过 LLM 直接执行工具。

@@ -11,10 +11,11 @@ import uuid
 from typing import List
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request, status
+from fastapi.responses import JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi_pagination import Params
 from pydantic import BaseModel, Field
-from sqlalchemy import select
+from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import SessionRepository, get_session, get_session_context
@@ -153,7 +154,7 @@ async def get_authorized_session(
 async def send_code(
     data: SendCodeRequest,
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Send verification code to email or mobile.
 
     Args:
@@ -190,7 +191,7 @@ async def register(
     request: Request,
     data: RegisterRequest,
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Register a new user.
 
     Args:
@@ -277,7 +278,7 @@ async def login(
     request: Request,
     data: LoginRequest,
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """User login.
 
     Args:
@@ -357,7 +358,7 @@ async def login(
 
 
 @router.post("/session")
-async def create_session(user: User = Depends(get_current_user)):
+async def create_session(user: User = Depends(get_current_user)) -> JSONResponse:
     """Create a new chat session for the authenticated user.
 
     Args:
@@ -375,7 +376,7 @@ async def create_session(user: User = Depends(get_current_user)):
         # Create session in database with default name "New Chat"
         async with get_session_context() as db:
             repo = SessionRepository(db)
-            session = await repo.create(session_id, current_user.uuid, name="New Chat")
+            session = await repo.create(session_id, str(user.uuid), name="New Chat")
 
         logger.info(
             "session_created",
@@ -402,7 +403,7 @@ async def update_session_name(
     name: str = Form(...),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Update a session's name.
 
     Args:
@@ -446,7 +447,7 @@ async def update_session_name(
 async def delete_session(
     session_id: str,
     current_user: User = Depends(get_current_user),
-):
+) -> JSONResponse:
     """Delete a session for the authenticated user.
 
     This endpoint performs cascade deletion:
@@ -472,7 +473,7 @@ async def delete_session(
         session = await repo.get(session_id)
         if session is None:
             raise HTTPException(status_code=404, detail="Session not found")
-            
+
         if str(session.user_uuid) != str(current_user.uuid):
             logger.warning(
                 "session_delete_unauthorized",
@@ -519,7 +520,7 @@ async def get_user_sessions(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
     params: Params = Depends(),
-):
+) -> JSONResponse:
     """Get paginated session list for the authenticated user.
 
     This endpoint returns sessions with pagination support in unified response format.
@@ -534,16 +535,16 @@ async def get_user_sessions(
         JSONResponse: Unified response with paginated sessions
     """
     from fastapi_pagination import Params
-    from fastapi_pagination.ext.sqlalchemy import paginate
+    from fastapi_pagination.ext.sqlalchemy import apaginate
 
     from app.core.responses import error_response, get_error_code_int, success_response
 
     try:
         # Build query for user's sessions, ordered by most recent first
-        query = select(ChatSession).where(ChatSession.user_uuid == user.uuid).order_by(ChatSession.created_at.desc())
+        query = select(ChatSession).where(ChatSession.user_uuid == user.uuid).order_by(desc(ChatSession.created_at))
 
         # Use fastapi-pagination to paginate the query
-        page_result = await paginate(
+        page_result = await apaginate(
             db,
             query,
             params=params,

@@ -87,7 +87,7 @@ class CodeManager:
     负责验证码的生成、存储、验证和频率限制。
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         # 配置
         self.code_length = 6
         self.expire_seconds = 300  # 5分钟

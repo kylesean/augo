@@ -54,7 +54,7 @@ def fuzzy_match_account(accounts: List[Any], hint: str) -> List[str]:
     return matches
 
 
-async def main():
+async def main() -> None:
     """Execution entry point for the skill script."""
     user_uuid_str = os.environ.get("USER_ID")
     if not user_uuid_str:

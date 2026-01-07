@@ -7,7 +7,7 @@
 """
 
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union, cast
 from zoneinfo import ZoneInfo
 
 # 默认时区
@@ -162,7 +162,7 @@ class TimezoneHelper:
             >>> print(formatted)
             "2025年12月02日 21:00"
         """
-        user_time = TimezoneHelper.utc_to_user(dt, user_timezone)
+        user_time = cast(datetime, TimezoneHelper.utc_to_user(dt, user_timezone))
         return user_time.strftime(format_str)
 
 
@@ -174,7 +174,7 @@ def to_utc(dt: datetime, user_timezone: str = DEFAULT_TIMEZONE) -> datetime:
 
 def from_utc(dt: datetime, user_timezone: str = DEFAULT_TIMEZONE) -> datetime:
     """快捷方式：UTC -> 用户时区"""
-    return TimezoneHelper.utc_to_user(dt, user_timezone)
+    return cast(datetime, TimezoneHelper.utc_to_user(dt, user_timezone))
 
 
 def now_utc() -> datetime:

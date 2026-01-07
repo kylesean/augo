@@ -11,7 +11,7 @@ import secrets
 import time
 import uuid
 from datetime import datetime
-from typing import Optional, Tuple
+from typing import Any, Optional, Tuple
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
@@ -34,7 +34,7 @@ class AuthService:
     - Account existence checking
     """
 
-    def __init__(self, db_session: AsyncSession, redis_client=None):
+    def __init__(self, db_session: AsyncSession, redis_client: Any = None):
         """Initialize the authentication service.
 
         Args:
@@ -130,14 +130,13 @@ class AuthService:
             if account_type == "email":
                 raise BusinessError(message="Email already registered", error_code=ErrorCode.EMAIL_REGISTERED)
             else:
-                raise BusinessError(message="Mobile number already registered", error_code=ErrorCode.PHONE_NUMBER_REGISTERED)
+                raise BusinessError(
+                    message="Mobile number already registered", error_code=ErrorCode.PHONE_NUMBER_REGISTERED
+                )
 
         # Verify the code
         if not await self.verify_code(account, code):
-            raise BusinessError(
-                "Verification code is invalid or expired", 
-                error_code=ErrorCode.CODE_EXPIRED
-            )
+            raise BusinessError("Verification code is invalid or expired", error_code=ErrorCode.CODE_EXPIRED)
 
         # Generate unique UUID
         user_uuid = self._generate_uuid()
@@ -181,7 +180,7 @@ class AuthService:
 
         return user
 
-    async def _create_default_financial_settings(self, user_uuid) -> None:
+    async def _create_default_financial_settings(self, user_uuid: Any) -> None:
         """Create default financial settings for a new user.
 
         Args:
@@ -410,7 +409,9 @@ class AuthService:
         Returns:
             uuid.UUID: UUID v7 object
         """
-        return uuid7()
+        from typing import cast
+
+        return cast(uuid.UUID, uuid7())
 
     def _generate_random_username(self) -> str:
         """Generate a random username.

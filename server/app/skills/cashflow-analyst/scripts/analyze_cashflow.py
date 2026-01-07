@@ -28,10 +28,11 @@ import os
 import sys
 from datetime import date, datetime
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 
-def json_serializer(obj):
+def json_serializer(obj: Any) -> Any:
     """JSON serializer for objects not serializable by default."""
     if isinstance(obj, (datetime, date)):
         return obj.isoformat()
@@ -68,7 +69,7 @@ def days_to_time_range(days: int) -> str:
         return "year"
 
 
-async def main():
+async def main() -> None:
     """Execution entry point for the skill script."""
     parser = argparse.ArgumentParser(description="Analyze financial health")
     parser.add_argument("--days", type=int, default=90, help="Analysis period in days")

@@ -6,7 +6,8 @@ from datetime import (
     datetime,
     timedelta,
 )
-from typing import Optional
+from typing import Any, Dict, List, Optional, Union, cast
+from uuid import UUID
 
 from jose import (
     JWTError,
@@ -19,7 +20,7 @@ from app.schemas.auth import Token
 from app.utils.sanitization import sanitize_string
 
 
-def create_access_token(subject, expires_delta: Optional[timedelta] = None) -> Token:
+def create_access_token(subject: Union[str, UUID, Any], expires_delta: Optional[timedelta] = None) -> Token:
     """Create a new access token.
 
     Args:
@@ -135,7 +136,7 @@ def decode_token_payload(token: str) -> Optional[dict]:
             algorithms=[settings.JWT_ALGORITHM],
             options={"verify_signature": False, "verify_exp": False},
         )
-        return payload
-    except JWTError as e:
+        return cast(Optional[dict[Any, Any]], payload)
+    except Exception as e:
         logger.error("token_decode_failed", error=str(e))
         return None

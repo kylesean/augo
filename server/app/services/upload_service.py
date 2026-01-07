@@ -12,7 +12,8 @@ import mimetypes
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Any, AsyncGenerator, List, Optional, Tuple, Union, cast
+from uuid import UUID
 
 import aiofiles
 import aiofiles.os
@@ -20,15 +21,15 @@ from fastapi import UploadFile
 from PIL import Image
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.concurrency import run_in_threadpool
 
 from app.core.config import settings
 from app.core.exceptions import AppException, BusinessException, ErrorCode
-from starlette.concurrency import run_in_threadpool
 from app.core.logging import logger
 from app.models.attachment import Attachment
-from app.models.storage_config import StorageConfig, ProviderType
-from app.services.storage.adapters.factory import StorageAdapterFactory
+from app.models.storage_config import ProviderType, StorageConfig
 from app.services.storage.adapters.base import StorageAdapter
+from app.services.storage.adapters.factory import StorageAdapterFactory
 
 # ============================================================================
 # 文件类型配置
@@ -112,7 +113,7 @@ class UploadService:
     async def upload_files(
         self,
         files: List[UploadFile],
-        user_uuid,  # Can be str or UUID
+        user_uuid: Union[str, UUID],
         compress: bool = True,
         thread_id: Optional[str] = None,
     ) -> Tuple[List[dict], List[dict]]:
@@ -238,7 +239,7 @@ class UploadService:
 
         return successful, failed
 
-    async def _get_or_create_storage_config(self, user_uuid) -> Tuple[int, StorageConfig]:
+    async def _get_or_create_storage_config(self, user_uuid: Union[str, UUID]) -> Tuple[Optional[int], StorageConfig]:
         """获取或创建用户的默认存储配置。
 
         根据 settings.STORAGE_PROVIDER 确定存储后端类型。
@@ -302,7 +303,7 @@ class UploadService:
     async def _process_and_save_file(
         self,
         file: UploadFile,
-        user_uuid: str,
+        user_uuid: Union[str, UUID],
         compress: bool,
     ) -> dict:
         """处理并保存单个文件（支持本地存储和 S3 适配器）。
@@ -338,7 +339,7 @@ class UploadService:
         # 6. 保存文件（根据适配器类型选择方式）
         if self._adapter and settings.STORAGE_PROVIDER != "local_uploads":
             # 使用适配器保存到远程存储（S3/Supabase）
-            async def content_generator():
+            async def content_generator() -> AsyncGenerator[bytes, None]:
                 yield content
 
             object_key = await self._adapter.save(
@@ -379,7 +380,7 @@ class UploadService:
     # 其他公共方法
     # =========================================================================
 
-    async def get_file_path(self, attachment_id: str, user_uuid) -> Tuple[Path, Attachment]:
+    async def get_file_path(self, attachment_id: str, user_uuid: Union[str, UUID]) -> Tuple[Path, Attachment]:
         """获取附件的本地文件路径。
 
         Args:
@@ -439,7 +440,7 @@ class UploadService:
 
         return file_path, attachment
 
-    async def delete_file(self, attachment_id, user_uuid: str) -> bool:
+    async def delete_file(self, attachment_id: str, user_uuid: Union[str, UUID]) -> bool:
         """删除文件。"""
         file_path, attachment = await self.get_file_path(attachment_id, user_uuid)
 
@@ -518,13 +519,13 @@ class UploadService:
                 else:
                     new_height = self.IMAGE_MAX_HEIGHT
                     new_width = int(new_height * ratio)
-                image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+                image = cast(Any, image.resize((new_width, new_height), Image.Resampling.LANCZOS))
 
             # RGBA -> RGB
             if image.mode == "RGBA" and extension.lower() in ("jpg", "jpeg"):
                 background = Image.new("RGB", image.size, (255, 255, 255))
                 background.paste(image, mask=image.split()[3])
-                image = background
+                image = cast(Any, background)
 
             # 保存
             buffer = io.BytesIO()

@@ -8,7 +8,7 @@ This module provides:
 
 from enum import Enum
 from functools import wraps
-from typing import Callable, List, Optional
+from typing import Any, Callable, List, Optional
 
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -86,7 +86,7 @@ def has_permission(user: User, permission: Permission) -> bool:
     return permission in role_permissions
 
 
-def require_permission(permission: Permission):
+def require_permission(permission: Permission) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Decorator to require a specific permission for an endpoint.
 
     Args:
@@ -99,9 +99,9 @@ def require_permission(permission: Permission):
         HTTPException: If user doesn't have the required permission
     """
 
-    def decorator(func: Callable) -> Callable:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(func)
-        async def wrapper(*args, user: User = Depends(get_current_user), **kwargs):
+        async def wrapper(*args: Any, user: User = Depends(get_current_user), **kwargs: Any) -> Any:
             if not has_permission(user, permission):
                 logger.warning("permission_denied", user_uuid=user.uuid, required_permission=permission.value)
                 raise HTTPException(
@@ -114,7 +114,7 @@ def require_permission(permission: Permission):
     return decorator
 
 
-def require_role(required_role: Role):
+def require_role(required_role: Role) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Decorator to require a specific role for an endpoint.
 
     Args:
@@ -127,9 +127,9 @@ def require_role(required_role: Role):
         HTTPException: If user doesn't have the required role
     """
 
-    def decorator(func: Callable) -> Callable:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(func)
-        async def wrapper(*args, user: User = Depends(get_current_user), **kwargs):
+        async def wrapper(*args: Any, user: User = Depends(get_current_user), **kwargs: Any) -> Any:
             user_role = get_user_role(user)
             if user_role != required_role:
                 logger.warning(

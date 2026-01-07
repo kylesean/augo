@@ -3,6 +3,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_session
@@ -22,7 +23,7 @@ router = APIRouter(prefix="/financial-settings", tags=["financial-settings"])
 async def get_financial_settings(
     current_user: Annotated[User, Depends(get_current_user)],
     db: Annotated[AsyncSession, Depends(get_session)],
-):
+) -> JSONResponse:
     """Get current user's financial settings.
 
     Args:
@@ -53,7 +54,7 @@ async def update_financial_settings(
     request: UpdateFinancialSettingsRequest,
     current_user: Annotated[User, Depends(get_current_user)],
     db: Annotated[AsyncSession, Depends(get_session)],
-):
+) -> JSONResponse:
     """Update current user's financial settings.
 
     Uses UPSERT to create settings if they don't exist.

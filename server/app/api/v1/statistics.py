@@ -3,6 +3,7 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_session
@@ -23,7 +24,7 @@ async def get_statistics_overview(
     account_types: Optional[str] = Query(default=None, description="Comma-separated account types to filter"),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Get statistics overview including balance, income, expense, and change percentage."""
     try:
         service = StatisticsService(db)
@@ -65,7 +66,7 @@ async def get_trend_data(
     account_types: Optional[str] = Query(default=None),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Get trend data for chart visualization."""
     try:
         service = StatisticsService(db)
@@ -108,7 +109,7 @@ async def get_category_breakdown(
     limit: int = Query(default=10, ge=1, le=50),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Get breakdown by category for specified transaction type."""
     try:
         service = StatisticsService(db)
@@ -154,7 +155,7 @@ async def get_top_transactions(
     size: int = Query(default=10, ge=1, le=50),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Get top transactions for the period."""
     try:
         service = StatisticsService(db)
@@ -198,7 +199,7 @@ async def get_cash_flow_analysis(
     account_types: Optional[str] = Query(default=None),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Get comprehensive cash flow analysis for the period.
 
     Returns key financial metrics including:
@@ -246,7 +247,7 @@ async def get_health_score(
     account_types: Optional[str] = Query(default=None),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Get financial health score based on multiple dimensions.
 
     Calculates a comprehensive score (0-100) based on:

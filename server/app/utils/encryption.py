@@ -7,7 +7,7 @@ sensitive credentials (S3 access keys, WebDAV passwords, etc.) in the database.
 import base64
 import json
 import os
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, cast
 
 from cryptography.fernet import Fernet, InvalidToken
 
@@ -118,7 +118,7 @@ class CredentialEncryption:
         try:
             encrypted_bytes = encrypted_str.encode("utf-8")
             decrypted = self._fernet.decrypt(encrypted_bytes)
-            return json.loads(decrypted.decode("utf-8"))
+            return cast(Dict[str, Any], json.loads(decrypted.decode("utf-8")))
         except InvalidToken:
             logger.error("credential_decryption_failed", reason="invalid_token")
             raise ValueError("Invalid encryption key or corrupted credential data")

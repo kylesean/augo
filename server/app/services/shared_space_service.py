@@ -8,9 +8,10 @@ from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 import structlog
-from sqlalchemy import and_, func, or_, select
+from sqlalchemy import and_, desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from sqlalchemy.sql.elements import ColumnElement
 
 from app.core.exceptions import AuthorizationError, BusinessError, NotFoundError
 from app.models.shared_space import (
@@ -97,7 +98,7 @@ class SharedSpaceService:
             .join(SpaceMember, SharedSpace.id == SpaceMember.space_id)
             .where(base_filter)
             .options(selectinload(SharedSpace.creator))
-            .order_by(SharedSpace.created_at.desc())
+            .order_by(desc(SharedSpace.created_at))
             .offset(offset)
             .limit(limit)
         )
@@ -212,8 +213,8 @@ class SharedSpaceService:
         await self.db.commit()
         await self.db.refresh(space)
 
-        tx_count = await self._get_space_transaction_count(space_id)
-        return self._space_to_dict(space, tx_count)
+        stats = await self._get_space_financial_stats(space_id)
+        return self._space_to_dict(space, stats["transaction_count"])
 
     async def delete_space(self, space_id: UUID, user_uuid: UUID) -> bool:
         """Delete a space (owner only).
@@ -564,7 +565,7 @@ class SharedSpaceService:
                 selectinload(SpaceTransaction.transaction),
                 selectinload(SpaceTransaction.added_by),
             )
-            .order_by(SpaceTransaction.created_at.desc())
+            .order_by(desc(SpaceTransaction.created_at))
             .offset(offset)
             .limit(limit)
         )
@@ -754,7 +755,7 @@ class SharedSpaceService:
         role: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Convert space to dictionary."""
-        data = {
+        data: dict[str, Any] = {
             "id": str(space.id),
             "name": space.name,
             "role": role,
@@ -810,7 +811,7 @@ class SharedSpaceService:
         role: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Convert space to dictionary with externally loaded creator."""
-        data = {
+        data: Dict[str, Any] = {
             "id": str(space.id),
             "name": space.name,
             "role": role,

@@ -7,10 +7,11 @@ import re
 from typing import Optional
 
 import jieba
-from sqlmodel import select
+from sqlalchemy import desc, or_, select
 
 from app.core.database import get_session_context
 from app.core.logging import logger
+from app.models.searchable_message import SearchableMessage
 from app.models.session import Session
 from app.schemas.search import HighlightRange, SearchResult
 from app.utils.types import UUIDLike
@@ -23,7 +24,7 @@ class SearchService:
     Uses jieba for Chinese word segmentation and PostgreSQL ILIKE for matching.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize search service."""
         # Initialize jieba (lazy loading, first call may be slow)
         jieba.setLogLevel(20)  # Suppress jieba logs
@@ -106,7 +107,7 @@ class SearchService:
 
         # Sort by start position and remove overlaps
         highlights.sort(key=lambda h: h.start)
-        merged = []
+        merged: list[HighlightRange] = []
         for h in highlights:
             if not merged or h.start >= merged[-1].end:
                 merged.append(h)
@@ -155,10 +156,6 @@ class SearchService:
         )
 
         try:
-            # Build ILIKE patterns for each token
-            # Search sessions where title contains any of the tokens
-            from sqlalchemy import or_
-
             async with get_session_context() as db:
                 # Build query with OR conditions for each token
                 base_query = select(Session).where(Session.user_uuid == str(user_uuid))
@@ -167,13 +164,13 @@ class SearchService:
                 for token in tokens:
                     # Escape special characters for LIKE
                     escaped_token = token.replace("%", r"\%").replace("_", r"\_")
-                    conditions.append(Session.name.ilike(f"%{escaped_token}%"))
+                    conditions.append(Session.name.ilike(f"%{escaped_token}%"))  # type: ignore
 
                 if conditions:
                     base_query = base_query.where(or_(*conditions))
 
                 # Order by updated_at descending and limit
-                base_query = base_query.order_by(Session.updated_at.desc()).limit(limit)
+                base_query = base_query.order_by(desc(Session.updated_at)).limit(limit)
 
                 result = await db.execute(base_query)
                 results = result.scalars().all()
@@ -247,23 +244,19 @@ class SearchService:
         )
 
         try:
-            from sqlalchemy import or_
-
-            from app.models.searchable_message import SearchableMessage
-
             async with get_session_context() as db:
                 base_query = select(SearchableMessage).where(SearchableMessage.user_uuid == str(user_uuid))
 
                 conditions = []
                 for token in tokens:
                     escaped_token = token.replace("%", r"\%").replace("_", r"\_")
-                    conditions.append(SearchableMessage.content.ilike(f"%{escaped_token}%"))
+                    conditions.append(SearchableMessage.content.ilike(f"%{escaped_token}%"))  # type: ignore
 
                 if conditions:
                     base_query = base_query.where(or_(*conditions))
 
                 # Order by created_at descending and limit
-                base_query = base_query.order_by(SearchableMessage.created_at.desc()).limit(limit)
+                base_query = base_query.order_by(desc(SearchableMessage.created_at)).limit(limit)
 
                 result = await db.execute(base_query)
                 results = result.scalars().all()

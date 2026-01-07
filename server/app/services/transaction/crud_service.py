@@ -6,9 +6,10 @@ from typing import Optional
 from uuid import UUID, uuid4
 
 import structlog
-from sqlalchemy import and_, select
+from sqlalchemy import and_, asc, case, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from sqlalchemy.sql.elements import ColumnElement
 
 from app.core.exceptions import BusinessError, NotFoundError
 from app.models.base import utc_now
@@ -353,7 +354,7 @@ class TransactionCRUDService:
                 id=uuid4(),
                 user_uuid=user_uuid,
                 type=item.get("transaction_type", "EXPENSE").upper(),
-                amount=amount.quantize(Decimal("0.00000001")),  
+                amount=amount.quantize(Decimal("0.00000001")),
                 amount_original=abs(amount_original),
                 currency=currency,
                 exchange_rate=exchange_rate_val.quantize(Decimal("0.00000001")),
@@ -427,7 +428,7 @@ class TransactionCRUDService:
         transaction_id: UUID,
         user_uuid: UUID,
         account_id: Optional[str],
-    ) -> dict:
+    ) -> Optional[dict]:
         """Update transaction account
 
         Support cross-currency account association:
@@ -448,7 +449,6 @@ class TransactionCRUDService:
         """
         from app.services.exchange_rate_service import ExchangeRateService
 
-     
         query = select(Transaction).where(Transaction.id == transaction_id)
         result = await self.db.execute(query)
         transaction = result.scalar_one_or_none()
@@ -635,12 +635,12 @@ class TransactionCRUDService:
         query = (
             select(
                 TransactionComment,
-                User.username.label("user_name"),
-                User.avatar_url.label("user_avatar_url"),
+                User.username.label("user_name"),  # type: ignore
+                User.avatar_url.label("user_avatar_url"),  # type: ignore
             )
             .join(User, TransactionComment.user_uuid == User.uuid)
             .where(TransactionComment.transaction_id == transaction_id)
-            .order_by(TransactionComment.created_at.asc())
+            .order_by(asc(TransactionComment.created_at))
         )
 
         result = await self.db.execute(query)
@@ -770,8 +770,8 @@ class TransactionCRUDService:
         query = (
             select(
                 TransactionComment,
-                User.username.label("user_name"),
-                User.avatar_url.label("user_avatar_url"),
+                User.username.label("user_name"),  # type: ignore
+                User.avatar_url.label("user_avatar_url"),  # type: ignore
             )
             .join(User, TransactionComment.user_uuid == User.uuid)
             .where(TransactionComment.id == new_comment.id)

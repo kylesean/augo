@@ -39,7 +39,7 @@ def bind_context(**kwargs: Any) -> None:
         **kwargs: Key-value pairs to bind to the logging context
     """
     current = _request_context.get()
-    _request_context.set({**current, **kwargs})
+    _request_context.set({**(current or {}), **kwargs})
 
 
 def clear_context() -> None:
@@ -53,7 +53,7 @@ def get_context() -> Dict[str, Any]:
     Returns:
         Dict[str, Any]: Current context dictionary
     """
-    return _request_context.get()
+    return _request_context.get() or {}
 
 
 def add_context_to_event_dict(logger: Any, method_name: str, event_dict: Dict[str, Any]) -> Dict[str, Any]:

@@ -10,6 +10,7 @@ from datetime import datetime
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
+from fastapi.responses import JSONResponse
 from sqlalchemy import and_, case, extract, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -28,7 +29,7 @@ router = APIRouter(prefix="/home", tags=["home"])
 async def get_total_expense(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Get user's expense summary, including today, month, year, and total expense.
 
     Base currency scheme:
@@ -126,7 +127,7 @@ async def get_calendar_month_details(
     month: int = Query(..., ge=1, le=12, description="Month"),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Get calendar month details for the specified month.
 
     Base currency scheme:

@@ -241,7 +241,7 @@ class SearchTransactionInput(BaseModel):
 
     @field_validator("transaction_types", mode="before")
     @classmethod
-    def parse_transaction_types(cls, v):
+    def parse_transaction_types(cls, v: Any) -> Any:
         """Convert JSON string to list"""
         if v is None:
             return None
@@ -341,7 +341,7 @@ async def search_transactions(
 
         items = []
         total_expense = Decimal("0.0")
-        category_stats = {}
+        category_stats: Dict[str, Decimal] = {}
 
         for item in result.items:
             val = Decimal(str(item.amount))
@@ -375,9 +375,9 @@ async def search_transactions(
                     {"category": cat_key, "amount": float(amt), "percentage": float(amt / total_expense)}
                 )
 
-        top_items = sorted([it for it in items if it["type"] == "EXPENSE"], key=lambda x: x["amount"], reverse=True)[
-            :3
-        ]
+        top_items = sorted(
+            [it for it in items if it["type"] == "EXPENSE"], key=lambda x: float(x.get("amount") or 0.0), reverse=True
+        )[:3]
 
         return {
             "success": True,

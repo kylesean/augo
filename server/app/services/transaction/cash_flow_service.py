@@ -2,7 +2,7 @@
 
 from datetime import date, datetime, timedelta
 from decimal import Decimal
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 from uuid import UUID
 
 import structlog
@@ -55,7 +55,7 @@ class CashFlowService:
                 ),
                 0,
             )
-        ).where(and_(FinancialAccount.user_uuid == user_uuid, FinancialAccount.include_in_net_worth.is_(True)))
+        ).where(and_(FinancialAccount.user_uuid == user_uuid, FinancialAccount.include_in_net_worth == True))  # noqa: E712
         balance_result = await self.db.execute(accounts_query)
         current_balance = balance_result.scalar() or Decimal("0.00")
         current_balance_str = str(current_balance)
@@ -95,7 +95,7 @@ class CashFlowService:
             avg_daily_spending_str = str(-abs(Decimal(avg_daily_spending_str)))
 
         # 2. Aggregate all future events
-        events_by_date = {}
+        events_by_date: dict[str, list[dict[str, Any]]] = {}
         start_date = datetime.now().date()
         forecast_end_date = start_date + timedelta(days=forecast_days)
 
@@ -103,7 +103,7 @@ class CashFlowService:
         recurring_query = select(RecurringTransaction).where(
             and_(
                 RecurringTransaction.user_uuid == user_uuid,
-                RecurringTransaction.is_active.is_(True),
+                RecurringTransaction.is_active == True,  # noqa: E712
             )
         )
         recurring_result = await self.db.execute(recurring_query)
@@ -132,7 +132,7 @@ class CashFlowService:
                     events_by_date[date_str].append(
                         {
                             "description": tx.description or "周期性交易",
-                            "amount": str(tx.amount),  
+                            "amount": str(tx.amount),
                         }
                     )
             except Exception as e:

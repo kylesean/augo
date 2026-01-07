@@ -103,9 +103,9 @@ class DefaultRenderPolicy(CompositeRenderPolicy):
     - 无骨架屏预占位（避免复杂的时序问题）
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             [
-                ToolsNodeBufferPolicy(),
+                # ToolsNodeBufferPolicy(),  # 禁用缓冲策略，让工具产生的 UI 组件立即渲染，避免用户感觉请求卡住
             ]
         )

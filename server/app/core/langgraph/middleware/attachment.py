@@ -9,7 +9,7 @@ Based on LangChain 1.0 middleware best practices.
 
 import base64
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, List, Optional
 from uuid import UUID
 
 import aiofiles
@@ -53,7 +53,7 @@ class AttachmentMiddleware(BaseMiddleware):
         "text/markdown",
     }
 
-    def __init__(self, db_session_factory):
+    def __init__(self, db_session_factory: Any) -> None:
         """Initialize with database session factory.
 
         Args:

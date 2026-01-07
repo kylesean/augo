@@ -1,6 +1,7 @@
 """This file contains the main application entry point."""
 
 import os
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
@@ -56,7 +57,7 @@ langfuse = Langfuse(
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Handle application startup and shutdown events."""
     logger.info(
         "application_startup",
@@ -120,7 +121,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
 @app.exception_handler(AppException)
-async def app_exception_handler(request: Request, exc: AppException):
+async def app_exception_handler(request: Request, exc: AppException) -> JSONResponse:
     """Handle custom application exceptions.
 
     Returns unified {code, message, data} format.
@@ -166,7 +167,7 @@ async def app_exception_handler(request: Request, exc: AppException):
 
 
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
+async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
     """Handle validation errors from request data.
 
     Returns unified {code, message, data} format with field errors in data.
@@ -201,7 +202,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         formatted_errors.append({"field": field, "message": msg})
 
     # For _root errors, try to get more context about the request body
-    log_extra = {}
+    log_extra: Dict[str, Any] = {}
     if any(err["field"] == "_root" for err in formatted_errors):
         try:
             # Try to read the raw body for debugging
@@ -232,7 +233,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 @app.exception_handler(ValueError)
-async def value_error_handler(request: Request, exc: ValueError):
+async def value_error_handler(request: Request, exc: ValueError) -> JSONResponse:
     """Handle ValueError exceptions.
 
     Many legacy services raise ValueError with error codes.
@@ -289,7 +290,7 @@ async def value_error_handler(request: Request, exc: ValueError):
 
 
 @app.exception_handler(StarletteHTTPException)
-async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+async def http_exception_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
     """Handle HTTP exceptions (404, 405, etc).
 
     Returns unified {code, message, data} format.
@@ -327,7 +328,7 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException):
 
 
 @app.exception_handler(Exception)
-async def general_exception_handler(request: Request, exc: Exception):
+async def general_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """Handle all unhandled exceptions.
 
     Returns unified {code, message, data} format.
@@ -388,7 +389,7 @@ logger.info("artifacts_static_mount", path=str(_artifacts_dir))
 
 @app.get("/")
 @limiter.limit(settings.RATE_LIMIT_ENDPOINTS["root"][0])
-async def root(request: Request):
+async def root(request: Request) -> JSONResponse:
     """Root endpoint returning basic API information."""
     logger.info("root_endpoint_called")
     body = {

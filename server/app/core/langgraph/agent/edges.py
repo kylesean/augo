@@ -7,7 +7,7 @@ Routing is now declarative based on tool metadata's `continuation` property,
 with minimal override rules for special modes like `direct_execute`.
 """
 
-from typing import Literal
+from typing import Literal, cast
 
 from langchain_core.messages import AIMessage
 from langgraph.graph import END
@@ -44,7 +44,7 @@ def route_after_agent(state: AgentState) -> Literal["tools", "__end__"]:
     messages = state.get("messages", [])
 
     if not messages:
-        return END
+        return cast(Literal["tools", "__end__"], END)
 
     last_message = messages[-1]
 
@@ -54,7 +54,7 @@ def route_after_agent(state: AgentState) -> Literal["tools", "__end__"]:
         logger.debug("route_after_agent_to_tools", tool_names=tool_names)
         return "tools"
 
-    return END
+    return cast(Literal["tools", "__end__"], END)
 
 
 # ============================================================================
@@ -65,11 +65,11 @@ def route_after_agent(state: AgentState) -> Literal["tools", "__end__"]:
 
 from app.core.langgraph.tools.tool_metadata import Continuation
 
-DIRECT_EXECUTE_OVERRIDES: dict[Continuation, str] = {
+DIRECT_EXECUTE_OVERRIDES: dict[Continuation, Literal["agent", "__end__"]] = {
     # WRITE tools: need agent to provide summary/confirmation after direct execution
     Continuation.END: "agent",
     # WAIT_USER tools: UI handles the rest, terminate graph
-    Continuation.WAIT_USER: END,
+    Continuation.WAIT_USER: cast(Literal["agent", "__end__"], END),
     # AGENT tools: continue as normal
     Continuation.AGENT: "agent",
 }
@@ -98,12 +98,12 @@ def route_after_tools(state: AgentState) -> Literal["agent", "__end__"]:
     messages = state.get("messages", [])
 
     if not messages:
-        return END
+        return cast(Literal["agent", "__end__"], END)
 
     last_message = messages[-1]
 
     if not isinstance(last_message, ToolMessage):
-        return END
+        return cast(Literal["agent", "__end__"], END)
 
     tool_name = getattr(last_message, "name", "")
     tool_meta = get_tool_metadata(tool_name)
@@ -143,7 +143,7 @@ def route_after_tools(state: AgentState) -> Literal["agent", "__end__"]:
             tool_name=tool_name,
             continuation=continuation.value,
         )
-        return END
+        return cast(Literal["agent", "__end__"], END)
 
     elif continuation == Continuation.WAIT_USER:
         logger.info(
@@ -151,7 +151,7 @@ def route_after_tools(state: AgentState) -> Literal["agent", "__end__"]:
             tool_name=tool_name,
             continuation=continuation.value,
         )
-        return END
+        return cast(Literal["agent", "__end__"], END)
 
     # Fallback: should not reach here
     logger.warning(
@@ -159,4 +159,4 @@ def route_after_tools(state: AgentState) -> Literal["agent", "__end__"]:
         tool_name=tool_name,
         continuation=continuation.value,
     )
-    return END
+    return cast(Literal["agent", "__end__"], END)

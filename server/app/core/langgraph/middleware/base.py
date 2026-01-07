@@ -10,7 +10,7 @@ Based on LangChain 1.0 middleware best practices:
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator, Callable, Optional
+from typing import Any, AsyncGenerator, Callable, Optional, cast
 
 from langchain_core.messages import BaseMessage, SystemMessage
 from langgraph.types import Command
@@ -141,10 +141,10 @@ class MiddlewareAgent:
 
     def __init__(
         self,
-        agent,
+        agent: Any,
         middlewares: list[BaseMiddleware],
         continue_on_error: bool = True,
-    ):
+    ) -> None:
         """Initialize middleware agent.
 
         Args:
@@ -240,7 +240,7 @@ class MiddlewareAgent:
                 if not should_continue:
                     raise
 
-        return result
+        return cast(dict, result)
 
     async def astream(
         self,
@@ -346,7 +346,7 @@ class MiddlewareAgent:
                 if not should_continue:
                     raise
 
-    async def aget_state(self, config: dict):
+    async def aget_state(self, config: dict) -> Any:
         """Get agent state (delegates to underlying agent).
 
         Args:
@@ -357,7 +357,7 @@ class MiddlewareAgent:
         """
         return await self.agent.aget_state(config)
 
-    async def aupdate_state(self, config: dict, values: dict, as_node: Optional[str] = None):
+    async def aupdate_state(self, config: dict, values: dict, as_node: Optional[str] = None) -> Any:
         """Update agent state (delegates to underlying agent).
 
         Args:

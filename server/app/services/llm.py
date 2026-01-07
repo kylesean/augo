@@ -6,6 +6,7 @@ from typing import (
     Dict,
     List,
     Optional,
+    cast,
 )
 
 from langchain_core.language_models.chat_models import BaseChatModel
@@ -139,7 +140,7 @@ class LLMRegistry:
     ]
 
     @classmethod
-    def get(cls, model_name: str, **kwargs) -> BaseChatModel:
+    def get(cls, model_name: str, **kwargs: Any) -> BaseChatModel:
         """Get an LLM by name with optional argument overrides.
 
         Args:
@@ -186,7 +187,9 @@ class LLMRegistry:
 
         # Return the default instance
         logger.debug("using_default_llm_instance", model_name=model_name)
-        return model_entry["llm"]
+        from langchain_core.language_models import BaseChatModel
+
+        return cast(BaseChatModel, model_entry["llm"])
 
     @classmethod
     def get_all_names(cls) -> List[str]:
@@ -219,7 +222,7 @@ class LLMService:
     rate limit handling, and circular fallback through all available models.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the LLM service."""
         self._llm: Optional[BaseChatModel] = None
         self._current_model_index: int = 0
@@ -329,7 +332,7 @@ class LLMService:
         self,
         messages: List[BaseMessage],
         model_name: Optional[str] = None,
-        **model_kwargs,
+        **model_kwargs: Any,
     ) -> BaseMessage:
         """Call the LLM with the specified messages and circular fallback.
 
@@ -434,7 +437,9 @@ class LLMService:
             Self for method chaining
         """
         if self._llm:
-            self._llm = self._llm.bind_tools(tools)
+            from langchain_core.language_models import BaseChatModel
+
+            self._llm = cast(BaseChatModel, self._llm.bind_tools(tools))
         return self
 
 

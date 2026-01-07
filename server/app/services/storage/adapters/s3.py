@@ -6,7 +6,7 @@ Uses s3fs/aiobotocore for async operations and generates presigned URLs.
 
 import uuid
 from datetime import datetime, timezone
-from typing import AsyncGenerator, Optional
+from typing import Any, AsyncGenerator, Optional
 
 from app.core.logging import logger
 from app.models.storage_config import StorageConfig
@@ -40,8 +40,8 @@ class S3Adapter(StorageAdapter):
             config: StorageConfig with S3 credentials and bucket name
         """
         super().__init__(config)
-        self._session = None
-        self._client = None
+        self._session: Any = None
+        self._client: Any = None
         self._credentials: dict = {}
 
     async def initialize(self) -> None:
@@ -63,25 +63,30 @@ class S3Adapter(StorageAdapter):
             logger.info(
                 "s3_adapter_initialized",
                 bucket=self.config.base_path,
-                endpoint=self._credentials.get("endpoint_url", "default")
+                endpoint=self._credentials.get("endpoint_url", "default"),
             )
         except Exception as e:
             logger.error("s3_adapter_init_failed", error=str(e))
             raise StorageError(f"Failed to initialize S3 adapter: {e}")
 
-    async def _get_client(self):
+    async def _get_client(self) -> Any:
         """Get or create S3 client context manager."""
         import aiobotocore.session
 
         if self._session is None:
             self._session = aiobotocore.session.get_session()
 
-        return self._session.create_client(
-            "s3",
-            endpoint_url=self._credentials.get("endpoint_url"),
-            aws_access_key_id=self._credentials.get("access_key"),
-            aws_secret_access_key=self._credentials.get("secret_key"),
-            region_name=self._credentials.get("region", "us-east-1"),
+        from typing import cast
+
+        return cast(
+            Any,
+            self._session.create_client(  # type: ignore
+                "s3",
+                endpoint_url=self._credentials.get("endpoint_url"),
+                aws_access_key_id=self._credentials.get("access_key"),
+                aws_secret_access_key=self._credentials.get("secret_key"),
+                region_name=self._credentials.get("region", "us-east-1"),
+            ),
         )
 
     @property
@@ -106,10 +111,7 @@ class S3Adapter(StorageAdapter):
         date_prefix = now.strftime("%Y/%m/%d")
 
         ext = Path(filename).suffix.lower() or ""
-        safe_name = "".join(
-            c for c in Path(filename).stem
-            if c.isalnum() or c in "-_"
-        )[:50]
+        safe_name = "".join(c for c in Path(filename).stem if c.isalnum() or c in "-_")[:50]
 
         unique_id = uuid.uuid4().hex[:12]
         return f"{date_prefix}/{unique_id}_{safe_name}{ext}"
@@ -156,20 +158,11 @@ class S3Adapter(StorageAdapter):
 
                 await client.put_object(**put_args)
 
-            logger.info(
-                "s3_file_uploaded",
-                bucket=self.bucket,
-                key=object_key,
-                size=len(content)
-            )
+            logger.info("s3_file_uploaded", bucket=self.bucket, key=object_key, size=len(content))
             return object_key
 
         except Exception as e:
-            logger.error(
-                "s3_upload_failed",
-                bucket=self.bucket,
-                error=str(e)
-            )
+            logger.error("s3_upload_failed", bucket=self.bucket, error=str(e))
             raise StorageError(f"Failed to upload to S3: {e}")
 
     async def get_download_url(
@@ -203,15 +196,12 @@ class S3Adapter(StorageAdapter):
                     Params=params,
                     ExpiresIn=expire_seconds,
                 )
-                return url
+                from typing import cast
+
+                return cast(str, url)
 
         except Exception as e:
-            logger.error(
-                "s3_presign_failed",
-                bucket=self.bucket,
-                key=object_key,
-                error=str(e)
-            )
+            logger.error("s3_presign_failed", bucket=self.bucket, key=object_key, error=str(e))
             raise StorageError(f"Failed to generate presigned URL: {e}")
 
     async def get_stream(
@@ -245,12 +235,7 @@ class S3Adapter(StorageAdapter):
         except Exception as e:
             if "NoSuchKey" in str(e):
                 raise StorageNotFoundError(f"Object not found: {object_key}")
-            logger.error(
-                "s3_stream_failed",
-                bucket=self.bucket,
-                key=object_key,
-                error=str(e)
-            )
+            logger.error("s3_stream_failed", bucket=self.bucket, key=object_key, error=str(e))
             raise StorageError(f"Failed to stream S3 object: {e}")
 
     async def delete(self, object_key: str) -> bool:
@@ -278,12 +263,7 @@ class S3Adapter(StorageAdapter):
             return True
 
         except Exception as e:
-            logger.error(
-                "s3_delete_failed",
-                bucket=self.bucket,
-                key=object_key,
-                error=str(e)
-            )
+            logger.error("s3_delete_failed", bucket=self.bucket, key=object_key, error=str(e))
             raise StorageError(f"Failed to delete S3 object: {e}")
 
     async def exists(self, object_key: str) -> bool:

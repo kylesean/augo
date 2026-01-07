@@ -17,8 +17,9 @@ from decimal import Decimal
 from typing import Any, Dict, List, Optional, Tuple
 from uuid import UUID
 
-from sqlalchemy import and_, case, func, or_, select
+from sqlalchemy import and_, case, desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql.elements import ColumnElement
 
 from app.core.logging import logger
 from app.models.financial_account import FinancialAccount
@@ -251,7 +252,7 @@ class ForecastService:
             and_(
                 FinancialAccount.user_uuid == user_uuid,
                 FinancialAccount.status == "ACTIVE",
-                FinancialAccount.include_in_net_worth.is_(True),
+                FinancialAccount.include_in_net_worth == True,  # noqa: E712
             )
         )
 
@@ -270,10 +271,10 @@ class ForecastService:
         query = select(RecurringTransaction).where(
             and_(
                 RecurringTransaction.user_uuid == user_uuid,
-                RecurringTransaction.is_active.is_(True),
+                RecurringTransaction.is_active == True,  # noqa: E712
                 or_(
-                    RecurringTransaction.end_date.is_(None),
-                    RecurringTransaction.end_date >= start_date,
+                    RecurringTransaction.end_date == None,  # noqa: E711
+                    RecurringTransaction.end_date >= start_date,  # type: ignore
                 ),
             )
         )
@@ -370,7 +371,7 @@ class ForecastService:
         recurring_query = select(RecurringTransaction.amount).where(
             and_(
                 RecurringTransaction.user_uuid == user_uuid,
-                RecurringTransaction.is_active.is_(True),
+                RecurringTransaction.is_active == True,  # noqa: E712
                 RecurringTransaction.type == "EXPENSE",
             )
         )
@@ -507,7 +508,7 @@ class ForecastService:
                     AIFeedbackMemory.insight_type == insight_type,
                 )
             )
-            .order_by(AIFeedbackMemory.created_at.desc())
+            .order_by(desc(AIFeedbackMemory.created_at))
             .limit(limit)
         )
 
@@ -658,8 +659,8 @@ class ForecastService:
         forecast_days: int,
     ) -> ForecastSummary:
         """Calculate forecast summary statistics."""
-        total_recurring_income = sum(e.amount for e in deterministic_events if e.amount > 0)
-        total_recurring_expense = abs(sum(e.amount for e in deterministic_events if e.amount < 0))
+        total_recurring_income = sum((e.amount for e in deterministic_events if e.amount > 0), Decimal("0"))
+        total_recurring_expense = abs(sum((e.amount for e in deterministic_events if e.amount < 0), Decimal("0")))
         predicted_variable = abs(avg_daily_spending * forecast_days)
 
         net_change = total_recurring_income - total_recurring_expense - predicted_variable

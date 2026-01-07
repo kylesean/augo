@@ -10,7 +10,7 @@ This module provides:
 from typing import Any, AsyncGenerator, Generic, List, Optional, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field
-from sqlalchemy import func, select
+from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import SQLModel
 
@@ -147,7 +147,7 @@ class CursorPaginatedResponse(BaseModel, Generic[T]):
 
 async def paginate(
     session: AsyncSession,
-    query: select,
+    query: Select,
     params: PaginationParams,
 ) -> PaginatedResponse:
     """Execute paginated query and return standardized response.
@@ -171,7 +171,7 @@ async def paginate(
         ```
     """
     # Get total count
-    count_query = select(func.count()).select_from(query.alias())
+    count_query = select(func.count()).select_from(query.subquery())
     count_result = await session.execute(count_query)
     total = count_result.scalar() or 0
 
@@ -202,7 +202,7 @@ async def paginate(
 
 async def paginate_cursor(
     session: AsyncSession,
-    query: select,
+    query: Select,
     params: CursorPaginationParams,
     cursor_field: str = "id",
 ) -> CursorPaginatedResponse:
@@ -287,7 +287,7 @@ async def paginate_cursor(
 
 async def stream_query_results(
     session: AsyncSession,
-    query: select,
+    query: Select,
     batch_size: int = 100,
 ) -> AsyncGenerator[Any, None]:
     """Stream query results in batches to avoid loading all data into memory.
@@ -340,7 +340,7 @@ async def stream_query_results(
 
 async def stream_query_batches(
     session: AsyncSession,
-    query: select,
+    query: Select,
     batch_size: int = 100,
 ) -> AsyncGenerator[List[Any], None]:
     """Stream query results as batches.

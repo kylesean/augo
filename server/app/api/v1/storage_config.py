@@ -10,6 +10,7 @@ Provides REST API for managing user storage configurations:
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, status
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -64,15 +65,12 @@ class StorageConfigResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-# --- Endpoints ---
-
-
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_storage_config(
     data: StorageConfigCreate,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Create a new storage configuration.
 
     Creates a storage config for the authenticated user.
@@ -120,7 +118,7 @@ async def list_storage_configs(
     provider_type: Optional[str] = None,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """List all storage configurations for the user.
 
     Args:
@@ -156,7 +154,7 @@ async def get_storage_config(
     config_id: int,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Get a specific storage configuration.
 
     Args:
@@ -193,7 +191,7 @@ async def update_storage_config(
     data: StorageConfigUpdate,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Update a storage configuration.
 
     Args:
@@ -238,7 +236,7 @@ async def delete_storage_config(
     config_id: int,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Delete a storage configuration.
 
     Note: Cannot delete if attachments still reference this config.
@@ -269,7 +267,7 @@ async def delete_storage_config(
 
 
 @router.get("/providers/list")
-async def list_providers():
+async def list_providers() -> JSONResponse:
     """List available storage provider types.
 
     Returns:

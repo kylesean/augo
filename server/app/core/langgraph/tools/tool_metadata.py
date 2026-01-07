@@ -11,7 +11,6 @@ This design provides clear separation of concerns and enables declarative routin
 from enum import Enum
 from typing import Any, Dict
 
-
 # ============================================================================
 # Orthogonal Dimension Enums
 # ============================================================================
@@ -28,8 +27,8 @@ class SideEffect(str, Enum):
     - WRITE: Mutating operations (e.g., database writes, transfers)
     """
 
-    PURE = "pure"    # No side effects
-    READ = "read"    # Read-only operations
+    PURE = "pure"  # No side effects
+    READ = "read"  # Read-only operations
     WRITE = "write"  # Mutating operations
 
 
@@ -44,8 +43,8 @@ class Continuation(str, Enum):
     - WAIT_USER: Pause and wait for user interaction via UI
     """
 
-    AGENT = "agent"          # Return to agent for further processing
-    END = "end"              # Terminate execution
+    AGENT = "agent"  # Return to agent for further processing
+    END = "end"  # Terminate execution
     WAIT_USER = "wait_user"  # Wait for user UI interaction
 
 
@@ -60,9 +59,9 @@ class OutputPolicy(str, Enum):
     - SILENT_ALL: Suppress all output (internal tools)
     """
 
-    NORMAL = "normal"            # Normal output (text + UI)
+    NORMAL = "normal"  # Normal output (text + UI)
     SILENT_TEXT = "silent_text"  # Suppress text, show UI
-    SILENT_ALL = "silent_all"    # Completely silent
+    SILENT_ALL = "silent_all"  # Completely silent
 
 
 # ============================================================================

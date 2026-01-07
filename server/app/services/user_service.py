@@ -97,7 +97,9 @@ class UserService:
         if not user:
             raise NotFoundError("User")
 
-        return user
+        from typing import cast
+
+        return cast(User, user)
 
     async def get_user_by_uuid(self, user_uuid: UUID) -> User:
         """Get user information by UUID.
@@ -117,7 +119,9 @@ class UserService:
         if not user:
             raise NotFoundError("User")
 
-        return user
+        from typing import cast
+
+        return cast(User, user)
 
     async def update_user_profile(
         self, user_uuid: UUID, username: Optional[str] = None, avatar_url: Optional[str] = None
@@ -249,7 +253,7 @@ class UserService:
             select(FinancialAccount)
             .where(FinancialAccount.user_uuid == user_uuid)
             .where(FinancialAccount.status == "ACTIVE")
-            .where(FinancialAccount.include_in_net_worth.is_(True))
+            .where(FinancialAccount.include_in_net_worth == True)  # noqa: E712
         )
         active_accounts = result.scalars().all()
 
@@ -486,7 +490,7 @@ class UserService:
         result = await self.db.execute(select(UserSettings).where(UserSettings.user_uuid == user_uuid))
         settings = result.scalar_one_or_none()
 
-        now = datetime.utcnow()
+        now = utc_now()
 
         if settings is None:
             # Create new settings
@@ -531,7 +535,7 @@ class UserService:
         income_result = await self.db.execute(
             select(RecurringTransaction)
             .where(RecurringTransaction.user_uuid == user_uuid)
-            .where(RecurringTransaction.amount > "0")
+            .where(RecurringTransaction.amount > 0)
             .limit(1)
         )
         has_recurring_income = income_result.scalar_one_or_none() is not None
@@ -540,7 +544,7 @@ class UserService:
         expense_result = await self.db.execute(
             select(RecurringTransaction)
             .where(RecurringTransaction.user_uuid == user_uuid)
-            .where(RecurringTransaction.amount < "0")
+            .where(RecurringTransaction.amount < 0)
             .limit(1)
         )
         has_recurring_expense = expense_result.scalar_one_or_none() is not None
@@ -581,7 +585,7 @@ class UserService:
         result = await self.db.execute(select(UserSettings).where(UserSettings.user_uuid == user_uuid))
         settings = result.scalar_one_or_none()
 
-        now = datetime.utcnow()
+        now = utc_now()
 
         if settings is None:
             # Create new settings with provided values or defaults

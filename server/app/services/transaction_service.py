@@ -102,7 +102,7 @@ class TransactionService:
         transaction_id: UUID,
         user_uuid: UUID,
         account_id: Optional[str],
-    ) -> dict:
+    ) -> Optional[dict]:
         """Update transaction's account."""
         return await self._crud.update_transaction_account(transaction_id, user_uuid, account_id)
 
@@ -159,6 +159,16 @@ class TransactionService:
         return self._recurring.parse_rrule_occurrences(
             rrule_string, start_date, end_date, forecast_start, forecast_end
         )
+
+    def _calculate_next_execution(
+        self,
+        rrule_str: str,
+        start_date: date,
+        end_date: Optional[date] = None,
+        exception_dates: Optional[list] = None,
+    ) -> Optional[datetime]:
+        """Calculate the next execution date for a recurring transaction."""
+        return self._recurring._calculate_next_execution(rrule_str, start_date, end_date, exception_dates)
 
     # ===== Cash Flow Operations (delegated to CashFlowService) =====
 

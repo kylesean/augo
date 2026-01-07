@@ -6,6 +6,7 @@ This module provides API endpoints for managing and accessing exchange rate data
 from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Depends, Query
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from app.core.dependencies import get_current_user
@@ -46,7 +47,7 @@ class ConversionResponse(BaseModel):
 @router.get("", response_model=Dict[str, Any])
 async def get_exchange_rates(
     _: Any = Depends(get_current_user),
-):
+) -> JSONResponse:
     """Get cached exchange rates.
 
     Returns the latest cached exchange rate data from Redis.
@@ -79,7 +80,7 @@ async def get_exchange_rates(
 async def get_single_rate(
     currency: str,
     _: Any = Depends(get_current_user),
-):
+) -> JSONResponse:
     """Get exchange rate for a specific currency.
 
     Args:
@@ -113,7 +114,7 @@ async def get_single_rate(
 async def convert_currency(
     request: ConversionRequest,
     _: Any = Depends(get_current_user),
-):
+) -> JSONResponse:
     """Convert amount between currencies.
 
     Args:
@@ -162,7 +163,7 @@ async def convert_currency(
 @router.post("/refresh", response_model=Dict[str, Any])
 async def refresh_exchange_rates(
     _: Any = Depends(get_current_user),
-):
+) -> JSONResponse:
     """Manually refresh exchange rates.
 
     Fetches the latest exchange rates from the API and updates the cache.

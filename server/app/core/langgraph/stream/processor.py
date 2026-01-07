@@ -69,7 +69,7 @@ class StreamProcessor:
 
     def get_last_response(self) -> str:
         """Get the AI response text from the last stream processing.
-        
+
         Returns:
             str: The collected AI response text
         """
@@ -77,7 +77,7 @@ class StreamProcessor:
 
     async def process_stream(
         self,
-        agent,
+        agent: Any,
         input_data: dict[str, Any] | None,
         config: dict[str, Any],
         session_id: str,

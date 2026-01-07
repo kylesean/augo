@@ -30,10 +30,11 @@ import sys
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 
-def json_serializer(obj):
+def json_serializer(obj: Any) -> Any:
     """JSON serializer for objects not serializable by default."""
     if isinstance(obj, (datetime, date)):
         return obj.isoformat()
@@ -49,7 +50,7 @@ from app.core.database import db_manager  # noqa: E402  # noqa: E402
 from app.services.forecast_service import ForecastService  # noqa: E402  # noqa: E402
 
 
-async def main():
+async def main() -> None:
     """Execution entry point for the skill script."""
     parser = argparse.ArgumentParser(description="Forecast cash flow")
     parser.add_argument("--days", type=int, default=30, help="Forecast period in days")

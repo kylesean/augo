@@ -149,18 +149,18 @@ async def query_budget_status(
                         }
                     )
 
-                for budget in summary.category_budgets:
+                for cat_budget in summary.category_budgets:
                     budgets_list.append(
                         {
-                            "id": str(budget.id),
-                            "name": budget.name,
+                            "id": str(cat_budget.id),
+                            "name": cat_budget.name,
                             "scope": "CATEGORY",
-                            "category_key": budget.category_key,
-                            "amount": budget.amount,
-                            "spent": budget.spent_amount,
-                            "remaining": budget.remaining_amount,
-                            "percentage": budget.usage_percentage,
-                            "status": budget.period_status,
+                            "category_key": cat_budget.category_key,
+                            "amount": cat_budget.amount,
+                            "spent": cat_budget.spent_amount,
+                            "remaining": cat_budget.remaining_amount,
+                            "percentage": cat_budget.usage_percentage,
+                            "status": cat_budget.period_status,
                         }
                     )
 
@@ -199,4 +199,3 @@ async def query_budget_status(
 budget_tools = [
     query_budget_status,
 ]
-

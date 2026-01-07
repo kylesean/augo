@@ -14,7 +14,7 @@ Best Practices Implemented:
 """
 
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Any, Dict, List, Optional, Union, cast
 from uuid import UUID
 
 from mem0 import AsyncMemory
@@ -54,7 +54,7 @@ class MemoryService:
     _instance: Optional["MemoryService"] = None
     _memory: Optional[AsyncMemory] = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Private constructor. Use get_instance() instead."""
         pass
 
@@ -124,7 +124,7 @@ class MemoryService:
 
         if provider == "ollama":
             # Ollama local embeddings
-            config = {
+            config: Dict[str, Any] = {
                 "provider": "ollama",
                 "config": {
                     "model": settings.LONG_TERM_MEMORY_EMBEDDER_MODEL,
@@ -210,12 +210,12 @@ class MemoryService:
             return {"success": False, "message": "No messages provided"}
 
         user_id = str(user_uuid)
-        
+
         # 1. Extract salient facts from the messages
         # We only care about the latest exchange usually, but can look at context
         full_text = "\n".join([f"{m['role']}: {m['content']}" for m in messages])
         facts = await self.extract_salient_facts(full_text)
-        
+
         if not facts:
             logger.debug("no_salient_facts_extracted", user_uuid=user_id)
             return {"success": True, "extracted": False}
@@ -225,7 +225,7 @@ class MemoryService:
             "category": category,
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "original_message_count": len(messages),
-            "memory_type": "extracted_fact"
+            "memory_type": "extracted_fact",
         }
 
         if session_id:
@@ -255,12 +255,7 @@ class MemoryService:
                 session_id=session_id,
             )
 
-            return {
-                "success": True,
-                "extracted": True,
-                "fact_count": len(facts),
-                "result": result
-            }
+            return {"success": True, "extracted": True, "fact_count": len(facts), "result": result}
 
         except Exception as e:
             logger.warning(
@@ -275,18 +270,18 @@ class MemoryService:
 
     async def extract_salient_facts(self, text: str) -> list[str]:
         """Extract important financial facts and preferences from text.
-        
+
         Uses LLM to filter noise and retain only long-term valuable information.
-        
+
         Args:
             text: Single string or conversation transcript
-            
+
         Returns:
             List of extracted fact strings
         """
         try:
             from app.services.llm import llm_service
-            
+
             prompt = (
                 "You are a Senior Financial Memory Analyst for an AI Personal Finance Agent. "
                 "Your task is to analyze the conversation and extract ONLY high-value, long-term salient facts. "
@@ -310,23 +305,22 @@ class MemoryService:
                 f"{text}\n\n"
                 "Extracted Facts:"
             )
-            
+
             # Use the default LLM (typically a capable one for reasoning)
             from langchain_core.messages import HumanMessage
-            response = await llm_service.call(
-                messages=[HumanMessage(content=prompt)]
-            )
-            
+
+            response = await llm_service.call(messages=[HumanMessage(content=prompt)])
+
             if not response or not response.content:
                 return []
-                
+
             content = response.content.strip()
             if content.upper() == "NONE":
                 return []
-                
+
             # Split lines and clean up
             facts = [f.strip("* ").strip("- ").strip() for f in content.split("\n") if f.strip()]
-            return [f for f in facts if len(f) > 5] # Basic filter for noise
+            return [f for f in facts if len(f) > 5]  # Basic filter for noise
 
         except Exception as e:
             logger.error("fact_extraction_failed", error=str(e))
@@ -358,14 +352,14 @@ class MemoryService:
             # Build filters if categories specified
             # Mem0 filter format: {"AND": [{"category": "value"}]} for multiple conditions
             # or {"category": "value"} for single category
-            filters = None
+            filters: Optional[Dict[str, Any]] = None
             if categories:
                 if len(categories) == 1:
                     filters = {"category": categories[0]}
                 else:
                     # Use OR logic for multiple categories
                     filters = {"OR": [{"category": cat} for cat in categories]}
-                
+
                 logger.debug(
                     "memory_search_filters",
                     categories=categories,
@@ -453,7 +447,7 @@ class MemoryService:
         """
         try:
             result = await self._memory.get(memory_id)
-            return result
+            return cast(Optional[Dict[Any, Any]], result)
         except Exception as e:
             logger.warning(
                 "get_memory_failed",
@@ -594,7 +588,7 @@ class MemoryService:
         memories = await self.get_user_memories(user_uuid, limit=1000)
 
         # Category breakdown
-        categories = {}
+        categories: Dict[str, int] = {}
         for mem in memories:
             meta = mem.get("metadata", {})
             cat = meta.get("category", "unknown")
@@ -616,19 +610,19 @@ class MemoryService:
         max_memories: int = 500,
     ) -> dict:
         """Clean up old or excess memories for a user.
-        
+
         Implements two cleanup strategies:
         1. Delete memories older than days_old
         2. Keep only max_memories most recent memories
-        
+
         This method is safe to call periodically (e.g., via a scheduled job)
         to prevent unbounded memory growth.
-        
+
         Args:
             user_uuid: User identifier
             days_old: Delete memories older than this (default 180 days)
             max_memories: Maximum memories to keep (default 500)
-        
+
         Returns:
             dict with cleanup statistics:
             - deleted_count: Number of memories deleted
@@ -636,34 +630,30 @@ class MemoryService:
             - error: Error message if cleanup failed
         """
         from datetime import timedelta
-        
+
         user_id = str(user_uuid)
         deleted_count = 0
-        
+
         try:
             memories = await self.get_user_memories(user_id, limit=1000)
-            
+
             if not memories:
                 return {"deleted_count": 0, "remaining_count": 0}
-            
+
             cutoff_date = datetime.now(timezone.utc) - timedelta(days=days_old)
-            
+
             # Sort by created_at descending (newest first)
-            sorted_memories = sorted(
-                memories,
-                key=lambda x: x.get("created_at", ""),
-                reverse=True
-            )
-            
+            sorted_memories = sorted(memories, key=lambda x: x.get("created_at", ""), reverse=True)
+
             # Identify memories to delete
             memories_to_delete = []
-            
+
             for i, mem in enumerate(sorted_memories):
                 # Strategy 1: Exceed max count (always delete excess)
                 if i >= max_memories:
                     memories_to_delete.append(mem)
                     continue
-                
+
                 # Strategy 2: Older than cutoff date
                 created_at_str = mem.get("created_at", "")
                 if created_at_str:
@@ -675,7 +665,7 @@ class MemoryService:
                             memories_to_delete.append(mem)
                     except ValueError:
                         pass
-            
+
             # Delete identified memories
             for mem in memories_to_delete:
                 mem_id = mem.get("id")
@@ -683,9 +673,9 @@ class MemoryService:
                     success = await self.delete_memory(mem_id)
                     if success:
                         deleted_count += 1
-            
+
             remaining_count = len(memories) - deleted_count
-            
+
             logger.info(
                 "memory_cleanup_completed",
                 user_uuid=user_id,
@@ -694,12 +684,12 @@ class MemoryService:
                 days_threshold=days_old,
                 max_memories=max_memories,
             )
-            
+
             return {
                 "deleted_count": deleted_count,
                 "remaining_count": remaining_count,
             }
-            
+
         except Exception as e:
             logger.error(
                 "memory_cleanup_failed",

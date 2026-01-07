@@ -7,7 +7,7 @@ Uses webdav4 async client for connections to NAS devices, cloud drives, etc.
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import PurePosixPath
-from typing import AsyncGenerator, Optional
+from typing import Any, AsyncGenerator, Optional, cast
 
 from app.core.config import settings
 from app.core.logging import logger
@@ -42,7 +42,7 @@ class WebDAVAdapter(StorageAdapter):
             config: StorageConfig with WebDAV credentials
         """
         super().__init__(config)
-        self._client = None
+        self._client: Any = None
         self._credentials: dict = {}
 
     async def initialize(self) -> None:
@@ -72,10 +72,7 @@ class WebDAVAdapter(StorageAdapter):
             )
 
             self._initialized = True
-            logger.info(
-                "webdav_adapter_initialized",
-                base_url=self._credentials.get("base_url", "")[:50] + "..."
-            )
+            logger.info("webdav_adapter_initialized", base_url=self._credentials.get("base_url", "")[:50] + "...")
         except Exception as e:
             logger.error("webdav_adapter_init_failed", error=str(e))
             raise StorageError(f"Failed to initialize WebDAV adapter: {e}")
@@ -105,10 +102,7 @@ class WebDAVAdapter(StorageAdapter):
         date_prefix = now.strftime("%Y/%m/%d")
 
         ext = PurePosixPath(filename).suffix.lower() or ""
-        safe_name = "".join(
-            c for c in PurePosixPath(filename).stem
-            if c.isalnum() or c in "-_"
-        )[:50]
+        safe_name = "".join(c for c in PurePosixPath(filename).stem if c.isalnum() or c in "-_")[:50]
 
         unique_id = uuid.uuid4().hex[:12]
         return f"{date_prefix}/{unique_id}_{safe_name}{ext}"
@@ -147,19 +141,16 @@ class WebDAVAdapter(StorageAdapter):
             # Ensure parent directories exist
             parent_path = str(PurePosixPath(full_path).parent)
             try:
-                self._client.mkdir(parent_path)
+                self._client.mkdir(parent_path)  # type: ignore
             except Exception:
                 pass  # Directory might already exist
 
             # Upload file
             from io import BytesIO
-            self._client.upload_fileobj(BytesIO(content), full_path)
 
-            logger.info(
-                "webdav_file_uploaded",
-                path=full_path,
-                size=len(content)
-            )
+            self._client.upload_fileobj(BytesIO(content), full_path)  # type: ignore
+
+            logger.info("webdav_file_uploaded", path=full_path, size=len(content))
             return object_key
 
         except Exception as e:
@@ -196,7 +187,7 @@ class WebDAVAdapter(StorageAdapter):
 
         token = create_access_token(
             data={"sub": f"file:{object_key}", "file_access": token_data},
-            expires_delta=timedelta(seconds=expire_seconds)
+            expires_delta=timedelta(seconds=expire_seconds),
         )
 
         base_url = getattr(settings, "APP_URL", "http://localhost:8000").rstrip("/")
@@ -221,13 +212,14 @@ class WebDAVAdapter(StorageAdapter):
 
         try:
             # Check existence
-            if not self._client.exists(full_path):
+            if not self._client.exists(full_path):  # type: ignore
                 raise StorageNotFoundError(f"File not found: {object_key}")
 
             # Download to memory and stream
             from io import BytesIO
+
             buffer = BytesIO()
-            self._client.download_fileobj(full_path, buffer)
+            self._client.download_fileobj(full_path, buffer)  # type: ignore
             buffer.seek(0)
 
             while chunk := buffer.read(8192):
@@ -256,10 +248,10 @@ class WebDAVAdapter(StorageAdapter):
         full_path = self._get_full_path(object_key)
 
         try:
-            if not self._client.exists(full_path):
+            if not self._client.exists(full_path):  # type: ignore
                 return False
 
-            self._client.remove(full_path)
+            self._client.remove(full_path)  # type: ignore
             logger.info("webdav_file_deleted", path=full_path)
             return True
 
@@ -278,7 +270,7 @@ class WebDAVAdapter(StorageAdapter):
         """
         try:
             full_path = self._get_full_path(object_key)
-            return self._client.exists(full_path)
+            return bool(self._client.exists(full_path))  # type: ignore
         except Exception:
             return False
 
@@ -293,7 +285,7 @@ class WebDAVAdapter(StorageAdapter):
         """
         try:
             full_path = self._get_full_path(object_key)
-            info = self._client.info(full_path)
+            info = self._client.info(full_path)  # type: ignore
             return {
                 "size": info.get("size"),
                 "modified": info.get("modified"),

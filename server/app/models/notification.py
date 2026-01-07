@@ -6,7 +6,10 @@ from uuid import UUID
 
 import sqlalchemy as sa
 from pydantic import field_validator
-from sqlalchemy.dialects.postgresql import JSONB, UUID as PGUUID
+from sqlalchemy.dialects.postgresql import (
+    JSONB,
+    UUID as PGUUID,
+)
 from sqlmodel import Column, Field, Relationship
 
 from app.models.base import BaseModel

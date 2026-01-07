@@ -9,7 +9,7 @@
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -92,7 +92,7 @@ async def upload_files(
     ),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """上传一个或多个文件。
 
     支持并发上传多个文件，每个文件独立处理。
@@ -212,7 +212,7 @@ async def view_attachment(
     attachment_id: str,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> FileResponse:
     """查看或下载文件。
 
     根据 MIME 类型返回文件:
@@ -293,7 +293,7 @@ async def delete_file(
     attachment_id: str,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """删除文件。
 
     删除物理文件和数据库记录。
@@ -338,7 +338,7 @@ async def delete_file(
 
 
 @router.get("/supported-types")
-async def get_supported_types():
+async def get_supported_types() -> JSONResponse:
     """获取支持的文件类型列表。
 
     Returns:

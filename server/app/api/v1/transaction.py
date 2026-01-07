@@ -1,9 +1,10 @@
 """Transaction management API endpoints."""
 
-from typing import Optional
+from typing import Any, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
 from fastapi_pagination import Params
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -33,7 +34,7 @@ from app.utils.currency_utils import BASE_CURRENCY, get_exchange_rate_from_base,
 router = APIRouter(prefix="/transactions", tags=["transactions"])
 
 
-def _transaction_to_dict(tx, display_currency: str = "CNY", exchange_rate: float = 1.0) -> dict:
+def _transaction_to_dict(tx: Any, display_currency: str = "CNY", exchange_rate: float = 1.0) -> dict[str, Any]:
     """统一的交易模型转字典辅助函数
 
     返回格式包含：
@@ -45,7 +46,7 @@ def _transaction_to_dict(tx, display_currency: str = "CNY", exchange_rate: float
     from app.services.transaction_query_service import TransactionItem
 
     # helper to get value from either object or dict
-    def get_val(obj, attr, key=None):
+    def get_val(obj: Any, attr: str, key: str | None = None) -> Any:
         if key is None:
             key = attr
         if isinstance(obj, dict):
@@ -121,7 +122,7 @@ async def get_transactions(
     transaction_type: Optional[str] = None,  # EXPENSE, INCOME, TRANSFER
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """Retrieve Transaction List (Feed Stream)
        Supports filtering by date and transaction type, returns a list of transactions with display calculated fields.
 
@@ -196,7 +197,7 @@ async def search_transactions(
     transaction_type: Optional[str] = None,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """搜索交易记录
 
     使用 fastapi-pagination 进行标准分页，支持多种过滤条件。
@@ -220,8 +221,8 @@ async def search_transactions(
     from datetime import datetime
     from decimal import Decimal
 
-    from fastapi_pagination.ext.sqlalchemy import paginate
-    from sqlalchemy import and_, or_, select
+    from fastapi_pagination.ext.sqlalchemy import apaginate
+    from sqlalchemy import String, and_, cast, desc, func, or_, select
 
     from app.core.logging import logger
     from app.core.responses import error_response, get_error_code_int, success_response
@@ -253,7 +254,7 @@ async def search_transactions(
 
         if category_keys:
             keys = [k.strip() for k in category_keys.split(",")]
-            conditions.append(Transaction.category_key.in_(keys))
+            conditions.append(Transaction.category_key.in_(keys))  # type: ignore
 
         if tags:
             tag_list = [t.strip() for t in tags.split(",")]
@@ -279,14 +280,14 @@ async def search_transactions(
             conditions.append(Transaction.type == transaction_type.upper())
 
         # 构建查询
-        query = select(Transaction).where(and_(*conditions)).order_by(Transaction.transaction_at.desc())
+        query = select(Transaction).where(and_(*conditions)).order_by(desc(Transaction.transaction_at))
 
         # 获取汇率和用户偏好币种
         display_currency = await get_user_display_currency(db, current_user.uuid)
         exchange_rate = await get_exchange_rate_from_base(display_currency)
 
         # 使用 fastapi-pagination 分页
-        page_result = await paginate(
+        page_result = await apaginate(
             db,
             query,
             params=params,
@@ -318,7 +319,7 @@ async def get_transaction_detail(
     transaction_id: UUID,  # UUID from path
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """获取交易详情"""
     service = TransactionService(db)
     transaction_data = await service.get_transaction_detail(transaction_id, current_user.uuid)
@@ -341,7 +342,7 @@ async def delete_transaction(
     transaction_id: UUID,  # UUID from path
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """删除交易记录"""
     from app.core.exceptions import BusinessError, NotFoundError
 
@@ -372,7 +373,7 @@ async def update_transaction_account(
     request: UpdateAccountRequest,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """更新交易的关联账户
 
     支持：
@@ -412,7 +413,7 @@ async def create_batch_transactions(
     request: BatchCreateTransactionRequest,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """批量创建交易记录"""
     service = TransactionService(db)
     result = await service.create_batch_transactions(
@@ -430,7 +431,7 @@ async def update_batch_transactions_account(
     request: UpdateBatchAccountRequest,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """批量更新交易的关联账户"""
     from app.core.exceptions import BusinessError, NotFoundError
 
@@ -458,7 +459,7 @@ async def get_transaction_comments(
     transaction_id: UUID,  # UUID from path
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """获取交易评论列表"""
     service = TransactionService(db)
     comments = await service.get_comments_for_transaction(str(transaction_id), current_user.uuid)
@@ -474,7 +475,7 @@ async def add_transaction_comment(
     request: CommentCreateRequest,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """添加交易评论"""
     service = TransactionService(db)
     comment = await service.add_comment(
@@ -494,7 +495,7 @@ async def delete_transaction_comment(
     comment_id: int,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """删除交易评论"""
     service = TransactionService(db)
     success = await service.delete_comment(comment_id, current_user.id)
@@ -517,7 +518,7 @@ async def list_recurring_transactions(
     is_active: Optional[bool] = None,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """获取周期性交易列表
 
     Args:
@@ -546,7 +547,7 @@ async def create_recurring_transaction(
     request: RecurringTransactionCreateRequest,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """创建周期性交易"""
     service = TransactionService(db)
     recurring_tx = await service.create_recurring_transaction(str(current_user.uuid), request.model_dump())
@@ -561,7 +562,7 @@ async def get_recurring_transaction(
     recurring_id: str,  # UUID as string
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """获取周期性交易详情"""
     service = TransactionService(db)
     recurring_tx = await service.get_recurring_transaction(recurring_id, str(current_user.uuid))
@@ -584,7 +585,7 @@ async def update_recurring_transaction(
     request: RecurringTransactionUpdateRequest,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """更新周期性交易"""
     service = TransactionService(db)
     recurring_tx = await service.update_recurring_transaction(
@@ -608,7 +609,7 @@ async def delete_recurring_transaction(
     recurring_id: str,  # UUID as string
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """删除周期性交易"""
     service = TransactionService(db)
     success = await service.delete_recurring_transaction(recurring_id, str(current_user.uuid))
@@ -630,7 +631,7 @@ async def forecast_cash_flow(
     request: CashFlowForecastRequest,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-):
+) -> JSONResponse:
     """现金流预测"""
     service = TransactionService(db)
     forecast = await service.forecast_cash_flow(

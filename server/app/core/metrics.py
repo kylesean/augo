@@ -3,6 +3,8 @@
 This module sets up and configures Prometheus metrics for monitoring the application.
 """
 
+from typing import Any
+
 from prometheus_client import Counter, Gauge, Histogram
 from starlette_prometheus import PrometheusMiddleware, metrics
 
@@ -35,7 +37,7 @@ llm_stream_duration_seconds = Histogram(
 )
 
 
-def setup_metrics(app):
+def setup_metrics(app: Any) -> None:
     """Set up Prometheus metrics middleware and endpoints.
 
     Args:

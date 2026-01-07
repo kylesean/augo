@@ -6,12 +6,12 @@ This module provides utilities for:
 - Batch loading utilities
 """
 
-from typing import Any, List, Optional, Type, TypeVar
+from typing import Any, List, Optional, Type, TypeVar, cast
 
-from sqlalchemy import select
+from sqlalchemy import Select, desc, select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 from sqlmodel import SQLModel
-from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.cache import cache_manager, cached
 from app.core.logging import logger
@@ -23,7 +23,7 @@ class QueryOptimizer:
     """Utilities for optimizing database queries."""
 
     @staticmethod
-    def with_relationships(query: select, *relationships: str) -> select:
+    def with_relationships(query: Select, *relationships: str) -> Select:
         """Add eager loading for specified relationships.
 
         This uses selectinload which is efficient for one-to-many relationships.
@@ -53,7 +53,7 @@ class QueryOptimizer:
         return query
 
     @staticmethod
-    def with_joined_relationships(query: select, *relationships: str) -> select:
+    def with_joined_relationships(query: Select, *relationships: str) -> Select:
         """Add eager loading using joins for specified relationships.
 
         This uses joinedload which is efficient for many-to-one relationships.
@@ -125,7 +125,7 @@ class QueryOptimizer:
         # Cache miss - query database
         logger.debug("query_cache_miss", model=model.__name__, id=id_value)
 
-        query = select(model).where(model.id == id_value)
+        query = select(model).where(cast(Any, model).id == id_value)
 
         # Add eager loading if specified
         if relationships:
@@ -195,7 +195,7 @@ class QueryOptimizer:
         if not ids:
             return []
 
-        query = select(model).where(model.id.in_(ids))
+        query = select(model).where(cast(Any, model).id.in_(ids))
 
         # Add eager loading if specified
         if relationships:
@@ -211,11 +211,11 @@ class PaginationHelper:
 
     @staticmethod
     def paginate_query(
-        query: select,
+        query: Select,
         page: int = 1,
         per_page: int = 10,
         max_per_page: int = 100,
-    ) -> select:
+    ) -> Select:
         """Add pagination to a query.
 
         Args:
@@ -249,7 +249,7 @@ class PaginationHelper:
     @staticmethod
     async def get_paginated_result(
         session: AsyncSession,
-        query: select,
+        query: Select,
         page: int = 1,
         per_page: int = 10,
         max_per_page: int = 100,
@@ -300,7 +300,7 @@ class PaginationHelper:
         )
 
         # Create a count query from the original query
-        count_query = sa_select(func.count()).select_from(query.alias())
+        count_query = sa_select(func.count()).select_from(query.subquery())
         count_result = await session.execute(count_query)
         total = count_result.scalar() or 0
 
@@ -347,11 +347,9 @@ async def get_user_conversations_optimized(
     Returns:
         dict: Paginated conversations with metadata
     """
-    from sqlalchemy import desc
+    from app.models.session import Session as ChatSession
 
-    from app.models.session import Conversation
-
-    query = select(Conversation).where(Conversation.user_uuid == user_uuid).order_by(desc(Conversation.updated_at))
+    query = select(ChatSession).where(ChatSession.user_uuid == user_uuid).order_by(desc(ChatSession.updated_at))
 
     # Add eager loading for messages (optional, depending on use case)
 
@@ -373,9 +371,9 @@ async def get_conversation_with_messages_optimized(
     Returns:
         Conversation with messages or None
     """
-    from app.models.session import Conversation
+    from app.models.session import Session as ChatSession
 
-    query = select(Conversation).where(Conversation.id == conversation_id).where(Conversation.user_uuid == user_uuid)
+    query = select(ChatSession).where(ChatSession.id == conversation_id).where(ChatSession.user_uuid == user_uuid)
 
     # Eager load messages and their attachments
     query = QueryOptimizer.with_relationships(query, "messages")
@@ -401,11 +399,9 @@ async def get_transactions_with_comments_optimized(
     Returns:
         dict: Paginated transactions with metadata
     """
-    from sqlalchemy import desc
-
     from app.models.transaction import Transaction
 
-    query = select(Transaction).where(Transaction.user_uuid == user_uuid).order_by(desc(Transaction.transaction_time))
+    query = select(Transaction).where(Transaction.user_uuid == user_uuid).order_by(desc(Transaction.transaction_at))
 
     # Eager load comments
     query = QueryOptimizer.with_relationships(query, "comments")

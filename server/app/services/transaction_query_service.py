@@ -14,9 +14,8 @@ from typing import Any, List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
-from sqlalchemy import String, and_, cast, func, or_
+from sqlalchemy import String, and_, cast, desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlmodel import select
 
 from app.core.database import db_manager
 from app.core.logging import logger
@@ -230,9 +229,9 @@ class TransactionQueryService:
                 keyword_pattern = f"%{params.keyword}%"
                 conditions.append(
                     or_(
-                        Transaction.description.ilike(keyword_pattern),
-                        Transaction.location.ilike(keyword_pattern),
-                        cast(Transaction.tags, String).ilike(keyword_pattern),
+                        Transaction.description.ilike(keyword_pattern),  # type: ignore
+                        Transaction.location.ilike(keyword_pattern),  # type: ignore
+                        cast(Transaction.tags, String).ilike(keyword_pattern),  # type: ignore
                     )
                 )
 
@@ -245,11 +244,11 @@ class TransactionQueryService:
             # 交易类型
             if params.transaction_types:
                 type_values = [t.value for t in params.transaction_types]
-                conditions.append(Transaction.type.in_(type_values))
+                conditions.append(Transaction.type.in_(type_values))  # type: ignore
 
             # 分类
             if params.category_keys:
-                conditions.append(Transaction.category_key.in_(params.category_keys))
+                conditions.append(Transaction.category_key.in_(params.category_keys))  # type: ignore
 
             # 标签（JSONB contains）
             if params.tags:
@@ -288,7 +287,7 @@ class TransactionQueryService:
             has_more = params.page < pages
 
             # 排序和分页
-            stmt = stmt.order_by(Transaction.transaction_at.desc())
+            stmt = stmt.order_by(desc(Transaction.transaction_at))
             stmt = stmt.offset((params.page - 1) * params.per_page).limit(params.per_page)
 
             # 执行查询

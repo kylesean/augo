@@ -1,6 +1,7 @@
 """Recurring transaction service for scheduled transactions."""
 
 from datetime import date, datetime
+from decimal import Decimal
 from typing import Optional
 from uuid import UUID
 
@@ -57,7 +58,7 @@ class RecurringTransactionService:
             target_account_id=UUID(data["target_account_id"]) if data.get("target_account_id") else None,
             amount_type=data.get("amount_type", "FIXED"),
             requires_confirmation=data.get("requires_confirmation", False),
-            amount=str(data["amount"]),
+            amount=Decimal(str(data["amount"])),
             currency=data.get("currency", "CNY"),
             category_key=data.get("category_key", "OTHERS"),
             tags=data.get("tags"),
@@ -258,7 +259,7 @@ class RecurringTransactionService:
         if "requires_confirmation" in data:
             recurring_tx.requires_confirmation = data["requires_confirmation"]
         if "amount" in data:
-            recurring_tx.amount = str(data["amount"])
+            recurring_tx.amount = Decimal(str(data["amount"]))
         if "currency" in data:
             recurring_tx.currency = data["currency"]
         if "category_key" in data:

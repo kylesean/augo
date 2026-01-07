@@ -55,10 +55,7 @@ class LocalAdapter(StorageAdapter):
         """Ensure base directory exists."""
         await aiofiles.os.makedirs(self.base_path, exist_ok=True)
         self._initialized = True
-        logger.info(
-            "local_adapter_initialized",
-            base_path=str(self.base_path)
-        )
+        logger.info("local_adapter_initialized", base_path=str(self.base_path))
 
     def _resolve_path(self, object_key: str) -> Path:
         """Resolve object_key to absolute path with security check.
@@ -78,10 +75,7 @@ class LocalAdapter(StorageAdapter):
         # Security check: prevent path traversal
         if not str(full_path).startswith(str(self.base_path.resolve())):
             logger.error(
-                "path_traversal_attempt",
-                object_key=object_key,
-                resolved=str(full_path),
-                base=str(self.base_path)
+                "path_traversal_attempt", object_key=object_key, resolved=str(full_path), base=str(self.base_path)
             )
             raise StorageError(f"Invalid file path: {object_key}")
 
@@ -103,10 +97,7 @@ class LocalAdapter(StorageAdapter):
 
         # Extract extension and sanitize filename
         ext = Path(filename).suffix.lower() or ""
-        safe_name = "".join(
-            c for c in Path(filename).stem
-            if c.isalnum() or c in "-_"
-        )[:50]
+        safe_name = "".join(c for c in Path(filename).stem if c.isalnum() or c in "-_")[:50]
 
         # Generate unique identifier
         unique_id = uuid.uuid4().hex[:12]
@@ -147,19 +138,11 @@ class LocalAdapter(StorageAdapter):
                 async for chunk in file_stream:
                     await f.write(chunk)
 
-            logger.info(
-                "local_file_saved",
-                object_key=object_key,
-                path=str(full_path)
-            )
+            logger.info("local_file_saved", object_key=object_key, path=str(full_path))
             return object_key
 
         except Exception as e:
-            logger.error(
-                "local_file_save_failed",
-                object_key=object_key,
-                error=str(e)
-            )
+            logger.error("local_file_save_failed", object_key=object_key, error=str(e))
             raise StorageError(f"Failed to save file: {e}")
 
     async def save_bytes(
@@ -178,7 +161,8 @@ class LocalAdapter(StorageAdapter):
         Returns:
             Generated object_key
         """
-        async def bytes_generator():
+
+        async def bytes_generator() -> AsyncGenerator[bytes, None]:
             yield content
 
         return await self.save(bytes_generator(), filename, content_type)
@@ -215,7 +199,7 @@ class LocalAdapter(StorageAdapter):
         # Use existing auth utility to create token
         token = create_access_token(
             data={"sub": f"file:{object_key}", "file_access": token_data},
-            expires_delta=timedelta(seconds=expire_seconds)
+            expires_delta=timedelta(seconds=expire_seconds),
         )
 
         # Build URL

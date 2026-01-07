@@ -42,11 +42,11 @@ api_router.include_router(budget_router)
 
 
 @api_router.get("/health")
-async def health_check():
+async def health_check() -> dict[str, str]:
     """Health check endpoint.
 
     Returns:
         dict: Health status information.
     """
     logger.info("health_check_called")
-    return {"status": "healthy", "version": "1.0.0"}
+    return {"status": "healthy", "version": "0.1.2"}

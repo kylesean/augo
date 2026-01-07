@@ -9,7 +9,7 @@
 - 静态工具类 + 策略钩子
 """
 
-from typing import Any
+from typing import Any, Optional, cast
 
 
 class ComponentDetector:
@@ -49,12 +49,12 @@ class ComponentDetector:
         # 优先级 1：专用字段
         component_type = tool_result.get("componentType")
         if component_type:
-            return component_type
+            return cast(str, component_type)
 
         # 优先级 2：兼容字段
         component_type = tool_result.get("_genui_component")
         if component_type:
-            return component_type
+            return cast(str, component_type)
 
         # 优先级 3：启发式检测 type 字段
         type_value = tool_result.get("type")
@@ -104,7 +104,7 @@ class ComponentDetector:
         """
         if not isinstance(tool_result, dict):
             return True
-        return tool_result.get("success", True)
+        return bool(tool_result.get("success", True))
 
     @staticmethod
     def _is_valid_component_name(value: Any) -> bool:

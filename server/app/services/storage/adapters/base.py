@@ -85,7 +85,7 @@ class StorageAdapter(ABC):
         pass
 
     @abstractmethod
-    async def get_stream(
+    def get_stream(
         self,
         object_key: str,
     ) -> AsyncGenerator[bytes, None]:
@@ -156,22 +156,22 @@ class StorageAdapter(ABC):
             StorageReadOnlyError: If storage is read-only
         """
         if self.config.is_readonly:
-            raise StorageReadOnlyError(
-                f"Storage '{self.config.name}' is read-only. "
-                "Cannot perform write operations."
-            )
+            raise StorageReadOnlyError(f"Storage '{self.config.name}' is read-only. Cannot perform write operations.")
 
 
 class StorageError(Exception):
     """Base exception for storage operations."""
+
     pass
 
 
 class StorageReadOnlyError(StorageError):
     """Raised when attempting write operation on read-only storage."""
+
     pass
 
 
 class StorageNotFoundError(StorageError):
     """Raised when file is not found in storage."""
+
     pass

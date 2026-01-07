@@ -56,9 +56,7 @@ async def get_current_user_info(
         createdAt=current_user.created_at.isoformat().replace("+00:00", "Z"),
         updatedAt=current_user.updated_at.isoformat().replace("+00:00", "Z"),
         clientLastLoginAt=(
-            current_user.last_login_at.isoformat().replace("+00:00", "Z")
-            if current_user.last_login_at
-            else None
+            current_user.last_login_at.isoformat().replace("+00:00", "Z") if current_user.last_login_at else None
         ),
     )
 

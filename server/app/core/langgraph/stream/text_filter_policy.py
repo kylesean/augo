@@ -109,7 +109,7 @@ class DefaultTextFilterPolicy(CompositeTextFilterPolicy):
     后续可以通过 ToolMetadata.silent_mode 统一管理
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             [
                 DirectExecuteSilentPolicy(),

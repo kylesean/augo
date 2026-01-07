@@ -6,7 +6,7 @@ and user default storage initialization.
 
 from typing import List, Optional
 
-from sqlalchemy import select
+from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.logging import logger
@@ -126,7 +126,7 @@ class StorageConfigService:
         if provider_type:
             query = query.where(StorageConfig.provider_type == provider_type)
 
-        query = query.order_by(StorageConfig.created_at.desc())
+        query = query.order_by(desc(StorageConfig.created_at))
 
         result = await self.db.execute(query)
         return list(result.scalars().all())

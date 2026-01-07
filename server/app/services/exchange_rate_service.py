@@ -4,8 +4,8 @@ This module provides functionality to fetch exchange rates from external APIs
 and cache them in Redis for use in currency conversion across the application.
 """
 
-from datetime import datetime
-from typing import Any, Dict, Optional
+from datetime import datetime, timezone
+from typing import Any, Dict, Optional, cast
 
 import httpx
 
@@ -21,7 +21,7 @@ class ExchangeRateService:
     for efficient access across the application.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the exchange rate service."""
         self._api_url = settings.EXCHANGE_RATE_API_URL
         self._cache_key = settings.EXCHANGE_RATE_CACHE_KEY
@@ -62,7 +62,7 @@ class ExchangeRateService:
                     last_update=data.get("time_last_update_utc"),
                 )
 
-                return data
+                return cast(Optional[Dict[str, Any]], data)
 
         except httpx.TimeoutException:
             logger.error(
@@ -103,7 +103,7 @@ class ExchangeRateService:
             "last_update_utc": data.get("time_last_update_utc"),
             "next_update_utc": data.get("time_next_update_utc"),
             "conversion_rates": data.get("conversion_rates", {}),
-            "cached_at": datetime.utcnow().isoformat(),
+            "cached_at": datetime.now(timezone.utc).isoformat(),
         }
 
         success = await cache_manager.set(
@@ -146,7 +146,7 @@ class ExchangeRateService:
             cached_at=data.get("cached_at"),
         )
 
-        return data
+        return cast(Optional[Dict[str, Any]], data)
 
     async def get_rate(self, target_currency: str) -> Optional[float]:
         """Get exchange rate for a specific currency.
@@ -177,7 +177,7 @@ class ExchangeRateService:
                 target_currency=target_currency,
             )
 
-        return rate
+        return cast(Optional[float], rate)
 
     async def convert(
         self,
@@ -238,14 +238,14 @@ class ExchangeRateService:
         amount_in_usd = amount / from_rate
         converted_amount = amount_in_usd * to_rate
 
-        return round(converted_amount, 4)
+        return cast(float, round(converted_amount, 4))
 
 
 # Global service instance
 exchange_rate_service = ExchangeRateService()
 
 
-async def update_exchange_rates():
+async def update_exchange_rates() -> bool:
     """Scheduled task to update exchange rates.
 
     This function is called by the scheduler to periodically

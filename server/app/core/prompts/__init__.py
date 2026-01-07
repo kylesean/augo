@@ -81,7 +81,7 @@ def get_stable_system_prompt() -> str:
 
 
 # Legacy function for backward compatibility
-def load_system_prompt(**kwargs) -> str:
+def load_system_prompt(**kwargs: str) -> str:
     """Legacy function - redirects to new cache-friendly implementation.
 
     DEPRECATED: Use get_stable_system_prompt() instead.

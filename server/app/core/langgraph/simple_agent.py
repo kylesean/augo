@@ -9,7 +9,7 @@
 此文件作为 Facade 类，协调各模块的工作。
 """
 
-from typing import AsyncGenerator, Optional
+from typing import Any, AsyncGenerator, Dict, List, Optional, Union, cast
 from urllib.parse import quote_plus
 
 from langchain_core.messages import AIMessage, HumanMessage
@@ -48,12 +48,12 @@ class SimpleLangChainAgent:
     - 使用 StreamProcessor 处理流式输出
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """初始化 Agent"""
         self.llm_service = llm_service
         self.llm_service.bind_tools(tools)
 
-        self._agent = None
+        self._agent: Optional[MiddlewareAgent] = None
         self._conn_pool: Optional[AsyncConnectionPool] = None
         self._memory_service: Optional[MemoryService] = None
         self._middlewares: Optional[list] = None
@@ -75,7 +75,7 @@ class SimpleLangChainAgent:
             logger.info("memory_service_initialized")
         return self._memory_service
 
-    async def _get_checkpointer(self):
+    async def _get_checkpointer(self) -> AsyncPostgresSaver:
         """获取 LangGraph checkpointer"""
         if self._conn_pool is None:
             connection_url = (
@@ -129,7 +129,7 @@ class SimpleLangChainAgent:
 
     def get_last_response(self) -> str:
         """Get the AI response text from the last stream.
-        
+
         Returns:
             str: The collected AI response text from the most recent stream
         """
@@ -139,7 +139,7 @@ class SimpleLangChainAgent:
     # Agent 生命周期
     # =========================================================================
 
-    async def get_agent(self):
+    async def get_agent(self) -> MiddlewareAgent:
         """获取或创建 Agent 实例
 
         Returns:
@@ -195,10 +195,10 @@ class SimpleLangChainAgent:
         """
         agent = await self.get_agent()
 
-        config = {
+        config: Dict[str, Any] = {
             "configurable": {
                 "thread_id": session_id,
-                "user_uuid": str(user_uuid) if user_uuid else None,  # 确保是字符串
+                "user_uuid": str(user_uuid) if user_uuid else None,
                 "attachment_ids": attachment_ids or [],
             },
         }
@@ -209,11 +209,7 @@ class SimpleLangChainAgent:
             config["callbacks"] = [langfuse_handler]
 
         # 转换消息格式
-        # CRITICAL FIX: 仅使用最后一条消息（新输入）作为图的输入
-        # 客户端通常会发送完整的历史记录（包含之前的流式碎片），
-        # 如果我们将整个历史再次传给 LangGraph，add_messages reducer 会将它们视为新消息
-        # 并追加到现有状态中，导致严重的重复和碎片化问题。
-        # 我们信任持久化层已保存历史，只处理增量输入。
+        # 持久化层已保存历史，只处理增量输入。
         lc_messages = []
         if messages:
             last_msg = messages[-1]
@@ -273,7 +269,7 @@ class SimpleLangChainAgent:
             )
             yield GenUIEvent(
                 type="text_delta",
-                data="\n\n⚠️ 抱歉，我在执行这个任务时尝试了太多次仍未成功。请尝试简化你的请求，或者换一种方式描述。",
+                data="\n\n抱歉，我在执行这个任务时尝试了太多次仍未成功。请尝试简化你的请求，或者换一种方式描述。",
             )
             yield GenUIEvent(type="done")
         finally:
@@ -287,7 +283,7 @@ class SimpleLangChainAgent:
             if "langfuse_handler" in locals() and langfuse_handler and hasattr(langfuse_handler, "flush"):
                 langfuse_handler.flush()
 
-    async def get_session_state(self, session_id: str):
+    async def get_session_state(self, session_id: str) -> Any:
         """获取会话的当前 LangGraph 状态
 
         用于检查会话是否有未完成的执行（state.next != None）。
@@ -301,6 +297,21 @@ class SimpleLangChainAgent:
         agent = await self.get_agent()
         config = {"configurable": {"thread_id": session_id}}
         return await agent.aget_state(config)
+
+    async def update_state(self, session_id: str, values: Dict[str, Any], as_node: Optional[str] = None) -> Any:
+        """更新会话的当前 LangGraph 状态
+
+        Args:
+            session_id: 会话 ID
+            values: 要更新到状态中的值
+            as_node: 可选，作为哪个节点更新状态
+
+        Returns:
+            更新后的配置对象
+        """
+        agent = await self.get_agent()
+        config = {"configurable": {"thread_id": session_id}}
+        return await agent.aupdate_state(config, values, as_node=as_node)
 
     async def resume_stream(
         self,
@@ -321,7 +332,7 @@ class SimpleLangChainAgent:
         """
         agent = await self.get_agent()
 
-        config = {
+        config: Dict[str, Any] = {
             "configurable": {
                 "thread_id": session_id,
                 "user_uuid": str(user_uuid) if user_uuid else None,  # 确保是字符串
@@ -417,7 +428,7 @@ class SimpleLangChainAgent:
             return result
         return []
 
-    async def get_detailed_history(self, session_id: str, user_uuid: str = None) -> list[dict]:
+    async def get_detailed_history(self, session_id: str, user_uuid: Optional[str] = None) -> list[dict[str, Any]]:
         """获取会话的详细历史消息，包含 UI 组件和附件信息。
 
         从 LangGraph checkpoint 读取消息并解析：
@@ -467,6 +478,8 @@ class SimpleLangChainAgent:
             if isinstance(msg, ToolMessage):
                 tool_name = getattr(msg, "name", None)
                 tool_call_id = getattr(msg, "tool_call_id", None)
+                if not tool_call_id:
+                    continue
 
                 # 提取工具执行结果（优先从 artifact 获取，否则从 content 解析）
                 tool_result = getattr(msg, "artifact", None)
@@ -579,7 +592,7 @@ class SimpleLangChainAgent:
                         wizard_data["preselectedSourceId"] = confirmed_params["source_id"]
                     if confirmed_params["target_id"]:
                         wizard_data["preselectedTargetId"] = confirmed_params["target_id"]
-                    if confirmed_params["amount"] > 0:
+                    if float(confirmed_params.get("amount") or 0.0) > 0:
                         wizard_data["amount"] = confirmed_params["amount"]
 
                     # 标记为已确认，以便前端渲染为 Historical 状态
@@ -657,7 +670,7 @@ class SimpleLangChainAgent:
                 # Checkpoint 中存储的已经是过滤后的消息
                 if hasattr(msg, "tool_calls") and msg.tool_calls:
                     for tc in msg.tool_calls:
-                        tc_id = tc.get("id", "")
+                        tc_id = str(tc.get("id") or "")
                         tc_name = tc.get("name", "")
                         tool_calls_data.append(
                             {
@@ -821,7 +834,7 @@ class SimpleLangChainAgent:
     # 辅助方法
     # =========================================================================
 
-    def _extract_text_content(self, content) -> str:
+    def _extract_text_content(self, content: Any) -> str:
         """从消息内容中提取文本"""
         if isinstance(content, str):
             return content
@@ -837,7 +850,7 @@ class SimpleLangChainAgent:
         else:
             return str(content)
 
-    def _extract_attachment_ids(self, content) -> list[dict]:
+    def _extract_attachment_ids(self, content: Any) -> list[dict[str, Any]]:
         """从消息内容中提取附件信息
 
         支持多种格式：
@@ -954,7 +967,7 @@ class SimpleLangChainAgent:
                 error=str(e),
             )
 
-    def _get_langfuse_callback(self, thread_id: str, user_id: str = None):
+    def _get_langfuse_callback(self, thread_id: str, user_id: Optional[str] = None) -> Any:
         """获取 Langfuse Callback Handler 用于追踪执行过程。"""
         # 深度诊断日志
         logger.info(
@@ -977,7 +990,7 @@ class SimpleLangChainAgent:
             # 直接初始化，SDK 会自动从环境变量读取密钥和 HOST
             handler = CallbackHandler()
             # 设置额外的 metadata
-            handler.metadata = {"thread_id": str(thread_id), "user_id": str(user_id)}
+            cast(Any, handler).metadata = {"thread_id": str(thread_id), "user_id": str(user_id)}
             return handler
         except Exception as e:
             logger.error("failed_to_initialize_langfuse_callback", error=str(e))
@@ -992,7 +1005,7 @@ class SimpleLangChainAgent:
         """非流式获取响应（支持 Langfuse 追踪）"""
         agent = await self.get_agent()
 
-        config = {
+        config: Dict[str, Any] = {
             "configurable": {
                 "thread_id": session_id,
                 "user_uuid": str(user_uuid) if user_uuid else None,

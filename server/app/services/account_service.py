@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 import structlog
-from sqlalchemy import and_, select
+from sqlalchemy import and_, asc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.financial_account import FinancialAccount
@@ -31,7 +31,7 @@ class AccountService:
             query = query.where(FinancialAccount.type == account_type.upper())
 
         # Nature (ASSET < LIABILITY), then name
-        query = query.order_by(FinancialAccount.nature.asc(), FinancialAccount.name.asc())
+        query = query.order_by(asc(FinancialAccount.nature), asc(FinancialAccount.name))
 
         result = await self.db.execute(query)
         return list(result.scalars().all())
@@ -43,4 +43,3 @@ class AccountService:
         )
         result = await self.db.execute(query)
         return result.scalar_one_or_none()
-

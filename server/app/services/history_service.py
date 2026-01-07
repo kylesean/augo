@@ -9,7 +9,7 @@ This service provides functionality to:
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
-from sqlalchemy import select
+from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
@@ -203,7 +203,7 @@ class HistoryService:
                 Attachment.thread_id == thread_id,
                 Attachment.user_uuid == user_uuid,
             )
-            .order_by(Attachment.created_at.desc())
+            .order_by(desc(Attachment.created_at))
         )
         result = await self.db.execute(stmt)
         rows = result.all()

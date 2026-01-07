@@ -362,11 +362,11 @@ class RecurringTransaction(BaseModel, table=True):
                         raise ValueError(f"Invalid day: {day}")
             elif key == "BYMONTHDAY":
                 try:
-                    day = int(value)
+                    day_num = int(value)
                 except ValueError:
                     raise ValueError(f"Invalid BYMONTHDAY value: {value}")
 
-                if day < 1 or day > 31:
+                if day_num < 1 or day_num > 31:
                     raise ValueError("BYMONTHDAY must be 1-31")
 
         return rule

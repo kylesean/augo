@@ -28,7 +28,7 @@ from app.core.database import db_manager  # noqa: E402  # noqa: E402
 from app.services.shared_space_service import SharedSpaceService  # noqa: E402
 
 
-async def main():
+async def main() -> None:
     """Execution entry point for the skill script."""
     # 从环境变量获取用户身份
     user_uuid_str = os.environ.get("USER_ID")

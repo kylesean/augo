@@ -34,9 +34,10 @@ async def process_due_transactions() -> None:
             # Find all active recurring transactions due today
             query = select(RecurringTransaction).where(
                 and_(
-                    RecurringTransaction.is_active.is_(True),
-                    RecurringTransaction.next_execution_at >= today_start,
-                    RecurringTransaction.next_execution_at <= today_end,
+                    RecurringTransaction.is_active == True,  # noqa: E712
+                    RecurringTransaction.next_execution_at != None,  # noqa: E711
+                    RecurringTransaction.next_execution_at >= today_start,  # type: ignore
+                    RecurringTransaction.next_execution_at <= today_end,  # type: ignore
                 )
             )
 
@@ -87,7 +88,7 @@ async def update_next_execution_dates() -> None:
     async with get_session_context() as db:
         try:
             query = select(RecurringTransaction).where(
-                RecurringTransaction.is_active.is_(True)
+                RecurringTransaction.is_active == True  # noqa: E712
             )
 
             result = await db.execute(query)

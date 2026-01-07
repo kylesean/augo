@@ -42,7 +42,7 @@ class ClientStateMutation(BaseModel):
 
         只包含非 None 的字段，避免覆盖已有状态。
         """
-        result = {}
+        result: Dict[str, Any] = {}
         if self.ui_mode is not None:
             result["ui_mode"] = self.ui_mode
         if self.tool_name is not None:

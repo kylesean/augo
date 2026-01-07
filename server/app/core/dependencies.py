@@ -7,7 +7,7 @@ This module provides reusable dependency functions for:
 - Session management
 """
 
-from typing import AsyncGenerator, Optional
+from typing import Any, AsyncGenerator, Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -23,7 +23,7 @@ from app.utils.auth import verify_token
 security = HTTPBearer()
 
 
-async def get_redis_client():
+async def get_redis_client() -> AsyncGenerator[Any, None]:
     """Get Redis client for caching and session management.
 
     Yields:
@@ -204,8 +204,8 @@ optional_auth = OptionalAuth()
 
 async def get_user_session_data(
     user: User = Depends(get_current_user),
-    redis_client=Depends(get_redis_client),
-) -> dict:
+    redis_client: Any = Depends(get_redis_client),
+) -> dict[str, Any]:
     """Get user session data from Redis.
 
     Args:
@@ -224,8 +224,9 @@ async def get_user_session_data(
 
         if session_data:
             import json
+            from typing import cast
 
-            return json.loads(session_data.decode())
+            return cast(dict[str, Any], json.loads(session_data.decode()))
 
         return {}
 
@@ -235,9 +236,9 @@ async def get_user_session_data(
 
 
 async def save_user_session_data(
-    session_data: dict,
+    session_data: dict[str, Any],
     user: User = Depends(get_current_user),
-    redis_client=Depends(get_redis_client),
+    redis_client: Any = Depends(get_redis_client),
 ) -> bool:
     """Save user session data to Redis.
 

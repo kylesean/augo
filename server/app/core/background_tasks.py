@@ -21,7 +21,7 @@ class BackgroundTaskManager:
     """
 
     @staticmethod
-    async def run_in_background(func: Callable, *args, **kwargs) -> None:
+    async def run_in_background(func: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
         """在后台运行任务（fire-and-forget）
 
         使用 asyncio.create_task 在后台执行任务，不阻塞当前请求。
@@ -33,7 +33,7 @@ class BackgroundTaskManager:
             **kwargs: 关键字参数
         """
 
-        async def _wrapped_task():
+        async def _wrapped_task() -> None:
             try:
                 logger.debug(
                     "background_task_started",
@@ -69,7 +69,7 @@ class BackgroundTaskManager:
         """
 
         @wraps(func)
-        async def wrapper(*args, **kwargs):
+        async def wrapper(*args: Any, **kwargs: Any) -> None:
             await BackgroundTaskManager.run_in_background(func, *args, **kwargs)
 
         return wrapper

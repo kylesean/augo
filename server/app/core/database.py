@@ -12,7 +12,7 @@ The two pools connect to the same database but use different drivers:
 from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING, AsyncGenerator, Optional
 
-from sqlalchemy import delete, select, text
+from sqlalchemy import delete, desc, select, text
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
@@ -29,7 +29,7 @@ from app.core.logging import logger
 class DatabaseManager:
     """Manages database connections and sessions."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize database manager with engine and session factory."""
         self._engine: AsyncEngine | None = None
         self._session_factory: async_sessionmaker[AsyncSession] | None = None
@@ -103,19 +103,19 @@ class DatabaseManager:
             return self.init_session_factory()
         return self._session_factory
 
-    async def create_tables(self):
+    async def create_tables(self) -> None:
         """Create all database tables defined in SQLModel metadata."""
         async with self.engine.begin() as conn:
             await conn.run_sync(SQLModel.metadata.create_all)
         logger.info("database_tables_created")
 
-    async def drop_tables(self):
+    async def drop_tables(self) -> None:
         """Drop all database tables. Use with caution!"""
         async with self.engine.begin() as conn:
             await conn.run_sync(SQLModel.metadata.drop_all)
         logger.warning("database_tables_dropped")
 
-    async def close(self):
+    async def close(self) -> None:
         """Close database engine and cleanup connections."""
         if self._engine is not None:
             await self._engine.dispose()
@@ -195,7 +195,7 @@ async def get_session_context() -> AsyncGenerator[AsyncSession, None]:
             await session.close()
 
 
-async def init_db():
+async def init_db() -> None:
     """Initialize database on application startup."""
     db_manager.init_engine()
     db_manager.init_session_factory()
@@ -209,7 +209,7 @@ async def init_db():
     logger.info("database_initialized_successfully")
 
 
-async def close_db():
+async def close_db() -> None:
     """Close database connections on application shutdown."""
     await db_manager.close()
 
@@ -309,7 +309,7 @@ class SessionRepository:
         from app.models.session import Session as ChatSession
 
         result = await self.db.execute(
-            select(ChatSession).where(ChatSession.user_uuid == user_uuid).order_by(ChatSession.created_at.desc())
+            select(ChatSession).where(ChatSession.user_uuid == user_uuid).order_by(desc(ChatSession.created_at))
         )
         return list(result.scalars().all())
 
@@ -362,11 +362,12 @@ class SessionRepository:
         result = await self.db.execute(delete(ChatSession).where(ChatSession.id == session_id))
         await self.db.commit()
 
-        deleted = result.rowcount > 0
+        deleted = bool(getattr(result, "rowcount", 0) > 0)
         if deleted:
             logger.info("session_deleted", session_id=session_id)
 
         return deleted
+
 
 # Type hint for forward reference
 if TYPE_CHECKING:

@@ -28,4 +28,3 @@ def generate_session_title(user_message: str, max_length: int = 15) -> str:
         return clean_message[:max_length] + "..."
 
     return clean_message
-

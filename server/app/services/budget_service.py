@@ -6,9 +6,10 @@ from decimal import Decimal
 from typing import List, Optional
 from uuid import UUID
 
-from sqlalchemy import and_, func, or_, select
+from sqlalchemy import String, and_, asc, cast, desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from sqlalchemy.sql.elements import ColumnElement
 
 from app.core.logging import logger
 from app.models.budget import (
@@ -166,7 +167,7 @@ class BudgetService:
         if scope:
             query = query.where(Budget.scope == scope.value)
 
-        query = query.order_by(Budget.scope.asc(), Budget.category_key.asc())
+        query = query.order_by(asc(Budget.scope), asc(Budget.category_key))
 
         result = await self.session.execute(query)
         return list(result.scalars().all())
@@ -243,6 +244,58 @@ class BudgetService:
 
         return True
 
+    async def rebalance(
+        self,
+        from_budget_id: UUID,
+        to_budget_id: UUID,
+        amount: Decimal,
+        user_uuid: UUID,
+    ) -> bool:
+        """Rebalance amount between two budgets.
+
+        Transfers budget allocation from one budget to another.
+        """
+        if amount <= 0:
+            return False
+
+        from_budget = await self.get_budget(from_budget_id, user_uuid)
+        to_budget = await self.get_budget(to_budget_id, user_uuid)
+
+        if not from_budget or not to_budget:
+            return False
+
+        # Ensure we don't go negative on the source budget
+        if from_budget.amount < amount:
+            return False
+
+        # Update budget amounts
+        from_budget.amount -= amount
+        to_budget.amount += amount
+
+        # Also update current periods
+        from_period = await self.get_or_create_current_period(from_budget)
+        to_period = await self.get_or_create_current_period(to_budget)
+
+        if from_period:
+            from_period.adjusted_target -= amount
+            await self.update_period_spent_amount(from_budget, from_period)
+
+        if to_period:
+            to_period.adjusted_target += amount
+            await self.update_period_spent_amount(to_budget, to_period)
+
+        await self.session.commit()
+
+        logger.info(
+            "budget_rebalanced",
+            from_budget_id=str(from_budget_id),
+            to_budget_id=str(to_budget_id),
+            amount=str(amount),
+            user_uuid=str(user_uuid),
+        )
+
+        return True
+
     # ========================================================================
     # Period Management
     # ========================================================================
@@ -281,7 +334,7 @@ class BudgetService:
             result = await self.session.execute(
                 select(BudgetPeriod)
                 .where(BudgetPeriod.budget_id == budget.id)
-                .order_by(BudgetPeriod.period_end.desc())
+                .order_by(desc(BudgetPeriod.period_end))
                 .limit(1)
             )
             prev_period = result.scalar_one_or_none()
@@ -706,7 +759,7 @@ class BudgetService:
             )
             .group_by(Transaction.category_key)
             .having(func.count(Transaction.id) >= 5)  # At least 5 transactions
-            .order_by(func.sum(Transaction.amount).desc())
+            .order_by(desc(func.sum(Transaction.amount)))
         )
 
         result = await self.session.execute(query)

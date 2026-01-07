@@ -7,6 +7,7 @@ from uuid import UUID
 import structlog
 from sqlalchemy import desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql.elements import ColumnElement
 
 from app.models.transaction import Transaction
 from app.schemas.transaction import TransactionDisplayValue
@@ -122,20 +123,20 @@ class TransactionQueryService:
         if keyword := filters.get("keyword"):
             query = query.where(
                 or_(
-                    Transaction.description.ilike(f"%{keyword}%"),
-                    Transaction.location.ilike(f"%{keyword}%"),
+                    Transaction.description.ilike(f"%{keyword}%"),  # type: ignore
+                    Transaction.location.ilike(f"%{keyword}%"),  # type: ignore
                 )
             )
 
         # 金额范围
         if min_amount := filters.get("min_amount"):
-            query = query.where(Transaction.amount >= str(min_amount))
+            query = query.where(Transaction.amount >= min_amount)
         if max_amount := filters.get("max_amount"):
-            query = query.where(Transaction.amount <= str(max_amount))
+            query = query.where(Transaction.amount <= max_amount)
 
         # 分类筛选
         if categories := filters.get("categories"):
-            query = query.where(Transaction.category_key.in_(categories))
+            query = query.where(Transaction.category_key.in_(categories))  # type: ignore
 
         # 标签筛选
         if tags := filters.get("tags"):
@@ -160,9 +161,9 @@ class TransactionQueryService:
         # 收入/支出筛选
         if type_val := filters.get("type"):
             if type_val:
-                query = query.where(Transaction.amount > "0")
+                query = query.where(Transaction.amount > 0)
             else:
-                query = query.where(Transaction.amount < "0")
+                query = query.where(Transaction.amount < 0)
 
         # 排序
         query = query.order_by(desc(Transaction.transaction_at))
@@ -191,7 +192,6 @@ class TransactionQueryService:
                     "category_key": tx.category_key,
                     "description": tx.description,
                     "transaction_at": tx.transaction_at.isoformat(),
-                    "payment_method": tx.payment_method,
                     "tags": tx.tags or [],
                     "created_at": tx.created_at.isoformat(),
                     "updated_at": tx.updated_at.isoformat(),

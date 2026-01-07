@@ -21,22 +21,22 @@ from app.services.memory import MemoryService, get_memory_service
 
 class LongTermMemoryMiddleware(BaseMiddleware):
     """Middleware for long-term memory operations.
-    
+
     STATUS: PASSIVE (no-op)
-    
+
     This middleware is currently disabled. Memory operations are now handled by:
-    
+
     WRITE PATH:
         chatbot.py -> agent._update_long_term_memory() -> MemoryService.add_conversation_memory()
-        
+
     READ PATH:
         Agent tool 'search_personal_context' -> MemoryService.search_memories()
-    
+
     BENEFITS OF CURRENT DESIGN:
         - Agent can call memory tool on-demand instead of every conversation
         - Supports i18n and finer-grained control
         - Reduces unnecessary memory queries and latency
-    
+
     This middleware framework is preserved for potential future use cases:
         - Global context injection (e.g., user profile summary)
         - Mandatory memory retrieval for specific scenarios
@@ -69,7 +69,7 @@ class LongTermMemoryMiddleware(BaseMiddleware):
         config: dict,
     ) -> tuple[list[BaseMessage], dict]:
         """Inject long-term memory before agent invocation.
-        
+
         MODIFIED: Now passive. Primary memory retrieval is handled by 'search_personal_context' tool.
         """
         # We skip automatic injection here to give full control to the Agent via tools.

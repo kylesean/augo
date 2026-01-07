@@ -5,7 +5,7 @@ from decimal import Decimal
 from typing import List, Optional
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 
 # ============================================================================
 # Enums (imported from models for consistency)
@@ -49,7 +49,7 @@ class BudgetCreateRequest(BaseModel):
 
     @field_validator("category_key")
     @classmethod
-    def validate_category_key(cls, v, info):
+    def validate_category_key(cls, v: Optional[str], info: ValidationInfo) -> Optional[str]:
         """Validate category_key based on scope."""
         scope = info.data.get("scope")
         if scope == BudgetScope.CATEGORY and not v:
@@ -80,7 +80,7 @@ class BudgetRebalanceRequest(BaseModel):
 
     @field_validator("to_budget_id")
     @classmethod
-    def validate_different_budgets(cls, v, info):
+    def validate_different_budgets(cls, v: UUID, info: ValidationInfo) -> UUID:
         """Ensure source and target are different."""
         from_id = info.data.get("from_budget_id")
         if from_id and v == from_id:
@@ -106,7 +106,7 @@ class BudgetSettingsUpdateRequest(BaseModel):
 
     @field_validator("weekly_summary_day")
     @classmethod
-    def validate_weekly_day(cls, v):
+    def validate_weekly_day(cls, v: Optional[str]) -> Optional[str]:
         """Validate weekly summary day."""
         if v is not None:
             valid_days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
