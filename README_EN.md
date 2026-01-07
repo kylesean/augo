@@ -43,7 +43,7 @@ Augo doesn't lock you into a single AI provider:
 - **Local Models**: Use **Ollama** or other frameworks to run models on your own hardware for maximum privacy.
 
 ### Voice & Privacy
-Integrates with the [asr_server](https://github.com/kylesean/asr_server) open-source project:
+Integrates with the [asr_server](https://github.com/kylesean/asr_server) project (customized from open-source ASR solutions):
 - **Self-Hosted ASR**: Deploy your own voice recognition service.
 - **Switchable Engines**: Easily switch between system-native and local ASR services to keep voice data within your network.
 
