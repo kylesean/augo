@@ -95,8 +95,14 @@ services:
     networks:
       - monitoring
 
-  # Prometheus
+  # =============================================================================
+  # Optional Monitoring Stack (Enterprise-grade observability)
+  # Enable with: docker compose --profile monitoring up -d
+  # =============================================================================
+
+  # Prometheus - Time-series database for metrics collection
   prometheus:
+    profiles: [ monitoring ]
     image: prom/prometheus:latest
     container_name: augo-prometheus
     ports:
@@ -112,8 +118,9 @@ services:
       - "project=augo"
       - "component=monitoring"
 
-  # Grafana
+  # Grafana - Visualization and dashboards
   grafana:
+    profiles: [ monitoring ]
     image: grafana/grafana:latest
     container_name: augo-grafana
     ports:
@@ -132,7 +139,9 @@ services:
       - "project=augo"
       - "component=monitoring-ui"
 
+  # cAdvisor - Container resource monitoring
   cadvisor:
+    profiles: [ monitoring ]
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: augo-cadvisor
     ports:
