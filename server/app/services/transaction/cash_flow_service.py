@@ -55,7 +55,7 @@ class CashFlowService:
                 ),
                 0,
             )
-        ).where(and_(FinancialAccount.user_uuid == user_uuid, FinancialAccount.include_in_net_worth == True))  # noqa: E712
+        ).where(and_(FinancialAccount.user_uuid == user_uuid, FinancialAccount.include_in_net_worth))
         balance_result = await self.db.execute(accounts_query)
         current_balance = balance_result.scalar() or Decimal("0.00")
         current_balance_str = str(current_balance)
@@ -103,7 +103,7 @@ class CashFlowService:
         recurring_query = select(RecurringTransaction).where(
             and_(
                 RecurringTransaction.user_uuid == user_uuid,
-                RecurringTransaction.is_active == True,  # noqa: E712
+                RecurringTransaction.is_active,
             )
         )
         recurring_result = await self.db.execute(recurring_query)

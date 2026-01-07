@@ -16,6 +16,7 @@ import uuid
 from collections.abc import AsyncGenerator
 from datetime import UTC, datetime
 from typing import Any
+from uuid import UUID
 
 from langchain_core.messages import AIMessage, ToolMessage
 
@@ -65,7 +66,7 @@ class EventGenerator:
     async def process_message_chunk(
         self,
         chunk: tuple,
-        session_id: str,
+        session_id: UUID,
     ) -> AsyncGenerator[GenUIEvent]:
         """处理 messages 模式的流块
 
@@ -132,7 +133,7 @@ class EventGenerator:
     async def _process_tool_call_chunks(
         self,
         tool_call_chunks: list[dict],
-        session_id: str,
+        session_id: UUID,
     ) -> AsyncGenerator[GenUIEvent]:
         """处理工具调用块
 
@@ -181,7 +182,7 @@ class EventGenerator:
     async def process_updates_chunk(
         self,
         chunk: dict[str, Any],
-        session_id: str,
+        session_id: UUID,
     ) -> AsyncGenerator[GenUIEvent]:
         """处理 updates 模式的流块
 
@@ -222,7 +223,7 @@ class EventGenerator:
     async def _process_tools_node(
         self,
         node_output: Any,
-        session_id: str,
+        session_id: UUID,
     ) -> AsyncGenerator[GenUIEvent]:
         """处理 tools 节点输出"""
         messages = []
@@ -272,7 +273,7 @@ class EventGenerator:
         self,
         tool_result: Any,
         tool_name: str,
-        session_id: str,
+        session_id: UUID,
         tool_call_id: str | None,
     ) -> AsyncGenerator[GenUIEvent]:
         """生成 UI 组件事件（a2ui_message）"""

@@ -38,7 +38,7 @@ class SharedSpace(BaseModel, table=True):
 
     __tablename__ = "shared_spaces"
 
-    id: UUID | None = Field(
+    id: Optional[UUID] = Field(
         default=None,
         sa_column=Column(PGUUID(as_uuid=True), primary_key=True, server_default=sa.text("gen_random_uuid()")),
     )
@@ -47,9 +47,9 @@ class SharedSpace(BaseModel, table=True):
         sa_column=Column(PGUUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False)
     )
     status: str = Field(max_length=50, default="ACTIVE")
-    description: str | None = Field(default=None)
-    invite_code: str | None = Field(default=None, max_length=20)
-    invite_code_expires_at: datetime | None = Field(
+    description: Optional[str] = Field(default=None)
+    invite_code: Optional[str] = Field(default=None, max_length=20)
+    invite_code_expires_at: Optional[datetime] = Field(
         default=None, sa_column=Column(TIMESTAMP(timezone=True), nullable=True)
     )
 
@@ -101,7 +101,7 @@ class SpaceMember(BaseModel, table=True):
     status: str = Field(max_length=50, default="ACCEPTED")
 
     # Relationships
-    space: SharedSpace | None = Relationship(back_populates="members")
+    space: Optional[SharedSpace] = Relationship(back_populates="members")
     user: Optional["User"] = Relationship(
         sa_relationship_kwargs={
             "foreign_keys": "[SpaceMember.user_uuid]",
@@ -133,7 +133,7 @@ class SpaceTransaction(BaseModel, table=True):
 
     __tablename__ = "space_transactions"
 
-    id: UUID | None = Field(
+    id: Optional[UUID] = Field(
         default=None,
         sa_column=Column(PGUUID(as_uuid=True), primary_key=True, server_default=sa.text("gen_random_uuid()")),
     )
@@ -148,7 +148,7 @@ class SpaceTransaction(BaseModel, table=True):
     )
 
     # Relationships
-    space: SharedSpace | None = Relationship(back_populates="space_transactions")
+    space: Optional[SharedSpace] = Relationship(back_populates="space_transactions")
     transaction: Optional["Transaction"] = Relationship(
         sa_relationship_kwargs={"foreign_keys": "[SpaceTransaction.transaction_id]"}
     )

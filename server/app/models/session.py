@@ -3,6 +3,7 @@
 import uuid as uuid_lib
 
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column
 from sqlmodel import Field
 
 from app.models.base import BaseModel
@@ -23,11 +24,9 @@ class Session(BaseModel, table=True):
 
     id: uuid_lib.UUID = Field(
         default_factory=uuid_lib.uuid4,
-        primary_key=True,
-        sa_type=UUID(as_uuid=True),
+        sa_column=Column(UUID(as_uuid=True), primary_key=True),
     )
     user_uuid: uuid_lib.UUID = Field(
-        sa_type=UUID(as_uuid=True),
-        index=True,
+        sa_column=Column(UUID(as_uuid=True), index=True),
     )
     name: str = Field(default="")

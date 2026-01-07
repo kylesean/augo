@@ -261,7 +261,7 @@ async def check_resource_ownership(resource_user_uuid: str, current_user: User, 
 
 
 async def require_resource_ownership(
-    resource_user_uuid: int, current_user: User = Depends(get_current_user), allow_admin: bool = True
+    resource_user_uuid: str, current_user: User = Depends(get_current_user), allow_admin: bool = True
 ) -> User:
     """Dependency to require resource ownership.
 

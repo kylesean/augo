@@ -225,7 +225,7 @@ async def search_transactions(
 
     try:
         # 构建基础查询
-        conditions = [Transaction.user_uuid == str(current_user.uuid)]
+        conditions = [Transaction.user_uuid == current_user.uuid]
 
         # 添加过滤条件
         if keyword:
@@ -275,7 +275,7 @@ async def search_transactions(
             conditions.append(Transaction.type == transaction_type.upper())
 
         # 构建查询
-        query = select(Transaction).where(and_(*conditions)).order_by(desc(Transaction.transaction_at))
+        query = select(Transaction).where(and_(*conditions)).order_by(Transaction.transaction_at.desc())
 
         # 获取汇率和用户偏好币种
         display_currency = await get_user_display_currency(db, current_user.uuid)
@@ -383,7 +383,7 @@ async def update_transaction_account(
         result = await service.update_transaction_account(
             transaction_id=transaction_id,
             user_uuid=current_user.uuid,
-            account_id=request.account_id,
+            account_id=UUID(request.account_id) if request.account_id else None,
         )
         return success_response(
             data=result,
@@ -434,8 +434,8 @@ async def update_batch_transactions_account(
     try:
         result = await service.update_batch_transactions_account(
             user_uuid=current_user.uuid,
-            transaction_ids=request.transaction_ids,
-            account_id=request.account_id,
+            transaction_ids=[UUID(tid) for tid in request.transaction_ids],
+            account_id=UUID(request.account_id) if request.account_id else None,
         )
         return success_response(
             data=result,
@@ -457,7 +457,7 @@ async def get_transaction_comments(
 ) -> JSONResponse:
     """获取交易评论列表"""
     service = TransactionService(db)
-    comments = await service.get_comments_for_transaction(str(transaction_id), current_user.uuid)
+    comments = await service.get_comments_for_transaction(transaction_id, current_user.uuid)
     return success_response(
         data=comments,
         message="Comments retrieved successfully",
@@ -474,7 +474,7 @@ async def add_transaction_comment(
     """添加交易评论"""
     service = TransactionService(db)
     comment = await service.add_comment(
-        transaction_id=str(transaction_id),
+        transaction_id=transaction_id,
         user_uuid=current_user.uuid,
         comment_text=request.comment_text,
         parent_comment_id=request.parent_comment_id,
@@ -493,7 +493,7 @@ async def delete_transaction_comment(
 ) -> JSONResponse:
     """删除交易评论"""
     service = TransactionService(db)
-    success = await service.delete_comment(comment_id, current_user.id)
+    success = await service.delete_comment(comment_id, current_user.uuid)
 
     if not success:
         raise HTTPException(
@@ -527,7 +527,7 @@ async def list_recurring_transactions(
     """
     service = TransactionService(db)
     recurring_txs = await service.list_recurring_transactions(
-        str(current_user.uuid),
+        current_user.uuid,
         type_filter=type,
         is_active=is_active,
     )
@@ -545,22 +545,22 @@ async def create_recurring_transaction(
 ) -> JSONResponse:
     """创建周期性交易"""
     service = TransactionService(db)
-    recurring_tx = await service.create_recurring_transaction(str(current_user.uuid), request.model_dump())
+    recurring_tx = await service.create_recurring_transaction(current_user.uuid, request.model_dump())
     return success_response(
         data=recurring_tx,
         message="Recurring transaction created successfully",
     )
 
 
-@router.get("/recurring/{recurring_id}", response_model=RecurringTransactionResponse)
+@router.get("/recurring/{recurring_id:uuid}", response_model=RecurringTransactionResponse)
 async def get_recurring_transaction(
-    recurring_id: str,  # UUID as string
+    recurring_id: UUID,  # UUID from path
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
     """获取周期性交易详情"""
     service = TransactionService(db)
-    recurring_tx = await service.get_recurring_transaction(recurring_id, str(current_user.uuid))
+    recurring_tx = await service.get_recurring_transaction(recurring_id, current_user.uuid)
 
     if not recurring_tx:
         raise HTTPException(
@@ -574,9 +574,9 @@ async def get_recurring_transaction(
     )
 
 
-@router.put("/recurring/{recurring_id}", response_model=RecurringTransactionResponse)
+@router.put("/recurring/{recurring_id:uuid}", response_model=RecurringTransactionResponse)
 async def update_recurring_transaction(
-    recurring_id: str,  # UUID as string
+    recurring_id: UUID,  # UUID from path
     request: RecurringTransactionUpdateRequest,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
@@ -584,7 +584,7 @@ async def update_recurring_transaction(
     """更新周期性交易"""
     service = TransactionService(db)
     recurring_tx = await service.update_recurring_transaction(
-        recurring_id, str(current_user.uuid), request.model_dump(exclude_unset=True)
+        recurring_id, current_user.uuid, request.model_dump(exclude_unset=True)
     )
 
     if not recurring_tx:
@@ -599,15 +599,15 @@ async def update_recurring_transaction(
     )
 
 
-@router.delete("/recurring/{recurring_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/recurring/{recurring_id:uuid}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_recurring_transaction(
-    recurring_id: str,  # UUID as string
+    recurring_id: UUID,  # UUID from path
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
     """删除周期性交易"""
     service = TransactionService(db)
-    success = await service.delete_recurring_transaction(recurring_id, str(current_user.uuid))
+    success = await service.delete_recurring_transaction(recurring_id, current_user.uuid)
 
     if not success:
         raise HTTPException(

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from decimal import Decimal
-from typing import Any
+from typing import Any, cast
 from uuid import UUID
 
 from sqlmodel import select
@@ -168,9 +168,9 @@ class UserService:
             "mobile": user.mobile,
             "username": user.username,
             "avatarUrl": user.avatar_url,
-            "createdAt": _format_iso_datetime(user.created_at),
-            "updatedAt": _format_iso_datetime(user.updated_at),
-            "lastLoginAt": _format_iso_datetime(user.last_login_at),
+            "createdAt": _format_iso_datetime(cast(datetime | None, user.created_at)),
+            "updatedAt": _format_iso_datetime(cast(datetime | None, user.updated_at)),
+            "lastLoginAt": _format_iso_datetime(cast(datetime | None, user.last_login_at)),
         }
 
     async def save_financial_accounts(self, user_uuid: UUID, accounts: list[dict[str, Any]]) -> dict[str, Any]:
@@ -320,8 +320,8 @@ class UserService:
                     "includeInNetWorth": account.include_in_net_worth,
                     "includeInCashFlow": getattr(account, "include_in_cash_flow", False),
                     "status": account.status,
-                    "createdAt": _format_iso_datetime(account.created_at),
-                    "updatedAt": _format_iso_datetime(account.updated_at),
+                    "createdAt": _format_iso_datetime(cast(datetime | None, account.created_at)),
+                    "updatedAt": _format_iso_datetime(cast(datetime | None, account.updated_at)),
                 }
             )
 
@@ -381,8 +381,8 @@ class UserService:
             "initialBalance": _format_decimal(financial_account.initial_balance),
             "includeInNetWorth": financial_account.include_in_net_worth,
             "status": financial_account.status,
-            "createdAt": _format_iso_datetime(financial_account.created_at),
-            "updatedAt": _format_iso_datetime(financial_account.updated_at),
+            "createdAt": _format_iso_datetime(cast(datetime | None, financial_account.created_at)),
+            "updatedAt": _format_iso_datetime(cast(datetime | None, financial_account.updated_at)),
         }
 
     async def update_financial_account(
@@ -440,8 +440,8 @@ class UserService:
             "initialBalance": _format_decimal(account.initial_balance),
             "includeInNetWorth": account.include_in_net_worth,
             "status": account.status,
-            "createdAt": _format_iso_datetime(account.created_at),
-            "updatedAt": _format_iso_datetime(account.updated_at),
+            "createdAt": _format_iso_datetime(cast(datetime | None, account.created_at)),
+            "updatedAt": _format_iso_datetime(cast(datetime | None, account.updated_at)),
         }
 
     async def delete_financial_account(self, user_uuid: UUID, account_id: UUID) -> bool:

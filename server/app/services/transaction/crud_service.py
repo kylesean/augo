@@ -2,10 +2,11 @@
 
 from datetime import UTC, datetime
 from decimal import Decimal
+from typing import Any, cast
 from uuid import UUID, uuid4
 
 import structlog
-from sqlalchemy import and_, asc, select
+from sqlalchemy import Select, and_, asc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -210,8 +211,8 @@ class TransactionCRUDService:
                     "parentCommentId": comment.parent_comment_id,
                     "commentText": comment.comment_text,
                     "mentionedUserIds": comment.mentioned_user_ids or [],
-                    "createdAt": comment.created_at.isoformat() if comment.created_at else None,
-                    "updatedAt": comment.updated_at.isoformat() if comment.updated_at else None,
+                    "createdAt": cast(datetime, comment.created_at).isoformat() if comment.created_at else None,
+                    "updatedAt": cast(datetime, comment.updated_at).isoformat() if comment.updated_at else None,
                 }
             )
 
@@ -230,7 +231,7 @@ class TransactionCRUDService:
             "categoryKey": transaction.category_key,
             "rawInput": transaction.raw_input,
             "description": transaction.description,
-            "transactionAt": transaction.transaction_at.isoformat() if transaction.transaction_at else None,
+            "transactionAt": cast(datetime, transaction.transaction_at).isoformat() if transaction.transaction_at else None,
             "transactionTimezone": transaction.transaction_timezone,
             "sourceAccountId": transaction.source_account_id,
             "targetAccountId": transaction.target_account_id,
@@ -240,8 +241,8 @@ class TransactionCRUDService:
             "longitude": str(transaction.longitude) if transaction.longitude else None,
             "source": transaction.source,
             "status": transaction.status,
-            "createdAt": transaction.created_at.isoformat() if transaction.created_at else None,
-            "updatedAt": transaction.updated_at.isoformat() if transaction.updated_at else None,
+            "createdAt": cast(datetime, transaction.created_at).isoformat() if transaction.created_at else None,
+            "updatedAt": cast(datetime, transaction.updated_at).isoformat() if transaction.updated_at else None,
             "comments": comments_data,
             "commentCount": len(comments_data),
             "spaces": spaces_data,
@@ -632,7 +633,7 @@ class TransactionCRUDService:
             )
             .join(User, TransactionComment.user_uuid == User.uuid)
             .where(TransactionComment.transaction_id == transaction_id)
-            .order_by(asc(TransactionComment.created_at))
+            .order_by(TransactionComment.created_at.asc())
         )
 
         result = await self.db.execute(query)
@@ -722,14 +723,14 @@ class TransactionCRUDService:
 
         # If there is a parent comment, validate the parent comment
         if parent_comment_id is not None:
-            parent_query = select(TransactionComment).where(
+            parent_comment_query = select(TransactionComment).where(
                 and_(
                     TransactionComment.id == parent_comment_id,
                     TransactionComment.transaction_id == transaction_id,
                 )
             )
-            parent_result = await self.db.execute(parent_query)
-            parent_comment = parent_result.scalar_one_or_none()
+            parent_comment_result = await self.db.execute(parent_comment_query)
+            parent_comment = parent_comment_result.scalar_one_or_none()
 
             if not parent_comment:
                 raise BusinessError("Parent comment does not exist", "INVALID_PARENT_COMMENT_ID")
@@ -782,16 +783,16 @@ class TransactionCRUDService:
         replied_to_user_name = None
 
         if parent_comment_id:
-            parent_query = (
+            reply_context_query: Select[Any] = (
                 select(TransactionComment, User.username)
                 .join(User, TransactionComment.user_uuid == User.uuid)
                 .where(TransactionComment.id == parent_comment_id)
             )
-            parent_result = await self.db.execute(parent_query)
-            parent_data = parent_result.first()
+            reply_context_result = await self.db.execute(reply_context_query)
+            reply_context_data = reply_context_result.first()
 
-            if parent_data:
-                parent_comment_obj, parent_user_name = parent_data
+            if reply_context_data:
+                parent_comment_obj, parent_user_name = reply_context_data
                 replied_to_user_uuid = str(parent_comment_obj.user_uuid)
                 replied_to_user_name = parent_user_name
 
@@ -809,12 +810,12 @@ class TransactionCRUDService:
             "updatedAt": comment.updated_at.isoformat() if comment.updated_at else None,
         }
 
-    async def delete_comment(self, comment_id: int, user_uuid: int) -> bool:
+    async def delete_comment(self, comment_id: int, user_uuid: UUID) -> bool:
         """Delete comment
 
         Args:
             comment_id: Comment ID
-            user_uuid: User ID
+            user_uuid: User UUID
 
         Returns:
             Whether the comment was deleted successfully

@@ -82,7 +82,7 @@ class TransactionService:
         self,
         user_uuid: UUID,
         data: dict,
-        source_thread_id: str | None = None,
+        source_thread_id: UUID | None = None,
     ) -> dict:
         """Create multiple transactions."""
         return await self._crud.create_batch_transactions(user_uuid, data, source_thread_id)
@@ -118,7 +118,7 @@ class TransactionService:
         """Get transaction feed (with automatic currency conversion)."""
         return await self._query.get_transaction_feed(user_uuid, date_filter, type_filter, page, limit)
 
-    async def search_transactions(self, user_uuid: str, filters: dict) -> dict:
+    async def search_transactions(self, user_uuid: UUID, filters: dict) -> dict:
         """Search transaction records."""
         return await self._query.search_transactions(user_uuid, filters)
 

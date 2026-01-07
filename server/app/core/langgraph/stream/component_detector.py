@@ -66,7 +66,7 @@ class ComponentDetector:
     @staticmethod
     def detect_with_overrides(
         tool_result: Any,
-        tool_name: str,
+        tool_name: str | None,
     ) -> str | None:
         """检测组件类型并应用业务覆盖规则
 

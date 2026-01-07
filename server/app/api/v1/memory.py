@@ -96,7 +96,7 @@ async def list_memories(
     """
     service = await get_memory_service()
     memories = await service.get_user_memories(
-        user_uuid=str(current_user.uuid),
+        user_uuid=current_user.uuid,
         limit=limit,
     )
 
@@ -144,7 +144,7 @@ async def search_memories(
     """
     service = await get_memory_service()
     memories = await service.search_memories(
-        user_uuid=str(current_user.uuid),
+        user_uuid=current_user.uuid,
         query=q,
         limit=limit,
     )
@@ -186,7 +186,7 @@ async def get_memory_stats(
         Total memory count and category breakdown
     """
     service = await get_memory_service()
-    stats = await service.get_memory_stats(user_uuid=str(current_user.uuid))
+    stats = await service.get_memory_stats(user_uuid=current_user.uuid)
 
     return success_response(
         data=MemoryStatsResponse(
@@ -288,11 +288,11 @@ async def delete_all_memories(
     service = await get_memory_service()
 
     # Get count before deletion
-    stats = await service.get_memory_stats(user_uuid=str(current_user.uuid))
+    stats = await service.get_memory_stats(user_uuid=current_user.uuid)
     count_before = stats["total_count"]
 
     deleted = await service.delete_all_user_memories(
-        user_uuid=str(current_user.uuid),
+        user_uuid=current_user.uuid,
     )
 
     logger.warning(

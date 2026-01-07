@@ -5,7 +5,7 @@ import secrets
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
-from typing import Any
+from typing import Any, cast
 from uuid import UUID
 
 import structlog
@@ -13,7 +13,7 @@ from sqlalchemy import and_, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.core.exceptions import AuthorizationError, BusinessError, NotFoundError
+from app.core.exceptions import AuthorizationError, BusinessError, ErrorCode, NotFoundError
 from app.models.shared_space import (
     SharedSpace,
     SpaceMember,
@@ -98,7 +98,7 @@ class SharedSpaceService:
             .join(SpaceMember, SharedSpace.id == SpaceMember.space_id)
             .where(base_filter)
             .options(selectinload(SharedSpace.creator))
-            .order_by(desc(SharedSpace.created_at))
+            .order_by(SharedSpace.created_at.desc())
             .offset(offset)
             .limit(limit)
         )
@@ -315,7 +315,7 @@ class SharedSpaceService:
 
         # Check expiration
         if space.invite_code_expires_at and space.invite_code_expires_at < datetime.now(UTC):
-            raise BusinessError("invitation code expired")
+            raise BusinessError("invitation code expired", error_code=ErrorCode.VALIDATION_ERROR)
 
         # Check if already a member
         member_query = select(SpaceMember).where(
@@ -326,7 +326,7 @@ class SharedSpaceService:
 
         if existing_member:
             if existing_member.status == "ACCEPTED":
-                raise BusinessError("you are already a member")
+                raise BusinessError("you are already a member", error_code=ErrorCode.ALREADY_MEMBER_OR_HAS_BEEN_INVITED)
             else:
                 # Update existing pending membership
                 existing_member.status = "ACCEPTED"
@@ -343,7 +343,7 @@ class SharedSpaceService:
         await self.db.commit()
 
         # Return space info
-        return await self.get_space_detail(space.id, user_uuid)
+        return await self.get_space_detail(cast(UUID, space.id), user_uuid)
 
     # =========================================================================
     # Member Management
@@ -371,7 +371,10 @@ class SharedSpaceService:
             raise NotFoundError("you are not a member of this space")
 
         if member.role == "OWNER":
-            raise BusinessError("space owner cannot leave space, please transfer or delete space first")
+            raise BusinessError(
+                "space owner cannot leave space, please transfer or delete space first",
+                error_code=ErrorCode.PERMISSION_DENIED,
+            )
 
         await self.db.delete(member)
         await self.db.commit()
@@ -398,7 +401,7 @@ class SharedSpaceService:
 
         # Cannot remove self via this method
         if user_uuid == target_user_uuid:
-            raise BusinessError("please use leave space function")
+            raise BusinessError("please use leave space function", error_code=ErrorCode.INVALID_ACTION)
 
         # Find target member
         query = select(SpaceMember).where(
@@ -411,7 +414,7 @@ class SharedSpaceService:
             raise NotFoundError("user is not a member of this space")
 
         if member.role == "OWNER":
-            raise BusinessError("cannot remove space owner")
+            raise BusinessError("cannot remove space owner", error_code=ErrorCode.PERMISSION_DENIED)
 
         await self.db.delete(member)
         await self.db.commit()
@@ -565,7 +568,7 @@ class SharedSpaceService:
                 selectinload(SpaceTransaction.transaction),
                 selectinload(SpaceTransaction.added_by),
             )
-            .order_by(desc(SpaceTransaction.created_at))
+            .order_by(SpaceTransaction.created_at.desc())
             .offset(offset)
             .limit(limit)
         )
@@ -765,8 +768,8 @@ class SharedSpaceService:
                 "username": space.creator.username if space.creator else "Unknown",
                 "avatarUrl": getattr(space.creator, "avatar_url", None) if space.creator else None,
             },
-            "createdAt": space.created_at.isoformat() if space.created_at else None,
-            "updatedAt": space.updated_at.isoformat() if space.updated_at else None,
+            "createdAt": cast(datetime, space.created_at).isoformat() if space.created_at else None,
+            "updatedAt": cast(datetime, space.updated_at).isoformat() if space.updated_at else None,
             "transactionCount": tx_count,
             "totalExpense": f"{total_expense:.2f}",
         }
@@ -780,7 +783,7 @@ class SharedSpaceService:
                     "avatarUrl": getattr(m.user, "avatar_url", None) if m.user else None,
                     "role": m.role,
                     "status": m.status,
-                    "createdAt": m.created_at.isoformat() if m.created_at else None,
+                    "createdAt": cast(datetime, m.created_at).isoformat() if m.created_at else None,
                     "contributionAmount": f"{contributions.get(m.user_uuid, Decimal('0')):.2f}",
                 }
                 for m in space.members
@@ -821,8 +824,8 @@ class SharedSpaceService:
                 "username": creator.username if creator else "Unknown",
                 "avatarUrl": getattr(creator, "avatar_url", None) if creator else None,
             },
-            "createdAt": space.created_at.isoformat() if space.created_at else None,
-            "updatedAt": space.updated_at.isoformat() if space.updated_at else None,
+            "createdAt": cast(datetime, space.created_at).isoformat() if space.created_at else None,
+            "updatedAt": cast(datetime, space.updated_at).isoformat() if space.updated_at else None,
             "transactionCount": tx_count,
             "totalExpense": f"{total_expense:.2f}",
         }
@@ -836,7 +839,7 @@ class SharedSpaceService:
                     "avatarUrl": getattr(m.user, "avatar_url", None) if m.user else None,
                     "role": m.role,
                     "status": m.status,
-                    "createdAt": m.created_at.isoformat() if m.created_at else None,
+                    "createdAt": cast(datetime, m.created_at).isoformat() if m.created_at else None,
                     "contributionAmount": f"{contributions.get(m.user_uuid, Decimal('0')):.2f}",
                 }
                 for m in space.members
@@ -875,8 +878,8 @@ class SharedSpaceService:
             "currency": currency,
             "description": tx.description if tx else None,
             "categoryKey": tx.category_key if tx else "",
-            "transactionAt": tx.transaction_at.isoformat() if tx and tx.transaction_at else None,
+            "transactionAt": cast(datetime, tx.transaction_at).isoformat() if tx and tx.transaction_at else None,
             "addedByUsername": st.added_by.username if st.added_by else "Unknown",
-            "addedAt": st.created_at.isoformat() if st.created_at else None,
+            "addedAt": cast(datetime, st.created_at).isoformat() if st.created_at else None,
             "display": display.model_dump(),  # 添加统一的金额显示格式
         }

@@ -21,31 +21,40 @@ from app.schemas.auth import Token
 from app.utils.sanitization import sanitize_string
 
 
-def create_access_token(subject: str | UUID | Any, expires_delta: timedelta | None = None) -> Token:
+def create_access_token(
+    subject: str | UUID | Any = None,
+    expires_delta: timedelta | None = None,
+    data: dict[str, Any] | None = None,
+) -> Token:
     """Create a new access token.
 
     Args:
         subject: The subject (user UUID). Can be str or UUID.
         expires_delta: Optional expiration time delta.
-
-    Returns:
-        Token: The generated access token.
+        data: Optional additional data to include in the token.
     """
-    # Convert UUID to string if needed
-    subject_str = str(subject)
+    to_encode = data.copy() if data else {}
+
+    if subject:
+        # Convert UUID to string if needed
+        subject_str = str(subject)
+        to_encode["sub"] = subject_str
+    else:
+        subject_str = str(to_encode.get("sub", "unknown"))
 
     if expires_delta:
         expire = datetime.now(UTC) + expires_delta
     else:
         expire = datetime.now(UTC) + timedelta(days=settings.JWT_ACCESS_TOKEN_EXPIRE_DAYS)
 
-    to_encode = {
-        "sub": subject_str,
-        "exp": expire,
-        "iat": datetime.now(UTC),
-        # Add unique token identifier
-        "jti": sanitize_string(f"{subject_str}-{datetime.now(UTC).timestamp()}"),
-    }
+    to_encode.update(
+        {
+            "exp": expire,
+            "iat": datetime.now(UTC),
+            # Add unique token identifier
+            "jti": sanitize_string(f"{subject_str}-{datetime.now(UTC).timestamp()}"),
+        }
+    )
 
     encoded_jwt = jwt.encode(to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 

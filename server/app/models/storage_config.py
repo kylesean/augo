@@ -10,8 +10,9 @@ import uuid
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
 
+import sqlalchemy as sa
 from sqlalchemy import Column
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB, UUID as PG_UUID
 from sqlmodel import Field, Relationship
 
 from app.models.base import BaseModel
@@ -56,7 +57,11 @@ class StorageConfig(BaseModel, table=True):
     __tablename__ = "storage_configs"
 
     id: Optional[int] = Field(default=None, primary_key=True, sa_column_kwargs={"autoincrement": True})
-    user_uuid: uuid.UUID = Field(foreign_key="users.uuid", index=True)
+    user_uuid: uuid.UUID = Field(
+        sa_column=Column(
+            PG_UUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False, index=True
+        )
+    )
 
     # Provider type: 'local_uploads', 's3_compatible', 'webdav'
     provider_type: str = Field(max_length=50)

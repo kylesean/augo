@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
+from typing import cast as type_cast
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -100,8 +101,8 @@ class TransactionItem(BaseModel):
             raw_input=tx.raw_input,
             source_account_id=str(tx.source_account_id) if tx.source_account_id else None,
             target_account_id=str(tx.target_account_id) if tx.target_account_id else None,
-            created_at=tx.created_at.isoformat() if tx.created_at else None,
-            updated_at=tx.updated_at.isoformat() if tx.updated_at else None,
+            created_at=type_cast(datetime, tx.created_at).isoformat() if tx.created_at else None,
+            updated_at=type_cast(datetime, tx.updated_at).isoformat() if tx.updated_at else None,
             display=TransactionDisplayValue.from_params(amount=amount_val, tx_type=tx.type, currency=display_currency),
         )
 

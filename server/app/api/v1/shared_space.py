@@ -1,5 +1,6 @@
 """Shared space API endpoints."""
 
+from typing import cast
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -55,7 +56,7 @@ async def create_shared_space(
     )
 
     # Get full space details
-    space_dict = await service.get_space_detail(space.id, current_user.uuid)
+    space_dict = await service.get_space_detail(cast(UUID, space.id), current_user.uuid)
     return success_response(data=space_dict)
 
 

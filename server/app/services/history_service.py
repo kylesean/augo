@@ -203,7 +203,7 @@ class HistoryService:
                 Attachment.thread_id == thread_id,
                 Attachment.user_uuid == user_uuid,
             )
-            .order_by(desc(Attachment.created_at))
+            .order_by(Attachment.created_at.desc())
         )
         result = await self.db.execute(stmt)
         rows = result.all()

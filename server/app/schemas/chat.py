@@ -4,7 +4,9 @@ from __future__ import annotations
 import re
 from typing import (
     Literal,
+    Sequence,
 )
+from uuid import UUID
 
 from pydantic import (
     BaseModel,
@@ -66,7 +68,7 @@ class ChatRequest(BaseModel):
         description="List of messages in the session",
         min_length=1,
     )
-    session_id: str | None = Field(
+    session_id: UUID | None = Field(
         default=None, description="Session ID for existing session. If null, a new session will be created."
     )
 
@@ -78,7 +80,7 @@ class AttachmentRef(BaseModel):
     previously uploaded via the /files/upload endpoint.
     """
 
-    id: str = Field(..., description="Attachment UUID")
+    id: UUID = Field(..., description="Attachment UUID")
 
 
 class MessageWithAttachments(Message):
@@ -105,7 +107,7 @@ class ChatRequestWithAttachments(BaseModel):
         description="List of messages with optional attachments",
         min_length=1,
     )
-    session_id: str | None = Field(
+    session_id: UUID | None = Field(
         default=None, description="Session ID for existing session. If null, a new session will be created."
     )
     client_state: ClientStateMutation | None = Field(
@@ -122,7 +124,7 @@ class ChatResponse(BaseModel):
     """
 
     messages: list[Message] = Field(..., description="List of messages in the session")
-    session_id: str | None = Field(default=None, description="Session ID for new sessions")
+    session_id: UUID | None = Field(default=None, description="Session ID for new sessions")
 
 
 class StreamResponse(BaseModel):
@@ -138,7 +140,7 @@ class StreamResponse(BaseModel):
 
     content: str = Field(default="", description="The content of the current chunk")
     done: bool = Field(default=False, description="Whether the stream is complete")
-    session_id: str | None = Field(default=None, description="Session ID for new sessions")
+    session_id: UUID | None = Field(default=None, description="Session ID for new sessions")
     tool_call: dict | None = Field(default=None, description="Tool call information (name, args, status)")
     message_id: str | None = Field(default=None, description="Message ID (only when done=True)")
 
@@ -165,8 +167,8 @@ class UIComponentInfo(BaseModel):
 class AttachmentInfo(BaseModel):
     """Attachment information with signed URL for history messages."""
 
-    id: str = Field(..., description="Attachment UUID")
-    attachmentId: str = Field(..., description="Alias for ID, required by client")
+    id: UUID = Field(..., description="Attachment UUID")
+    attachmentId: UUID = Field(..., description="Alias for ID, required by client")
     type: str = Field(..., description="Attachment type (image/document/other)")
     filename: str = Field(..., description="Original filename")
     objectKey: str = Field(..., description="Object storage key, required by client")
@@ -182,7 +184,7 @@ class HistoryMessage(BaseModel):
     tool calls, UI components, and attachments.
     """
 
-    id: str = Field(..., description="Message UUID")
+    id: UUID = Field(..., description="Message UUID")
     role: Literal["user", "assistant", "tool"] = Field(..., description="Message role")
     content: str = Field(default="", description="Text content")
     timestamp: str | None = Field(default=None, description="ISO timestamp")
@@ -196,5 +198,5 @@ class HistoryMessagesResponse(BaseModel):
     """Response model for session messages endpoint."""
 
     messages: list[HistoryMessage] = Field(..., description="Complete message history")
-    session_id: str = Field(..., description="Session ID")
+    session_id: UUID = Field(..., description="Session ID")
     title: str | None = Field(default=None, description="Session title")

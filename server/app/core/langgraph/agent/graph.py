@@ -10,6 +10,8 @@
 """
 from __future__ import annotations
 
+from typing import Any, cast
+
 from langchain_core.language_models import BaseChatModel
 from langchain_core.tools import BaseTool
 from langgraph.checkpoint.base import BaseCheckpointSaver
@@ -57,9 +59,9 @@ def build_agent_graph(
     workflow = StateGraph(AgentState)
 
     # 添加节点
-    workflow.add_node("agent", create_agent_node(llm, tools, formatted_prompt))
+    workflow.add_node("agent", cast(Any, create_agent_node(llm, tools, formatted_prompt)))
     workflow.add_node("tools", ToolNode(tools))
-    workflow.add_node("direct_execute", create_direct_execute_node(tools))
+    workflow.add_node("direct_execute", cast(Any, create_direct_execute_node(tools)))
 
     # 添加边
     # 1. 入口条件边：检查是否需要直接执行

@@ -15,6 +15,7 @@
 import asyncio
 from collections.abc import AsyncGenerator
 from typing import Any
+from uuid import UUID
 
 from app.core.langgraph.stream.event_generator import EventGenerator
 from app.core.langgraph.stream.render_policy import (
@@ -81,8 +82,8 @@ class StreamProcessor:
         agent: Any,
         input_data: dict[str, Any] | None,
         config: dict[str, Any],
-        session_id: str,
-        user_uuid: str | None = None,
+        session_id: UUID,
+        user_uuid: UUID | None = None,
     ) -> AsyncGenerator[GenUIEvent]:
         """处理 LangGraph 流并生成 GenUI 事件
 
@@ -197,8 +198,8 @@ class StreamProcessor:
 
     async def _index_messages(
         self,
-        session_id: str,
-        user_uuid: str,
+        session_id: UUID,
+        user_uuid: UUID,
         user_message: str,
         ai_response: str,
     ) -> None:
@@ -249,7 +250,7 @@ class StreamProcessor:
         self,
         mode: str,
         chunk: Any,
-        session_id: str,
+        session_id: UUID,
         event_buffer: list[GenUIEvent],
     ) -> AsyncGenerator[GenUIEvent]:
         """处理单个流块
@@ -282,7 +283,7 @@ class StreamProcessor:
     async def _process_messages_mode(
         self,
         chunk: tuple,
-        session_id: str,
+        session_id: UUID,
         event_buffer: list[GenUIEvent],
     ) -> AsyncGenerator[GenUIEvent]:
         """处理 messages 模式
@@ -341,7 +342,7 @@ class StreamProcessor:
     async def _process_updates_mode(
         self,
         chunk: dict[str, Any],
-        session_id: str,
+        session_id: UUID,
         event_buffer: list[GenUIEvent],
     ) -> AsyncGenerator[GenUIEvent]:
         """处理 updates 模式

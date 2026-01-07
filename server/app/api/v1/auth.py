@@ -9,6 +9,9 @@ This module provides endpoints for user authentication including:
 from __future__ import annotations
 
 import uuid
+from datetime import datetime
+from uuid import UUID
+from typing import Any, cast
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request, status
 from fastapi.responses import JSONResponse
@@ -20,7 +23,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import SessionRepository, get_session, get_session_context
 from app.core.logging import bind_context, logger
-from app.models.session import Session as ChatSession
+from app.models.session import Session
 from app.models.user import User
 from app.schemas.auth import AuthResponse, LoginRequest, RegisterRequest, SendCodeRequest, SessionResponse, UserInfo
 from app.services.auth_service import AuthService
@@ -97,10 +100,10 @@ async def get_current_user(
 
 
 async def get_authorized_session(
-    session_id: str,
+    session_id: UUID,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
-) -> ChatSession:
+) -> Session:
     """Get session with ownership verification.
 
     This function verifies both:
@@ -118,24 +121,21 @@ async def get_authorized_session(
     Raises:
         HTTPException: 404 if session not found, 403 if access denied
     """
-    # Sanitize session_id
-    sanitized_session_id = sanitize_string(session_id)
-
     # Verify session exists using repository
     repo = SessionRepository(db)
-    session = await repo.get(sanitized_session_id)
+    session = await repo.get(session_id)
     if session is None:
-        logger.error("session_not_found", session_id=sanitized_session_id)
+        logger.error("session_not_found", session_id=session_id)
         raise HTTPException(
             status_code=404,
             detail="Session not found",
         )
 
     # Verify ownership
-    if str(session.user_uuid) != str(current_user.uuid):
+    if session.user_uuid != current_user.uuid:
         logger.warning(
             "session_access_denied",
-            session_id=sanitized_session_id,
+            session_id=session_id,
             session_owner=session.user_uuid,
             requesting_user=current_user.uuid,
         )
@@ -237,9 +237,9 @@ async def register(
             mobile=user.mobile,
             username=user.username or user.email or user.mobile or f"user_{str(user.uuid)[:8]}",
             avatarUrl=user.avatar_url,
-            createdAt=user.created_at.isoformat(),
-            updatedAt=user.updated_at.isoformat(),
-            clientLastLoginAt=user.last_login_at.isoformat() if user.last_login_at else None,
+            createdAt=cast(datetime, user.created_at).isoformat(),
+            updatedAt=cast(datetime, user.updated_at).isoformat(),
+            clientLastLoginAt=cast(datetime, user.last_login_at).isoformat() if user.last_login_at else None,
         )
 
         logger.info(
@@ -316,9 +316,9 @@ async def login(
             mobile=user.mobile,
             username=user.username or user.email or user.mobile or f"user_{str(user.uuid)[:8]}",
             avatarUrl=user.avatar_url,
-            createdAt=user.created_at.isoformat(),
-            updatedAt=user.updated_at.isoformat(),
-            clientLastLoginAt=user.last_login_at.isoformat() if user.last_login_at else None,
+            createdAt=cast(datetime, user.created_at).isoformat(),
+            updatedAt=cast(datetime, user.updated_at).isoformat(),
+            clientLastLoginAt=cast(datetime, user.last_login_at).isoformat() if user.last_login_at else None,
         )
 
         logger.info(
@@ -371,12 +371,12 @@ async def create_session(user: User = Depends(get_current_user)) -> JSONResponse
 
     try:
         # Generate a unique session ID
-        session_id = str(uuid.uuid4())
+        session_id = uuid.uuid4()
 
         # Create session in database with default name "New Chat"
         async with get_session_context() as db:
             repo = SessionRepository(db)
-            session = await repo.create(session_id, str(user.uuid), name="New Chat")
+            session = await repo.create(session_id, user.uuid, name="New Chat")
 
         logger.info(
             "session_created",
@@ -399,7 +399,7 @@ async def create_session(user: User = Depends(get_current_user)) -> JSONResponse
 
 @router.patch("/session/{session_id}/name", response_model=SessionResponse)
 async def update_session_name(
-    session_id: str,
+    session_id: UUID,
     name: str = Form(...),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
@@ -426,6 +426,8 @@ async def update_session_name(
     # Update the session name
     repo = SessionRepository(db)
     updated_session = await repo.update_name(session.id, sanitized_name)
+    if updated_session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
 
     logger.info(
         "session_name_updated",
@@ -445,7 +447,7 @@ async def update_session_name(
 
 @router.delete("/session/{session_id}")
 async def delete_session(
-    session_id: str,
+    session_id: UUID,
     current_user: User = Depends(get_current_user),
 ) -> JSONResponse:
     """Delete a session for the authenticated user.
@@ -474,7 +476,7 @@ async def delete_session(
         if session is None:
             raise HTTPException(status_code=404, detail="Session not found")
 
-        if str(session.user_uuid) != str(current_user.uuid):
+        if session.user_uuid != current_user.uuid:
             logger.warning(
                 "session_delete_unauthorized",
                 session_id=session_id,
@@ -486,7 +488,7 @@ async def delete_session(
     try:
         # 1. Use the chatbot agent to cascade delete history
         # This handles LangGraph checkpoints (via official API) and searchable_messages
-        await chatbot_agent.delete_session_history(str(session.id))
+        await chatbot_agent.delete_session_history(session.id)
 
         # 2. Delete the session metadata
         async with get_session_context() as db:
@@ -540,7 +542,7 @@ async def get_user_sessions(
 
     try:
         # Build query for user's sessions, ordered by most recent first
-        query = select(ChatSession).where(ChatSession.user_uuid == user.uuid).order_by(desc(ChatSession.created_at))
+        query = select(Session).where(Session.user_uuid == user.uuid).order_by(cast(Any, Session.created_at).desc())
 
         # Use fastapi-pagination to paginate the query
         page_result = await apaginate(
@@ -553,10 +555,10 @@ async def get_user_sessions(
                     "name": session.name or "",
                     # Use standard ISO 8601 format: replace +00:00 with Z for UTC
                     "created_at": (
-                        session.created_at.isoformat().replace("+00:00", "Z") if session.created_at else ""
+                        cast(datetime, session.created_at).isoformat().replace("+00:00", "Z") if session.created_at else ""
                     ),
                     "updated_at": (
-                        session.updated_at.isoformat().replace("+00:00", "Z") if session.updated_at else ""
+                        cast(datetime, session.updated_at).isoformat().replace("+00:00", "Z") if session.updated_at else ""
                     ),
                 }
                 for session in items

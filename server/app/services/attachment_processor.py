@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import base64
 from pathlib import Path
+from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,7 +24,7 @@ class AttachmentProcessor:
         """
         self.db_session = db_session
 
-    async def load_attachments(self, attachment_ids: list[int], user_uuid: int) -> list[dict]:
+    async def load_attachments(self, attachment_ids: list[UUID], user_uuid: UUID) -> list[dict]:
         """Load attachments from database by IDs.
 
         Args:
@@ -60,7 +61,7 @@ class AttachmentProcessor:
                     "object_key": attachment.object_key,
                     "mime_type": attachment.mime_type,
                     "size": attachment.size,
-                    "type": self._get_attachment_type(attachment.mime_type),
+                    "type": self._get_attachment_type(attachment.mime_type or ""),
                     "file_path": str(file_path),
                     "access_url": await self._get_access_url(attachment, file_path),
                 }
@@ -129,14 +130,15 @@ class AttachmentProcessor:
         Returns:
             Access URL string
         """
+        mime_type = attachment.mime_type or ""
         # For images, convert to base64 data URL
-        if attachment.mime_type.startswith("image/"):
+        if mime_type.startswith("image/"):
             try:
                 if file_path.exists():
                     with open(file_path, "rb") as f:
                         image_data = f.read()
                     base64_data = base64.b64encode(image_data).decode("utf-8")
-                    return f"data:{attachment.mime_type};base64,{base64_data}"
+                    return f"data:{mime_type};base64,{base64_data}"
             except Exception as e:
                 logger.error(
                     "failed_to_convert_image_to_base64",

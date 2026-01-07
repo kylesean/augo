@@ -1,6 +1,7 @@
 """Financial settings API endpoints."""
 
-from typing import Annotated
+from datetime import datetime
+from typing import Annotated, Any, cast
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
@@ -33,7 +34,7 @@ async def get_financial_settings(
     Returns:
         Unified response with financial settings
     """
-    user_service = UserService(db)
+    user_service = UserService(cast(Any, db))
     settings = await user_service.get_financial_settings(current_user.uuid)
 
     return success_response(
@@ -43,7 +44,7 @@ async def get_financial_settings(
             burnRateMode=settings.burn_rate_mode,
             primaryCurrency=settings.primary_currency,
             monthStartDay=settings.month_start_day,
-            updatedAt=settings.updated_at.isoformat() if settings.updated_at else None,
+            updatedAt=cast(datetime, settings.updated_at).isoformat() if settings.updated_at else None,
         ),
         message="Financial settings retrieved successfully",
     )
@@ -67,7 +68,7 @@ async def update_financial_settings(
     Returns:
         Unified response with updated financial settings
     """
-    user_service = UserService(db)
+    user_service = UserService(cast(Any, db))
     settings = await user_service.update_financial_settings(
         user_uuid=current_user.uuid,
         safety_threshold=request.safetyThreshold,
@@ -84,7 +85,7 @@ async def update_financial_settings(
             burnRateMode=settings.burn_rate_mode,
             primaryCurrency=settings.primary_currency,
             monthStartDay=settings.month_start_day,
-            updatedAt=settings.updated_at.isoformat() if settings.updated_at else None,
+            updatedAt=cast(datetime, settings.updated_at).isoformat() if settings.updated_at else None,
         ),
         message="Financial settings updated successfully",
     )

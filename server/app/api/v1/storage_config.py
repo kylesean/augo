@@ -8,6 +8,9 @@ Provides REST API for managing user storage configurations:
 """
 from __future__ import annotations
 
+from datetime import datetime
+from typing import cast
+
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
@@ -104,8 +107,8 @@ async def create_storage_config(
             "basePath": config.base_path,
             "credentials": service.mask_credentials(config),
             "isReadonly": config.is_readonly,
-            "createdAt": config.created_at.isoformat().replace("+00:00", "Z"),
-            "updatedAt": config.updated_at.isoformat().replace("+00:00", "Z"),
+            "createdAt": cast(datetime, config.created_at).isoformat().replace("+00:00", "Z"),
+            "updatedAt": cast(datetime, config.updated_at).isoformat().replace("+00:00", "Z"),
         },
         message="存储配置创建成功",
     )
@@ -139,8 +142,8 @@ async def list_storage_configs(
                 "basePath": c.base_path,
                 "credentials": service.mask_credentials(c),
                 "isReadonly": c.is_readonly,
-                "createdAt": c.created_at.isoformat().replace("+00:00", "Z"),
-                "updatedAt": c.updated_at.isoformat().replace("+00:00", "Z"),
+                "createdAt": cast(datetime, c.created_at).isoformat().replace("+00:00", "Z"),
+                "updatedAt": cast(datetime, c.updated_at).isoformat().replace("+00:00", "Z"),
             }
             for c in configs
         ]
@@ -164,7 +167,7 @@ async def get_storage_config(
         Storage config (credentials masked)
     """
     service = StorageConfigService(db)
-    config = await service.get_by_id(config_id, current_user.id)
+    config = await service.get_by_id(config_id, current_user.uuid)
 
     if not config:
         raise BusinessException(message="存储配置不存在或无权访问", status_code=404, error_code="CONFIG_NOT_FOUND")
@@ -177,8 +180,8 @@ async def get_storage_config(
             "basePath": config.base_path,
             "credentials": service.mask_credentials(config),
             "isReadonly": config.is_readonly,
-            "createdAt": config.created_at.isoformat().replace("+00:00", "Z"),
-            "updatedAt": config.updated_at.isoformat().replace("+00:00", "Z"),
+            "createdAt": cast(datetime, config.created_at).isoformat().replace("+00:00", "Z"),
+            "updatedAt": cast(datetime, config.updated_at).isoformat().replace("+00:00", "Z"),
         }
     )
 
@@ -222,8 +225,8 @@ async def update_storage_config(
             "basePath": config.base_path,
             "credentials": service.mask_credentials(config),
             "isReadonly": config.is_readonly,
-            "createdAt": config.created_at.isoformat().replace("+00:00", "Z"),
-            "updatedAt": config.updated_at.isoformat().replace("+00:00", "Z"),
+            "createdAt": cast(datetime, config.created_at).isoformat().replace("+00:00", "Z"),
+            "updatedAt": cast(datetime, config.updated_at).isoformat().replace("+00:00", "Z"),
         },
         message="存储配置更新成功",
     )
@@ -250,7 +253,7 @@ async def delete_storage_config(
     service = StorageConfigService(db)
 
     try:
-        deleted = await service.delete(config_id, current_user.id)
+        deleted = await service.delete(config_id, current_user.uuid)
     except Exception as e:
         if "foreign key" in str(e).lower():
             raise BusinessException(

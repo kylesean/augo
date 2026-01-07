@@ -144,7 +144,7 @@ async def chat(
 
         # If we created a new session, include the session_id in the response
         if is_new:
-            response.session_id = str(session.id)
+            response.session_id = session.id
             logger.info(
                 "new_session_info_in_response",
                 session_id=session.id,
@@ -308,9 +308,9 @@ async def chat_stream(
                     asyncio.create_task(
                         _update_memory_background(
                             agent=agent,
-                            user_uuid=str(session.user_uuid),
+                            user_uuid=session.user_uuid,
                             messages=memory_messages,
-                            session_id=str(session.id),
+                            session_id=session.id,
                         )
                     )
 

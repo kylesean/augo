@@ -56,7 +56,7 @@ class User(BaseModel, table=True):
     timezone: str = Field(default="Asia/Shanghai", max_length=100)
     registration_type: str = Field(max_length=20)  # 'email' or 'mobile'
     last_login_ip: Optional[str] = Field(default=None, sa_column=Column(postgresql.INET, nullable=True))
-    last_login_at: Optional[datetime] = Field(default=None, sa_type=DateTime(timezone=True))
+    last_login_at: Optional[datetime] = Field(default=None, sa_column=Column(DateTime(timezone=True), nullable=True))
     # Relationships
     settings: Optional["UserSettings"] = Relationship(
         sa_relationship_kwargs={

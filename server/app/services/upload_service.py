@@ -14,7 +14,7 @@ import uuid
 from collections.abc import AsyncGenerator
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 from uuid import UUID
 
 import aiofiles
@@ -315,9 +315,10 @@ class UploadService:
         content = await self._validate_and_read(file)
 
         # 2. 获取扩展名和 MIME 类型
-        extension = self._get_extension(file.filename)
+        filename = file.filename or "unnamed_file"
+        extension = self._get_extension(filename)
         mime_type = file.content_type
-        guessed_type, _ = mimetypes.guess_type(file.filename)
+        guessed_type, _ = mimetypes.guess_type(filename)
         if guessed_type:
             mime_type = guessed_type
 
@@ -342,7 +343,7 @@ class UploadService:
 
             object_key = await self._adapter.save(
                 file_stream=content_generator(),
-                filename=file.filename,
+                filename=filename,
                 content_type=mime_type,
             )
             logger.debug(
@@ -491,13 +492,13 @@ class UploadService:
                 else:
                     new_height = self.IMAGE_MAX_HEIGHT
                     new_width = int(new_height * ratio)
-                image = cast(Any, image.resize((new_width, new_height), Image.Resampling.LANCZOS))
+                image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
             # RGBA -> RGB
             if image.mode == "RGBA" and extension.lower() in ("jpg", "jpeg"):
                 background = Image.new("RGB", image.size, (255, 255, 255))
                 background.paste(image, mask=image.split()[3])
-                image = cast(Any, background)
+                image = background
 
             # 保存
             buffer = io.BytesIO()

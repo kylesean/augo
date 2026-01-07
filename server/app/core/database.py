@@ -12,6 +12,7 @@ The two pools connect to the same database but use different drivers:
 from __future__ import annotations
 
 import uuid
+from typing import Any, cast
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING
@@ -313,7 +314,7 @@ class SessionRepository:
         from app.models.session import Session as ChatSession
 
         result = await self.db.execute(
-            select(ChatSession).where(ChatSession.user_uuid == user_uuid).order_by(desc(ChatSession.created_at))
+            select(ChatSession).where(ChatSession.user_uuid == user_uuid).order_by(cast(Any, ChatSession.created_at).desc())
         )
         return list(result.scalars().all())
 

@@ -1,3 +1,4 @@
+from typing import Any, cast
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
@@ -24,18 +25,18 @@ async def get_notifications(
 ) -> JSONResponse:
     """Get user notifications with pagination."""
     # Base filters
-    filters = [Notification.user_uuid == current_user.uuid]
+    filters: list[Any] = [Notification.user_uuid == current_user.uuid]
     if unread_only:
         filters.append(Notification.is_read == False)  # noqa: E712
 
     # Count total
-    count_query = select(func.count(Notification.id)).where(and_(*filters))
+    count_query = select(func.count(cast(Any, Notification.id))).where(and_(*filters))
     count_result = await db.execute(count_query)
     total = count_result.scalar() or 0
 
     # Get unread count
-    unread_count_query = select(func.count(Notification.id)).where(
-        and_(Notification.user_uuid == current_user.uuid, Notification.is_read == False)  # noqa: E712
+    unread_count_query = select(func.count(cast(Any, Notification.id))).where(
+        and_(cast(Any, Notification.user_uuid == current_user.uuid), cast(Any, Notification.is_read == False))  # noqa: E712
     )
     unread_result = await db.execute(unread_count_query)
     unread_count = unread_result.scalar() or 0
@@ -44,7 +45,7 @@ async def get_notifications(
     query = (
         select(Notification)
         .where(and_(*filters))
-        .order_by(desc(Notification.created_at))
+        .order_by(cast(Any, Notification.created_at).desc())
         .offset((page - 1) * limit)
         .limit(limit)
     )
@@ -79,8 +80,8 @@ async def get_unread_count(
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
     """Get unread notifications count."""
-    query = select(func.count(Notification.id)).where(
-        and_(Notification.user_uuid == current_user.uuid, Notification.is_read == False)  # noqa: E712
+    query = select(func.count(cast(Any, Notification.id))).where(
+        and_(cast(Any, Notification.user_uuid == current_user.uuid), cast(Any, Notification.is_read == False))  # noqa: E712
     )
     result = await db.execute(query)
     count = result.scalar() or 0
@@ -95,7 +96,7 @@ async def mark_as_read(
 ) -> JSONResponse:
     """Mark notification as read."""
     query = select(Notification).where(
-        and_(Notification.id == notification_id, Notification.user_uuid == current_user.uuid)
+        and_(cast(Any, Notification.id == notification_id), cast(Any, Notification.user_uuid == current_user.uuid))
     )
     result = await db.execute(query)
     notification = result.scalar_one_or_none()
@@ -118,7 +119,7 @@ async def mark_all_read(
 
     query = (
         update(Notification)
-        .where(and_(Notification.user_uuid == current_user.uuid, Notification.is_read == False))  # noqa: E712
+        .where(and_(cast(Any, Notification.user_uuid == current_user.uuid), cast(Any, Notification.is_read == False)))  # noqa: E712
         .values(is_read=True, read_at=func.now())
     )
     await db.execute(query)
@@ -134,7 +135,7 @@ async def delete_notification(
 ) -> JSONResponse:
     """Delete a notification."""
     query = select(Notification).where(
-        and_(Notification.id == notification_id, Notification.user_uuid == current_user.uuid)
+        and_(cast(Any, Notification.id == notification_id), cast(Any, Notification.user_uuid == current_user.uuid))
     )
     result = await db.execute(query)
     notification = result.scalar_one_or_none()

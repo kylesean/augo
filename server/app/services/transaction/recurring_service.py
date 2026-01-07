@@ -2,6 +2,7 @@
 
 from datetime import UTC, date, datetime
 from decimal import Decimal
+from typing import Any, cast
 from uuid import UUID
 
 import structlog
@@ -141,19 +142,19 @@ class RecurringTransactionService:
             "tags": recurring_tx.tags,
             "recurrence_rule": recurring_tx.recurrence_rule,
             "timezone": recurring_tx.timezone,
-            "start_date": recurring_tx.start_date.isoformat(),
-            "end_date": recurring_tx.end_date.isoformat() if recurring_tx.end_date else None,
+            "start_date": cast(datetime, recurring_tx.start_date).isoformat(),
+            "end_date": cast(datetime, recurring_tx.end_date).isoformat() if recurring_tx.end_date else None,
             "exception_dates": recurring_tx.exception_dates or [],
-            "last_generated_at": recurring_tx.last_generated_at.isoformat()
+            "last_generated_at": cast(datetime, recurring_tx.last_generated_at).isoformat()
             if recurring_tx.last_generated_at
             else None,
-            "next_execution_at": recurring_tx.next_execution_at.isoformat()
+            "next_execution_at": cast(datetime, recurring_tx.next_execution_at).isoformat()
             if recurring_tx.next_execution_at
             else None,
             "description": recurring_tx.description,
             "is_active": recurring_tx.is_active,
-            "created_at": recurring_tx.created_at.isoformat(),
-            "updated_at": recurring_tx.updated_at.isoformat(),
+            "created_at": cast(datetime, recurring_tx.created_at).isoformat(),
+            "updated_at": cast(datetime, recurring_tx.updated_at).isoformat(),
         }
 
     async def list_recurring_transactions(
@@ -181,7 +182,7 @@ class RecurringTransactionService:
             query = query.where(RecurringTransaction.is_active == is_active)
 
         # 按创建时间降序排列
-        query = query.order_by(desc(RecurringTransaction.created_at))
+        query = query.order_by(RecurringTransaction.created_at.desc())
 
         result = await self.db.execute(query)
         recurring_txs = result.scalars().all()

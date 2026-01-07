@@ -2,7 +2,10 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+from typing import Any, cast
 
+from pydantic import ConfigDict
+from sqlalchemy import Column
 from sqlalchemy.types import DateTime
 from sqlmodel import Field, SQLModel
 
@@ -22,5 +25,13 @@ class BaseModel(SQLModel):
     This avoids Column object sharing issues across multiple tables.
     """
 
-    created_at: datetime = Field(default_factory=utc_now, sa_type=DateTime(timezone=True), nullable=False)
-    updated_at: datetime = Field(default_factory=utc_now, sa_type=DateTime(timezone=True), nullable=False)
+    model_config = ConfigDict(arbitrary_types_allowed=True)  # type: ignore
+
+    created_at: datetime = Field(
+        default_factory=utc_now,
+        sa_type=cast(Any, DateTime(timezone=True)),
+    )
+    updated_at: datetime = Field(
+        default_factory=utc_now,
+        sa_type=cast(Any, DateTime(timezone=True)),
+    )

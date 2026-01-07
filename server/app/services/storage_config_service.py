@@ -6,6 +6,8 @@ and user default storage initialization.
 from __future__ import annotations
 
 from sqlalchemy import desc, select
+
+from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 
@@ -126,7 +128,7 @@ class StorageConfigService:
         if provider_type:
             query = query.where(StorageConfig.provider_type == provider_type)
 
-        query = query.order_by(desc(StorageConfig.created_at))
+        query = query.order_by(StorageConfig.created_at.desc())
 
         result = await self.db.execute(query)
         return list(result.scalars().all())
@@ -146,7 +148,7 @@ class StorageConfigService:
                 StorageConfig.user_uuid == user_uuid,
                 StorageConfig.provider_type == ProviderType.LOCAL_UPLOADS.value,
             )
-            .order_by(StorageConfig.created_at)
+            .order_by(StorageConfig.created_at.asc())
             .limit(1)
         )
 

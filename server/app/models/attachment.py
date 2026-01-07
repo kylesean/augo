@@ -7,6 +7,7 @@ with support for multiple storage sources and LangGraph integration.
 import uuid as uuid_lib
 from typing import TYPE_CHECKING, Optional
 
+import sqlalchemy as sa
 from sqlalchemy import Column, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlmodel import Field, Relationship
@@ -48,13 +49,18 @@ class Attachment(BaseModel, table=True):
         sa_column=Column(UUID(as_uuid=True), primary_key=True, default=uuid_lib.uuid4),
     )
 
-    user_uuid: uuid_lib.UUID = Field(foreign_key="users.uuid", index=True)
+    user_uuid: uuid_lib.UUID = Field(
+        sa_column=Column(UUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False, index=True)
+    )
 
     # Foreign key to storage configuration
     storage_config_id: int = Field(foreign_key="storage_configs.id", index=True)
 
     # LangGraph thread/conversation ID for context association
-    thread_id: Optional[str] = Field(default=None, sa_column=Column(Text, index=True))
+    thread_id: Optional[uuid_lib.UUID] = Field(
+        default=None,
+        sa_column=Column(UUID(as_uuid=True), index=True),
+    )
 
     # Original filename for display
     filename: str = Field(max_length=255)

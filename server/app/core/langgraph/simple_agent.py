@@ -11,13 +11,16 @@
 from __future__ import annotations
 
 from collections.abc import AsyncGenerator
-from typing import Any, cast
+from typing import Any, Sequence, cast
 from urllib.parse import quote_plus
 
 from langchain_core.messages import AIMessage, HumanMessage
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.errors import GraphRecursionError
+from psycopg import AsyncConnection
+from psycopg.rows import dict_row
 from psycopg_pool import AsyncConnectionPool
+from uuid import UUID
 
 from app.core.config import settings
 from app.core.langgraph.agent import build_agent_graph
@@ -56,7 +59,7 @@ class SimpleLangChainAgent:
         self.llm_service.bind_tools(tools)
 
         self._agent: MiddlewareAgent | None = None
-        self._conn_pool: AsyncConnectionPool | None = None
+        self._conn_pool: AsyncConnectionPool[AsyncConnection[dict[str, Any]]] | None = None
         self._memory_service: MemoryService | None = None
         self._middlewares: list | None = None
         self._stream_processor = StreamProcessor()
@@ -94,6 +97,7 @@ class SimpleLangChainAgent:
                     "autocommit": True,
                     "connect_timeout": 5,
                     "prepare_threshold": None,
+                    "row_factory": dict_row,
                 },
             )
             await self._conn_pool.open()
@@ -152,8 +156,12 @@ class SimpleLangChainAgent:
 
         # 使用自定义图构建（支持 direct_execute 节点）
         checkpointer = await self._get_checkpointer()
+        llm = self.llm_service.get_llm()
+        if llm is None:
+            raise RuntimeError("LLM not initialized")
+ 
         graph = build_agent_graph(
-            llm=self.llm_service.get_llm(),
+            llm=llm,
             tools=tools,
             system_prompt=get_stable_system_prompt(),
             checkpointer=checkpointer,
@@ -172,10 +180,10 @@ class SimpleLangChainAgent:
 
     async def get_genui_stream(
         self,
-        messages: list[Message],
-        session_id: str,
-        user_uuid: str | None = None,
-        attachment_ids: list[str] | None = None,
+        messages: Sequence[Message],
+        session_id: UUID,
+        user_uuid: UUID | None = None,
+        attachment_ids: list[UUID] | None = None,
         client_state: ClientStateMutation | None = None,
     ) -> AsyncGenerator[GenUIEvent]:
         """GenUI 核心流处理器
@@ -199,9 +207,9 @@ class SimpleLangChainAgent:
 
         config: dict[str, Any] = {
             "configurable": {
-                "thread_id": session_id,
+                "thread_id": str(session_id),
                 "user_uuid": str(user_uuid) if user_uuid else None,
-                "attachment_ids": attachment_ids or [],
+                "attachment_ids": [str(aid) for aid in attachment_ids] if attachment_ids else [],
             },
         }
 
@@ -285,7 +293,7 @@ class SimpleLangChainAgent:
             if "langfuse_handler" in locals() and langfuse_handler and hasattr(langfuse_handler, "flush"):
                 langfuse_handler.flush()
 
-    async def get_session_state(self, session_id: str) -> Any:
+    async def get_session_state(self, session_id: UUID) -> Any:
         """获取会话的当前 LangGraph 状态
 
         用于检查会话是否有未完成的执行（state.next != None）。
@@ -297,10 +305,10 @@ class SimpleLangChainAgent:
             StateSnapshot 对象，包含 values 和 next 属性
         """
         agent = await self.get_agent()
-        config = {"configurable": {"thread_id": session_id}}
+        config = {"configurable": {"thread_id": str(session_id)}}
         return await agent.aget_state(config)
 
-    async def update_state(self, session_id: str, values: dict[str, Any], as_node: str | None = None) -> Any:
+    async def update_state(self, session_id: UUID, values: dict[str, Any], as_node: str | None = None) -> Any:
         """更新会话的当前 LangGraph 状态
 
         Args:
@@ -312,13 +320,13 @@ class SimpleLangChainAgent:
             更新后的配置对象
         """
         agent = await self.get_agent()
-        config = {"configurable": {"thread_id": session_id}}
+        config = {"configurable": {"thread_id": str(session_id)}}
         return await agent.aupdate_state(config, values, as_node=as_node)
 
     async def resume_stream(
         self,
-        session_id: str,
-        user_uuid: str | None = None,
+        session_id: UUID,
+        user_uuid: UUID | None = None,
     ) -> AsyncGenerator[GenUIEvent]:
         """从 checkpoint 恢复未完成的流式执行
 
@@ -398,7 +406,7 @@ class SimpleLangChainAgent:
     # GenUI 原子模式不再需要单独的 state update API
     # 所有状态突变通过 get_genui_stream 的 client_state 参数原子性处理
 
-    async def get_chat_history(self, session_id: str) -> list[Message]:
+    async def get_chat_history(self, session_id: UUID) -> list[Message]:
         """获取聊天历史
 
         Args:
@@ -408,7 +416,7 @@ class SimpleLangChainAgent:
             消息列表
         """
         agent = await self.get_agent()
-        config = {"configurable": {"thread_id": session_id}}
+        config = {"configurable": {"thread_id": str(session_id)}}
         state = await agent.aget_state(config)
 
         if state.values and "messages" in state.values:
@@ -430,7 +438,7 @@ class SimpleLangChainAgent:
             return result
         return []
 
-    async def get_detailed_history(self, session_id: str, user_uuid: str | None = None) -> list[dict[str, Any]]:
+    async def get_detailed_history(self, session_id: UUID, user_uuid: UUID | None = None) -> list[dict[str, Any]]:
         """获取会话的详细历史消息，包含 UI 组件和附件信息。
 
         从 LangGraph checkpoint 读取消息并解析：
@@ -454,7 +462,7 @@ class SimpleLangChainAgent:
         from langchain_core.messages import ToolMessage
 
         agent = await self.get_agent()
-        config = {"configurable": {"thread_id": session_id}}
+        config = {"configurable": {"thread_id": str(session_id)}}
         state = await agent.aget_state(config)
 
         if not state.values or "messages" not in state.values:
@@ -594,7 +602,7 @@ class SimpleLangChainAgent:
                         wizard_data["preselectedSourceId"] = confirmed_params["source_id"]
                     if confirmed_params["target_id"]:
                         wizard_data["preselectedTargetId"] = confirmed_params["target_id"]
-                    if float(confirmed_params.get("amount") or 0.0) > 0:
+                    if float(str(confirmed_params.get("amount") or 0.0)) > 0:
                         wizard_data["amount"] = confirmed_params["amount"]
 
                     # 标记为已确认，以便前端渲染为 Historical 状态
@@ -716,8 +724,10 @@ class SimpleLangChainAgent:
         if de_ui_component:
             # 找到最后一个 AI 消息（从后往前找）
             for i in range(len(result) - 1, -1, -1):
-                if result[i].get("role") == "assistant":
-                    result[i]["uiComponents"].append(de_ui_component)
+                if isinstance(result[i], dict) and result[i].get("role") == "assistant":
+                    assistant_msg_ui_components: Any = result[i]["uiComponents"]
+                    if isinstance(assistant_msg_ui_components, list):
+                        assistant_msg_ui_components.append(de_ui_component)
                     logger.info(
                         "direct_execute_ui_appended_to_message",
                         message_id=result[i].get("id"),
@@ -734,7 +744,7 @@ class SimpleLangChainAgent:
 
         return result
 
-    async def delete_session_history(self, session_id: str) -> None:
+    async def delete_session_history(self, session_id: UUID) -> None:
         """彻底删除会话的所有历史记录和 checkpoints。
 
         1. 使用 LangGraph 官方 API adelete_thread。
@@ -748,9 +758,9 @@ class SimpleLangChainAgent:
         # 获取 checkpointer 实例
         checkpointer = await self._get_checkpointer()
 
-        config = {"configurable": {"thread_id": session_id}}
-        # 1. 使用 LangGraph 官方 API 删除整个 thread 的 checkpoints 和 writes
-        await checkpointer.adelete_thread(config)
+        config = {"configurable": {"thread_id": str(session_id)}}
+        # 1. 使用 LangGraph Official API 删除整个 thread 的 checkpoints 和 writes
+        await checkpointer.adelete_thread(str(session_id))
 
         # 2. 删除业务表中的消息索引 (searchable_messages)
         deleted_count = await message_index_service.delete_thread_messages(session_id)
@@ -762,7 +772,7 @@ class SimpleLangChainAgent:
             deleted_message_count=deleted_count,
         )
 
-    async def clear_chat_history(self, session_id: str) -> None:
+    async def clear_chat_history(self, session_id: UUID) -> None:
         """清除聊天历史 (保留会话元数据，仅清理消息内容)
 
         Args:
@@ -771,7 +781,7 @@ class SimpleLangChainAgent:
         await self.delete_session_history(session_id)
         logger.info("chat_history_cleared", session_id=session_id)
 
-    async def cancel_last_turn(self, session_id: str) -> dict:
+    async def cancel_last_turn(self, session_id: UUID) -> dict:
         """取消最后一轮对话
 
         使用 RemoveMessage 清理 checkpoint 状态。
@@ -915,9 +925,9 @@ class SimpleLangChainAgent:
 
     async def _update_long_term_memory(
         self,
-        user_uuid: str | None,
+        user_uuid: UUID | None,
         messages: list[dict],
-        session_id: str | None = None,
+        session_id: UUID | None = None,
         category: str = "conversation",
         additional_metadata: dict | None = None,
     ) -> None:
@@ -969,7 +979,7 @@ class SimpleLangChainAgent:
                 error=str(e),
             )
 
-    def _get_langfuse_callback(self, thread_id: str, user_id: str | None = None) -> Any:
+    def _get_langfuse_callback(self, thread_id: UUID, user_id: UUID | None = None) -> Any:
         """获取 Langfuse Callback Handler 用于追踪执行过程。"""
         # 深度诊断日志
         logger.info(
@@ -992,7 +1002,7 @@ class SimpleLangChainAgent:
             # 直接初始化，SDK 会自动从环境变量读取密钥和 HOST
             handler = CallbackHandler()
             # 设置额外的 metadata
-            cast(Any, handler).metadata = {"thread_id": str(thread_id), "user_id": str(user_id)}
+            cast(Any, handler).metadata = {"thread_id": str(thread_id), "user_id": str(user_id) if user_id else None}
             return handler
         except Exception as e:
             logger.error("failed_to_initialize_langfuse_callback", error=str(e))
@@ -1001,15 +1011,15 @@ class SimpleLangChainAgent:
     async def get_response(
         self,
         messages: list[Message],
-        session_id: str,
-        user_uuid: str | None = None,
+        session_id: UUID,
+        user_uuid: UUID | None = None,
     ) -> list[Message]:
         """非流式获取响应（支持 Langfuse 追踪）"""
         agent = await self.get_agent()
 
         config: dict[str, Any] = {
             "configurable": {
-                "thread_id": session_id,
+                "thread_id": str(session_id),
                 "user_uuid": str(user_uuid) if user_uuid else None,
             },
         }

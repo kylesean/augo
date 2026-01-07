@@ -7,6 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import (
     Any,
+    cast,
 )
 
 from dotenv import load_dotenv
@@ -106,7 +107,7 @@ app.add_middleware(MetricsMiddleware)
 
 # Set up rate limiter exception handler
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(RateLimitExceeded, cast(Any, _rate_limit_exceeded_handler))
 
 
 # ============================================================================

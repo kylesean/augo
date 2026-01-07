@@ -1,0 +1,6 @@
+    @property
+    def memory(self) -> AsyncMemory:
+        """Get the initialized memory instance."""
+        if self._memory is None:
+            raise RuntimeError("Memory service not initialized")
+        return self._memory

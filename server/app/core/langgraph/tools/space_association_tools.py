@@ -26,7 +26,7 @@ def _get_user_uuid(config: RunnableConfig) -> UUID | None:
 @tool("associate_transactions_to_space")
 async def associate_transactions_to_space(
     transaction_ids: list[str],
-    space_id: int,
+    space_id: str,
     surface_id: str | None = None,
     *,
     config: RunnableConfig,
@@ -38,7 +38,7 @@ async def associate_transactions_to_space(
 
     Args:
         transaction_ids: List of transaction IDs to associate
-        space_id: Target shared space ID
+        space_id: Target shared space ID (UUID)
         surface_id: GenUI surface ID for UI updates
         config: LangChain runnable config
 
@@ -65,7 +65,7 @@ async def associate_transactions_to_space(
             service = SharedSpaceService(session)
 
             # Get space details first
-            space_detail = await service.get_space_detail(space_id, user_uuid)
+            space_detail = await service.get_space_detail(UUID(space_id), user_uuid)
             space_name = space_detail.get("name", f"空间 {space_id}")
 
             # Associate each transaction
@@ -75,7 +75,7 @@ async def associate_transactions_to_space(
             for tx_id in transaction_ids:
                 try:
                     await service.add_transaction_to_space(
-                        space_id=space_id,
+                        space_id=UUID(space_id),
                         user_uuid=user_uuid,
                         transaction_id=UUID(tx_id),
                     )

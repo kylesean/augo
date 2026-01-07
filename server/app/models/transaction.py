@@ -88,7 +88,7 @@ class Transaction(BaseModel, table=True):
     longitude: Optional[Decimal] = Field(default=None, sa_column=Column(Numeric(9, 6)))
     source: str = Field(max_length=20, default="MANUAL")
     status: str = Field(max_length=20, default="CLEARED")
-    description: Optional[str] = None
+    description: Optional[str] = Field(default=None)
     raw_input: str = Field(default="")  # NOT NULL in DDL
     category_key: str = Field(max_length=25, default="")
     subject: str = Field(max_length=20, default="SELF")  # Transaction beneficiary
@@ -293,7 +293,7 @@ class RecurringTransaction(BaseModel, table=True):
     recurrence_rule: str = Field(max_length=255)  # RRULE format (iCalendar)
     timezone: str = Field(max_length=50, default="Asia/Shanghai")
     start_date: date
-    end_date: Optional[date] = None
+    end_date: Optional[date] = Field(default=None)
 
     # Execution control
     exception_dates: Optional[list[str]] = Field(default=None, sa_column=Column(JSONB, default=[]))
@@ -305,7 +305,7 @@ class RecurringTransaction(BaseModel, table=True):
     )
 
     # Metadata
-    description: Optional[str] = None
+    description: Optional[str] = Field(default=None)
     is_active: bool = Field(default=True)
 
     @field_validator("recurrence_rule")

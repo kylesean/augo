@@ -14,7 +14,7 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool
@@ -195,7 +195,7 @@ async def record_transactions(
                     "target_account_id": target_account_id,
                     "transaction_at": tx_time.isoformat(),
                 },
-                source_thread_id=_get_thread_id(config),
+                source_thread_id=uuid.UUID(tid) if (tid := _get_thread_id(config)) else None,
             )
 
             if isinstance(result, dict) and result.get("success"):
@@ -376,7 +376,9 @@ async def search_transactions(
                 )
 
         top_items = sorted(
-            [it for it in items if it["type"] == "EXPENSE"], key=lambda x: float(x.get("amount") or 0.0), reverse=True
+            [it for it in items if it["type"] == "EXPENSE"],
+            key=lambda x: cast(float, x.get("amount") or 0.0),
+            reverse=True,
         )[:3]
 
         return {

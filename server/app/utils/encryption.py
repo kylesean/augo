@@ -76,6 +76,15 @@ class CredentialEncryption:
             logger.error("encryption_init_failed", error=str(e))
             raise ValueError(f"Failed to initialize encryption: {e}")
 
+    @property
+    def fernet(self) -> Fernet:
+        """Get the initialized Fernet instance."""
+        if self._fernet is None:
+            self._initialize()
+            if self._fernet is None:
+                raise RuntimeError("Encryption system failed to initialize")
+        return self._fernet
+
     def encrypt_credentials(self, credentials: dict[str, Any]) -> str:
         """Encrypt a credentials dictionary to a string.
 
@@ -95,7 +104,7 @@ class CredentialEncryption:
         try:
             # Serialize to JSON then encrypt
             json_bytes = json.dumps(credentials, ensure_ascii=False).encode("utf-8")
-            encrypted = self._fernet.encrypt(json_bytes)
+            encrypted = self.fernet.encrypt(json_bytes)
             return encrypted.decode("utf-8")
         except Exception as e:
             logger.error("credential_encryption_failed", error=str(e))
@@ -118,7 +127,7 @@ class CredentialEncryption:
 
         try:
             encrypted_bytes = encrypted_str.encode("utf-8")
-            decrypted = self._fernet.decrypt(encrypted_bytes)
+            decrypted = self.fernet.decrypt(encrypted_bytes)
             return cast(dict[str, Any], json.loads(decrypted.decode("utf-8")))
         except InvalidToken:
             logger.error("credential_decryption_failed", reason="invalid_token")

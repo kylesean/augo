@@ -3,6 +3,7 @@
 Allows the agent to search for user context, preferences, and long-term facts.
 """
 
+from uuid import UUID
 
 from langchain_core.tools import tool
 
@@ -34,7 +35,7 @@ async def search_personal_context(query: str) -> str:
     try:
         service = await get_memory_service()
         memories = await service.search_memories(
-            user_uuid=user_id,
+            user_uuid=UUID(user_id),
             query=query,
             limit=5,
             categories=["financial_profile", "preference", "household", "conversation"],

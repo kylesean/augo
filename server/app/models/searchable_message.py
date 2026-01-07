@@ -33,18 +33,15 @@ class SearchableMessage(BaseModel, table=True):
 
     id: uuid_lib.UUID = Field(
         default_factory=uuid_lib.uuid4,
-        sa_type=PG_UUID(as_uuid=True),
-        primary_key=True,
+        sa_column=Column(PG_UUID(as_uuid=True), primary_key=True),
         description="UUID primary key",
     )
     thread_id: uuid_lib.UUID = Field(
-        sa_type=PG_UUID(as_uuid=True),
-        index=True,
+        sa_column=Column(PG_UUID(as_uuid=True), index=True),
         description="LangGraph thread_id / session_id",
     )
     user_uuid: uuid_lib.UUID = Field(
-        sa_type=PG_UUID(as_uuid=True),
-        index=True,
+        sa_column=Column(PG_UUID(as_uuid=True), index=True),
         description="User UUID for access control",
     )
     role: str = Field(max_length=20, description="'user' or 'assistant'")

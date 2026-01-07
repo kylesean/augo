@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import html
 import re
+from typing import Any
 from typing import (
     Any,
 )
@@ -83,7 +84,7 @@ def sanitize_list(data: list[Any]) -> list[Any]:
     Returns:
         List[Any]: The sanitized list
     """
-    sanitized = []
+    sanitized: list[Any] = []
     for item in data:
         if isinstance(item, str):
             sanitized.append(sanitize_string(item))

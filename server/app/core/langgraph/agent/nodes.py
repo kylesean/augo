@@ -5,7 +5,7 @@ LangGraph 节点函数，每个节点专注于单一职责。
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Any
+from typing import Any, cast
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage, SystemMessage
@@ -31,7 +31,9 @@ def create_agent_node(
 
         # 支持 SkillConstraintMiddleware 动态过滤工具
         filtered_tools = config.get("configurable", {}).get("filtered_tools")
-        current_tools = filtered_tools or state.get("filtered_tools") or tools
+        current_tools = cast(
+            list[BaseTool], filtered_tools or state.get("filtered_tools") or tools
+        )
 
         bound_llm = llm.bind_tools(current_tools)
         prompt_messages = [SystemMessage(content=system_prompt)] + messages

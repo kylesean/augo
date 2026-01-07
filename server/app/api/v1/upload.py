@@ -7,6 +7,7 @@
 """
 from __future__ import annotations
 
+from uuid import UUID
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
@@ -86,7 +87,7 @@ async def upload_files(
         description="要上传的文件列表。支持的格式: 图片(jpg/png/gif/webp等), 文档(pdf/doc/docx/xls/xlsx/ppt/pptx/txt/md等)",
     ),
     compress: bool = Query(default=True, description="是否压缩图片（仅对 jpg/jpeg/png/webp 有效）"),
-    thread_id: str | None = Query(
+    thread_id: UUID | None = Query(
         default=None, alias="threadId", description="关联的会话 ID（用于 LangGraph 对话）"
     ),
     current_user: User = Depends(get_current_user),
@@ -208,7 +209,7 @@ async def upload_files(
 
 @router.get("/view/{attachment_id}", response_class=FileResponse)
 async def view_attachment(
-    attachment_id: str,
+    attachment_id: UUID,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> FileResponse:
@@ -289,7 +290,7 @@ async def view_attachment(
 
 @router.delete("/{attachment_id}", status_code=status.HTTP_200_OK)
 async def delete_file(
-    attachment_id: str,
+    attachment_id: UUID,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:

@@ -50,7 +50,7 @@ class QueryOptimizer:
             ```
         """
         for relationship in relationships:
-            query = query.options(selectinload(relationship))
+            query = query.options(selectinload(cast(Any, relationship)))
         return query
 
     @staticmethod
@@ -80,7 +80,7 @@ class QueryOptimizer:
             ```
         """
         for relationship in relationships:
-            query = query.options(joinedload(relationship))
+            query = query.options(joinedload(cast(Any, relationship)))
         return query
 
     @staticmethod
@@ -131,7 +131,7 @@ class QueryOptimizer:
         # Add eager loading if specified
         if relationships:
             for rel in relationships:
-                query = query.options(selectinload(rel))
+                query = query.options(selectinload(cast(Any, rel)))
 
         result = await session.execute(query)
         instance = result.scalar_one_or_none()
@@ -201,7 +201,7 @@ class QueryOptimizer:
         # Add eager loading if specified
         if relationships:
             for rel in relationships:
-                query = query.options(selectinload(rel))
+                query = query.options(selectinload(cast(Any, rel)))
 
         result = await session.execute(query)
         return list(result.scalars().all())
@@ -350,7 +350,7 @@ async def get_user_conversations_optimized(
     """
     from app.models.session import Session as ChatSession
 
-    query = select(ChatSession).where(ChatSession.user_uuid == user_uuid).order_by(desc(ChatSession.updated_at))
+    query = select(ChatSession).where(ChatSession.user_uuid == user_uuid).order_by(desc(cast(Any, ChatSession.updated_at)))
 
     # Add eager loading for messages (optional, depending on use case)
 
@@ -402,7 +402,7 @@ async def get_transactions_with_comments_optimized(
     """
     from app.models.transaction import Transaction
 
-    query = select(Transaction).where(Transaction.user_uuid == user_uuid).order_by(desc(Transaction.transaction_at))
+    query = select(Transaction).where(Transaction.user_uuid == user_uuid).order_by(desc(cast(Any, Transaction.transaction_at)))
 
     # Eager load comments
     query = QueryOptimizer.with_relationships(query, "comments")

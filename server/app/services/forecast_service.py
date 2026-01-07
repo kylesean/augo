@@ -15,7 +15,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
-from typing import Any
+from typing import Any, cast
 from uuid import UUID
 
 from sqlalchemy import and_, case, desc, func, or_, select
@@ -508,7 +508,7 @@ class ForecastService:
                     AIFeedbackMemory.insight_type == insight_type,
                 )
             )
-            .order_by(desc(AIFeedbackMemory.created_at))
+            .order_by(AIFeedbackMemory.created_at.desc())
             .limit(limit)
         )
 
@@ -526,7 +526,7 @@ class ForecastService:
                     {
                         "action": fb.user_action,
                         "rule": fb.preference_rule,
-                        "created_at": fb.created_at.isoformat() if fb.created_at else None,
+                        "created_at": cast(datetime, fb.created_at).isoformat() if fb.created_at else None,
                     }
                 )
 

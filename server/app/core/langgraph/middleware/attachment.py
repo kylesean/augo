@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import base64
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from uuid import UUID
 
 import aiofiles
@@ -275,7 +275,7 @@ class AttachmentMiddleware(BaseMiddleware):
                 # 保存 attachment_ids 到 additional_kwargs，用于后续历史加载
                 attachment_ids = [str(img.id) for img in images]
                 messages[i] = HumanMessage(
-                    content=multimodal_content,
+                    content=cast(Any, multimodal_content),
                     additional_kwargs={
                         **getattr(msg, "additional_kwargs", {}),
                         "attachment_ids": attachment_ids,

@@ -107,7 +107,7 @@ class AppScheduler:
         if self._scheduler is None:
             self.init()
 
-        if not self._scheduler.running:
+        if self._scheduler and not self._scheduler.running:
             self._scheduler.start()
             logger.info("scheduler_started")
 

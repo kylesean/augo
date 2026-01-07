@@ -38,7 +38,7 @@ async def cleanup_all_user_memories() -> None:
         for user_uuid in user_uuids:
             try:
                 cleanup_result = await memory_service.cleanup_old_memories(
-                    user_uuid=str(user_uuid),
+                    user_uuid=user_uuid,
                     days_old=180,
                     max_memories=500,
                 )

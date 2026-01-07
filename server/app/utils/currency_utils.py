@@ -28,7 +28,9 @@ async def get_user_display_currency(db: AsyncSession, user_uuid: UUID) -> str:
 
     try:
         result = await db.execute(
-            select(FinancialSettings.primary_currency).where(FinancialSettings.user_uuid == user_uuid)
+            select(FinancialSettings.primary_currency).where(
+                FinancialSettings.user_uuid == user_uuid
+            )
         )
         currency = result.scalar_one_or_none()
         return currency or "CNY"

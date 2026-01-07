@@ -1,6 +1,7 @@
 """Transaction query service for search and feed operations."""
 
 from datetime import datetime
+from typing import Any, cast
 from uuid import UUID
 
 import structlog
@@ -51,7 +52,7 @@ class TransactionQueryService:
             query = query.where(Transaction.type == "EXPENSE")
 
         # 排序
-        query = query.order_by(desc(Transaction.transaction_at), desc(Transaction.id))
+        query = query.order_by(Transaction.transaction_at.desc(), Transaction.id.desc())
 
         # 计算总数
         count_query = select(func.count()).select_from(query.subquery())
@@ -83,10 +84,10 @@ class TransactionQueryService:
                     "currency": display_currency,
                     "categoryKey": tx.category_key,
                     "description": tx.description,
-                    "transactionAt": tx.transaction_at.isoformat(),
+                    "transactionAt": cast(datetime, tx.transaction_at).isoformat(),
                     "tags": tx.tags or [],
-                    "createdAt": tx.created_at.isoformat(),
-                    "updatedAt": tx.updated_at.isoformat(),
+                    "createdAt": cast(datetime, tx.created_at).isoformat(),
+                    "updatedAt": cast(datetime, tx.updated_at).isoformat(),
                     "display": TransactionDisplayValue.from_params(
                         amount=amount_val, tx_type=tx.type, currency=display_currency
                     ).model_dump(),
@@ -164,7 +165,7 @@ class TransactionQueryService:
                 query = query.where(Transaction.amount < 0)
 
         # 排序
-        query = query.order_by(desc(Transaction.transaction_at))
+        query = query.order_by(Transaction.transaction_at.desc())
 
         # 分页
         page = filters.get("page", 1)
@@ -189,10 +190,10 @@ class TransactionQueryService:
                     "amount": str(tx.amount),
                     "category_key": tx.category_key,
                     "description": tx.description,
-                    "transaction_at": tx.transaction_at.isoformat(),
+                    "transaction_at": cast(datetime, tx.transaction_at).isoformat(),
                     "tags": tx.tags or [],
-                    "created_at": tx.created_at.isoformat(),
-                    "updated_at": tx.updated_at.isoformat(),
+                    "created_at": cast(datetime, tx.created_at).isoformat(),
+                    "updated_at": cast(datetime, tx.updated_at).isoformat(),
                 }
                 for tx in transactions
             ],

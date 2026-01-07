@@ -97,8 +97,12 @@ async def main() -> None:
                 result = await session.execute(stmt)
                 stats = result.first()
 
-                total_expense = float(stats.total_expense) if stats.total_expense else 0
-                tx_count = stats.transaction_count or 0
+                if stats:
+                    total_expense = float(stats.total_expense or 0)
+                    tx_count = stats.transaction_count or 0
+                else:
+                    total_expense = 0.0
+                    tx_count = 0
 
                 summaries.append(
                     {

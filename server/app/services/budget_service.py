@@ -2,8 +2,10 @@
 from __future__ import annotations
 
 from calendar import monthrange
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from decimal import Decimal
+from datetime import datetime as dt_datetime
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import asc, desc, func, select
@@ -635,8 +637,8 @@ class BudgetService:
             period_start=period.period_start,
             period_end=period.period_end,
             ai_forecast=float(period.ai_forecast) if period.ai_forecast else None,
-            created_at=budget.created_at.isoformat() if budget.created_at else None,
-            updated_at=budget.updated_at.isoformat() if budget.updated_at else None,
+            created_at=budget.created_at.isoformat() if isinstance(budget.created_at, dt_datetime) else None,
+            updated_at=budget.updated_at.isoformat() if isinstance(budget.updated_at, dt_datetime) else None,
         )
 
     # ========================================================================
@@ -666,7 +668,7 @@ class BudgetService:
         # Get historical spending
         query = select(
             func.sum(Transaction.amount).label("total"),
-            func.count(Transaction.id).label("count"),
+            func.count(Transaction.id).label("tx_count"),
             func.avg(Transaction.amount).label("avg"),
         ).where(
             Transaction.user_uuid == user_uuid,
@@ -683,9 +685,9 @@ class BudgetService:
         row = result.one()
 
         total_spent = Decimal(str(row.total or 0))
-        tx_count = row.count or 0
+        tx_count_val = row.tx_count or 0
 
-        if tx_count == 0:
+        if tx_count_val == 0:
             # No historical data - return structured reasoning for frontend to translate
             return BudgetSuggestion(
                 scope=BudgetScope.CATEGORY.value if category_key else BudgetScope.TOTAL.value,
@@ -706,7 +708,7 @@ class BudgetService:
 
         # Calculate confidence based on data quantity
         # More transactions = higher confidence
-        confidence = min(0.95, 0.5 + (tx_count / 100) * 0.45)
+        confidence = min(0.95, 0.5 + (float(tx_count_val) / 100.0) * 0.45)
 
         scope = BudgetScope.CATEGORY.value if category_key else BudgetScope.TOTAL.value
 

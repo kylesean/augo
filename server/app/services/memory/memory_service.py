@@ -59,6 +59,13 @@ class MemoryService:
         """Private constructor. Use get_instance() instead."""
         pass
 
+    @property
+    def memory(self) -> AsyncMemory:
+        """Get the initialized memory instance."""
+        if self._memory is None:
+            raise RuntimeError("Memory service not initialized")
+        return self._memory
+
     @classmethod
     async def get_instance(cls) -> MemoryService:
         """Get or create the singleton instance.
@@ -242,7 +249,7 @@ class MemoryService:
             # Use infer=False to skip Mem0's internal LLM processing
             # We've already extracted facts via extract_salient_facts()
             # This saves ~50% token cost and reduces latency
-            result = await self._memory.add(
+            result = await self.memory.add(
                 consolidated_text,
                 user_id=user_id,
                 metadata=metadata,
@@ -312,7 +319,7 @@ class MemoryService:
 
             response = await llm_service.call(messages=[HumanMessage(content=prompt)])
 
-            if not response or not response.content:
+            if not response or not isinstance(response.content, str):
                 return []
 
             content = response.content.strip()
@@ -367,7 +374,7 @@ class MemoryService:
                     filters=filters,
                 )
 
-            result = await self._memory.search(
+            result = await self.memory.search(
                 query=query,
                 user_id=user_id,
                 limit=limit,
@@ -412,7 +419,7 @@ class MemoryService:
         user_id = str(user_uuid)
 
         try:
-            result = await self._memory.get_all(user_id=user_id)
+            result = await self.memory.get_all(user_id=user_id)
 
             memories = []
             if result and result.get("results"):
@@ -447,7 +454,7 @@ class MemoryService:
             Memory dict or None if not found
         """
         try:
-            result = await self._memory.get(memory_id)
+            result = await self.memory.get(memory_id)
             return cast(dict[Any, Any] | None, result)
         except Exception as e:
             logger.warning(
@@ -472,7 +479,7 @@ class MemoryService:
             True if successful, False otherwise
         """
         try:
-            await self._memory.update(memory_id, data=data)
+            await self.memory.update(memory_id, data=data)
             logger.info("memory_updated", memory_id=memory_id)
             return True
         except Exception as e:
@@ -496,7 +503,7 @@ class MemoryService:
             True if successful, False otherwise
         """
         try:
-            await self._memory.delete(memory_id)
+            await self.memory.delete(memory_id)
             logger.info("memory_deleted", memory_id=memory_id)
             return True
         except Exception as e:
@@ -522,7 +529,7 @@ class MemoryService:
         user_id = str(user_uuid)
 
         try:
-            await self._memory.delete_all(user_id=user_id)
+            await self.memory.delete_all(user_id=user_id)
             logger.info("all_memories_deleted", user_uuid=user_id)
             return True
         except Exception as e:
@@ -636,7 +643,7 @@ class MemoryService:
         deleted_count = 0
 
         try:
-            memories = await self.get_user_memories(user_id, limit=1000)
+            memories = await self.get_user_memories(user_uuid, limit=1000)
 
             if not memories:
                 return {"deleted_count": 0, "remaining_count": 0}
