@@ -35,7 +35,7 @@ class TranslationsJa extends Translations with BaseTranslations<AppLocale, Trans
 
 	late final TranslationsJa _root = this; // ignore: unused_field
 
-	@override 
+	@override
 	TranslationsJa $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsJa(meta: meta ?? this.$meta);
 
 	// Translations

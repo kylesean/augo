@@ -10,7 +10,6 @@ Enhanced Features:
 - Graceful degradation on errors
 """
 
-
 from langchain_core.messages import BaseMessage
 
 from app.core.langgraph.middleware.base import BaseMiddleware

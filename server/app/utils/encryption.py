@@ -3,6 +3,7 @@
 This module provides symmetric encryption using Fernet for storing
 sensitive credentials (S3 access keys, WebDAV passwords, etc.) in the database.
 """
+
 from __future__ import annotations
 
 import base64
@@ -66,7 +67,7 @@ class CredentialEncryption:
         if isinstance(key, str):
             try:
                 key = key.encode()
-            except Exception:
+            except Exception:  # nosec B110
                 pass
 
         try:

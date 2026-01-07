@@ -21,7 +21,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Create stored procedures."""
-    
+
     # =========================================================================
     # rebuild_account_snapshots - Rebuild daily balance snapshots for a user
     # =========================================================================
@@ -32,22 +32,22 @@ def upgrade() -> None:
         AS $func$
         BEGIN
             -- 1. Clear old snapshots for this user
-            DELETE FROM public.account_daily_snapshots 
+            DELETE FROM public.account_daily_snapshots
             WHERE user_uuid = target_user_uuid;
 
             -- 2. Rebuild snapshots from transactions
             INSERT INTO public.account_daily_snapshots (
-                snapshot_date, 
-                account_id, 
-                user_uuid, 
-                currency, 
-                total_incoming, 
-                total_outgoing, 
+                snapshot_date,
+                account_id,
+                user_uuid,
+                currency,
+                total_incoming,
+                total_outgoing,
                 balance
             )
-            WITH 
+            WITH
             date_bounds AS (
-                SELECT 
+                SELECT
                     COALESCE(MIN(transaction_at::date), CURRENT_DATE - INTERVAL '1 year') as min_date,
                     CURRENT_DATE as max_date
                 FROM public.transactions
@@ -58,7 +58,7 @@ def upgrade() -> None:
                 FROM date_bounds
             ),
             daily_stats AS (
-                SELECT 
+                SELECT
                     ds.day_date,
                     acct.id as account_id,
                     acct.currency_code,
@@ -66,7 +66,7 @@ def upgrade() -> None:
                     COALESCE(SUM(CASE WHEN t.source_account_id = acct.id THEN t.amount ELSE 0 END), 0) as outgoing
                 FROM public.financial_accounts acct
                 CROSS JOIN date_series ds
-                LEFT JOIN public.transactions t 
+                LEFT JOIN public.transactions t
                     ON (t.source_account_id = acct.id OR t.target_account_id = acct.id)
                     AND t.transaction_at::date = ds.day_date
                     AND t.status = 'CLEARED'
@@ -81,28 +81,28 @@ def upgrade() -> None:
                     acct.currency_code,
                     COALESCE(s.incoming, 0) as daily_in,
                     COALESCE(s.outgoing, 0) as daily_out,
-                    acct.initial_balance + SUM(COALESCE(s.incoming, 0) - COALESCE(s.outgoing, 0)) 
-                        OVER (PARTITION BY acct.id ORDER BY ds.day_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) 
+                    acct.initial_balance + SUM(COALESCE(s.incoming, 0) - COALESCE(s.outgoing, 0))
+                        OVER (PARTITION BY acct.id ORDER BY ds.day_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
                     as current_balance
                 FROM date_series ds
                 CROSS JOIN public.financial_accounts acct
                 LEFT JOIN daily_stats s ON s.day_date = ds.day_date AND s.account_id = acct.id
                 WHERE acct.user_uuid = target_user_uuid
             )
-            SELECT 
-                day_date, 
-                account_id, 
-                user_uuid, 
-                currency_code, 
-                daily_in, 
-                daily_out, 
+            SELECT
+                day_date,
+                account_id,
+                user_uuid,
+                currency_code,
+                daily_in,
+                daily_out,
                 current_balance
             FROM running_balance;
         END;
         $func$;
-        
-        COMMENT ON FUNCTION public.rebuild_account_snapshots IS 
-            'Rebuild daily account balance snapshots for a specific user. 
+
+        COMMENT ON FUNCTION public.rebuild_account_snapshots IS
+            'Rebuild daily account balance snapshots for a specific user.
              Calculates running balances from transaction history.';
     """)
 

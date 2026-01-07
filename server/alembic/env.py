@@ -46,33 +46,33 @@ target_metadata = SQLModel.metadata
 
 def include_object(object, name, type_, reflected, compare_to):
     """Filter objects for migration autogenerate.
-    
+
     Excludes:
     - LangGraph checkpoint tables (managed by LangGraph itself)
     - Mem0 internal tables (managed by Mem0)
     - PostGIS/pgvector extension tables
     - Other externally managed tables
-    
+
     Args:
         object: The SQLAlchemy schema object
         name: Object name
         type_: Object type (table, column, index, etc.)
         reflected: Whether object was reflected from database
         compare_to: The object being compared to
-        
+
     Returns:
         bool: True to include in autogenerate, False to skip
     """
     # Skip LangGraph checkpoint tables
     langgraph_tables = {
-        "checkpoints", 
-        "checkpoint_blobs", 
+        "checkpoints",
+        "checkpoint_blobs",
         "checkpoint_writes",
         "checkpoint_migrations",
     }
     if type_ == "table" and name in langgraph_tables:
         return False
-    
+
     # Skip Mem0 internal tables
     mem0_tables = {
         "longterm_memory",
@@ -80,11 +80,11 @@ def include_object(object, name, type_, reflected, compare_to):
     }
     if type_ == "table" and name in mem0_tables:
         return False
-    
+
     # Skip tables prefixed with mem0_
     if type_ == "table" and name.startswith("mem0_"):
         return False
-    
+
     # Skip message_branches (if not in models, it's legacy)
     legacy_tables = {
         "message_branches",
@@ -92,7 +92,7 @@ def include_object(object, name, type_, reflected, compare_to):
     }
     if type_ == "table" and name in legacy_tables:
         return False
-    
+
     return True
 
 

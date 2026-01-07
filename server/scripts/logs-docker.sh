@@ -39,4 +39,4 @@ fi
 
 # Display logs with follow option
 echo "Following logs from $CONTAINER_NAME (Ctrl+C to exit)"
-docker logs -f $CONTAINER_NAME 
+docker logs -f $CONTAINER_NAME

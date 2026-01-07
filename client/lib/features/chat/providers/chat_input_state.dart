@@ -8,14 +8,19 @@ part 'chat_input_state.freezed.dart';
 abstract class ChatInputState with _$ChatInputState {
   const factory ChatInputState({
     @Default('') String text, // Current text in the input box
-    @Default(false) bool isListening, // Whether speech recognition is in progress
-    @Default(false) bool isSpeechAvailable, // Whether speech recognition service is available
+    @Default(false)
+    bool isListening, // Whether speech recognition is in progress
+    @Default(false)
+    bool isSpeechAvailable, // Whether speech recognition service is available
     @Default(false) bool isLoadingResponse, // Whether waiting for AI response
     @Default(false) bool showError, // Whether to show error提示
     @Default('') String errorMessage, // Error message content
-    @Default(HintType.normal) HintType hintType, // Used to control input box hint text type
+    @Default(HintType.normal)
+    HintType hintType, // Used to control input box hint text type
     @Default([]) List<XFile> selectedFiles, // List of selected files
-    @Default({}) Map<String, bool> uploadingFiles, // Mapping of files being uploaded (path -> isUploading)
+    @Default({})
+    Map<String, bool>
+    uploadingFiles, // Mapping of files being uploaded (path -> isUploading)
   }) = _ChatInputState;
 }
 

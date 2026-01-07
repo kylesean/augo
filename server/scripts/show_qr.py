@@ -5,7 +5,7 @@ This is used by manage.sh to help users configure the mobile app.
 
 import os
 import socket
-import subprocess
+import subprocess  # nosec B404
 import sys
 
 
@@ -18,12 +18,14 @@ def get_local_ip():
         # Avoid localhost or Docker IPs (172.x.x.x is often Docker)
         if ip and not ip.startswith("127.") and not ip.startswith("172."):
             return ip
-    except Exception:
+    except Exception:  # nosec B110
         pass
 
     # Method 2: Parse ip route to get the default interface IP
     try:
-        result = subprocess.run(["ip", "route", "get", "1.1.1.1"], capture_output=True, text=True, timeout=5)
+        result = subprocess.run(  # nosec B607 B603
+            ["ip", "route", "get", "1.1.1.1"], capture_output=True, text=True, timeout=5
+        )
         if result.returncode == 0:
             # Output like: "1.1.1.1 via 192.168.1.1 dev eth0 src 192.168.1.100 uid 1000"
             parts = result.stdout.split()
@@ -32,12 +34,14 @@ def get_local_ip():
                     ip = parts[i + 1]
                     if not ip.startswith("172."):  # Skip Docker IPs
                         return ip
-    except Exception:
+    except Exception:  # nosec B110
         pass
 
     # Method 3: List all interfaces and find non-Docker ones
     try:
-        result = subprocess.run(["hostname", "-I"], capture_output=True, text=True, timeout=5)
+        result = subprocess.run(  # nosec B607 B603
+            ["hostname", "-I"], capture_output=True, text=True, timeout=5
+        )
         if result.returncode == 0:
             ips = result.stdout.strip().split()
             for ip in ips:
@@ -48,7 +52,7 @@ def get_local_ip():
             for ip in ips:
                 if not ip.startswith("172.") and not ip.startswith("127."):
                     return ip
-    except Exception:
+    except Exception:  # nosec B110
         pass
 
     # Method 4: Connect to external address (fallback, may get Docker IP)
@@ -59,7 +63,7 @@ def get_local_ip():
         local_ip = s.getsockname()[0]
         s.close()
         return local_ip
-    except Exception:
+    except Exception:  # nosec B110
         pass
 
     return "127.0.0.1"

@@ -36,7 +36,7 @@ class ConversationItemSkeleton extends StatelessWidget {
           // Simulate date line
           Container(
             height: 10, // Simulate text height
-            width: 80,  // Simulate date length
+            width: 80, // Simulate date length
             decoration: BoxDecoration(
               color: placeholderColor,
               borderRadius: BorderRadius.circular(4),

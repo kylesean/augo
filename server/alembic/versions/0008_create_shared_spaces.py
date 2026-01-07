@@ -22,7 +22,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Create shared_spaces tables."""
-    
+
     # =========================================================================
     # shared_spaces - Collaborative financial spaces (matches SharedSpace model)
     # =========================================================================
@@ -61,9 +61,9 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
     )
-    
+
     op.create_index("ix_shared_spaces_creator_uuid", "shared_spaces", ["creator_uuid"])
-    
+
     # =========================================================================
     # space_members - Space membership (matches SpaceMember model)
     # Composite primary key: (space_id, user_uuid)
@@ -100,10 +100,10 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
     )
-    
+
     op.create_index("ix_space_members_space_id", "space_members", ["space_id"])
     op.create_index("ix_space_members_user_uuid", "space_members", ["user_uuid"])
-    
+
     # =========================================================================
     # space_transactions - Transactions within shared spaces (matches SpaceTransaction model)
     # =========================================================================
@@ -148,10 +148,10 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
     )
-    
+
     op.create_index("ix_space_transactions_space_id", "space_transactions", ["space_id"])
     op.create_index("ix_space_transactions_transaction_id", "space_transactions", ["transaction_id"])
-    
+
     # Add deferred FK constraint for budgets.shared_space_id (table created in 0007)
     op.create_foreign_key(
         "fk_budgets_shared_space_id",
@@ -167,14 +167,14 @@ def downgrade() -> None:
     """Drop shared_spaces tables."""
     # Drop deferred FK first
     op.drop_constraint("fk_budgets_shared_space_id", "budgets", type_="foreignkey")
-    
+
     op.drop_index("ix_space_transactions_transaction_id")
     op.drop_index("ix_space_transactions_space_id")
     op.drop_table("space_transactions")
-    
+
     op.drop_index("ix_space_members_user_uuid")
     op.drop_index("ix_space_members_space_id")
     op.drop_table("space_members")
-    
+
     op.drop_index("ix_shared_spaces_creator_uuid")
     op.drop_table("shared_spaces")

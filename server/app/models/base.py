@@ -1,4 +1,5 @@
 """Base models and common imports for all models."""
+
 from __future__ import annotations
 
 from datetime import UTC, datetime

@@ -216,7 +216,7 @@ return $default(_that.currentConversationId,_that.currentConversationTitle,_that
 
 class _ChatHistoryState implements ChatHistoryState {
   const _ChatHistoryState({this.currentConversationId, this.currentConversationTitle, this.isLoadingHistory = false, final  List<ChatMessage> messages = const [], this.historyError, this.historyCurrentPage = 1, this.historyHasMore = true, this.isStreamingResponse = false}): _messages = messages;
-  
+
 
 @override final  String? currentConversationId;
 @override final  String? currentConversationTitle;

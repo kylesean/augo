@@ -4,6 +4,7 @@ This module defines the protocol and registry for component enrichers.
 Enrichers are responsible for hydrating historical UI components with live data
 from the database, ensuring that users always see the most up-to-date state.
 """
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod

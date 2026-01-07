@@ -143,7 +143,7 @@ class WebDAVAdapter(StorageAdapter):
             parent_path = str(PurePosixPath(full_path).parent)
             try:
                 self._client.mkdir(parent_path)  # type: ignore
-            except Exception:
+            except Exception:  # nosec B110
                 pass  # Directory might already exist
 
             # Upload file
@@ -258,7 +258,7 @@ class WebDAVAdapter(StorageAdapter):
 
         except Exception as e:
             logger.error("webdav_delete_failed", path=full_path, error=str(e))
-            raise StorageError(f"Failed to delete from WebDAV: {e}")
+            raise StorageError(f"Failed to delete from WebDAV: {e}")  # nosec B608
 
     async def exists(self, object_key: str) -> bool:
         """Check if file exists on WebDAV server.

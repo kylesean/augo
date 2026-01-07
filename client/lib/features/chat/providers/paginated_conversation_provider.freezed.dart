@@ -216,7 +216,7 @@ return $default(_that.conversations,_that.currentPage,_that.isLoading,_that.isLo
 
 class _PaginatedConversationState implements PaginatedConversationState {
   const _PaginatedConversationState({final  List<ConversationInfo> conversations = const [], this.currentPage = 1, this.isLoading = false, this.isLoadingMore = false, this.hasMore = true, this.perPage = 10, this.total = 0, this.isInitialized = false, this.error}): _conversations = conversations;
-  
+
 
  final  List<ConversationInfo> _conversations;
 @override@JsonKey() List<ConversationInfo> get conversations {

@@ -3,6 +3,7 @@
 防御性状态校验器，在图执行前校验客户端提交的状态突变。
 实现 "Trust, but Verify" 原则。
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

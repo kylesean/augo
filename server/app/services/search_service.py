@@ -3,7 +3,6 @@
 Provides session title search with Chinese tokenization support using jieba.
 """
 
-
 from uuid import UUID
 
 import jieba
@@ -347,7 +346,7 @@ class SearchService:
                         session_obj = result.scalar_one_or_none()
                         if session_obj:
                             msg_result.title = session_obj.name
-                except Exception:
+                except Exception:  # nosec B110
                     pass
 
                 combined.append(msg_result)

@@ -8,7 +8,9 @@ class ChatService {
   ChatService(this._networkClient);
 
   /// Search transaction records
-  Future<Map<String, dynamic>> searchTransactions(Map<String, dynamic> searchParams) async {
+  Future<Map<String, dynamic>> searchTransactions(
+    Map<String, dynamic> searchParams,
+  ) async {
     final response = await _networkClient.request<Map<String, dynamic>>(
       '/transactions/search',
       method: HttpMethod.get,
@@ -17,12 +19,15 @@ class ChatService {
         if (json is Map<String, dynamic>) {
           return json;
         }
-        throw Exception("API /transactions/search expected to return an object but received ${json.runtimeType}");
+        throw Exception(
+          "API /transactions/search expected to return an object but received ${json.runtimeType}",
+        );
       },
     );
 
     // Return the content in the data field, which should contain items and hasNextPage fields
-    if (response.containsKey('data') && response['data'] is Map<String, dynamic>) {
+    if (response.containsKey('data') &&
+        response['data'] is Map<String, dynamic>) {
       return response['data'] as Map<String, dynamic>;
     }
 

@@ -45,14 +45,17 @@ class AudioRecorderService {
       _logger.info('Permission check result: $hasPermission');
 
       if (!hasPermission) {
-        _logger.severe('Microphone permission denied, please authorize in system settings');
+        _logger.severe(
+          'Microphone permission denied, please authorize in system settings',
+        );
         return false;
       }
 
       // Configure recording parameters
       const config = RecordConfig(
         encoder: AudioEncoder.pcm16bits, // PCM 16-bit
-        sampleRate: 16000, // 16kHz sampling rate, suitable for speech recognition
+        sampleRate:
+            16000, // 16kHz sampling rate, suitable for speech recognition
         numChannels: 1, // Mono
         autoGain: true, // Auto gain
         echoCancel: true, // Echo cancellation

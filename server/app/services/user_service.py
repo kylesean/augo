@@ -1,4 +1,5 @@
 """User service for managing user information, settings, and financial accounts."""
+
 from __future__ import annotations
 
 from datetime import datetime

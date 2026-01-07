@@ -3,6 +3,7 @@
 This module provides functionality to fetch exchange rates from external APIs
 and cache them in Redis for use in currency conversion across the application.
 """
+
 from __future__ import annotations
 
 from datetime import UTC, datetime

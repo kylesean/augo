@@ -3,13 +3,13 @@
 Provides CRUD operations for StorageConfig with credential encryption
 and user default storage initialization.
 """
+
 from __future__ import annotations
 
-from sqlalchemy import desc, select
+from uuid import UUID
 
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from uuid import UUID
 
 from app.core.logging import logger
 from app.models.storage_config import ProviderType, StorageConfig

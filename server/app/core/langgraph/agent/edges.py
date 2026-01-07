@@ -13,6 +13,7 @@ from langchain_core.messages import AIMessage
 from langgraph.graph import END
 
 from app.core.langgraph.agent.state import AgentState
+from app.core.langgraph.tools.tool_metadata import Continuation
 from app.core.logging import logger
 
 
@@ -62,8 +63,6 @@ def route_after_agent(state: AgentState) -> Literal["tools", "__end__"]:
 # ============================================================================
 # When ui_mode=direct_execute, these rules override the tool's declared continuation.
 # This centralizes special-case logic instead of scattering it in conditionals.
-
-from app.core.langgraph.tools.tool_metadata import Continuation
 
 DIRECT_EXECUTE_OVERRIDES: dict[Continuation, Literal["agent", "__end__"]] = {
     # WRITE tools: need agent to provide summary/confirmation after direct execution

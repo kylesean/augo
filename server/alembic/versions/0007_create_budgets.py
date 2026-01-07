@@ -22,7 +22,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Create budgets tables."""
-    
+
     # =========================================================================
     # budgets - Budget definitions (matches Budget model)
     # =========================================================================
@@ -92,11 +92,11 @@ def upgrade() -> None:
         sa.CheckConstraint("status IN ('ACTIVE', 'PAUSED', 'ARCHIVED')", name="chk_budgets_status"),
         sa.CheckConstraint("amount >= 0", name="chk_budgets_amount_positive"),
     )
-    
+
     op.create_index("ix_budgets_owner_uuid", "budgets", ["owner_uuid"])
     op.create_index("ix_budgets_shared_space_id", "budgets", ["shared_space_id"])
     op.create_index("ix_budgets_category_key", "budgets", ["category_key"])
-    
+
     # =========================================================================
     # budget_periods - Budget period tracking (matches BudgetPeriod model)
     # =========================================================================
@@ -141,10 +141,10 @@ def upgrade() -> None:
         sa.CheckConstraint("status IN ('ON_TRACK', 'WARNING', 'EXCEEDED', 'ACHIEVED')", name="chk_budget_periods_status"),
         sa.CheckConstraint("spent_amount >= 0", name="chk_budget_periods_spent_positive"),
     )
-    
+
     op.create_index("ix_budget_periods_budget_id", "budget_periods", ["budget_id"])
     op.create_index("ix_budget_periods_dates", "budget_periods", ["period_start", "period_end"])
-    
+
     # =========================================================================
     # budget_settings - User budget preferences (matches BudgetSettings model)
     # Primary key is user_uuid (one-to-one with user)
@@ -195,11 +195,11 @@ def upgrade() -> None:
 def downgrade() -> None:
     """Drop budgets tables."""
     op.drop_table("budget_settings")
-    
+
     op.drop_index("ix_budget_periods_dates")
     op.drop_index("ix_budget_periods_budget_id")
     op.drop_table("budget_periods")
-    
+
     op.drop_index("ix_budgets_category_key")
     op.drop_index("ix_budgets_shared_space_id")
     op.drop_index("ix_budgets_owner_uuid")

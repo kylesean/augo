@@ -133,7 +133,8 @@ class MediaValidationService {
       final maxSizeFormatted = formatFileSize(maxFileSizeBytes);
       return ValidationResult(
         isValid: false,
-        errorMessage: 'File size $fileSizeFormatted exceeds limit $maxSizeFormatted',
+        errorMessage:
+            'File size $fileSizeFormatted exceeds limit $maxSizeFormatted',
       );
     }
 
@@ -187,7 +188,10 @@ class MediaValidationService {
   /// Validate file format by extension (for testing and internal use)
   static ValidationResult validateFileFormatByExtension(String? extension) {
     if (extension == null || extension.isEmpty) {
-      return const ValidationResult(isValid: false, errorMessage: 'Unable to recognize file format');
+      return const ValidationResult(
+        isValid: false,
+        errorMessage: 'Unable to recognize file format',
+      );
     }
 
     final isSupported =
@@ -264,7 +268,10 @@ class MediaValidationService {
   ///
   /// Returns string containing all supported formats for error prompts
   static String getSupportedFormatsString() {
-    final allFormats = <String>[...supportedImageExtensions, ...supportedFileExtensions];
+    final allFormats = <String>[
+      ...supportedImageExtensions,
+      ...supportedFileExtensions,
+    ];
 
     allFormats.sort();
     return allFormats.map((ext) => '.$ext').join(', ');

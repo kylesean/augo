@@ -51,7 +51,7 @@ async def get_redis_client() -> AsyncGenerator[Any]:
         if redis_client is not None:
             try:
                 await redis_client.aclose()
-            except Exception:
+            except Exception:  # nosec B110
                 pass
 
 

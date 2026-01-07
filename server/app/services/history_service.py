@@ -5,6 +5,7 @@ This service provides functionality to:
 - Dynamically inject temporary signed URLs for attachments
 - Support message format transformation for frontend consumption
 """
+
 from __future__ import annotations
 
 from datetime import UTC, datetime

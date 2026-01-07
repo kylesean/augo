@@ -1,6 +1,6 @@
 """Transaction management API endpoints."""
 
-from typing import Any
+from typing import Annotated, Any
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -11,15 +11,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_session
 from app.core.dependencies import get_current_user
 from app.core.responses import error_response, get_error_code_int, success_response
+from app.core.service_deps import get_transaction_service
 from app.models.user import User
 from app.schemas.transaction import (
     BatchCreateTransactionRequest,
     CashFlowForecastRequest,
-    CashFlowForecastResponse,
     CommentCreateRequest,
-    CommentResponse,
     RecurringTransactionCreateRequest,
-    RecurringTransactionResponse,
     RecurringTransactionUpdateRequest,
     TransactionDisplayValue,
     UpdateAccountRequest,
@@ -30,81 +28,132 @@ from app.utils.currency_utils import BASE_CURRENCY, get_exchange_rate_from_base,
 
 router = APIRouter(prefix="/transactions", tags=["transactions"])
 
+# Type aliases for cleaner dependency injection
+CurrentUser = Annotated[User, Depends(get_current_user)]
+DbSession = Annotated[AsyncSession, Depends(get_session)]
+TxService = Annotated[TransactionService, Depends(get_transaction_service)]
+
+
+def _get_attr(obj: Any, snake_case: str, camel_case: str | None = None) -> Any:
+    """Get attribute from object or dict, supporting both snake_case and camelCase keys.
+
+    Args:
+        obj: The object or dict to extract value from
+        snake_case: The snake_case attribute name (for ORM models)
+        camel_case: Optional camelCase key name (for dicts), defaults to snake_case
+
+    Returns:
+        The attribute value or None
+    """
+    if camel_case is None:
+        camel_case = snake_case
+    if isinstance(obj, dict):
+        return obj.get(camel_case) or obj.get(snake_case)
+    return getattr(obj, snake_case, None)
+
+
+def _format_datetime(value: Any) -> Any:
+    """Format a datetime value to ISO format string.
+
+    Args:
+        value: A datetime object or string
+
+    Returns:
+        ISO format string or original value if not a datetime
+    """
+    if hasattr(value, "isoformat"):
+        return value.isoformat()
+    return value
+
+
+def _extract_amounts(tx: Any) -> tuple[float, float, str, Any]:
+    """Extract amount-related fields from transaction.
+
+    Args:
+        tx: Transaction object or dict
+
+    Returns:
+        Tuple of (amount_val, amount_original, original_currency, stored_exchange_rate)
+    """
+    amount_original = float(_get_attr(tx, "amount_original", "amountOriginal") or _get_attr(tx, "amount") or 0)
+    original_currency = _get_attr(tx, "currency") or "CNY"
+    stored_exchange_rate = _get_attr(tx, "exchange_rate", "exchangeRate")
+    amount_val = float(_get_attr(tx, "amount") or 0)
+
+    return amount_val, amount_original, original_currency, stored_exchange_rate
+
 
 def _transaction_to_dict(tx: Any, display_currency: str = "CNY", exchange_rate: float = 1.0) -> dict[str, Any]:
-    """统一的交易模型转字典辅助函数
+    """Convert transaction model to dictionary for API response.
 
-    返回格式包含：
-    - amount: 换算到 display_currency 的金额（用于统一展示）
-    - amountOriginal: 原始记录金额（不可变）
-    - originalCurrency: 原始记录货币（不可变）
-    - exchangeRate: 记账时的汇率快照（不可变）
+    This function handles multiple input types:
+    - SQLModel Transaction objects
+    - Pydantic TransactionItem objects
+    - Pre-formatted dictionaries
+
+    Returns format:
+    - amount: Display amount converted to display_currency
+    - amountOriginal: Original recorded amount (immutable)
+    - originalCurrency: Original currency (immutable)
+    - exchangeRate: Exchange rate snapshot at recording time
+
+    Args:
+        tx: Transaction object, dict, or TransactionItem
+        display_currency: Target currency for display
+        exchange_rate: Exchange rate from base currency to display currency
+
+    Returns:
+        Dictionary representation of the transaction
     """
     from app.services.transaction_query_service import TransactionItem
 
-    # helper to get value from either object or dict
-    def get_val(obj: Any, attr: str, key: str | None = None) -> Any:
-        if key is None:
-            key = attr
-        if isinstance(obj, dict):
-            return obj.get(key)
-        return getattr(obj, attr, None)
-
-    # 1. 如果已经是经过完整格式化的字典（通常由 Service 层返回），直接返回
+    # Fast path: already formatted dict
     if isinstance(tx, dict) and ("userUuid" in tx or "display" in tx):
         return tx
 
-    # 2. 识别输入源并决定是否换算
-    # 如果输入已经是 TransactionItem (Pydantic模型)，说明 Service 层已经做过换算了
+    # Check if already converted by service layer
     is_already_converted = isinstance(tx, TransactionItem)
 
-    tx_id = str(get_val(tx, "id"))
-    tx_type = get_val(tx, "type")
+    # Extract core identifiers
+    tx_id = str(_get_attr(tx, "id"))
+    tx_type = _get_attr(tx, "type")
+    user_uuid = _get_attr(tx, "user_uuid", "userUuid")
 
-    # 获取原始金额和货币（历史数据，不可变）
-    amount_original = float(
-        get_val(tx, "amount_original") or get_val(tx, "amountOriginal") or get_val(tx, "amount") or 0
-    )
-    original_currency = get_val(tx, "currency") or "CNY"
-    stored_exchange_rate = get_val(tx, "exchange_rate") or get_val(tx, "exchangeRate")
+    # Extract amounts
+    amount_val, amount_original, original_currency, stored_exchange_rate = _extract_amounts(tx)
 
-    # 获取已换算到本位币的金额
-    amount_val = float(get_val(tx, "amount") or 0)
-
-    # 3. 执行换算 (仅对未换算的本位币数据进行)
-    # 如果已经换算过，或者目标是本位币且输入也是本位币，则跳过
+    # Apply exchange rate conversion if needed
     if not is_already_converted and display_currency != BASE_CURRENCY:
         amount_val = amount_val * exchange_rate
 
+    # Build response dictionary
     return {
+        # Core fields
         "id": tx_id,
-        "userUuid": str(get_val(tx, "user_uuid") or get_val(tx, "userUuid")),
+        "userUuid": str(user_uuid),
         "type": tx_type,
-        # 换算后的展示金额（用于统一列表展示）
+        # Amount fields
         "amount": round(amount_val, 2),
         "currency": display_currency,
-        # 原始记录信息（历史数据，不可变）
         "amountOriginal": round(amount_original, 2),
         "originalCurrency": original_currency,
         "exchangeRate": str(stored_exchange_rate) if stored_exchange_rate else None,
-        # 其他字段
-        "categoryKey": get_val(tx, "category_key") or get_val(tx, "categoryKey"),
-        "description": get_val(tx, "description") or "",
-        "rawInput": get_val(tx, "raw_input") or get_val(tx, "rawInput") or "",
-        "transactionAt": get_val(tx, "transaction_at").isoformat()
-        if hasattr(get_val(tx, "transaction_at"), "isoformat")
-        else get_val(tx, "transaction_at"),
-        "transactionTimezone": get_val(tx, "transaction_timezone")
-        or get_val(tx, "transactionTimezone")
-        or "Asia/Shanghai",
-        "tags": get_val(tx, "tags") or [],
-        "status": get_val(tx, "status") or "CLEARED",
-        "location": get_val(tx, "location"),
-        "sourceAccountId": str(get_val(tx, "source_account_id")) if get_val(tx, "source_account_id") else None,
-        "targetAccountId": str(get_val(tx, "target_account_id")) if get_val(tx, "target_account_id") else None,
-        "createdAt": get_val(tx, "created_at").isoformat()
-        if hasattr(get_val(tx, "created_at"), "isoformat")
-        else get_val(tx, "created_at"),
+        # Descriptive fields
+        "categoryKey": _get_attr(tx, "category_key", "categoryKey"),
+        "description": _get_attr(tx, "description") or "",
+        "rawInput": _get_attr(tx, "raw_input", "rawInput") or "",
+        # Temporal fields
+        "transactionAt": _format_datetime(_get_attr(tx, "transaction_at", "transactionAt")),
+        "transactionTimezone": _get_attr(tx, "transaction_timezone", "transactionTimezone") or "Asia/Shanghai",
+        "createdAt": _format_datetime(_get_attr(tx, "created_at", "createdAt")),
+        # Metadata
+        "tags": _get_attr(tx, "tags") or [],
+        "status": _get_attr(tx, "status") or "CLEARED",
+        "location": _get_attr(tx, "location"),
+        # Account references
+        "sourceAccountId": str(_get_attr(tx, "source_account_id")) if _get_attr(tx, "source_account_id") else None,
+        "targetAccountId": str(_get_attr(tx, "target_account_id")) if _get_attr(tx, "target_account_id") else None,
+        # Display value for UI
         "display": TransactionDisplayValue.from_params(
             amount=amount_val, tx_type=tx_type, currency=display_currency
         ).model_dump(by_alias=False),
@@ -311,12 +360,11 @@ async def search_transactions(
 
 @router.get("/{transaction_id:uuid}")
 async def get_transaction_detail(
-    transaction_id: UUID,  # UUID from path
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
+    transaction_id: UUID,
+    current_user: CurrentUser,
+    service: TxService,
 ) -> JSONResponse:
-    """获取交易详情"""
-    service = TransactionService(db)
+    """Get transaction details."""
     transaction_data = await service.get_transaction_detail(transaction_id, current_user.uuid)
 
     if not transaction_data:
@@ -334,14 +382,13 @@ async def get_transaction_detail(
 
 @router.delete("/{transaction_id:uuid}", status_code=status.HTTP_200_OK)
 async def delete_transaction(
-    transaction_id: UUID,  # UUID from path
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
+    transaction_id: UUID,
+    current_user: CurrentUser,
+    service: TxService,
 ) -> JSONResponse:
-    """删除交易记录"""
+    """Delete transaction."""
     from app.core.exceptions import BusinessError, NotFoundError
 
-    service = TransactionService(db)
     try:
         await service.delete_transaction(transaction_id, current_user.uuid)
         return success_response(
@@ -406,11 +453,10 @@ async def update_transaction_account(
 @router.post("/batch")
 async def create_batch_transactions(
     request: BatchCreateTransactionRequest,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
+    current_user: CurrentUser,
+    service: TxService,
 ) -> JSONResponse:
-    """批量创建交易记录"""
-    service = TransactionService(db)
+    """Batch create transactions."""
     result = await service.create_batch_transactions(
         user_uuid=current_user.uuid,
         data=request.model_dump(),
@@ -424,13 +470,12 @@ async def create_batch_transactions(
 @router.patch("/batch/account")
 async def update_batch_transactions_account(
     request: UpdateBatchAccountRequest,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
+    current_user: CurrentUser,
+    service: TxService,
 ) -> JSONResponse:
-    """批量更新交易的关联账户"""
+    """Batch update transactions account."""
     from app.core.exceptions import BusinessError, NotFoundError
 
-    service = TransactionService(db)
     try:
         result = await service.update_batch_transactions_account(
             user_uuid=current_user.uuid,
@@ -449,7 +494,7 @@ async def update_batch_transactions_account(
         )
 
 
-@router.get("/{transaction_id:uuid}/comments", response_model=list[CommentResponse])
+@router.get("/{transaction_id:uuid}/comments")
 async def get_transaction_comments(
     transaction_id: UUID,  # UUID from path
     current_user: User = Depends(get_current_user),
@@ -464,7 +509,7 @@ async def get_transaction_comments(
     )
 
 
-@router.post("/{transaction_id:uuid}/comments", response_model=CommentResponse)
+@router.post("/{transaction_id:uuid}/comments")
 async def add_transaction_comment(
     transaction_id: UUID,  # UUID from path
     request: CommentCreateRequest,
@@ -537,7 +582,7 @@ async def list_recurring_transactions(
     )
 
 
-@router.post("/recurring", response_model=RecurringTransactionResponse)
+@router.post("/recurring")
 async def create_recurring_transaction(
     request: RecurringTransactionCreateRequest,
     current_user: User = Depends(get_current_user),
@@ -552,7 +597,7 @@ async def create_recurring_transaction(
     )
 
 
-@router.get("/recurring/{recurring_id:uuid}", response_model=RecurringTransactionResponse)
+@router.get("/recurring/{recurring_id:uuid}")
 async def get_recurring_transaction(
     recurring_id: UUID,  # UUID from path
     current_user: User = Depends(get_current_user),
@@ -574,7 +619,7 @@ async def get_recurring_transaction(
     )
 
 
-@router.put("/recurring/{recurring_id:uuid}", response_model=RecurringTransactionResponse)
+@router.put("/recurring/{recurring_id:uuid}")
 async def update_recurring_transaction(
     recurring_id: UUID,  # UUID from path
     request: RecurringTransactionUpdateRequest,
@@ -621,7 +666,7 @@ async def delete_recurring_transaction(
     )
 
 
-@router.post("/forecast", response_model=CashFlowForecastResponse)
+@router.post("/forecast")
 async def forecast_cash_flow(
     request: CashFlowForecastRequest,
     current_user: User = Depends(get_current_user),

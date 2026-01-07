@@ -1,12 +1,10 @@
 """This file contains the sanitization utilities for the application."""
+
 from __future__ import annotations
 
 import html
 import re
 from typing import Any
-from typing import (
-    Any,
-)
 
 
 def sanitize_string(value: str) -> str:

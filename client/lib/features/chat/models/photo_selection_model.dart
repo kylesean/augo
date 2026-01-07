@@ -43,7 +43,8 @@ class PhotoSelectionItem {
 /// Photo selection state model
 class PhotoSelectionState {
   final List<XFile> availablePhotos; // List of available photos
-  final Map<String, PhotoSelectionItem> selectedPhotos; // Selected photos, key is photo.path
+  final Map<String, PhotoSelectionItem>
+  selectedPhotos; // Selected photos, key is photo.path
   final bool isLoading;
   final String? errorMessage;
   final bool hasPermission;

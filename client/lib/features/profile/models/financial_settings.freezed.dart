@@ -768,7 +768,7 @@ return $default(_that.safetyThreshold,_that.dailyBurnRate,_that.burnRateMode,_th
 
 class _FinancialSettingsState extends FinancialSettingsState {
   const _FinancialSettingsState({@JsonKey(fromJson: _decimalFromJsonNullable, toJson: _decimalToJsonNullable) this.safetyThreshold, @JsonKey(fromJson: _decimalFromJsonNullable, toJson: _decimalToJsonNullable) this.dailyBurnRate, this.burnRateMode = "AI_AUTO", this.primaryCurrency = "USD", this.monthStartDay = 1, this.lastUpdatedAt, this.isLoading = false, this.hasChanges = false, this.error}): super._();
-  
+
 
 @override@JsonKey(fromJson: _decimalFromJsonNullable, toJson: _decimalToJsonNullable) final  Decimal? safetyThreshold;
 @override@JsonKey(fromJson: _decimalFromJsonNullable, toJson: _decimalToJsonNullable) final  Decimal? dailyBurnRate;

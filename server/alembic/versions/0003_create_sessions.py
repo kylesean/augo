@@ -53,7 +53,7 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
     )
-    
+
     op.create_index("ix_sessions_user_uuid", "sessions", ["user_uuid"])
     op.create_index("ix_sessions_created_at", "sessions", ["created_at"])
 

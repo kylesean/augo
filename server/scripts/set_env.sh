@@ -41,7 +41,7 @@ if [ -f "$PROJECT_ROOT/.env" ]; then
     ENV_FILE="$PROJECT_ROOT/.env"
 else
     echo -e "${YELLOW}No .env file found.${NC}"
-    
+
     EXAMPLE_FILE="$PROJECT_ROOT/.env.example"
     if [ ! -f "$EXAMPLE_FILE" ]; then
         echo -e "${RED}Error: .env.example not found at $EXAMPLE_FILE${NC}"

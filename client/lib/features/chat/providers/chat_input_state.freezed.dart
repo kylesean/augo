@@ -223,7 +223,7 @@ return $default(_that.text,_that.isListening,_that.isSpeechAvailable,_that.isLoa
 
 class _ChatInputState implements ChatInputState {
   const _ChatInputState({this.text = '', this.isListening = false, this.isSpeechAvailable = false, this.isLoadingResponse = false, this.showError = false, this.errorMessage = '', this.hintType = HintType.normal, final  List<XFile> selectedFiles = const [], final  Map<String, bool> uploadingFiles = const {}}): _selectedFiles = selectedFiles,_uploadingFiles = uploadingFiles;
-  
+
 
 @override@JsonKey() final  String text;
 // Current text in the input box

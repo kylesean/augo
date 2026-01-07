@@ -180,7 +180,7 @@ class RegisterRequest(BaseModel):
                 {
                     "type": "email",
                     "account": "user@example.com",
-                    "password": "password123",
+                    "password": "password123",  # pragma: allowlist secret
                     "code": "123456",
                     "timezone": "Asia/Shanghai",
                 }

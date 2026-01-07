@@ -231,7 +231,9 @@ class TransactionCRUDService:
             "categoryKey": transaction.category_key,
             "rawInput": transaction.raw_input,
             "description": transaction.description,
-            "transactionAt": cast(datetime, transaction.transaction_at).isoformat() if transaction.transaction_at else None,
+            "transactionAt": cast(datetime, transaction.transaction_at).isoformat()
+            if transaction.transaction_at
+            else None,
             "transactionTimezone": transaction.transaction_timezone,
             "sourceAccountId": transaction.source_account_id,
             "targetAccountId": transaction.target_account_id,

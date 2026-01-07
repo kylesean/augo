@@ -75,7 +75,7 @@ def upgrade() -> None:
         sa.CheckConstraint("nature IN ('ASSET', 'LIABILITY')", name="check_nature"),
         sa.CheckConstraint("status IN ('ACTIVE', 'INACTIVE', 'CLOSED')", name="check_status"),
     )
-    
+
     op.create_index("ix_financial_accounts_user_uuid", "financial_accounts", ["user_uuid"])
 
 

@@ -77,7 +77,7 @@ as Meta,
 @override
 @pragma('vm:prefer-inline')
 $MetaCopyWith<$Res> get meta {
-  
+
   return $MetaCopyWith<$Res>(_self.meta, (value) {
     return _then(_self.copyWith(meta: value));
   });
@@ -294,7 +294,7 @@ as Meta,
 @override
 @pragma('vm:prefer-inline')
 $MetaCopyWith<$Res> get meta {
-  
+
   return $MetaCopyWith<$Res>(_self.meta, (value) {
     return _then(_self.copyWith(meta: value));
   });

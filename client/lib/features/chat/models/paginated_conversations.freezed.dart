@@ -352,7 +352,7 @@ as ConversationMeta,
 @override
 @pragma('vm:prefer-inline')
 $ConversationMetaCopyWith<$Res> get meta {
-  
+
   return $ConversationMetaCopyWith<$Res>(_self.meta, (value) {
     return _then(_self.copyWith(meta: value));
   });
@@ -569,7 +569,7 @@ as ConversationMeta,
 @override
 @pragma('vm:prefer-inline')
 $ConversationMetaCopyWith<$Res> get meta {
-  
+
   return $ConversationMetaCopyWith<$Res>(_self.meta, (value) {
     return _then(_self.copyWith(meta: value));
   });

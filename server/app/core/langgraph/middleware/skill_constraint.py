@@ -8,6 +8,7 @@
 注意：这个 Middleware 不做意图检测！意图检测是 LLM 的工作。
 我们只负责在技能激活后应用约束。
 """
+
 from __future__ import annotations
 
 from typing import Any

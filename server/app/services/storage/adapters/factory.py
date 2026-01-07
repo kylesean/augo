@@ -3,6 +3,7 @@
 Factory pattern for creating appropriate storage adapters
 based on StorageConfig provider type.
 """
+
 from __future__ import annotations
 
 from app.core.logging import logger

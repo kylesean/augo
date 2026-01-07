@@ -240,9 +240,13 @@ class RecurringTransactionService:
         if "type" in data:
             recurring_tx.type = data["type"]
         if "source_account_id" in data:
-            recurring_tx.source_account_id = UUID(str(data["source_account_id"])) if data["source_account_id"] else None
+            recurring_tx.source_account_id = (
+                UUID(str(data["source_account_id"])) if data["source_account_id"] else None
+            )
         if "target_account_id" in data:
-            recurring_tx.target_account_id = UUID(str(data["target_account_id"])) if data["target_account_id"] else None
+            recurring_tx.target_account_id = (
+                UUID(str(data["target_account_id"])) if data["target_account_id"] else None
+            )
         if "amount_type" in data:
             recurring_tx.amount_type = data["amount_type"]
         if "requires_confirmation" in data:

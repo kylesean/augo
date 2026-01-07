@@ -53,9 +53,9 @@ services:
     ports:
       - "8000:8000"
     command: >
-      sh -c "if [ \"$${APP_ENV}\" = \"development\" ]; then 
+      sh -c "if [ \"$${APP_ENV}\" = \"development\" ]; then
                uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /app/app;
-             else 
+             else
                uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2;
              fi"
     volumes:

@@ -50,7 +50,7 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
     )
-    
+
     op.create_index("ix_notifications_user_uuid", "notifications", ["user_uuid"])
     op.create_index("ix_notifications_is_read", "notifications", ["is_read"])
 

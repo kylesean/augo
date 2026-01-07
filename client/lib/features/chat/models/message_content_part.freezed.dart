@@ -27,7 +27,7 @@ MessageContentPart _$MessageContentPartFromJson(
           return UIComponentPart.fromJson(
             json
           );
-        
+
           default:
             throw CheckedFromJsonException(
   json,
@@ -36,7 +36,7 @@ MessageContentPart _$MessageContentPartFromJson(
   'Invalid union type "${json['runtimeType']}"!'
 );
         }
-      
+
 }
 
 /// @nodoc
@@ -355,7 +355,7 @@ as ToolCallInfo,
 @override
 @pragma('vm:prefer-inline')
 $ToolCallInfoCopyWith<$Res> get toolCall {
-  
+
   return $ToolCallInfoCopyWith<$Res>(_self.toolCall, (value) {
     return _then(_self.copyWith(toolCall: value));
   });
@@ -437,7 +437,7 @@ as UIComponentInfo,
 @override
 @pragma('vm:prefer-inline')
 $UIComponentInfoCopyWith<$Res> get component {
-  
+
   return $UIComponentInfoCopyWith<$Res>(_self.component, (value) {
     return _then(_self.copyWith(component: value));
   });

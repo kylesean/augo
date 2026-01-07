@@ -1,4 +1,5 @@
 """Budget schemas for API request/response handling."""
+
 from __future__ import annotations
 
 from datetime import date, time

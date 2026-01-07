@@ -4,8 +4,6 @@ from uuid import uuid4
 
 import pytest
 import pytest_asyncio
-from app.main import app
-from app.models.user import User
 from fastapi.testclient import TestClient
 from sqlalchemy import text
 from sqlalchemy.dialects import postgresql
@@ -21,6 +19,8 @@ from sqlmodel import SQLModel
 
 from app.core.database import get_session
 from app.core.dependencies import get_current_user
+from app.main import app
+from app.models.user import User
 
 # --- Type Compilation Hacks for SQLite ---
 # These allow using Postgres-specific types (JSONB, UUID) in SQLite tests

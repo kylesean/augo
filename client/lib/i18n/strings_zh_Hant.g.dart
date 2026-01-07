@@ -35,7 +35,7 @@ class TranslationsZhHant extends Translations with BaseTranslations<AppLocale, T
 
 	late final TranslationsZhHant _root = this; // ignore: unused_field
 
-	@override 
+	@override
 	TranslationsZhHant $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsZhHant(meta: meta ?? this.$meta);
 
 	// Translations

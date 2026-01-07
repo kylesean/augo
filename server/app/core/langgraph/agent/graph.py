@@ -8,6 +8,7 @@
 
 参考: docs/ROUTE_AFTER_GAENT.md
 """
+
 from __future__ import annotations
 
 from typing import Any, cast

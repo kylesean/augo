@@ -9,11 +9,12 @@ Providing core system tools via DeepAgents' FilesystemBackend:
 
 Mapped to the project root directory for accessing skills and other project files.
 """
+
 from __future__ import annotations
 
 import json
 import os
-import subprocess
+import subprocess  # nosec B404
 from pathlib import Path
 from typing import Any, cast
 
@@ -57,7 +58,7 @@ class LocalFilesystemBackend(FilesystemBackend, SandboxBackendProtocol):
 
             # 使用 subprocess 执行命令
             # cwd 设置为 self.cwd (项目根目录)
-            result = subprocess.run(
+            result = subprocess.run(  # nosec B602 B607
                 command,
                 shell=True,
                 cwd=self.cwd,

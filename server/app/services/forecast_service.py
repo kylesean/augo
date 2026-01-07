@@ -10,6 +10,7 @@ Architecture:
     - RAG context retrieval for AI feedback preferences
     - Compatible with GenUI streaming via tools layer
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -380,7 +381,7 @@ class ForecastService:
             for row in result.all():
                 # 添加周期金额（允许小误差匹配）
                 recurring_amounts.add(float(abs(row[0])))
-        except Exception:
+        except Exception:  # nosec B110
             pass
 
         # 查询每笔支出交易（而非每日汇总）

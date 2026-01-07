@@ -176,7 +176,7 @@ return temporary(_that.currency);case _:
 
 class AccountViewCurrencyGlobal implements AccountViewCurrencyState {
   const AccountViewCurrencyGlobal();
-  
+
 
 
 
@@ -208,7 +208,7 @@ String toString() {
 
 class AccountViewCurrencyTemporary implements AccountViewCurrencyState {
   const AccountViewCurrencyTemporary(this.currency);
-  
+
 
  final  String currency;
 

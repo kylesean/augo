@@ -63,14 +63,14 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
     )
-    
+
     op.create_index("ix_searchable_messages_user_uuid", "searchable_messages", ["user_uuid"])
     op.create_index("ix_searchable_messages_thread_id", "searchable_messages", ["thread_id"])
-    
+
     # Full-text search index on content
     op.execute("""
-        CREATE INDEX ix_searchable_messages_content_gin 
-        ON searchable_messages 
+        CREATE INDEX ix_searchable_messages_content_gin
+        ON searchable_messages
         USING gin(to_tsvector('simple', content))
     """)
 

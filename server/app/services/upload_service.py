@@ -5,6 +5,7 @@
 2. 然后一次性批量插入数据库记录
 3. 单次 commit
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -134,7 +135,6 @@ class UploadService:
         Returns:
             (成功列表, 失败列表)
         """
-
         # ====================================================================
         # 阶段 1：获取存储配置并初始化适配器
         # ====================================================================
@@ -386,7 +386,6 @@ class UploadService:
             attachment_id: 附件 ID
             user_uuid: 用户 UUID
         """
-
         stmt = select(Attachment).where(
             Attachment.id == attachment_id,
             Attachment.user_uuid == user_uuid,

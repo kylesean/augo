@@ -6,6 +6,7 @@ This service provides a unified interface for querying transactions, used by bot
 
 Best practice: Business logic lives here, not in API routes or tool definitions.
 """
+
 from __future__ import annotations
 
 from datetime import datetime

@@ -2,6 +2,7 @@
 
 This module provides API endpoints for managing and accessing exchange rate data.
 """
+
 from __future__ import annotations
 
 from typing import Any

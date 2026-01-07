@@ -101,7 +101,9 @@ class DataUriService {
         dataUriFiles.add(dataUriFile);
         _logger.info('Successfully converted file to DataUri: ${file.name}');
       } catch (e) {
-        _logger.warning('Failed to convert file to DataUri: ${file.name}, reason: $e');
+        _logger.warning(
+          'Failed to convert file to DataUri: ${file.name}, reason: $e',
+        );
         // Single file failure does not affect other files
       }
     }

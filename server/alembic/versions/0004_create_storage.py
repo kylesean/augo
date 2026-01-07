@@ -22,7 +22,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Create storage tables."""
-    
+
     # storage_configs
     op.create_table(
         "storage_configs",
@@ -52,7 +52,7 @@ def upgrade() -> None:
         ),
     )
     op.create_index("ix_storage_configs_user_uuid", "storage_configs", ["user_uuid"])
-    
+
     # attachments
     op.create_table(
         "attachments",

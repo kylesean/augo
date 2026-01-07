@@ -193,7 +193,6 @@ class EventGenerator:
         Yields:
             GenUIEvent 事件
         """
-
         for node_name, node_output in chunk.items():
             if node_name.startswith("__"):
                 continue

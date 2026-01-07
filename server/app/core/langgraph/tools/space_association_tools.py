@@ -3,6 +3,7 @@
 These tools are called directly from UI via direct_execute, bypassing LLM.
 Similar to execute_transfer for transfer confirmation.
 """
+
 from __future__ import annotations
 
 from typing import Any

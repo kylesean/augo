@@ -67,4 +67,3 @@ echo "Ensuring pgvector extension in database '$POSTGRES_DB'"
 "${DC_CMD[@]}" exec -T db psql -U postgres -d "$POSTGRES_DB" -c "CREATE EXTENSION IF NOT EXISTS vector;"
 
 echo "PostgreSQL initialization completed successfully"
-

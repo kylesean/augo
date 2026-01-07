@@ -4,6 +4,7 @@ This module contains models for:
 - AccountDailySnapshot: Daily balance snapshots for high-performance time series analysis
 - AIFeedbackMemory: User feedback on AI predictions for RAG context learning
 """
+
 from __future__ import annotations
 
 from datetime import date

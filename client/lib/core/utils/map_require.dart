@@ -8,7 +8,9 @@ extension RequireField on Map<String, dynamic>? {
     }
     final value = map[key];
     if (value is! T) {
-      throw BusinessException("Field '$key' type error: expected $T, actual ${value.runtimeType}");
+      throw BusinessException(
+        "Field '$key' type error: expected $T, actual ${value.runtimeType}",
+      );
     }
     return value;
   }

@@ -7,8 +7,10 @@ part 'conversation_search_state.freezed.dart';
 enum SearchMode {
   /// Normal mode - Display conversation list and categories
   normal,
+
   /// Search mode - Display search interface (within drawer)
   search,
+
   /// Fullscreen search mode - Display search interface in fullscreen
   fullscreenSearch,
 }

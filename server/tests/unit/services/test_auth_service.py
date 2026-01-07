@@ -3,9 +3,9 @@ from uuid import uuid4
 
 import pytest
 
+from app.core.exceptions import AuthenticationError, BusinessError
 from app.models.user import User
 from app.services.auth_service import AuthService
-from app.core.exceptions import AuthenticationError, BusinessError
 
 
 @pytest.mark.asyncio

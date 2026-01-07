@@ -1,16 +1,27 @@
-name: Build iOS IPA (Sideload Version)
+# iOS IPA Build (Sideload Version)
+# Builds an unsigned IPA for sideloading via AltStore, Sideloadly, etc.
+
+name: Build iOS IPA (Sideload)
 
 on:
   push:
-    branches: [ master ]
-  workflow_dispatch:
+    branches: [main]
+    paths:
+      - 'client/**'
+      - '.github/workflows/ios_distribute.yml'
+  workflow_dispatch:  # Allow manual trigger
 
 jobs:
-  build:
+  build-ios:
+    name: Build iOS IPA
     runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: ./client
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -20,21 +31,21 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
-        working-directory: ./client
 
-      # 这里我们不签发正式证书，只打一个无签名的测试包
-      - name: Build IPA
+      - name: Build iOS (no codesign)
+        run: flutter build ios --release --no-codesign
+
+      - name: Create IPA for sideloading
         run: |
-          flutter build ios --release --no-codesign
-          # 这里很关键：把编译出的 .app 转换成 .ipa 方便侧载工具识别
           cd build/ios/iphoneos
-          mkdir Payload
+          mkdir -p Payload
           cp -r Runner.app Payload/
           zip -r ../../Augo_Sideload.ipa Payload
-        working-directory: ./client
+          echo "IPA created at: $(pwd)/../../Augo_Sideload.ipa"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Augo-iOS-IPA
           path: client/build/Augo_Sideload.ipa
+          retention-days: 30

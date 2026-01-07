@@ -2,8 +2,8 @@
 
 import uuid as uuid_lib
 
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import Column
+from sqlalchemy.dialects.postgresql import UUID
 from sqlmodel import Field
 
 from app.models.base import BaseModel

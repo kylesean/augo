@@ -21,6 +21,7 @@ Output (JSON):
 Note:
     No aiInsight field - LLM generates insights in user's language.
 """
+
 from __future__ import annotations
 
 import argparse

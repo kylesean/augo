@@ -12,10 +12,9 @@ The two pools connect to the same database but use different drivers:
 from __future__ import annotations
 
 import uuid
-from typing import Any, cast
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
 from sqlalchemy import delete, desc, select, text
 from sqlalchemy.ext.asyncio import (
@@ -314,7 +313,9 @@ class SessionRepository:
         from app.models.session import Session as ChatSession
 
         result = await self.db.execute(
-            select(ChatSession).where(ChatSession.user_uuid == user_uuid).order_by(cast(Any, ChatSession.created_at).desc())
+            select(ChatSession)
+            .where(ChatSession.user_uuid == user_uuid)
+            .order_by(cast(Any, ChatSession.created_at).desc())
         )
         return list(result.scalars().all())
 

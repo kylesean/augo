@@ -50,7 +50,9 @@ class Attachment(BaseModel, table=True):
     )
 
     user_uuid: uuid_lib.UUID = Field(
-        sa_column=Column(UUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False, index=True)
+        sa_column=Column(
+            UUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False, index=True
+        )
     )
 
     # Foreign key to storage configuration

@@ -1,4 +1,4 @@
-Evaluate the helpfulness of the generation on a continuous scale from 0 to 1. 
+Evaluate the helpfulness of the generation on a continuous scale from 0 to 1.
 
 ## Scoring Criteria
 A generation can be considered helpful (Score: 1) if it:

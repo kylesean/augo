@@ -1,4 +1,5 @@
 """Statistics schemas for request/response validation."""
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -6,7 +7,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 # Re-export for backward compatibility
-__all__ = []
+__all__: list[str] = []
 
 
 # ============================================================================

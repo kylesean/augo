@@ -24,18 +24,18 @@ def upgrade() -> None:
     """Enable PostgreSQL extensions."""
     # UUID generation
     op.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
-    
+
     # Vector similarity search (required for Mem0 and AI features)
     op.execute('CREATE EXTENSION IF NOT EXISTS "vector"')
 
 
 def downgrade() -> None:
     """Extensions are not dropped on downgrade.
-    
+
     Reason: These extensions (especially vector) are used by external components
-    like Mem0 which are not managed by Alembic. Dropping them would break 
+    like Mem0 which are not managed by Alembic. Dropping them would break
     those components and require manual cleanup.
-    
+
     If you need to fully reset the database, drop it manually and recreate.
     """
     # Intentionally empty - do not drop extensions

@@ -22,7 +22,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Create users and user_settings tables."""
-    
+
     # =========================================================================
     # users - Core user authentication table
     # =========================================================================
@@ -63,12 +63,12 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
     )
-    
+
     # Indexes for users
     op.create_index("ix_users_uuid", "users", ["uuid"])
     op.create_index("ix_users_email", "users", ["email"])
     op.create_index("ix_users_mobile", "users", ["mobile"])
-    
+
     # =========================================================================
     # user_settings - User preferences
     # =========================================================================
@@ -99,7 +99,7 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
     )
-    
+
     op.create_index("ix_user_settings_user_uuid", "user_settings", ["user_uuid"])
 
 
@@ -107,7 +107,7 @@ def downgrade() -> None:
     """Drop users and user_settings tables."""
     op.drop_index("ix_user_settings_user_uuid")
     op.drop_table("user_settings")
-    
+
     op.drop_index("ix_users_mobile")
     op.drop_index("ix_users_email")
     op.drop_index("ix_users_uuid")

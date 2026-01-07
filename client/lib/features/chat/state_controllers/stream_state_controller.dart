@@ -40,6 +40,7 @@ enum StreamPhase {
 /// - User cancellation tracking
 class StreamStateController {
   final _logger = Logger('StreamStateController');
+
   /// Current streaming phase
   StreamPhase _currentPhase = StreamPhase.idle;
 
@@ -95,7 +96,9 @@ class StreamStateController {
 
   /// Start a new streaming session
   void startStreaming(String messageId) {
-    _logger.info('StreamStateController: Starting streaming for message $messageId');
+    _logger.info(
+      'StreamStateController: Starting streaming for message $messageId',
+    );
     _currentMessageId = messageId;
     _currentPhase = StreamPhase.waitingForFirstChunk;
     _lastEventType = null;

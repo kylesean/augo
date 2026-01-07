@@ -13,6 +13,7 @@ outer key name as the discriminator:
   ❌ Wrong: {"type": "surface_update", "surfaceId": "..."}
   ✅ Right: {"surfaceUpdate": {"surfaceId": "..."}}
 """
+
 from __future__ import annotations
 
 from typing import Any

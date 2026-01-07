@@ -639,7 +639,7 @@ as String,
 @override
 @pragma('vm:prefer-inline')
 $SpaceCreatorCopyWith<$Res> get creator {
-  
+
   return $SpaceCreatorCopyWith<$Res>(_self.creator, (value) {
     return _then(_self.copyWith(creator: value));
   });
@@ -876,7 +876,7 @@ as String,
 @override
 @pragma('vm:prefer-inline')
 $SpaceCreatorCopyWith<$Res> get creator {
-  
+
   return $SpaceCreatorCopyWith<$Res>(_self.creator, (value) {
     return _then(_self.copyWith(creator: value));
   });

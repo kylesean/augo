@@ -173,6 +173,22 @@ audit:
 typecheck:
 	cd server && uv run mypy .
 
-# Run all quality checks (lint, typecheck, audit)
-check-all: lint typecheck audit
+# Run code complexity analysis
+complexity:
+	@echo "=== Cyclomatic Complexity (functions with CC > 10) ==="
+	cd server && uv run radon cc app/ -a -s --min C
+	@echo ""
+	@echo "=== Maintainability Index (files with MI < 20) ==="
+	cd server && uv run radon mi app/ -s --min C || echo "All files have good maintainability"
+
+# Run pre-commit hooks on all files
+pre-commit:
+	cd server && uv run pre-commit run --all-files
+
+# Install pre-commit hooks
+pre-commit-install:
+	cd server && uv run pre-commit install
+
+# Run all quality checks (lint, typecheck, audit, complexity)
+check-all: lint typecheck audit complexity
 	@echo "All quality checks passed!"

@@ -54,6 +54,68 @@ class MetricsMiddleware(BaseHTTPMiddleware):
         return response
 
 
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    """Middleware for adding security headers to all responses.
+
+    This middleware adds essential security headers to protect against:
+    - XSS (Cross-Site Scripting) attacks
+    - Clickjacking attacks
+    - MIME type sniffing attacks
+    - Information leakage
+    """
+
+    async def dispatch(self, request: Request, call_next: Callable) -> Response:
+        """Add security headers to each response.
+
+        Args:
+            request: The incoming request
+            call_next: The next middleware or route handler
+
+        Returns:
+            Response: The response with security headers added
+        """
+        response: Response = await call_next(request)
+
+        # XSS Protection - Enables browser's built-in XSS filter
+        # Note: Deprecated in modern browsers but still useful for legacy support
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+
+        # Prevent MIME type sniffing - stops browsers from guessing content type
+        response.headers["X-Content-Type-Options"] = "nosniff"
+
+        # Clickjacking protection - prevents embedding in iframes
+        # SAMEORIGIN allows same-origin embedding (for internal tools if needed)
+        response.headers["X-Frame-Options"] = "SAMEORIGIN"
+
+        # Content Security Policy - restrict resource loading sources
+        # This is a basic policy; adjust based on your frontend requirements
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
+            "style-src 'self' 'unsafe-inline'; "
+            "img-src 'self' data: https:; "
+            "font-src 'self' data:; "
+            "connect-src 'self' https:; "
+            "frame-ancestors 'self';"
+        )
+
+        # Referrer Policy - controls information sent in Referer header
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+
+        # Permissions Policy - disable unnecessary browser features
+        response.headers["Permissions-Policy"] = (
+            "geolocation=(), " "microphone=(), " "camera=(), " "payment=(), " "usb=()"
+        )
+
+        # Cache control for API responses - prevent caching of sensitive data
+        # Only apply to API routes, not static files
+        if request.url.path.startswith("/api/"):
+            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
+            response.headers["Pragma"] = "no-cache"
+
+        return response
+
+
 class LoggingContextMiddleware(BaseHTTPMiddleware):
     """Middleware for adding request_id, user_uuid and session_id to logging context."""
 

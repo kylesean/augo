@@ -9,6 +9,7 @@ Design principles:
 3. Business logic success/failure is indicated by the 'code' field
 4. code=0 means success, non-zero means business error
 """
+
 from __future__ import annotations
 
 from typing import Any, TypeVar

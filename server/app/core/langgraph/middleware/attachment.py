@@ -6,6 +6,7 @@ This middleware handles image and document attachments in chat messages:
 
 Based on LangChain 1.0 middleware best practices.
 """
+
 from __future__ import annotations
 
 import base64
@@ -151,7 +152,6 @@ class AttachmentMiddleware(BaseMiddleware):
         Returns:
             List of Attachment objects
         """
-
         async with self.db_session_factory() as session:
             # Convert string IDs to UUIDs
             uuids = [UUID(aid) for aid in attachment_ids]

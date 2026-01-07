@@ -7,6 +7,7 @@ This module defines metadata for each tool using three orthogonal dimensions:
 
 This design provides clear separation of concerns and enables declarative routing logic.
 """
+
 from __future__ import annotations
 
 from enum import Enum

@@ -1,4 +1,5 @@
 """Shared space service for managing collaborative spaces."""
+
 from __future__ import annotations
 
 import secrets
@@ -326,7 +327,9 @@ class SharedSpaceService:
 
         if existing_member:
             if existing_member.status == "ACCEPTED":
-                raise BusinessError("you are already a member", error_code=ErrorCode.ALREADY_MEMBER_OR_HAS_BEEN_INVITED)
+                raise BusinessError(
+                    "you are already a member", error_code=ErrorCode.ALREADY_MEMBER_OR_HAS_BEEN_INVITED
+                )
             else:
                 # Update existing pending membership
                 existing_member.status = "ACCEPTED"
@@ -792,9 +795,7 @@ class SharedSpaceService:
 
             # Get current valid invite code
             if space.invite_code:
-                is_valid = not space.invite_code_expires_at or space.invite_code_expires_at > datetime.now(
-                    UTC
-                )
+                is_valid = not space.invite_code_expires_at or space.invite_code_expires_at > datetime.now(UTC)
                 if is_valid:
                     data["currentInviteCode"] = space.invite_code
                     data["inviteCodeExpiresAt"] = (
@@ -848,9 +849,7 @@ class SharedSpaceService:
 
             # Get current valid invite code
             if space.invite_code:
-                is_valid = not space.invite_code_expires_at or space.invite_code_expires_at > datetime.now(
-                    UTC
-                )
+                is_valid = not space.invite_code_expires_at or space.invite_code_expires_at > datetime.now(UTC)
                 if is_valid:
                     data["currentInviteCode"] = space.invite_code
                     data["inviteCodeExpiresAt"] = (

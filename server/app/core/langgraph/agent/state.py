@@ -3,6 +3,7 @@
 使用 LangGraph TypedDict + Annotated 模式定义 Agent 状态。
 参考: https://docs.langchain.com/oss/python/langgraph/graph-api#state
 """
+
 from __future__ import annotations
 
 from typing import Annotated, Any, Literal, TypedDict

@@ -6,6 +6,7 @@ This module provides the core authentication business logic including:
 - Verification code sending and validation
 - Account existence checking
 """
+
 from __future__ import annotations
 
 import secrets

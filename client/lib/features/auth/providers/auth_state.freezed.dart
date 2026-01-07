@@ -221,7 +221,7 @@ return $default(_that.status,_that.user,_that.token);case _:
 
 class _AuthState implements AuthState {
   const _AuthState({this.status = AuthStatus.initial, this.user, this.token});
-  
+
 
 @override@JsonKey() final  AuthStatus status;
 @override final  UserModel? user;

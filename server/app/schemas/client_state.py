@@ -3,6 +3,7 @@
 定义客户端允许操作的状态子集，用于 GenUI 原子模式。
 这是 Client 与 Server 共享 StateGraph 的协议契约。
 """
+
 from __future__ import annotations
 
 from typing import Any, Literal
@@ -32,9 +33,7 @@ class ClientStateMutation(BaseModel):
         default=None, description="UI 模式：idle=走 agent，direct_execute=跳过 LLM 直接执行工具"
     )
     tool_name: str | None = Field(default=None, description="要直接执行的工具名（需在内部工具注册表中）")
-    tool_params: dict[str, Any] | None = Field(
-        default=None, description="工具参数，ui_mode=direct_execute 时必须提供"
-    )
+    tool_params: dict[str, Any] | None = Field(default=None, description="工具参数，ui_mode=direct_execute 时必须提供")
 
     model_config = {"extra": "ignore"}
 

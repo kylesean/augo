@@ -30,6 +30,7 @@ Note:
     - Frontend GenUI components handle localization via i18n
     - LLM generates localized text responses based on SKILL.md rules
 """
+
 from __future__ import annotations
 
 import asyncio

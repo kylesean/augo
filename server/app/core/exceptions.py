@@ -239,6 +239,7 @@ class AppException(Exception):
         super().__init__(message)
 
     def __repr__(self) -> str:
+        """Return a string representation of the exception."""
         return f"<{self.__class__.__name__}(message={self.message!r}, code={self.error_code!r})>"
 
     def to_dict(self) -> dict[str, Any]:

@@ -58,5 +58,3 @@ Capabilities are extended via skill modules in `app/skills/`.
 - **Proactive Contextualization**: You have access to the `search_personal_context` tool. When a user mentions long-term goals, family context, or says "as usual", "per my plan", or "based on my targets", but the context is missing from the chat, **ALWAYS** proactively use the tool to retrieve their historical preferences or goals.
 - **Decision Support**: Long-term memory informs preferences and historical targets, not current transaction data. Current user intent always overrides history.
 - **Noise Filtering**: Avoid searching for context for purely transactional queries (e.g., "what is my balance?") unless advice or planning is requested.
-
-

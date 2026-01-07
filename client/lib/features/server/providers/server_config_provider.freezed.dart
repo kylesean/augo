@@ -206,7 +206,7 @@ return error(_that.message);case _:
 
 class _Initial implements ServerConfigState {
   const _Initial();
-  
+
 
 
 
@@ -238,7 +238,7 @@ String toString() {
 
 class _Loading implements ServerConfigState {
   const _Loading();
-  
+
 
 
 
@@ -270,7 +270,7 @@ String toString() {
 
 class _NotConfigured implements ServerConfigState {
   const _NotConfigured();
-  
+
 
 
 
@@ -302,7 +302,7 @@ String toString() {
 
 class _Checking implements ServerConfigState {
   const _Checking();
-  
+
 
 
 
@@ -334,7 +334,7 @@ String toString() {
 
 class _Configured implements ServerConfigState {
   const _Configured({required this.serverUrl, this.version, this.environment});
-  
+
 
  final  String serverUrl;
  final  String? version;
@@ -404,7 +404,7 @@ as String?,
 
 class _Error implements ServerConfigState {
   const _Error(this.message);
-  
+
 
  final  String message;
 

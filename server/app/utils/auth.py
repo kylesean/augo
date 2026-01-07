@@ -1,4 +1,5 @@
 """This file contains the authentication utilities for the application."""
+
 from __future__ import annotations
 
 import re

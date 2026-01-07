@@ -1,4 +1,5 @@
 """Budget API routes for managing user budgets."""
+
 from __future__ import annotations
 
 from collections.abc import AsyncGenerator

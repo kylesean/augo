@@ -6,6 +6,7 @@ This module provides:
 - Streaming utilities for large result sets
 - Pagination schemas for API responses
 """
+
 from __future__ import annotations
 
 from collections.abc import AsyncGenerator

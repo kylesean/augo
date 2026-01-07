@@ -12,7 +12,10 @@ from typing import TYPE_CHECKING, Optional
 
 import sqlalchemy as sa
 from sqlalchemy import Column
-from sqlalchemy.dialects.postgresql import JSONB, UUID as PG_UUID
+from sqlalchemy.dialects.postgresql import (
+    JSONB,
+    UUID as PG_UUID,
+)
 from sqlmodel import Field, Relationship
 
 from app.models.base import BaseModel

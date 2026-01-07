@@ -211,7 +211,7 @@ return $default(_that.accounts,_that.totalBalance,_that.lastUpdatedAt,_that.isLo
 
 class _FinancialAccountState extends FinancialAccountState {
   const _FinancialAccountState({final  List<FinancialAccount> accounts = const [], this.totalBalance, this.lastUpdatedAt, this.isLoading = false, this.error}): _accounts = accounts,super._();
-  
+
 
  final  List<FinancialAccount> _accounts;
 @override@JsonKey() List<FinancialAccount> get accounts {

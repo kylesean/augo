@@ -104,8 +104,4 @@ class DefaultRenderPolicy(CompositeRenderPolicy):
     """
 
     def __init__(self) -> None:
-        super().__init__(
-            [
-                # ToolsNodeBufferPolicy(),  # 禁用缓冲策略，让工具产生的 UI 组件立即渲染，避免用户感觉请求卡住
-            ]
-        )
+        super().__init__([])

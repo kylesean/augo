@@ -137,7 +137,8 @@ class MediaUploadException implements Exception {
   }) {
     return MediaUploadException(
       MediaUploadError.networkError,
-      message ?? 'Network connection failed, please check network connection and try again',
+      message ??
+          'Network connection failed, please check network connection and try again',
       originalError,
     );
   }

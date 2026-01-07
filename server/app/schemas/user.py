@@ -1,4 +1,5 @@
 """Pydantic schemas for user management endpoints."""
+
 from __future__ import annotations
 
 from decimal import Decimal
@@ -28,7 +29,9 @@ class FinancialAccountItem(BaseModel):
 
     name: str = Field(..., description="Account name", max_length=100)
     nature: Literal["ASSET", "LIABILITY"] = Field(..., description="Account nature")
-    type: Literal["CASH", "DEPOSIT", "E_MONEY", "INVESTMENT", "RECEIVABLE", "CREDIT_CARD", "LOAN", "PAYABLE"] | None = Field(None, description="Account type", max_length=50)
+    type: (
+        Literal["CASH", "DEPOSIT", "E_MONEY", "INVESTMENT", "RECEIVABLE", "CREDIT_CARD", "LOAN", "PAYABLE"] | None
+    ) = Field(None, description="Account type", max_length=50)
     initialBalance: str = Field(default="0", description="Initial balance", alias="initial_balance")
     currentBalance: str = Field(default="0", description="Current balance", alias="current_balance")
     currencyCode: str = Field(default="CNY", description="Currency code", alias="currency_code", max_length=3)
@@ -172,7 +175,9 @@ class CreateFinancialAccountRequest(BaseModel):
 
     name: str = Field(..., description="Account name", max_length=100)
     nature: Literal["ASSET", "LIABILITY"] = Field(..., description="Account nature")
-    type: Literal["CASH", "DEPOSIT", "E_MONEY", "INVESTMENT", "RECEIVABLE", "CREDIT_CARD", "LOAN", "PAYABLE"] | None = Field(None, description="Account type", max_length=50)
+    type: (
+        Literal["CASH", "DEPOSIT", "E_MONEY", "INVESTMENT", "RECEIVABLE", "CREDIT_CARD", "LOAN", "PAYABLE"] | None
+    ) = Field(None, description="Account type", max_length=50)
     initialBalance: str = Field(default="0", description="Initial balance")
     currentBalance: str = Field(default="0", description="Current balance")
     currencyCode: str = Field(default="CNY", description="Currency code", max_length=3)
@@ -196,7 +201,9 @@ class UpdateFinancialAccountRequest(BaseModel):
 
     name: str | None = Field(None, max_length=100)
     nature: Literal["ASSET", "LIABILITY"] | None = None
-    type: Literal["CASH", "DEPOSIT", "E_MONEY", "INVESTMENT", "RECEIVABLE", "CREDIT_CARD", "LOAN", "PAYABLE"] | None = Field(None, max_length=50)
+    type: (
+        Literal["CASH", "DEPOSIT", "E_MONEY", "INVESTMENT", "RECEIVABLE", "CREDIT_CARD", "LOAN", "PAYABLE"] | None
+    ) = Field(None, max_length=50)
     initialBalance: str | None = None
     currentBalance: str | None = None
     currencyCode: str | None = Field(None, max_length=3)

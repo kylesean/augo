@@ -24,7 +24,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Create forecast tables."""
-    
+
     # =========================================================================
     # account_daily_snapshots - Daily balance snapshots for charts
     # Composite primary key: (snapshot_date, account_id)
@@ -74,11 +74,11 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
     )
-    
+
     op.create_index("ix_account_daily_snapshots_user_uuid", "account_daily_snapshots", ["user_uuid"])
     op.create_index("ix_account_daily_snapshots_account_id", "account_daily_snapshots", ["account_id"])
     op.create_index("ix_account_daily_snapshots_date", "account_daily_snapshots", ["snapshot_date"])
-    
+
     # =========================================================================
     # ai_feedback_memory - User feedback on AI predictions for RAG
     # =========================================================================
@@ -120,7 +120,7 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
     )
-    
+
     op.create_index("ix_ai_feedback_memory_user_uuid", "ai_feedback_memory", ["user_uuid"])
     op.create_index("ix_ai_feedback_memory_insight_type", "ai_feedback_memory", ["insight_type"])
     op.create_index("ix_ai_feedback_memory_created_at", "ai_feedback_memory", ["created_at"])
@@ -132,7 +132,7 @@ def downgrade() -> None:
     op.drop_index("ix_ai_feedback_memory_insight_type")
     op.drop_index("ix_ai_feedback_memory_user_uuid")
     op.drop_table("ai_feedback_memory")
-    
+
     op.drop_index("ix_account_daily_snapshots_date")
     op.drop_index("ix_account_daily_snapshots_account_id")
     op.drop_index("ix_account_daily_snapshots_user_uuid")

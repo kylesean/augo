@@ -1,0 +1,119 @@
+# Global Pre-commit hooks for Augo (Mono-repo)
+# Install: pip install pre-commit && pre-commit install
+# Run: pre-commit run --all-files
+
+default_language_version:
+  python: python3.13
+
+repos:
+  # ============================================================================
+  # Python Hooks (Backend)
+  # ============================================================================
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.0
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix, --config, server/pyproject.toml]
+        files: ^server/
+      - id: ruff-format
+        args: [--config, server/pyproject.toml]
+        files: ^server/
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.14.0
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - pydantic>=2.11.1
+          - sqlalchemy[stubs]>=2.0.40
+          - types-requests>=2.31.0
+          - types-python-dateutil>=2.8.0
+          - types-aiofiles>=23.2.0
+        args: [--config-file, server/pyproject.toml]
+        pass_filenames: false
+        entry: bash -c "cd server && mypy app/"
+        files: ^server/
+
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.8.0
+    hooks:
+      - id: bandit
+        args: [-c, server/pyproject.toml, -r, server/app/]
+        additional_dependencies: ["bandit[toml]"]
+        files: ^server/
+
+  # ============================================================================
+  # Dart/Flutter Hooks (Frontend) - Using Local Commands
+  # ============================================================================
+  - repo: local
+    hooks:
+      - id: dart-format
+        name: Dart Format
+        entry: dart format
+        language: system
+        types: [dart]
+        files: ^client/
+      - id: flutter-analyze
+        name: Flutter Analyze
+        entry: bash -c "cd client && flutter analyze"
+        language: system
+        types: [dart]
+        files: ^client/
+        pass_filenames: false
+
+  # ============================================================================
+  # General File Checks
+  # ============================================================================
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-yaml
+        args: [--unsafe]
+      - id: check-toml
+      - id: check-json
+      - id: end-of-file-fixer
+        exclude: ^(server/\.env|server/\.env\.example|client/\.env|client/\.env\.example)$
+      - id: trailing-whitespace
+        exclude: ^(server/\.env|server/\.env\.example|client/\.env|client/\.env\.example)$
+      # ------------------------------------------------------------------------
+      # 待发布 v0.1 后启用：禁止直接提交到主分支，强制执行特性分支开发流程
+      # ------------------------------------------------------------------------
+      # - id: no-commit-to-branch
+      #   args: [--branch, main, --branch, master]
+      - id: detect-private-key
+      - id: check-ast
+      - id: debug-statements
+
+  # ============================================================================
+  # Security (Secrets)
+  # ============================================================================
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: [--baseline, .secrets.baseline]
+        exclude: |
+          (?x)^(
+            server/uv\.lock|
+            client/pubspec\.lock|
+            .*\.g\.dart|            # Ignore Flutter generated code
+            .*\.freezed\.dart|      # Ignore code gen
+            server/tests/.*|        # Ignore python tests
+            client/test/.*|         # Ignore flutter tests
+            .*\.json|
+            .*\.xcscheme|
+            client/\.metadata
+          )$
+
+  # ============================================================================
+  # Meta Checks
+  # ============================================================================
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.23
+    hooks:
+      - id: validate-pyproject
+        files: ^server/pyproject.toml

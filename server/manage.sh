@@ -70,7 +70,7 @@ fi
 case $COMMAND in
     setup)
         echo -e "${GREEN}Starting setup for $ENV environment...${NC}"
-        
+
         # Connectivity Check Loop
         while true; do
             echo -e "${GREEN}Verifying database connectivity...${NC}"

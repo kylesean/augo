@@ -6,6 +6,7 @@ These tools enable AI-driven budget management:
 - suggest_budget: AI-generated budget suggestions
 - rebalance_budget: Transfer between budgets
 """
+
 from __future__ import annotations
 
 from typing import Any, Literal

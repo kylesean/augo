@@ -217,7 +217,7 @@ return $default(_that.id,_that.title,_that.snippet,_that.messageId,_that.created
 
 class _ConversationSearchResult implements ConversationSearchResult {
   const _ConversationSearchResult({required this.id, required this.title, required this.snippet, this.messageId, this.createdAt, this.updatedAt, final  List<HighlightRange> highlights = const []}): _highlights = highlights;
-  
+
 
 @override final  String id;
 @override final  String title;
@@ -499,7 +499,7 @@ return $default(_that.start,_that.end,_that.field);case _:
 
 class _HighlightRange implements HighlightRange {
   const _HighlightRange({required this.start, required this.end, required this.field});
-  
+
 
 @override final  int start;
 @override final  int end;
@@ -767,7 +767,7 @@ return $default(_that.mode,_that.query,_that.results,_that.isLoading,_that.error
 
 class _ConversationSearchState implements ConversationSearchState {
   const _ConversationSearchState({this.mode = SearchMode.normal, this.query = '', final  List<ConversationSearchResult> results = const [], this.isLoading = false, this.error, this.hasSearched = false, this.isFullscreen = false}): _results = results;
-  
+
 
 @override@JsonKey() final  SearchMode mode;
 @override@JsonKey() final  String query;

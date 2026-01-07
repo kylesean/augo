@@ -9,6 +9,7 @@ Design Principles:
 - Type parameterization, rather than multi-tool separation
 - Return GenUI component data
 """
+
 from __future__ import annotations
 
 import uuid
@@ -106,9 +107,7 @@ class RecordTransactionsInput(BaseModel):
     transactions: list[TransactionItem] = Field(
         ..., min_length=1, description="Transaction list, each containing type/amount/tags"
     )
-    transaction_at: str | None = Field(
-        default=None, description="Transaction time (ISO 8601), default current time"
-    )
+    transaction_at: str | None = Field(default=None, description="Transaction time (ISO 8601), default current time")
     source_account_id: str | None = Field(default=None, description="Payment account ID for expense (optional)")
     target_account_id: str | None = Field(default=None, description="Receipt account ID for income (optional)")
 

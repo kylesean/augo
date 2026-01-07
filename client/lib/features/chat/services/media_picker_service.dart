@@ -27,9 +27,7 @@ class MediaPickerService {
       if (e is MediaUploadException) {
         rethrow;
       }
-      throw MediaUploadException.unknownError(
-        originalError: e,
-      );
+      throw MediaUploadException.unknownError(originalError: e);
     }
   }
 
@@ -49,9 +47,7 @@ class MediaPickerService {
 
       return images;
     } catch (e) {
-      throw MediaUploadException.unknownError(
-        originalError: e,
-      );
+      throw MediaUploadException.unknownError(originalError: e);
     }
   }
 
@@ -77,9 +73,7 @@ class MediaPickerService {
 
       return files;
     } catch (e) {
-      throw MediaUploadException.unknownError(
-        originalError: e,
-      );
+      throw MediaUploadException.unknownError(originalError: e);
     }
   }
 }

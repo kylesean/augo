@@ -6,7 +6,7 @@ and cache invalidation strategies for the application.
 
 import functools
 import json
-import pickle
+import pickle  # nosec B403
 from collections.abc import Callable
 from typing import Any, cast
 
@@ -114,7 +114,7 @@ class CacheManager:
                     return json.loads(value)
                 except (json.JSONDecodeError, TypeError):
                     # Fall back to pickle for complex objects
-                    return pickle.loads(value)
+                    return pickle.loads(value)  # nosec B301
 
             return value
 

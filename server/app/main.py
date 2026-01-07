@@ -1,4 +1,5 @@
 """This file contains the main application entry point."""
+
 from __future__ import annotations
 
 from collections.abc import AsyncIterator
@@ -38,6 +39,7 @@ from app.core.metrics import setup_metrics
 from app.core.middleware import (
     LoggingContextMiddleware,
     MetricsMiddleware,
+    SecurityHeadersMiddleware,
 )
 from app.core.responses import error_response, get_error_code_int, success_response
 
@@ -369,6 +371,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add security headers middleware (XSS protection, clickjacking, etc.)
+app.add_middleware(SecurityHeadersMiddleware)
 
 # Include API router
 app.include_router(api_router, prefix=settings.API_V1_STR)

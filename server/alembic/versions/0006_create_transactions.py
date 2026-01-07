@@ -22,7 +22,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Create transactions and related tables."""
-    
+
     # =========================================================================
     # transactions - Core transaction records (matches Transaction model)
     # =========================================================================
@@ -98,7 +98,7 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
     )
-    
+
     op.create_index("ix_transactions_user_uuid", "transactions", ["user_uuid"])
     op.create_index("ix_transactions_transaction_at", "transactions", ["transaction_at"])
     op.create_index("ix_transactions_category", "transactions", ["category_key"])
@@ -106,7 +106,7 @@ def upgrade() -> None:
     op.create_index("ix_transactions_source_thread_id", "transactions", ["source_thread_id"])
     op.create_index("ix_transactions_source_account_id", "transactions", ["source_account_id"])
     op.create_index("ix_transactions_target_account_id", "transactions", ["target_account_id"])
-    
+
     # =========================================================================
     # transaction_comments - Comments on transactions (matches TransactionComment model)
     # =========================================================================
@@ -149,10 +149,10 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
     )
-    
+
     op.create_index("ix_transaction_comments_transaction_id", "transaction_comments", ["transaction_id"])
     op.create_index("ix_transaction_comments_user_uuid", "transaction_comments", ["user_uuid"])
-    
+
     # =========================================================================
     # transaction_shares - Shared transactions (matches TransactionShare model)
     # =========================================================================
@@ -202,11 +202,11 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
     )
-    
+
     op.create_index("ix_transaction_shares_transaction_id", "transaction_shares", ["transaction_id"])
     op.create_index("ix_transaction_shares_sharer_user_uuid", "transaction_shares", ["sharer_user_uuid"])
     op.create_index("ix_transaction_shares_shared_with_user_uuid", "transaction_shares", ["shared_with_user_uuid"])
-    
+
     # =========================================================================
     # recurring_transactions - Recurring transaction rules (matches RecurringTransaction model)
     # =========================================================================
@@ -261,7 +261,7 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
     )
-    
+
     op.create_index("ix_recurring_transactions_user_uuid", "recurring_transactions", ["user_uuid"])
     op.create_index("ix_recurring_transactions_active", "recurring_transactions", ["is_active"])
 
@@ -271,16 +271,16 @@ def downgrade() -> None:
     op.drop_index("ix_recurring_transactions_active")
     op.drop_index("ix_recurring_transactions_user_uuid")
     op.drop_table("recurring_transactions")
-    
+
     op.drop_index("ix_transaction_shares_shared_with_user_uuid")
     op.drop_index("ix_transaction_shares_sharer_user_uuid")
     op.drop_index("ix_transaction_shares_transaction_id")
     op.drop_table("transaction_shares")
-    
+
     op.drop_index("ix_transaction_comments_user_uuid")
     op.drop_index("ix_transaction_comments_transaction_id")
     op.drop_table("transaction_comments")
-    
+
     op.drop_index("ix_transactions_target_account_id")
     op.drop_index("ix_transactions_source_account_id")
     op.drop_index("ix_transactions_source_thread_id")

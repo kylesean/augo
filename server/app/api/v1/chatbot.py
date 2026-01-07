@@ -8,8 +8,8 @@ Authorization: Session ownership is verified via get_authorized_session.
 """
 
 import json
-from uuid import UUID, uuid4
 from collections.abc import AsyncGenerator
+from uuid import UUID, uuid4
 
 from fastapi import (
     APIRouter,
@@ -338,6 +338,7 @@ async def update_session_state(
         session_id: The session ID to update.
         updates: The updates to apply to the state.
         current_user: The authenticated user.
+        db: Database session.
 
     Returns:
         dict: A message indicating the state was updated.
@@ -390,6 +391,7 @@ async def get_session_messages(
         request: The FastAPI request object for rate limiting.
         session_id: The session ID from URL path.
         current_user: The authenticated user.
+        db: Database session.
 
     Returns:
         Unified response with detailed messages in data field.
@@ -437,6 +439,7 @@ async def clear_session_messages(
         request: The FastAPI request object for rate limiting.
         session_id: The session ID from URL path.
         current_user: The authenticated user.
+        db: Database session.
 
     Returns:
         dict: A message indicating the chat history was cleared.
@@ -489,6 +492,7 @@ async def cancel_last_turn(
         request: The FastAPI request object for rate limiting.
         session_id: The session ID from URL path.
         current_user: The authenticated user.
+        db: Database session.
 
     Returns:
         dict: A message indicating the cancellation result.
@@ -539,6 +543,7 @@ async def get_resume_status(
         request: The FastAPI request object for rate limiting.
         session_id: The session ID from URL path.
         current_user: The authenticated user.
+        db: Database session.
 
     Returns:
         dict: 包含 canResume 和 nextNodes 字段
@@ -597,6 +602,7 @@ async def resume_session(
         request: The FastAPI request object for rate limiting.
         session_id: The session ID from URL path.
         current_user: The authenticated user.
+        db: Database session.
 
     Returns:
         StreamingResponse: SSE 流式响应

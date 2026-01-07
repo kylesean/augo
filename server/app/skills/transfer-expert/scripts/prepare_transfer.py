@@ -4,6 +4,7 @@
 - Fuzzy matches accounts based on user hints
 - Pre-populates GenUI component
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -93,7 +94,7 @@ async def main() -> None:
                 for k, v in stdin_options.items():
                     if k not in options or options[k] is None:
                         options[k] = v
-        except Exception:
+        except Exception:  # nosec B110
             pass
 
     # 2. Validate Amount (Optional now as UI provides input)

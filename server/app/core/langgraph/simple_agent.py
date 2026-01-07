@@ -8,11 +8,13 @@
 
 此文件作为 Facade 类，协调各模块的工作。
 """
+
 from __future__ import annotations
 
 from collections.abc import AsyncGenerator
 from typing import Any, Sequence, cast
 from urllib.parse import quote_plus
+from uuid import UUID
 
 from langchain_core.messages import AIMessage, HumanMessage
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
@@ -20,7 +22,6 @@ from langgraph.errors import GraphRecursionError
 from psycopg import AsyncConnection
 from psycopg.rows import dict_row
 from psycopg_pool import AsyncConnectionPool
-from uuid import UUID
 
 from app.core.config import settings
 from app.core.langgraph.agent import build_agent_graph
@@ -159,7 +160,7 @@ class SimpleLangChainAgent:
         llm = self.llm_service.get_llm()
         if llm is None:
             raise RuntimeError("LLM not initialized")
- 
+
         graph = build_agent_graph(
             llm=llm,
             tools=tools,
@@ -500,7 +501,7 @@ class SimpleLangChainAgent:
                             tool_result = json.loads(content)
                         elif isinstance(content, dict):
                             tool_result = content
-                    except Exception:
+                    except Exception:  # nosec B112
                         continue
 
                 # 数据驱动：使用 ComponentDetector 统一检测
@@ -758,7 +759,6 @@ class SimpleLangChainAgent:
         # 获取 checkpointer 实例
         checkpointer = await self._get_checkpointer()
 
-        config = {"configurable": {"thread_id": str(session_id)}}
         # 1. 使用 LangGraph Official API 删除整个 thread 的 checkpoints 和 writes
         await checkpointer.adelete_thread(str(session_id))
 

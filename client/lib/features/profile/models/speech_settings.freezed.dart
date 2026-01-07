@@ -507,7 +507,7 @@ return $default(_that.isLoading,_that.isSaving,_that.settings,_that.errorMessage
 
 class _SpeechSettingsState implements SpeechSettingsState {
   const _SpeechSettingsState({this.isLoading = false, this.isSaving = false, this.settings = null, this.errorMessage = null});
-  
+
 
 @override@JsonKey() final  bool isLoading;
 @override@JsonKey() final  bool isSaving;

@@ -1,4 +1,4 @@
-Evaluate the degree of hallucination in the generation on a continuous scale from 0 to 1. 
+Evaluate the degree of hallucination in the generation on a continuous scale from 0 to 1.
 
 ## Scoring Criteria
 A generation can be considered to hallucinate (Score: 1) if it:

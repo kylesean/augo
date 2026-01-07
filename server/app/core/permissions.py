@@ -5,6 +5,7 @@ This module provides:
 - Permission checking decorators
 - Resource ownership validation
 """
+
 from __future__ import annotations
 
 from collections.abc import Callable

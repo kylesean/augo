@@ -52,4 +52,3 @@ When you recognize a transfer intent, immediately execute `prepare_transfer.py`.
 - **UI First**: Even if the amount is missing, you can open the wizard as it has an input field.
 - **Asset Only**: The script filters for asset accounts. Do not try to guide users via text if the script says they lack accounts.
 - **Localization**: Localize all your responses back to the current session language.
-

@@ -6,12 +6,13 @@ This module provides endpoints for user authentication including:
 - User login
 - Token verification and user/session dependencies
 """
+
 from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from uuid import UUID
 from typing import Any, cast
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request, status
 from fastapi.responses import JSONResponse
@@ -555,10 +556,14 @@ async def get_user_sessions(
                     "name": session.name or "",
                     # Use standard ISO 8601 format: replace +00:00 with Z for UTC
                     "created_at": (
-                        cast(datetime, session.created_at).isoformat().replace("+00:00", "Z") if session.created_at else ""
+                        cast(datetime, session.created_at).isoformat().replace("+00:00", "Z")
+                        if session.created_at
+                        else ""
                     ),
                     "updated_at": (
-                        cast(datetime, session.updated_at).isoformat().replace("+00:00", "Z") if session.updated_at else ""
+                        cast(datetime, session.updated_at).isoformat().replace("+00:00", "Z")
+                        if session.updated_at
+                        else ""
                     ),
                 }
                 for session in items

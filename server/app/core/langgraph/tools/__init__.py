@@ -10,6 +10,7 @@
 - 转账通过 transfer-expert 技能触发，由 UI 收集账户信息
 - 财务分析、共享空间等通过 Skills + 脚本实现，节省 token 消耗
 """
+
 from __future__ import annotations
 
 from contextvars import ContextVar

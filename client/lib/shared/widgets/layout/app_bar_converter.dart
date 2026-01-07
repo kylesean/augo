@@ -26,9 +26,6 @@ class AppBarConverter {
 
   /// Convert FHeaderAction to IconButton
   static IconButton convertToIconButton(FHeaderAction action) {
-    return IconButton(
-      icon: action.icon,
-      onPressed: action.onPress,
-    );
+    return IconButton(icon: action.icon, onPressed: action.onPress);
   }
 }

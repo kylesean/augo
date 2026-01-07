@@ -5,6 +5,7 @@ supporting both real-time streaming and historical message restoration using Pyd
 
 Schema Version: 2.0 (Refactored)
 """
+
 from __future__ import annotations
 
 from enum import Enum

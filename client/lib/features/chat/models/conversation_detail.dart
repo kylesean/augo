@@ -10,12 +10,14 @@ abstract class ConversationDetail with _$ConversationDetail {
   const factory ConversationDetail({
     required String id,
     required String title,
-    @JsonKey(fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) required DateTime updatedAt,
+    @JsonKey(fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)
+    required DateTime updatedAt,
     // Directly include message list, no longer using pagination structure
     @Default([]) List<ChatMessage> messages,
   }) = _ConversationDetail;
 
-  factory ConversationDetail.fromJson(Map<String, dynamic> json) => _$ConversationDetailFromJson(json);
+  factory ConversationDetail.fromJson(Map<String, dynamic> json) =>
+      _$ConversationDetailFromJson(json);
 }
 
 // Custom deserializer for DateTime
