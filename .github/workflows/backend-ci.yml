@@ -236,6 +236,7 @@ jobs:
           DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/augo_test # pragma: allowlist secret
           REDIS_URL: redis://localhost:6379/0
           JWT_SECRET_KEY: test-secret-key-for-ci # pragma: allowlist secret
+          ENCRYPTION_KEY: v3u8eA7-R5i_oX6DozID8lH_l6ApxfGqI8Xh-8o9mG4= # pragma: allowlist secret
           ENVIRONMENT: test
         run: |
           uv run pytest tests/ \
