@@ -54,7 +54,7 @@ from app.models import *  # noqa: F401, F403, E402
 
 @pytest_asyncio.fixture(scope="function")
 async def async_db_engine() -> AsyncGenerator[AsyncEngine, None]:
-    """Create a reusable SQLite engine.
+    """Create a reusable SQLite engine for tests.
     Use StaticPool to share data in memory across the session.
     """
     engine = create_async_engine(
@@ -70,6 +70,17 @@ async def async_db_engine() -> AsyncGenerator[AsyncEngine, None]:
     yield engine
 
     await engine.dispose()
+
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def setup_db_manager(async_db_engine: AsyncEngine) -> None:
+    """Inject the test engine into the global db_manager before each test.
+    This ensures the app's startup lifespan (init_db) uses the SQLite engine.
+    """
+    from app.core.database import db_manager
+
+    db_manager._engine = async_db_engine
+    db_manager.init_session_factory()
 
 
 @pytest_asyncio.fixture(scope="function")
@@ -93,7 +104,7 @@ async def db_session(async_db_engine: AsyncEngine) -> AsyncGenerator[AsyncSessio
     await connection.close()
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def client() -> Generator[TestClient, None, None]:
     with TestClient(app) as c:
         yield c
@@ -103,6 +114,8 @@ def client() -> Generator[TestClient, None, None]:
 def setup_test_env(monkeypatch):
     """Setup test environment variables and core mocks."""
     # 1. Inject mandatory keys to prevent init errors
+    monkeypatch.setenv("APP_ENV", "test")
+    monkeypatch.setenv("DATABASE_URL", "sqlite+aiosqlite:///:memory:")
     monkeypatch.setenv("ENCRYPTION_KEY", "v3u8eA7-R5i_oX6DozID8lH_l6ApxfGqI8Xh-8o9mG4=")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-test-key-for-unit-tests")
     monkeypatch.setenv("JWT_SECRET_KEY", "test-secret-key")
