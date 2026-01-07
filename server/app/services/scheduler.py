@@ -16,7 +16,6 @@ Usage:
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -63,7 +62,7 @@ class AppScheduler:
     """
 
     def __init__(self) -> None:
-        self._scheduler: Optional[AsyncIOScheduler] = None
+        self._scheduler: AsyncIOScheduler | None = None
         self._jobs: list[ScheduledJob] = []
 
     def register_job(self, job: ScheduledJob) -> None:

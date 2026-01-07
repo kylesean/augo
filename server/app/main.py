@@ -1,13 +1,12 @@
 """This file contains the main application entry point."""
+from __future__ import annotations
 
-import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
 from typing import (
     Any,
-    Dict,
 )
 
 from dotenv import load_dotenv
@@ -31,11 +30,6 @@ from app.core.config import settings
 from app.core.database import db_manager
 from app.core.exceptions import (
     AppException,
-    AuthenticationError,
-    AuthorizationError,
-    BusinessError,
-    NotFoundError,
-    ValidationError as AppValidationError,
 )
 from app.core.limiter import limiter
 from app.core.logging import logger
@@ -202,7 +196,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         formatted_errors.append({"field": field, "message": msg})
 
     # For _root errors, try to get more context about the request body
-    log_extra: Dict[str, Any] = {}
+    log_extra: dict[str, Any] = {}
     if any(err["field"] == "_root" for err in formatted_errors):
         try:
             # Try to read the raw body for debugging

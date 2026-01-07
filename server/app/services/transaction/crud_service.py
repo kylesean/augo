@@ -1,15 +1,13 @@
 """Transaction CRUD service for basic transaction operations."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Optional
 from uuid import UUID, uuid4
 
 import structlog
-from sqlalchemy import and_, asc, case, desc, func, select
+from sqlalchemy import and_, asc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from sqlalchemy.sql.elements import ColumnElement
 
 from app.core.exceptions import BusinessError, NotFoundError
 from app.models.base import utc_now
@@ -28,7 +26,7 @@ class TransactionCRUDService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def get_financial_account(self, account_id: UUID, user_uuid: UUID) -> Optional[FinancialAccount]:
+    async def get_financial_account(self, account_id: UUID, user_uuid: UUID) -> FinancialAccount | None:
         """Get and validate financial account."""
         query = select(FinancialAccount).where(
             and_(FinancialAccount.id == account_id, FinancialAccount.user_uuid == user_uuid)
@@ -41,15 +39,15 @@ class TransactionCRUDService:
         user_uuid: UUID,
         amount: float,
         transaction_type: str = "expense",
-        transaction_at: Optional[datetime] = None,
+        transaction_at: datetime | None = None,
         category_key: str = "OTHERS",
         currency: str = "CNY",
-        raw_input: Optional[str] = None,
-        source_account_id: Optional[UUID] = None,
-        target_account_id: Optional[UUID] = None,
+        raw_input: str | None = None,
+        source_account_id: UUID | None = None,
+        target_account_id: UUID | None = None,
         subject: str = "SELF",
         intent: str = "SURVIVAL",
-        tags: Optional[list[str]] = None,
+        tags: list[str] | None = None,
     ) -> dict:
         """Create a single transaction record
 
@@ -57,7 +55,7 @@ class TransactionCRUDService:
         """
         tx_type = transaction_type.lower()
         transfer_amount = Decimal(str(amount))
-        tx_time = transaction_at or datetime.now(timezone.utc)
+        tx_time = transaction_at or datetime.now(UTC)
 
         # Validation logic has been handled by the utility layer, Service layer mainly responsible for persistence
         source_acc = None
@@ -107,10 +105,10 @@ class TransactionCRUDService:
         if tx_type == "transfer" and source_acc and target_acc:
             # Deduct from source account
             source_acc.current_balance -= transfer_amount
-            source_acc.updated_at = datetime.now(timezone.utc)
+            source_acc.updated_at = datetime.now(UTC)
             # Add to target account
             target_acc.current_balance += transfer_amount
-            target_acc.updated_at = datetime.now(timezone.utc)
+            target_acc.updated_at = datetime.now(UTC)
 
         await self.db.commit()
         await self.db.refresh(transaction)
@@ -157,7 +155,7 @@ class TransactionCRUDService:
 
         return result
 
-    async def get_transaction_detail(self, transaction_id: UUID, user_uuid: UUID) -> Optional[dict]:
+    async def get_transaction_detail(self, transaction_id: UUID, user_uuid: UUID) -> dict | None:
         """Get transaction details (including comments)
 
         Args:
@@ -299,7 +297,7 @@ class TransactionCRUDService:
         self,
         user_uuid: UUID,
         data: dict,
-        source_thread_id: Optional[str] = None,
+        source_thread_id: UUID | None = None,
     ) -> dict:
         """Batch create transactions
 
@@ -361,18 +359,12 @@ class TransactionCRUDService:
                 category_key=item.get("category_key", "OTHERS"),
                 tags=item.get("tags", []),
                 raw_input=item.get("raw_input"),
-                source_account_id=UUID(source_account_id) if source_account_id else None,
+                source_account_id=UUID(str(source_account_id)) if source_account_id else None,
                 transaction_at=utc_now(),
                 transaction_timezone="Asia/Shanghai",
                 source="AI",
                 status="CLEARED",
-                source_thread_id=(
-                    source_thread_id
-                    if isinstance(source_thread_id, UUID)
-                    else UUID(source_thread_id)
-                    if source_thread_id
-                    else None
-                ),
+                source_thread_id=source_thread_id,
             )
             self.db.add(tx)
             created_transactions.append(tx)
@@ -407,19 +399,19 @@ class TransactionCRUDService:
     async def update_batch_transactions_account(
         self,
         user_uuid: UUID,
-        transaction_ids: list[str],
-        account_id: Optional[str],
+        transaction_ids: list[UUID],
+        account_id: UUID | None,
     ) -> dict:
         """Batch update transaction account"""
         results = []
         for tx_id in transaction_ids:
             try:
                 res = await self.update_transaction_account(
-                    transaction_id=UUID(tx_id), user_uuid=user_uuid, account_id=account_id
+                    transaction_id=tx_id, user_uuid=user_uuid, account_id=account_id
                 )
                 results.append(res)
             except Exception as e:
-                logger.error("batch_update_tx_failed", tx_id=tx_id, error=str(e))
+                logger.error("batch_update_tx_failed", tx_id=str(tx_id), error=str(e))
 
         return {"success": True, "count": len(results), "account_id": account_id}
 
@@ -427,8 +419,8 @@ class TransactionCRUDService:
         self,
         transaction_id: UUID,
         user_uuid: UUID,
-        account_id: Optional[str],
-    ) -> Optional[dict]:
+        account_id: UUID | None,
+    ) -> dict | None:
         """Update transaction account
 
         Support cross-currency account association:
@@ -475,7 +467,7 @@ class TransactionCRUDService:
             # Transfer type does not support single account association
             old_account_id = transaction.source_account_id
 
-        new_account_id = UUID(account_id) if account_id else None
+        new_account_id = account_id
 
         # If the account has not changed, return directly
         if old_account_id == new_account_id:
@@ -611,7 +603,7 @@ class TransactionCRUDService:
 
     # ===== Comment Operations =====
 
-    async def get_comments_for_transaction(self, transaction_id: int, user_uuid: int) -> list[dict]:
+    async def get_comments_for_transaction(self, transaction_id: UUID, user_uuid: UUID) -> list[dict]:
         """Get transaction comments list
 
         Args:
@@ -690,10 +682,10 @@ class TransactionCRUDService:
 
     async def add_comment(
         self,
-        transaction_id: int,
-        user_uuid: int,
+        transaction_id: UUID,
+        user_uuid: UUID,
         comment_text: str,
-        parent_comment_id: Optional[int] = None,
+        parent_comment_id: int | None = None,
     ) -> dict:
         """Add transaction comment
 

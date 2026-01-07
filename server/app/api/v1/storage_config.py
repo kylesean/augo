@@ -6,8 +6,7 @@ Provides REST API for managing user storage configurations:
 - Update storage configs
 - Delete storage configs
 """
-
-from typing import List, Optional
+from __future__ import annotations
 
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
@@ -17,7 +16,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_session
 from app.core.dependencies import get_current_user
 from app.core.exceptions import BusinessException
-from app.core.logging import logger
 from app.core.responses import success_response
 from app.models.storage_config import ProviderType
 from app.models.user import User
@@ -35,7 +33,7 @@ class StorageConfigCreate(BaseModel):
     provider_type: str = Field(..., description="Provider type: local_uploads, s3_compatible, webdav")
     name: str = Field(..., max_length=100, description="Display name")
     base_path: str = Field(..., max_length=255, description="Root path or bucket name")
-    credentials: Optional[dict] = Field(
+    credentials: dict | None = Field(
         default=None, description="Connection credentials (endpoint, access_key, secret_key, etc.)"
     )
     is_readonly: bool = Field(default=True, description="Whether to prevent write operations")
@@ -44,10 +42,10 @@ class StorageConfigCreate(BaseModel):
 class StorageConfigUpdate(BaseModel):
     """Request schema for updating a storage config."""
 
-    name: Optional[str] = Field(None, max_length=100)
-    base_path: Optional[str] = Field(None, max_length=255)
-    credentials: Optional[dict] = None
-    is_readonly: Optional[bool] = None
+    name: str | None = Field(None, max_length=100)
+    base_path: str | None = Field(None, max_length=255)
+    credentials: dict | None = None
+    is_readonly: bool | None = None
 
 
 class StorageConfigResponse(BaseModel):
@@ -115,7 +113,7 @@ async def create_storage_config(
 
 @router.get("")
 async def list_storage_configs(
-    provider_type: Optional[str] = None,
+    provider_type: str | None = None,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:

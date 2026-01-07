@@ -4,6 +4,7 @@ This module provides structured logging configuration using structlog,
 with environment-specific formatters and handlers. It supports both
 console-friendly development logging and JSON-formatted production logging.
 """
+from __future__ import annotations
 
 import json
 import logging
@@ -13,9 +14,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import (
     Any,
-    Dict,
-    List,
-    Optional,
 )
 
 import structlog
@@ -29,7 +27,7 @@ from app.core.config import (
 settings.LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 # Context variables for storing request-specific data
-_request_context: ContextVar[Optional[Dict[str, Any]]] = ContextVar("request_context", default=None)
+_request_context: ContextVar[dict[str, Any] | None] = ContextVar("request_context", default=None)
 
 
 def bind_context(**kwargs: Any) -> None:
@@ -47,7 +45,7 @@ def clear_context() -> None:
     _request_context.set({})
 
 
-def get_context() -> Dict[str, Any]:
+def get_context() -> dict[str, Any]:
     """Get the current logging context.
 
     Returns:
@@ -56,7 +54,7 @@ def get_context() -> Dict[str, Any]:
     return _request_context.get() or {}
 
 
-def add_context_to_event_dict(logger: Any, method_name: str, event_dict: Dict[str, Any]) -> Dict[str, Any]:
+def add_context_to_event_dict(logger: Any, method_name: str, event_dict: dict[str, Any]) -> dict[str, Any]:
     """Add context variables to the event dictionary.
 
     This processor adds any bound context variables to each log event.
@@ -131,7 +129,7 @@ class JsonlFileHandler(logging.Handler):
         super().close()
 
 
-def get_structlog_processors(include_file_info: bool = True) -> List[Any]:
+def get_structlog_processors(include_file_info: bool = True) -> list[Any]:
     """Get the structlog processors based on configuration.
 
     Args:

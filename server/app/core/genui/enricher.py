@@ -4,9 +4,10 @@ This module defines the protocol and registry for component enrichers.
 Enrichers are responsible for hydrating historical UI components with live data
 from the database, ensuring that users always see the most up-to-date state.
 """
+from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Type
+from typing import Any
 
 from app.core.logging import logger
 
@@ -21,7 +22,7 @@ class ComponentEnricher(ABC):
         pass
 
     @abstractmethod
-    async def enrich(self, tool_call_id: str, data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+    async def enrich(self, tool_call_id: str, data: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
         """Enrich component data with live information.
 
         Args:
@@ -38,7 +39,7 @@ class ComponentEnricher(ABC):
 class EnricherRegistry:
     """Registry for component enrichers."""
 
-    _enrichers: Dict[str, ComponentEnricher] = {}
+    _enrichers: dict[str, ComponentEnricher] = {}
 
     @classmethod
     def register(cls, enricher: ComponentEnricher) -> None:
@@ -49,14 +50,14 @@ class EnricherRegistry:
         logger.info("enricher_registered", component_name=enricher.component_name)
 
     @classmethod
-    def get(cls, component_name: str) -> Optional[ComponentEnricher]:
+    def get(cls, component_name: str) -> ComponentEnricher | None:
         """Get an enricher by component name."""
         return cls._enrichers.get(component_name)
 
     @classmethod
     async def enrich_component(
-        cls, component_name: str, tool_call_id: str, data: Dict[str, Any], context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        cls, component_name: str, tool_call_id: str, data: dict[str, Any], context: dict[str, Any]
+    ) -> dict[str, Any]:
         """Enrich a component if an enricher is available."""
         enricher = cls.get(component_name)
         if enricher:

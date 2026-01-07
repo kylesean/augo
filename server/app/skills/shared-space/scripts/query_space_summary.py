@@ -13,13 +13,12 @@ import asyncio
 import json
 import os
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 # 将项目根目录加入路径
 sys.path.append(str(Path(__file__).parent.parent.parent.parent.parent))
 
-from decimal import Decimal
 from uuid import UUID
 
 from sqlalchemy import func, select
@@ -70,7 +69,6 @@ async def main() -> None:
                     return
 
             # 为每个空间计算统计数据
-            from sqlalchemy import and_
 
             from app.models.shared_space import SpaceTransaction
             from app.models.transaction import Transaction
@@ -80,7 +78,7 @@ async def main() -> None:
                 sid = space.get("id")
 
                 # 查询该空间本月的交易统计
-                now = datetime.now(timezone.utc)
+                now = datetime.now(UTC)
                 month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
                 # 查询本月总支出
@@ -121,7 +119,7 @@ async def main() -> None:
                         "success": True,
                         "spaces": summaries,
                         "total": len(summaries),
-                        "query_time": datetime.now(timezone.utc).isoformat(),
+                        "query_time": datetime.now(UTC).isoformat(),
                     },
                     ensure_ascii=False,
                 )

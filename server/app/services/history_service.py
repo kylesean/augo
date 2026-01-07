@@ -5,14 +5,15 @@ This service provides functionality to:
 - Dynamically inject temporary signed URLs for attachments
 - Support message format transformation for frontend consumption
 """
+from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any
+from uuid import UUID
 
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import settings
 from app.core.logging import logger
 from app.models.attachment import Attachment
 from app.models.storage_config import StorageConfig
@@ -36,10 +37,10 @@ class HistoryService:
 
     async def hydrate_message_attachments(
         self,
-        messages: List[Dict[str, Any]],
-        user_uuid: str,
+        messages: list[dict[str, Any]],
+        user_uuid: UUID,
         expire_seconds: int = 3600,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Hydrate messages with temporary signed URLs for attachments.
 
         Scans messages for attachment_id references and injects temporary
@@ -73,7 +74,6 @@ class HistoryService:
         if not attachment_ids:
             return messages
 
-        # Fetch attachments and their storage configs
         attachment_urls = await self._get_attachment_urls(
             list(attachment_ids),
             user_uuid,
@@ -120,10 +120,10 @@ class HistoryService:
 
     async def _get_attachment_urls(
         self,
-        attachment_ids: List[int],
-        user_uuid: str,
+        attachment_ids: list[UUID],
+        user_uuid: UUID,
         expire_seconds: int,
-    ) -> Dict[int, Dict[str, Any]]:
+    ) -> dict[UUID, dict[str, Any]]:
         """Fetch attachments and generate temporary URLs.
 
         Args:
@@ -167,7 +167,7 @@ class HistoryService:
                     "filename": attachment.filename,
                     "mime_type": attachment.mime_type,
                     "size": attachment.size,
-                    "expires_at": (datetime.now(timezone.utc).timestamp() + expire_seconds),
+                    "expires_at": (datetime.now(UTC).timestamp() + expire_seconds),
                 }
 
             except Exception as e:
@@ -182,10 +182,10 @@ class HistoryService:
 
     async def get_thread_attachments(
         self,
-        thread_id: str,
-        user_uuid: str,
+        thread_id: UUID,
+        user_uuid: UUID,
         expire_seconds: int = 3600,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Get all attachments for a conversation thread with URLs.
 
         Args:
@@ -228,7 +228,7 @@ class HistoryService:
                         "mime_type": attachment.mime_type,
                         "size": attachment.size,
                         "created_at": attachment.created_at.isoformat().replace("+00:00", "Z"),
-                        "expires_at": (datetime.now(timezone.utc).timestamp() + expire_seconds),
+                        "expires_at": (datetime.now(UTC).timestamp() + expire_seconds),
                     }
                 )
 
@@ -251,10 +251,10 @@ class HistoryService:
 
     async def format_conversation_history(
         self,
-        messages: List[Any],
-        user_uuid: int,
+        messages: list[Any],
+        user_uuid: UUID,
         expire_seconds: int = 3600,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Format LangGraph messages for frontend consumption.
 
         Converts LangChain message objects to frontend-friendly format
@@ -268,7 +268,7 @@ class HistoryService:
         Returns:
             Formatted message list with hydrated attachments
         """
-        from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
+        from langchain_core.messages import AIMessage, ToolMessage
 
         formatted = []
         for msg in messages:

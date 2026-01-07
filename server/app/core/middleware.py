@@ -1,7 +1,7 @@
 """Custom middleware for tracking metrics and other cross-cutting concerns."""
 
 import time
-from typing import Callable
+from collections.abc import Callable
 
 from fastapi import Request
 from jose import (
@@ -17,7 +17,6 @@ from app.core.logging import (
     clear_context,
 )
 from app.core.metrics import (
-    db_connections,
     http_request_duration_seconds,
     http_requests_total,
 )

@@ -3,11 +3,12 @@
 This module provides symmetric encryption using Fernet for storing
 sensitive credentials (S3 access keys, WebDAV passwords, etc.) in the database.
 """
+from __future__ import annotations
 
 import base64
 import json
 import os
-from typing import Any, Dict, Optional, cast
+from typing import Any, cast
 
 from cryptography.fernet import Fernet, InvalidToken
 
@@ -23,10 +24,10 @@ class CredentialEncryption:
     only when needed for storage adapter initialization.
     """
 
-    _instance: Optional["CredentialEncryption"] = None
-    _fernet: Optional[Fernet] = None
+    _instance: CredentialEncryption | None = None
+    _fernet: Fernet | None = None
 
-    def __new__(cls) -> "CredentialEncryption":
+    def __new__(cls) -> CredentialEncryption:
         """Singleton pattern to ensure single Fernet instance."""
         if cls._instance is None:
             cls._instance = super().__new__(cls)
@@ -75,7 +76,7 @@ class CredentialEncryption:
             logger.error("encryption_init_failed", error=str(e))
             raise ValueError(f"Failed to initialize encryption: {e}")
 
-    def encrypt_credentials(self, credentials: Dict[str, Any]) -> str:
+    def encrypt_credentials(self, credentials: dict[str, Any]) -> str:
         """Encrypt a credentials dictionary to a string.
 
         Args:
@@ -100,7 +101,7 @@ class CredentialEncryption:
             logger.error("credential_encryption_failed", error=str(e))
             raise ValueError(f"Failed to encrypt credentials: {e}")
 
-    def decrypt_credentials(self, encrypted_str: str) -> Dict[str, Any]:
+    def decrypt_credentials(self, encrypted_str: str) -> dict[str, Any]:
         """Decrypt a credentials string back to a dictionary.
 
         Args:
@@ -118,7 +119,7 @@ class CredentialEncryption:
         try:
             encrypted_bytes = encrypted_str.encode("utf-8")
             decrypted = self._fernet.decrypt(encrypted_bytes)
-            return cast(Dict[str, Any], json.loads(decrypted.decode("utf-8")))
+            return cast(dict[str, Any], json.loads(decrypted.decode("utf-8")))
         except InvalidToken:
             logger.error("credential_decryption_failed", reason="invalid_token")
             raise ValueError("Invalid encryption key or corrupted credential data")
@@ -126,7 +127,7 @@ class CredentialEncryption:
             logger.error("credential_decryption_failed", error=str(e))
             raise ValueError(f"Failed to decrypt credentials: {e}")
 
-    def mask_credentials(self, credentials: Dict[str, Any]) -> Dict[str, Any]:
+    def mask_credentials(self, credentials: dict[str, Any]) -> dict[str, Any]:
         """Create a masked version of credentials for display.
 
         Sensitive fields are replaced with asterisks while keeping

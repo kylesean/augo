@@ -3,16 +3,15 @@
 Includes Budget, BudgetPeriod, and BudgetSettings models.
 """
 
-from datetime import date, datetime, time
+from datetime import date, time
 from decimal import Decimal
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
 from uuid import UUID, uuid4
 
 import sqlalchemy as sa
-from sqlalchemy import CheckConstraint, Numeric, UniqueConstraint
+from sqlalchemy import CheckConstraint, Numeric
 from sqlalchemy.dialects.postgresql import (
-    TIMESTAMP,
     UUID as PGUUID,
 )
 from sqlalchemy.types import Date, Time
@@ -21,8 +20,6 @@ from sqlmodel import Column, Field, Relationship
 from app.models.base import BaseModel
 
 if TYPE_CHECKING:
-    from app.models.financial_account import FinancialAccount
-    from app.models.shared_space import SharedSpace
     from app.models.user import User
 
 
@@ -380,6 +377,4 @@ class BudgetSettings(BaseModel, table=True):
 
 
 # Avoid circular imports
-from app.models.financial_account import FinancialAccount  # noqa: E402
-from app.models.shared_space import SharedSpace  # noqa: E402
 from app.models.user import User  # noqa: E402

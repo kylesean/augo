@@ -1,16 +1,14 @@
 """Shared space API endpoints."""
 
-from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_session
 from app.core.dependencies import get_current_user
-from app.core.exceptions import AuthorizationError, BusinessError, NotFoundError
-from app.core.responses import error_response, get_error_code_int, success_response
+from app.core.responses import success_response
 from app.models.user import User
 from app.schemas.shared_space import (
     AddTransactionToSpaceRequest,

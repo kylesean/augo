@@ -6,12 +6,12 @@ This module provides the core authentication business logic including:
 - Verification code sending and validation
 - Account existence checking
 """
+from __future__ import annotations
 
 import secrets
 import time
 import uuid
-from datetime import datetime
-from typing import Any, Optional, Tuple
+from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
@@ -103,8 +103,8 @@ class AuthService:
         password: str,
         code: str,
         timezone: str = "Asia/Shanghai",
-        client_ip: Optional[str] = None,
-        locale: Optional[str] = None,
+        client_ip: str | None = None,
+        locale: str | None = None,
     ) -> User:
         """Register a new user.
 
@@ -197,8 +197,8 @@ class AuthService:
             logger.error("failed_to_create_financial_settings", user_uuid=str(user_uuid), error=str(e))
 
     async def login(
-        self, account_type: str, account: str, password: str, timezone: str, client_ip: Optional[str] = None
-    ) -> Tuple[User, str]:
+        self, account_type: str, account: str, password: str, timezone: str, client_ip: str | None = None
+    ) -> tuple[User, str]:
         """Authenticate user and generate JWT token.
 
         Args:

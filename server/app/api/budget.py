@@ -1,6 +1,7 @@
 """Budget API routes for managing user budgets."""
+from __future__ import annotations
 
-from typing import AsyncGenerator, List, Optional
+from collections.abc import AsyncGenerator
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -9,7 +10,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import db_manager
 from app.core.dependencies import get_current_user
-from app.core.logging import logger
 from app.core.responses import success_response
 from app.models.budget import BudgetScope, BudgetStatus
 from app.models.user import User
@@ -28,7 +28,7 @@ from app.services.budget_service import BudgetService
 router = APIRouter(prefix="/budgets", tags=["Budget"])
 
 
-async def get_db() -> AsyncGenerator[AsyncSession, None]:
+async def get_db() -> AsyncGenerator[AsyncSession]:
     """Get database session."""
     async with db_manager.session_factory() as session:
         yield session
@@ -83,10 +83,10 @@ async def create_budget(
     )
 
 
-@router.get("", response_model=List[BudgetResponse])
+@router.get("", response_model=list[BudgetResponse])
 async def get_budgets(
-    scope: Optional[str] = None,
-    status_filter: Optional[str] = None,
+    scope: str | None = None,
+    status_filter: str | None = None,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> JSONResponse:
@@ -135,7 +135,7 @@ async def get_budget_summary(
     return success_response(data=await service.get_budget_summary(current_user.uuid, include_paused=include_paused))
 
 
-@router.get("/suggestions", response_model=List[BudgetSuggestion])
+@router.get("/suggestions", response_model=list[BudgetSuggestion])
 async def get_budget_suggestions(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),

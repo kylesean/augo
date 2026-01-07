@@ -9,17 +9,18 @@ Design Principles:
 - Type parameterization, rather than multi-tool separation
 - Return GenUI component data
 """
+from __future__ import annotations
 
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any, Literal
 
 from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field, field_validator
 
-from app.core.constants.transaction_constants import EXPENSE_CATEGORIES, INCOME_CATEGORIES, TransactionCategory
+from app.core.constants.transaction_constants import TransactionCategory
 from app.core.database import db_manager
 from app.core.logging import logger
 from app.services.transaction_service import TransactionService
@@ -29,7 +30,7 @@ from app.services.transaction_service import TransactionService
 # ============================================================================
 
 
-def _get_user_uuid(config: RunnableConfig) -> Optional[uuid.UUID]:
+def _get_user_uuid(config: RunnableConfig) -> uuid.UUID | None:
     """Extract user UUID from configuration"""
     val = config.get("configurable", {}).get("user_uuid")
     if val is None:
@@ -37,7 +38,7 @@ def _get_user_uuid(config: RunnableConfig) -> Optional[uuid.UUID]:
     return uuid.UUID(val) if isinstance(val, str) else val
 
 
-def _get_user_uuid_str(config: RunnableConfig) -> Optional[str]:
+def _get_user_uuid_str(config: RunnableConfig) -> str | None:
     """Extract user UUID string from configuration"""
     val = config.get("configurable", {}).get("user_uuid")
     if val is None:
@@ -45,19 +46,19 @@ def _get_user_uuid_str(config: RunnableConfig) -> Optional[str]:
     return str(val) if isinstance(val, uuid.UUID) else val
 
 
-def _get_thread_id(config: RunnableConfig) -> Optional[str]:
+def _get_thread_id(config: RunnableConfig) -> str | None:
     """Extract thread_id (session_id) from configuration for message anchor"""
     return config.get("configurable", {}).get("thread_id")
 
 
-def _parse_time(time_str: Optional[str]) -> datetime:
+def _parse_time(time_str: str | None) -> datetime:
     """Parse time string, return current time if failed"""
     if not time_str:
-        return datetime.now(timezone.utc)
+        return datetime.now(UTC)
     try:
         return datetime.fromisoformat(time_str.replace("Z", "+00:00"))
     except (ValueError, AttributeError):
-        return datetime.now(timezone.utc)
+        return datetime.now(UTC)
 
 
 def _get_default_category(tx_type: str) -> str:
@@ -79,7 +80,7 @@ class TransactionItem(BaseModel):
         ..., description="Transaction type: expense (outflow) or income (inflow)"
     )
     amount: float = Field(..., gt=0, description="Amount")
-    currency: Optional[str] = Field(
+    currency: str | None = Field(
         default=None,
         description=(
             "Currency code (ISO 4217). IMPORTANT: Leave as null/empty unless the user "
@@ -90,37 +91,37 @@ class TransactionItem(BaseModel):
             "Only fill this when the user clearly wants a specific currency different from their usual one."
         ),
     )
-    tags: List[str] = Field(
+    tags: list[str] = Field(
         ..., min_length=1, description="Tags (describe transaction content), e.g. ['fruit', 'supermarket']"
     )
     category_key: TransactionCategory = Field(
         ..., description="Key of the category. Choose the most appropriate one based on context."
     )
-    raw_input: Optional[str] = Field(default=None, description="Corresponding original input fragment")
+    raw_input: str | None = Field(default=None, description="Corresponding original input fragment")
 
 
 class RecordTransactionsInput(BaseModel):
     """Record transactions input schema"""
 
-    transactions: List[TransactionItem] = Field(
+    transactions: list[TransactionItem] = Field(
         ..., min_length=1, description="Transaction list, each containing type/amount/tags"
     )
-    transaction_at: Optional[str] = Field(
+    transaction_at: str | None = Field(
         default=None, description="Transaction time (ISO 8601), default current time"
     )
-    source_account_id: Optional[str] = Field(default=None, description="Payment account ID for expense (optional)")
-    target_account_id: Optional[str] = Field(default=None, description="Receipt account ID for income (optional)")
+    source_account_id: str | None = Field(default=None, description="Payment account ID for expense (optional)")
+    target_account_id: str | None = Field(default=None, description="Receipt account ID for income (optional)")
 
 
 @tool("record_transactions", args_schema=RecordTransactionsInput)
 async def record_transactions(
-    transactions: List[dict],
-    transaction_at: Optional[str] = None,
-    source_account_id: Optional[str] = None,
-    target_account_id: Optional[str] = None,
+    transactions: list[dict],
+    transaction_at: str | None = None,
+    source_account_id: str | None = None,
+    target_account_id: str | None = None,
     *,
     config: RunnableConfig,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Record financial transactions. Supports multiple items of mixed types (expense/income).
 
     INTENT DETECTION:
@@ -234,10 +235,10 @@ async def record_transactions(
 class SearchTransactionInput(BaseModel):
     """Search transaction input schema"""
 
-    keyword: Optional[str] = Field(None, description="Keyword, match description/merchant/tags")
-    min_amount: Optional[float] = Field(None, description="Minimum amount")
-    max_amount: Optional[float] = Field(None, description="Maximum amount")
-    transaction_types: Optional[List[str]] = Field(None, description="Type: EXPENSE/INCOME/TRANSFER")
+    keyword: str | None = Field(None, description="Keyword, match description/merchant/tags")
+    min_amount: float | None = Field(None, description="Minimum amount")
+    max_amount: float | None = Field(None, description="Maximum amount")
+    transaction_types: list[str] | None = Field(None, description="Type: EXPENSE/INCOME/TRANSFER")
 
     @field_validator("transaction_types", mode="before")
     @classmethod
@@ -263,25 +264,25 @@ class SearchTransactionInput(BaseModel):
                 return [v_clean.upper()]
         return v
 
-    start_date: Optional[str] = Field(None, description="Start date (ISO 8601)")
-    end_date: Optional[str] = Field(None, description="End date (ISO 8601)")
+    start_date: str | None = Field(None, description="Start date (ISO 8601)")
+    end_date: str | None = Field(None, description="End date (ISO 8601)")
     page: int = Field(1, description="Page number")
     per_page: int = Field(10, description="Number of items per page")
 
 
 @tool("search_transactions", args_schema=SearchTransactionInput)
 async def search_transactions(
-    keyword: Optional[str] = None,
-    min_amount: Optional[float] = None,
-    max_amount: Optional[float] = None,
-    transaction_types: Optional[List[str]] = None,
-    start_date: Optional[str] = None,
-    end_date: Optional[str] = None,
+    keyword: str | None = None,
+    min_amount: float | None = None,
+    max_amount: float | None = None,
+    transaction_types: list[str] | None = None,
+    start_date: str | None = None,
+    end_date: str | None = None,
     page: int = 1,
     per_page: int = 10,
     *,
     config: RunnableConfig,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Retrieve a raw list of transaction records. Best for finding specific orders or viewing history.
 
     IMPORTANT: This tool ONLY lists transactions. For any "analysis", "spending breakdown",
@@ -290,7 +291,6 @@ async def search_transactions(
 
     Defaults to last 7 days.
     """
-    from app.core.database import db_manager as search_db_manager
     from app.services.transaction_query_service import (
         TransactionQueryParams,
         TransactionQueryService,
@@ -312,7 +312,7 @@ async def search_transactions(
         effective_end_date = end_date
 
         if not start_date and not end_date:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
             effective_start_date = (now - timedelta(days=7)).isoformat()
             effective_end_date = now.isoformat()
             logger.debug(
@@ -341,7 +341,7 @@ async def search_transactions(
 
         items = []
         total_expense = Decimal("0.0")
-        category_stats: Dict[str, Decimal] = {}
+        category_stats: dict[str, Decimal] = {}
 
         for item in result.items:
             val = Decimal(str(item.amount))

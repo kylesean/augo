@@ -8,9 +8,7 @@ The dual-write pattern:
 2. Secondary storage: searchable_messages table (optimized for full-text search)
 """
 
-import uuid as uuid_lib
-from datetime import datetime, timezone
-from typing import Optional
+from uuid import UUID
 
 from sqlalchemy import delete
 
@@ -28,11 +26,11 @@ class MessageIndexService:
 
     async def index_message(
         self,
-        thread_id: str,
-        user_uuid: str,
+        thread_id: UUID,
+        user_uuid: UUID,
         role: str,
         content: str,
-    ) -> Optional[SearchableMessage]:
+    ) -> SearchableMessage | None:
         """Index a single message for full-text search.
 
         Args:
@@ -53,14 +51,10 @@ class MessageIndexService:
             return None
 
         try:
-            # Convert string UUIDs to UUID objects
-            thread_uuid = uuid_lib.UUID(thread_id) if isinstance(thread_id, str) else thread_id
-            user_uuid_obj = uuid_lib.UUID(user_uuid) if isinstance(user_uuid, str) else user_uuid
-
             # Create searchable message record
             message = SearchableMessage(
-                thread_id=thread_uuid,
-                user_uuid=user_uuid_obj,
+                thread_id=thread_id,
+                user_uuid=user_uuid,
                 role=role,
                 content=content.strip(),
             )
@@ -94,10 +88,10 @@ class MessageIndexService:
 
     async def index_user_message(
         self,
-        thread_id: str,
-        user_uuid: str,
+        thread_id: UUID,
+        user_uuid: UUID,
         content: str,
-    ) -> Optional[SearchableMessage]:
+    ) -> SearchableMessage | None:
         """Index a user message.
 
         Convenience method for indexing user messages.
@@ -119,10 +113,10 @@ class MessageIndexService:
 
     async def index_assistant_message(
         self,
-        thread_id: str,
-        user_uuid: str,
+        thread_id: UUID,
+        user_uuid: UUID,
         content: str,
-    ) -> Optional[SearchableMessage]:
+    ) -> SearchableMessage | None:
         """Index an assistant message.
 
         Convenience method for indexing assistant responses.
@@ -144,7 +138,7 @@ class MessageIndexService:
 
     async def delete_thread_messages(
         self,
-        thread_id: str,
+        thread_id: UUID,
     ) -> int:
         """Delete all indexed messages for a thread.
 
@@ -157,10 +151,8 @@ class MessageIndexService:
             Number of messages deleted
         """
         try:
-            thread_uuid = uuid_lib.UUID(thread_id) if isinstance(thread_id, str) else thread_id
-
             async with get_session_context() as db:
-                stmt = delete(SearchableMessage).where(SearchableMessage.thread_id == thread_uuid)
+                stmt = delete(SearchableMessage).where(SearchableMessage.thread_id == thread_id)
                 result = await db.execute(stmt)
                 await db.commit()
                 deleted_count = getattr(result, "rowcount", 0) or 0  # type: ignore

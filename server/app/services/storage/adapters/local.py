@@ -6,9 +6,9 @@ Uses aiofiles for async I/O and generates JWT-signed URLs for downloads.
 
 import hashlib
 import uuid
-from datetime import datetime, timedelta, timezone
+from collections.abc import AsyncGenerator
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import AsyncGenerator, Optional
 
 import aiofiles
 import aiofiles.os
@@ -20,7 +20,6 @@ from app.services.storage.adapters.base import (
     StorageAdapter,
     StorageError,
     StorageNotFoundError,
-    StorageReadOnlyError,
 )
 from app.utils.auth import create_access_token
 
@@ -92,7 +91,7 @@ class LocalAdapter(StorageAdapter):
         Returns:
             Generated object key
         """
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         date_path = now.strftime("%Y/%m/%d")
 
         # Extract extension and sanitize filename
@@ -106,9 +105,9 @@ class LocalAdapter(StorageAdapter):
 
     async def save(
         self,
-        file_stream: AsyncGenerator[bytes, None],
+        file_stream: AsyncGenerator[bytes],
         filename: str,
-        content_type: Optional[str] = None,
+        content_type: str | None = None,
     ) -> str:
         """Save file to local filesystem.
 
@@ -149,7 +148,7 @@ class LocalAdapter(StorageAdapter):
         self,
         content: bytes,
         filename: str,
-        content_type: Optional[str] = None,
+        content_type: str | None = None,
     ) -> str:
         """Save bytes content to local filesystem (convenience method).
 
@@ -162,7 +161,7 @@ class LocalAdapter(StorageAdapter):
             Generated object_key
         """
 
-        async def bytes_generator() -> AsyncGenerator[bytes, None]:
+        async def bytes_generator() -> AsyncGenerator[bytes]:
             yield content
 
         return await self.save(bytes_generator(), filename, content_type)
@@ -171,7 +170,7 @@ class LocalAdapter(StorageAdapter):
         self,
         object_key: str,
         expire_seconds: int = 3600,
-        filename: Optional[str] = None,
+        filename: str | None = None,
     ) -> str:
         """Generate JWT-signed URL for file access.
 
@@ -190,7 +189,7 @@ class LocalAdapter(StorageAdapter):
         token_data = {
             "object_key": object_key,
             "storage_config_id": self.config.id,
-            "exp": datetime.now(timezone.utc) + timedelta(seconds=expire_seconds),
+            "exp": datetime.now(UTC) + timedelta(seconds=expire_seconds),
         }
 
         if filename:
@@ -209,7 +208,7 @@ class LocalAdapter(StorageAdapter):
     async def get_stream(
         self,
         object_key: str,
-    ) -> AsyncGenerator[bytes, None]:
+    ) -> AsyncGenerator[bytes]:
         """Stream file content asynchronously.
 
         Args:
@@ -276,7 +275,7 @@ class LocalAdapter(StorageAdapter):
         except StorageError:
             return False
 
-    async def get_file_info(self, object_key: str) -> Optional[dict]:
+    async def get_file_info(self, object_key: str) -> dict | None:
         """Get file metadata from local filesystem.
 
         Args:
@@ -293,13 +292,13 @@ class LocalAdapter(StorageAdapter):
             stat = full_path.stat()
             return {
                 "size": stat.st_size,
-                "modified": datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc),
+                "modified": datetime.fromtimestamp(stat.st_mtime, tz=UTC),
                 "content_type": None,  # Would need mimetypes detection
             }
         except Exception:
             return None
 
-    async def calculate_hash(self, object_key: str) -> Optional[str]:
+    async def calculate_hash(self, object_key: str) -> str | None:
         """Calculate SHA256 hash of file.
 
         Args:

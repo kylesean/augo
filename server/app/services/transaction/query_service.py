@@ -1,13 +1,11 @@
 """Transaction query service for search and feed operations."""
 
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 import structlog
 from sqlalchemy import desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql.elements import ColumnElement
 
 from app.models.transaction import Transaction
 from app.schemas.transaction import TransactionDisplayValue
@@ -25,7 +23,7 @@ class TransactionQueryService:
     async def get_transaction_feed(
         self,
         user_uuid: UUID,
-        date_filter: Optional[str] = None,
+        date_filter: str | None = None,
         type_filter: str = "all",
         page: int = 1,
         limit: int = 10,
@@ -106,7 +104,7 @@ class TransactionQueryService:
             },
         }
 
-    async def search_transactions(self, user_uuid: str, filters: dict) -> dict:
+    async def search_transactions(self, user_uuid: UUID, filters: dict) -> dict:
         """搜索交易记录
 
         Args:

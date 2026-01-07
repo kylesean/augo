@@ -6,13 +6,14 @@ This module provides:
 - Streaming utilities for large result sets
 - Pagination schemas for API responses
 """
+from __future__ import annotations
 
-from typing import Any, AsyncGenerator, Generic, List, Optional, TypeVar
+from collections.abc import AsyncGenerator
+from typing import Any, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlmodel import SQLModel
 
 from app.core.logging import logger
 
@@ -70,7 +71,7 @@ class PaginationMeta(BaseModel):
     has_prev: bool = Field(description="Whether there is a previous page")
 
 
-class PaginatedResponse(BaseModel, Generic[T]):
+class PaginatedResponse[T](BaseModel):
     """Generic paginated response.
 
     Attributes:
@@ -78,7 +79,7 @@ class PaginatedResponse(BaseModel, Generic[T]):
         meta: Pagination metadata
     """
 
-    items: List[T] = Field(description="List of items")
+    items: list[T] = Field(description="List of items")
     meta: PaginationMeta = Field(description="Pagination metadata")
 
     model_config = ConfigDict(
@@ -110,7 +111,7 @@ class CursorPaginationParams(BaseModel):
         direction: Direction to paginate ('next' or 'prev')
     """
 
-    cursor: Optional[str] = Field(default=None, description="Cursor value")
+    cursor: str | None = Field(default=None, description="Cursor value")
     limit: int = Field(default=10, ge=1, le=100, description="Number of items")
     direction: str = Field(default="next", pattern="^(next|prev)$", description="Pagination direction")
 
@@ -126,14 +127,14 @@ class CursorPaginationMeta(BaseModel):
         count: Number of items in current page
     """
 
-    next_cursor: Optional[str] = Field(default=None, description="Cursor for next page")
-    prev_cursor: Optional[str] = Field(default=None, description="Cursor for previous page")
+    next_cursor: str | None = Field(default=None, description="Cursor for next page")
+    prev_cursor: str | None = Field(default=None, description="Cursor for previous page")
     has_next: bool = Field(description="Whether there is a next page")
     has_prev: bool = Field(description="Whether there is a previous page")
     count: int = Field(description="Number of items in current page")
 
 
-class CursorPaginatedResponse(BaseModel, Generic[T]):
+class CursorPaginatedResponse[T](BaseModel):
     """Generic cursor-paginated response.
 
     Attributes:
@@ -141,7 +142,7 @@ class CursorPaginatedResponse(BaseModel, Generic[T]):
         meta: Cursor pagination metadata
     """
 
-    items: List[T] = Field(description="List of items")
+    items: list[T] = Field(description="List of items")
     meta: CursorPaginationMeta = Field(description="Cursor pagination metadata")
 
 
@@ -289,7 +290,7 @@ async def stream_query_results(
     session: AsyncSession,
     query: Select,
     batch_size: int = 100,
-) -> AsyncGenerator[Any, None]:
+) -> AsyncGenerator[Any]:
     """Stream query results in batches to avoid loading all data into memory.
 
     This is useful for processing large datasets without memory issues.
@@ -342,7 +343,7 @@ async def stream_query_batches(
     session: AsyncSession,
     query: Select,
     batch_size: int = 100,
-) -> AsyncGenerator[List[Any], None]:
+) -> AsyncGenerator[list[Any]]:
     """Stream query results as batches.
 
     This is useful when you want to process items in batches rather than individually.
@@ -392,8 +393,8 @@ async def stream_query_batches(
 # Convenience functions for common use cases
 
 
-def create_pagination_response(
-    items: List[T],
+def create_pagination_response[T](
+    items: list[T],
     page: int,
     per_page: int,
     total: int,
@@ -439,8 +440,8 @@ def create_pagination_response(
 
 
 def get_pagination_params(
-    page: Optional[int] = None,
-    per_page: Optional[int] = None,
+    page: int | None = None,
+    per_page: int | None = None,
     default_per_page: int = 10,
     max_per_page: int = 100,
 ) -> PaginationParams:

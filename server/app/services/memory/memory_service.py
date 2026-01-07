@@ -12,9 +12,10 @@ Best Practices Implemented:
 3. Error Handling: Graceful degradation on failures
 4. User Isolation: Memories are strictly scoped by user_id
 """
+from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Union, cast
+from datetime import UTC, datetime
+from typing import Any, cast
 from uuid import UUID
 
 from mem0 import AsyncMemory
@@ -33,9 +34,9 @@ class MemoryService:
 
         # Add memory from conversation
         await service.add_conversation_memory(
-            user_uuid="user-123",
+            user_uuid=UUID("..."),
             messages=[{"role": "user", "content": "I prefer dark mode"}],
-            session_id="session-456",
+            session_id=UUID("..."),
         )
 
         # Search memories
@@ -45,21 +46,21 @@ class MemoryService:
         )
 
         # Get all memories for a user
-        all_memories = await service.get_user_memories(user_uuid="user-123")
+        all_memories = await service.get_user_memories(user_uuid=UUID("..."))
 
         # Delete specific memory
         await service.delete_memory(memory_id="mem-789")
     """
 
-    _instance: Optional["MemoryService"] = None
-    _memory: Optional[AsyncMemory] = None
+    _instance: MemoryService | None = None
+    _memory: AsyncMemory | None = None
 
     def __init__(self) -> None:
         """Private constructor. Use get_instance() instead."""
         pass
 
     @classmethod
-    async def get_instance(cls) -> "MemoryService":
+    async def get_instance(cls) -> MemoryService:
         """Get or create the singleton instance.
 
         Returns:
@@ -124,7 +125,7 @@ class MemoryService:
 
         if provider == "ollama":
             # Ollama local embeddings
-            config: Dict[str, Any] = {
+            config: dict[str, Any] = {
                 "provider": "ollama",
                 "config": {
                     "model": settings.LONG_TERM_MEMORY_EMBEDDER_MODEL,
@@ -185,11 +186,11 @@ class MemoryService:
 
     async def add_conversation_memory(
         self,
-        user_uuid: str | UUID,
+        user_uuid: UUID,
         messages: list[dict],
-        session_id: Optional[str] = None,
+        session_id: UUID | None = None,
         category: str = "conversation",
-        additional_metadata: Optional[dict] = None,
+        additional_metadata: dict | None = None,
     ) -> dict:
         """Add memories from a conversation with proactive fact extraction.
 
@@ -223,13 +224,13 @@ class MemoryService:
         # 2. Build rich metadata
         metadata = {
             "category": category,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "original_message_count": len(messages),
             "memory_type": "extracted_fact",
         }
 
         if session_id:
-            metadata["session_id"] = session_id
+            metadata["session_id"] = str(session_id)
 
         if additional_metadata:
             metadata.update(additional_metadata)
@@ -252,7 +253,7 @@ class MemoryService:
                 "salient_memories_added",
                 user_uuid=user_id,
                 fact_count=len(facts),
-                session_id=session_id,
+                session_id=str(session_id) if session_id else None,
             )
 
             return {"success": True, "extracted": True, "fact_count": len(facts), "result": result}
@@ -328,11 +329,11 @@ class MemoryService:
 
     async def search_memories(
         self,
-        user_uuid: str | UUID,
+        user_uuid: UUID,
         query: str,
         limit: int = 5,
         rerank: bool = True,
-        categories: Optional[list[str]] = None,
+        categories: list[str] | None = None,
     ) -> list[dict]:
         """Search for relevant memories with optional category filtering.
 
@@ -352,7 +353,7 @@ class MemoryService:
             # Build filters if categories specified
             # Mem0 filter format: {"AND": [{"category": "value"}]} for multiple conditions
             # or {"category": "value"} for single category
-            filters: Optional[Dict[str, Any]] = None
+            filters: dict[str, Any] | None = None
             if categories:
                 if len(categories) == 1:
                     filters = {"category": categories[0]}
@@ -396,7 +397,7 @@ class MemoryService:
 
     async def get_user_memories(
         self,
-        user_uuid: str | UUID,
+        user_uuid: UUID,
         limit: int = 100,
     ) -> list[dict]:
         """Get all memories for a user.
@@ -436,7 +437,7 @@ class MemoryService:
     async def get_memory_by_id(
         self,
         memory_id: str,
-    ) -> Optional[dict]:
+    ) -> dict | None:
         """Get a specific memory by ID.
 
         Args:
@@ -447,7 +448,7 @@ class MemoryService:
         """
         try:
             result = await self._memory.get(memory_id)
-            return cast(Optional[Dict[Any, Any]], result)
+            return cast(dict[Any, Any] | None, result)
         except Exception as e:
             logger.warning(
                 "get_memory_failed",
@@ -508,7 +509,7 @@ class MemoryService:
 
     async def delete_all_user_memories(
         self,
-        user_uuid: str | UUID,
+        user_uuid: UUID,
     ) -> bool:
         """Delete all memories for a user.
 
@@ -575,7 +576,7 @@ class MemoryService:
 
     async def get_memory_stats(
         self,
-        user_uuid: str | UUID,
+        user_uuid: UUID,
     ) -> dict:
         """Get memory statistics for a user.
 
@@ -588,7 +589,7 @@ class MemoryService:
         memories = await self.get_user_memories(user_uuid, limit=1000)
 
         # Category breakdown
-        categories: Dict[str, int] = {}
+        categories: dict[str, int] = {}
         for mem in memories:
             meta = mem.get("metadata", {})
             cat = meta.get("category", "unknown")
@@ -605,7 +606,7 @@ class MemoryService:
 
     async def cleanup_old_memories(
         self,
-        user_uuid: str | UUID,
+        user_uuid: UUID,
         days_old: int = 180,
         max_memories: int = 500,
     ) -> dict:
@@ -640,7 +641,7 @@ class MemoryService:
             if not memories:
                 return {"deleted_count": 0, "remaining_count": 0}
 
-            cutoff_date = datetime.now(timezone.utc) - timedelta(days=days_old)
+            cutoff_date = datetime.now(UTC) - timedelta(days=days_old)
 
             # Sort by created_at descending (newest first)
             sorted_memories = sorted(memories, key=lambda x: x.get("created_at", ""), reverse=True)

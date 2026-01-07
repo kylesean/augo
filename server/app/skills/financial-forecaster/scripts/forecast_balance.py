@@ -21,16 +21,17 @@ Output (JSON):
 Note:
     No aiInsight field - LLM generates insights in user's language.
 """
+from __future__ import annotations
 
 import argparse
 import asyncio
 import json
 import os
 import sys
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 from uuid import UUID
 
 

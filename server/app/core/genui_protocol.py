@@ -13,8 +13,9 @@ outer key name as the discriminator:
   ❌ Wrong: {"type": "surface_update", "surfaceId": "..."}
   ✅ Right: {"surfaceUpdate": {"surfaceId": "..."}}
 """
+from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -38,7 +39,7 @@ class Component(BaseModel):
     """
 
     id: str
-    component: Dict[str, Any]  # Changed from componentProperties to component
+    component: dict[str, Any]  # Changed from componentProperties to component
 
 
 # ============================================================================
@@ -50,7 +51,7 @@ class SurfaceUpdatePayload(BaseModel):
     """Payload for surface update."""
 
     surfaceId: str
-    components: List[Component]
+    components: list[Component]
 
 
 class SurfaceUpdate(BaseModel):
@@ -131,7 +132,7 @@ class UserInteractionPayload(BaseModel):
     surfaceId: str
     componentId: str
     action: str
-    data: Optional[Dict[str, Any]] = None
+    data: dict[str, Any] | None = None
 
 
 class UserInteraction(BaseModel):

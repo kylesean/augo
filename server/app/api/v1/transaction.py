@@ -1,6 +1,6 @@
 """Transaction management API endpoints."""
 
-from typing import Any, Optional
+from typing import Any
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -18,13 +18,10 @@ from app.schemas.transaction import (
     CashFlowForecastResponse,
     CommentCreateRequest,
     CommentResponse,
-    PaginatedTransactionResponse,
     RecurringTransactionCreateRequest,
     RecurringTransactionResponse,
     RecurringTransactionUpdateRequest,
-    TransactionDetailResponse,
     TransactionDisplayValue,
-    TransactionSearchRequest,
     UpdateAccountRequest,
     UpdateBatchAccountRequest,
 )
@@ -118,8 +115,8 @@ def _transaction_to_dict(tx: Any, display_currency: str = "CNY", exchange_rate: 
 async def get_transactions(
     page: int = 1,
     size: int = 20,
-    date: Optional[str] = None,  # YYYY-MM-DD format
-    transaction_type: Optional[str] = None,  # EXPENSE, INCOME, TRANSFER
+    date: str | None = None,  # YYYY-MM-DD format
+    transaction_type: str | None = None,  # EXPENSE, INCOME, TRANSFER
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
@@ -137,7 +134,6 @@ async def get_transactions(
     Returns:
         Unified format pagination response, containing display fields
     """
-    from app.core.logging import logger
     from app.core.responses import error_response, get_error_code_int, success_response
     from app.services.transaction_query_service import (
         TransactionQueryParams,
@@ -187,14 +183,14 @@ async def get_transactions(
 @router.get("/search")
 async def search_transactions(
     params: Params = Depends(),
-    keyword: Optional[str] = None,
-    min_amount: Optional[str] = None,
-    max_amount: Optional[str] = None,
-    category_keys: Optional[str] = None,
-    tags: Optional[str] = None,
-    start_date: Optional[str] = None,
-    end_date: Optional[str] = None,
-    transaction_type: Optional[str] = None,
+    keyword: str | None = None,
+    min_amount: str | None = None,
+    max_amount: str | None = None,
+    category_keys: str | None = None,
+    tags: str | None = None,
+    start_date: str | None = None,
+    end_date: str | None = None,
+    transaction_type: str | None = None,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
@@ -222,9 +218,8 @@ async def search_transactions(
     from decimal import Decimal
 
     from fastapi_pagination.ext.sqlalchemy import apaginate
-    from sqlalchemy import String, and_, cast, desc, func, or_, select
+    from sqlalchemy import and_, desc, or_, select
 
-    from app.core.logging import logger
     from app.core.responses import error_response, get_error_code_int, success_response
     from app.models.transaction import Transaction
 
@@ -514,8 +509,8 @@ async def delete_transaction_comment(
 
 @router.get("/recurring")
 async def list_recurring_transactions(
-    type: Optional[str] = None,  # EXPENSE, INCOME, TRANSFER
-    is_active: Optional[bool] = None,
+    type: str | None = None,  # EXPENSE, INCOME, TRANSFER
+    is_active: bool | None = None,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:

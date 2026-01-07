@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from decimal import Decimal
-from typing import Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -77,14 +77,14 @@ class TransactionDisplayValue(BaseModel):
 class UpdateAccountRequest(BaseModel):
     """更新交易关联账户请求"""
 
-    account_id: Optional[str] = Field(None, description="关联账户 ID，传 null 表示取消关联")
+    account_id: str | None = Field(None, description="关联账户 ID，传 null 表示取消关联")
 
 
 class UpdateBatchAccountRequest(BaseModel):
     """批量更新交易关联账户请求"""
 
     transaction_ids: list[str] = Field(..., description="交易 ID 列表")
-    account_id: Optional[str] = Field(..., description="关联账户 ID")
+    account_id: str | None = Field(..., description="关联账户 ID")
 
 
 class CreateTransactionItem(BaseModel):
@@ -109,33 +109,33 @@ class CreateTransactionItem(BaseModel):
     )
     transaction_type: Literal["expense", "income", "transfer"] = Field(default="expense")
     category_key: str = Field(default="OTHERS")
-    raw_input: Optional[str] = Field(None, description="该笔交易对应的原始输入片段")
+    raw_input: str | None = Field(None, description="该笔交易对应的原始输入片段")
 
 
 class BatchCreateTransactionRequest(BaseModel):
     """批量创建交易请求"""
 
     transactions: list[CreateTransactionItem] = Field(..., min_length=1)
-    source_account_id: Optional[str] = Field(None, description="可选的全局关联账户 ID")
+    source_account_id: str | None = Field(None, description="可选的全局关联账户 ID")
 
 
 class TransactionSearchRequest(BaseModel):
     """搜索交易请求"""
 
-    keyword: Optional[str] = None
-    min_amount: Optional[str] = Field(None, description="Minimum amount as string")
-    max_amount: Optional[str] = Field(None, description="Maximum amount as string")
-    categories: Optional[list[str]] = None
-    payment_methods: Optional[list[str]] = None
-    tags: Optional[list[str]] = None
-    start_date: Optional[str] = None
-    end_date: Optional[str] = None
+    keyword: str | None = None
+    min_amount: str | None = Field(None, description="Minimum amount as string")
+    max_amount: str | None = Field(None, description="Maximum amount as string")
+    categories: list[str] | None = None
+    payment_methods: list[str] | None = None
+    tags: list[str] | None = None
+    start_date: str | None = None
+    end_date: str | None = None
     page: int = Field(default=1, ge=1)
     per_page: int = Field(default=10, ge=1, le=100)
 
     @field_validator("min_amount", "max_amount")
     @classmethod
-    def validate_amount(cls, v: Optional[str]) -> Optional[str]:
+    def validate_amount(cls, v: str | None) -> str | None:
         """Validate amount string if provided."""
         if v is None:
             return None
@@ -156,8 +156,8 @@ class RecurringTransactionCreateRequest(BaseModel):
     start_date: str  # YYYY-MM-DD
 
     # Optional account references
-    source_account_id: Optional[str] = Field(None, description="Source account UUID")
-    target_account_id: Optional[str] = Field(None, description="Target account UUID")
+    source_account_id: str | None = Field(None, description="Source account UUID")
+    target_account_id: str | None = Field(None, description="Target account UUID")
 
     # Amount settings
     amount_type: str = Field(default="FIXED", description="FIXED or ESTIMATE")
@@ -165,16 +165,16 @@ class RecurringTransactionCreateRequest(BaseModel):
     currency: str = Field(default="CNY", description="Currency code (CNY, USD, JPY, etc.)")
 
     # Classification
-    category_key: Optional[str] = Field(default="OTHERS", description="Category key")
-    tags: Optional[list[str]] = Field(default=None, description="Tags list")
+    category_key: str | None = Field(default="OTHERS", description="Category key")
+    tags: list[str] | None = Field(default=None, description="Tags list")
 
     # Rule settings
     timezone: str = Field(default="Asia/Shanghai", description="Timezone for the rule")
-    end_date: Optional[str] = None  # YYYY-MM-DD
-    exception_dates: Optional[list[str]] = None
+    end_date: str | None = None  # YYYY-MM-DD
+    exception_dates: list[str] | None = None
 
     # Metadata
-    description: Optional[str] = None
+    description: str | None = None
     is_active: bool = True
 
     @field_validator("amount")
@@ -216,8 +216,8 @@ class RecurringTransactionCreate(BaseModel):
     startDate: str = Field(..., description="Start date (YYYY-MM-DD)", alias="start_date")
 
     # Optional account references
-    sourceAccountId: Optional[str] = Field(None, description="Source account UUID", alias="source_account_id")
-    targetAccountId: Optional[str] = Field(None, description="Target account UUID", alias="target_account_id")
+    sourceAccountId: str | None = Field(None, description="Source account UUID", alias="source_account_id")
+    targetAccountId: str | None = Field(None, description="Target account UUID", alias="target_account_id")
 
     # Amount settings
     amountType: str = Field(default="FIXED", description="FIXED or ESTIMATE", alias="amount_type")
@@ -227,16 +227,16 @@ class RecurringTransactionCreate(BaseModel):
     currency: str = Field(default="CNY", description="Currency code")
 
     # Classification
-    categoryKey: Optional[str] = Field(default="OTHERS", description="Category key", alias="category_key")
-    tags: Optional[list[str]] = Field(default=None, description="Tags list")
+    categoryKey: str | None = Field(default="OTHERS", description="Category key", alias="category_key")
+    tags: list[str] | None = Field(default=None, description="Tags list")
 
     # Rule settings
     timezone: str = Field(default="Asia/Shanghai", description="Timezone")
-    endDate: Optional[str] = Field(None, description="End date (YYYY-MM-DD)", alias="end_date")
-    exceptionDates: Optional[list[str]] = Field(None, description="Exception dates", alias="exception_dates")
+    endDate: str | None = Field(None, description="End date (YYYY-MM-DD)", alias="end_date")
+    exceptionDates: list[str] | None = Field(None, description="Exception dates", alias="exception_dates")
 
     # Metadata
-    description: Optional[str] = Field(None, description="Transaction description")
+    description: str | None = Field(None, description="Transaction description")
     isActive: bool = Field(default=True, alias="is_active")
 
     # Allow both camelCase and snake_case
@@ -247,39 +247,39 @@ class RecurringTransactionUpdateRequest(BaseModel):
     """更新周期性交易请求"""
 
     # Transaction type
-    type: Optional[str] = None
+    type: str | None = None
 
     # Account references
-    source_account_id: Optional[str] = None
-    target_account_id: Optional[str] = None
+    source_account_id: str | None = None
+    target_account_id: str | None = None
 
     # Amount settings
-    amount_type: Optional[str] = None
-    requires_confirmation: Optional[bool] = None
-    amount: Optional[str] = None
-    currency: Optional[str] = None
+    amount_type: str | None = None
+    requires_confirmation: bool | None = None
+    amount: str | None = None
+    currency: str | None = None
 
     # Classification
-    category_key: Optional[str] = None
-    tags: Optional[list[str]] = None
+    category_key: str | None = None
+    tags: list[str] | None = None
 
     # Rule settings
-    recurrence_rule: Optional[str] = None
-    timezone: Optional[str] = None
-    start_date: Optional[str] = None
-    end_date: Optional[str] = None
-    exception_dates: Optional[list[str]] = None
+    recurrence_rule: str | None = None
+    timezone: str | None = None
+    start_date: str | None = None
+    end_date: str | None = None
+    exception_dates: list[str] | None = None
 
     # Execution control
-    next_execution_at: Optional[str] = None
+    next_execution_at: str | None = None
 
     # Metadata
-    description: Optional[str] = None
-    is_active: Optional[bool] = None
+    description: str | None = None
+    is_active: bool | None = None
 
     @field_validator("amount")
     @classmethod
-    def validate_amount(cls, v: Optional[str]) -> Optional[str]:
+    def validate_amount(cls, v: str | None) -> str | None:
         """Validate and normalize amount string if provided."""
         if v is None:
             return None
@@ -291,7 +291,7 @@ class RecurringTransactionUpdateRequest(BaseModel):
 
     @field_validator("type")
     @classmethod
-    def validate_type(cls, v: Optional[str]) -> Optional[str]:
+    def validate_type(cls, v: str | None) -> str | None:
         """Validate transaction type if provided."""
         if v is None:
             return None
@@ -302,7 +302,7 @@ class RecurringTransactionUpdateRequest(BaseModel):
 
     @field_validator("amount_type")
     @classmethod
-    def validate_amount_type(cls, v: Optional[str]) -> Optional[str]:
+    def validate_amount_type(cls, v: str | None) -> str | None:
         """Validate amount type if provided."""
         if v is None:
             return None
@@ -317,7 +317,7 @@ class CashFlowForecastRequest(BaseModel):
 
     forecast_days: int = Field(default=60, ge=1, le=365)
     granularity: str = Field(default="daily")
-    scenarios: Optional[list[dict]] = None
+    scenarios: list[dict] | None = None
 
     @field_validator("granularity")
     @classmethod
@@ -332,7 +332,7 @@ class CommentCreateRequest(BaseModel):
     """创建评论请求"""
 
     comment_text: str = Field(min_length=1)
-    parent_comment_id: Optional[int] = None
+    parent_comment_id: int | None = None
 
 
 # Response schemas
@@ -342,17 +342,17 @@ class TransactionResponse(BaseModel):
     id: str  # UUID as string
     user_uuid: str
     type: str  # EXPENSE, INCOME, TRANSFER
-    source_account_id: Optional[str] = None  # UUID as string
-    target_account_id: Optional[str] = None  # UUID as string
+    source_account_id: str | None = None  # UUID as string
+    target_account_id: str | None = None  # UUID as string
     amount: str  # Decimal as string
     amount_original: str  # Original amount
     currency: str
     category_key: str  # Category key
-    description: Optional[str]
+    description: str | None
     transaction_at: datetime  # Transaction timestamp
     transaction_timezone: str  # Original timezone
-    location: Optional[str]
-    tags: Optional[list[str]]
+    location: str | None
+    tags: list[str] | None
     source: str  # MANUAL, AI, IMPORT
     status: str  # CLEARED, PENDING
     created_at: datetime
@@ -370,21 +370,21 @@ class TransactionDetailResponse(BaseModel):
     amount: str
     amount_original: str
     currency: str
-    exchange_rate: Optional[str]
+    exchange_rate: str | None
     category_key: str
-    description: Optional[str]
+    description: str | None
     transaction_at: datetime
     transaction_timezone: str
-    tags: Optional[list[str]]
-    location: Optional[str]
-    latitude: Optional[str]
-    longitude: Optional[str]
+    tags: list[str] | None
+    location: str | None
+    latitude: str | None
+    longitude: str | None
     source: str
     status: str
     raw_input: str
-    source_account_id: Optional[str] = None  # UUID as string
-    target_account_id: Optional[str] = None  # UUID as string
-    shared_space_id: Optional[int]
+    source_account_id: str | None = None  # UUID as string
+    target_account_id: str | None = None  # UUID as string
+    shared_space_id: int | None
     created_at: datetime
     updated_at: datetime
 
@@ -399,12 +399,12 @@ class CommentResponse(BaseModel):
     user_uuid: str
     user_name: str
     user_avatar_url: str
-    parent_comment_id: Optional[str]
+    parent_comment_id: str | None
     comment_text: str
-    replied_to_user_uuid: Optional[str]
-    replied_to_user_name: Optional[str]
+    replied_to_user_uuid: str | None
+    replied_to_user_name: str | None
     created_at: str
-    updated_at: Optional[str]
+    updated_at: str | None
 
 
 class RecurringTransactionResponse(BaseModel):
@@ -417,8 +417,8 @@ class RecurringTransactionResponse(BaseModel):
     type: str  # EXPENSE, INCOME, TRANSFER
 
     # Account references
-    source_account_id: Optional[str] = None
-    target_account_id: Optional[str] = None
+    source_account_id: str | None = None
+    target_account_id: str | None = None
 
     # Amount settings
     amount_type: str
@@ -427,22 +427,22 @@ class RecurringTransactionResponse(BaseModel):
     currency: str
 
     # Classification
-    category_key: Optional[str]
-    tags: Optional[list[str]]
+    category_key: str | None
+    tags: list[str] | None
 
     # Rule settings
     recurrence_rule: str
     timezone: str
     start_date: str
-    end_date: Optional[str]
-    exception_dates: Optional[list[str]]
+    end_date: str | None
+    exception_dates: list[str] | None
 
     # Execution control
-    last_generated_at: Optional[datetime]
-    next_execution_at: Optional[datetime]
+    last_generated_at: datetime | None
+    next_execution_at: datetime | None
 
     # Metadata
-    description: Optional[str]
+    description: str | None
     is_active: bool
     created_at: datetime
     updated_at: datetime

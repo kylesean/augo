@@ -1,7 +1,7 @@
 """Statistics schemas for request/response validation."""
+from __future__ import annotations
 
 from datetime import datetime
-from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -18,9 +18,9 @@ class StatisticsQueryParams(BaseModel):
     """Common query parameters for statistics endpoints."""
 
     time_range: str = Field(default="month", description="Time range: week, month, year, or custom")
-    start_date: Optional[str] = Field(default=None, description="Start date for custom range (ISO 8601 format)")
-    end_date: Optional[str] = Field(default=None, description="End date for custom range (ISO 8601 format)")
-    account_types: Optional[str] = Field(default=None, description="Comma-separated list of account types to filter")
+    start_date: str | None = Field(default=None, description="Start date for custom range (ISO 8601 format)")
+    end_date: str | None = Field(default=None, description="End date for custom range (ISO 8601 format)")
+    account_types: str | None = Field(default=None, description="Comma-separated list of account types to filter")
 
 
 # ============================================================================
@@ -53,7 +53,7 @@ class TrendDataPoint(BaseModel):
 class TrendDataResponse(BaseModel):
     """Response for trend data endpoint."""
 
-    dataPoints: List[TrendDataPoint] = Field(..., description="List of trend data points")
+    dataPoints: list[TrendDataPoint] = Field(..., description="List of trend data points")
     timeRange: str = Field(..., description="Time range used")
     transactionType: str = Field(..., description="Transaction type: expense or income")
 
@@ -72,7 +72,7 @@ class CategoryBreakdownItem(BaseModel):
 class CategoryBreakdownResponse(BaseModel):
     """Response for category breakdown endpoint."""
 
-    items: List[CategoryBreakdownItem] = Field(..., description="List of category breakdowns")
+    items: list[CategoryBreakdownItem] = Field(..., description="List of category breakdowns")
     total: str = Field(..., description="Total amount across all categories")
 
 
@@ -91,7 +91,7 @@ class TopTransactionItem(BaseModel):
 class TopTransactionsResponse(BaseModel):
     """Response for top transactions endpoint."""
 
-    items: List[TopTransactionItem] = Field(..., description="List of top transactions")
+    items: list[TopTransactionItem] = Field(..., description="List of top transactions")
     sortBy: str = Field(..., description="Sort method: amount or date")
     total: int = Field(..., description="Total count of transactions matching filters")
     page: int = Field(default=1, description="Current page number")
@@ -147,10 +147,10 @@ class HealthScoreResponse(BaseModel):
     grade: str = Field(..., description="Grade: A (90+), B (75-89), C (60-74), D (45-59), F (<45)")
 
     # Dimension breakdowns
-    dimensions: List[HealthScoreDimension] = Field(..., description="Individual dimension scores")
+    dimensions: list[HealthScoreDimension] = Field(..., description="Individual dimension scores")
 
     # Suggestions
-    suggestions: List[str] = Field(default_factory=list, description="Improvement suggestions based on scores")
+    suggestions: list[str] = Field(default_factory=list, description="Improvement suggestions based on scores")
 
     # Period info
     periodStart: datetime = Field(..., description="Period start datetime")

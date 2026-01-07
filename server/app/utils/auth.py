@@ -1,4 +1,5 @@
 """This file contains the authentication utilities for the application."""
+from __future__ import annotations
 
 import re
 from datetime import (
@@ -6,7 +7,7 @@ from datetime import (
     datetime,
     timedelta,
 )
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, cast
 from uuid import UUID
 
 from jose import (
@@ -20,7 +21,7 @@ from app.schemas.auth import Token
 from app.utils.sanitization import sanitize_string
 
 
-def create_access_token(subject: Union[str, UUID, Any], expires_delta: Optional[timedelta] = None) -> Token:
+def create_access_token(subject: str | UUID | Any, expires_delta: timedelta | None = None) -> Token:
     """Create a new access token.
 
     Args:
@@ -53,7 +54,7 @@ def create_access_token(subject: Union[str, UUID, Any], expires_delta: Optional[
     return Token(access_token=encoded_jwt, expires_at=expire)
 
 
-def verify_token(token: str) -> Optional[str]:
+def verify_token(token: str) -> str | None:
     """Verify a JWT token and return the subject (user UUID).
 
     Args:
@@ -90,7 +91,7 @@ def verify_token(token: str) -> Optional[str]:
         return None
 
 
-def refresh_token(old_token: str) -> Optional[Token]:
+def refresh_token(old_token: str) -> Token | None:
     """Refresh an existing JWT token.
 
     Args:
@@ -116,7 +117,7 @@ def refresh_token(old_token: str) -> Optional[Token]:
     return new_token
 
 
-def decode_token_payload(token: str) -> Optional[dict]:
+def decode_token_payload(token: str) -> dict | None:
     """Decode a JWT token and return its payload without verification.
 
     This is useful for extracting information from expired tokens or for debugging.
@@ -136,7 +137,7 @@ def decode_token_payload(token: str) -> Optional[dict]:
             algorithms=[settings.JWT_ALGORITHM],
             options={"verify_signature": False, "verify_exp": False},
         )
-        return cast(Optional[dict[Any, Any]], payload)
+        return cast(dict[Any, Any] | None, payload)
     except Exception as e:
         logger.error("token_decode_failed", error=str(e))
         return None

@@ -10,16 +10,16 @@ Architecture:
     - RAG context retrieval for AI feedback preferences
     - Compatible with GenUI streaming via tools layer
 """
+from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import and_, case, desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql.elements import ColumnElement
 
 from app.core.logging import logger
 from app.models.financial_account import FinancialAccount
@@ -35,8 +35,8 @@ class ForecastEvent:
     description: str
     amount: Decimal
     event_type: str  # RECURRING, PREDICTED_VARIABLE, SIMULATED
-    source_id: Optional[str] = None  # recurring_transaction.id if applicable
-    category_key: Optional[str] = None
+    source_id: str | None = None  # recurring_transaction.id if applicable
+    category_key: str | None = None
     confidence: float = 1.0  # 1.0 for deterministic, < 1.0 for predicted
 
 
@@ -48,7 +48,7 @@ class ForecastDataPoint:
     predicted_balance: Decimal
     lower_bound: Decimal  # Conservative estimate
     upper_bound: Decimal  # Optimistic estimate
-    events: List[ForecastEvent] = field(default_factory=list)
+    events: list[ForecastEvent] = field(default_factory=list)
 
 
 @dataclass
@@ -70,7 +70,7 @@ class ForecastSummary:
     net_change: Decimal
 
     @property
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert the forecast summary to a serializable dictionary."""
         return {
             "total_recurring_income": float(self.total_recurring_income),
@@ -85,14 +85,14 @@ class CashFlowForecastResult:
     """Complete cash flow forecast result."""
 
     success: bool
-    forecast_period: Dict[str, Any]
+    forecast_period: dict[str, Any]
     current_balance: Decimal
-    data_points: List[ForecastDataPoint]
-    warnings: List[ForecastWarning]
+    data_points: list[ForecastDataPoint]
+    warnings: list[ForecastWarning]
     summary: ForecastSummary
-    user_preferences: List[Dict[str, Any]] = field(default_factory=list)
+    user_preferences: list[dict[str, Any]] = field(default_factory=list)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
         return {
             "success": self.success,
@@ -150,9 +150,9 @@ class ForecastService:
         self,
         user_uuid: UUID,
         forecast_days: int = 30,
-        scenarios: Optional[List[Dict[str, Any]]] = None,
+        scenarios: list[dict[str, Any]] | None = None,
         include_variable_spending: bool = True,
-        safety_threshold: Optional[Decimal] = None,
+        safety_threshold: Decimal | None = None,
     ) -> CashFlowForecastResult:
         """Generate a complete cash flow forecast.
 
@@ -264,7 +264,7 @@ class ForecastService:
         user_uuid: UUID,
         start_date: date,
         end_date: date,
-    ) -> List[ForecastEvent]:
+    ) -> list[ForecastEvent]:
         """Get all deterministic events from recurring transactions."""
         from dateutil.rrule import rrulestr
 
@@ -287,7 +287,7 @@ class ForecastService:
         for tx in recurring_txs:
             try:
                 # Parse RRULE and generate occurrences
-                dtstart = datetime.combine(tx.start_date, datetime.min.time(), tzinfo=timezone.utc)
+                dtstart = datetime.combine(tx.start_date, datetime.min.time(), tzinfo=UTC)
                 rrule = rrulestr(tx.recurrence_rule, dtstart=dtstart)
 
                 exception_set = set(tx.exception_dates or [])
@@ -343,7 +343,7 @@ class ForecastService:
         self,
         user_uuid: UUID,
         lookback_days: int = 30,
-        manual_fallback: Optional[Decimal] = None,
+        manual_fallback: Decimal | None = None,
     ) -> Decimal:
         """Calculate predicted daily variable spending using scientific methods.
 
@@ -364,7 +364,7 @@ class ForecastService:
             )
             return -abs(manual_fallback)
 
-        lookback_start = datetime.now(timezone.utc) - timedelta(days=lookback_days)
+        lookback_start = datetime.now(UTC) - timedelta(days=lookback_days)
 
         # 获取周期性交易的金额集合（用于排除）
         recurring_amounts = set()
@@ -461,8 +461,8 @@ class ForecastService:
 
     def _process_scenarios(
         self,
-        scenarios: List[Dict[str, Any]],
-    ) -> List[ForecastEvent]:
+        scenarios: list[dict[str, Any]],
+    ) -> list[ForecastEvent]:
         """Convert LLM-generated scenarios to ForecastEvents."""
         events = []
 
@@ -498,7 +498,7 @@ class ForecastService:
         user_uuid: UUID,
         insight_type: str,
         limit: int = 10,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Get user's AI feedback preferences for RAG context."""
         query = (
             select(AIFeedbackMemory)
@@ -532,7 +532,7 @@ class ForecastService:
 
         return preferences
 
-    async def _get_financial_settings(self, user_uuid: UUID) -> Tuple[Decimal, Decimal]:
+    async def _get_financial_settings(self, user_uuid: UUID) -> tuple[Decimal, Decimal]:
         """Get user's financial settings (safety_threshold, daily_burn_rate)."""
         from app.models.financial_settings import FinancialSettings
 
@@ -554,13 +554,13 @@ class ForecastService:
         start_date: date,
         end_date: date,
         current_balance: Decimal,
-        deterministic_events: List[ForecastEvent],
-        scenario_events: List[ForecastEvent],
+        deterministic_events: list[ForecastEvent],
+        scenario_events: list[ForecastEvent],
         avg_daily_spending: Decimal,
-    ) -> List[ForecastDataPoint]:
+    ) -> list[ForecastDataPoint]:
         """Build the complete forecast time series."""
         # Group events by date
-        events_by_date: Dict[date, List[ForecastEvent]] = {}
+        events_by_date: dict[date, list[ForecastEvent]] = {}
 
         for event in deterministic_events + scenario_events:
             if event.date not in events_by_date:
@@ -619,9 +619,9 @@ class ForecastService:
 
     def _generate_warnings(
         self,
-        data_points: List[ForecastDataPoint],
+        data_points: list[ForecastDataPoint],
         safety_threshold: Decimal,
-    ) -> List[ForecastWarning]:
+    ) -> list[ForecastWarning]:
         """Generate warnings for potential financial issues."""
         warnings = []
         warned_below_safety = False
@@ -654,7 +654,7 @@ class ForecastService:
 
     def _calculate_summary(
         self,
-        deterministic_events: List[ForecastEvent],
+        deterministic_events: list[ForecastEvent],
         avg_daily_spending: Decimal,
         forecast_days: int,
     ) -> ForecastSummary:
@@ -676,7 +676,7 @@ class ForecastService:
         self,
         user_uuid: UUID,
         amount: Decimal,
-        purchase_date: Optional[date] = None,
+        purchase_date: date | None = None,
         description: str = "模拟购买",
     ) -> CashFlowForecastResult:
         """Simulate a one-time purchase and show its impact.

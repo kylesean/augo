@@ -8,8 +8,9 @@
 注意：这个 Middleware 不做意图检测！意图检测是 LLM 的工作。
 我们只负责在技能激活后应用约束。
 """
+from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 
 from app.core.langgraph.middleware.base import BaseMiddleware
 from app.core.logging import logger
@@ -29,18 +30,18 @@ class SkillConstraintMiddleware(BaseMiddleware):
     - 调用 read_file 读取 SKILL.md 获取完整指导
     """
 
-    def __init__(self, tools: Optional[List[Any]] = None) -> None:
+    def __init__(self, tools: list[Any] | None = None) -> None:
         """初始化技能约束中间件
 
         Args:
             tools: 完整工具列表引用（用于动态过滤）
         """
         self._skill_loader = SkillLoader()
-        self._active_skill: Optional[str] = None
-        self._allowed_tools: Optional[Set[str]] = None
-        self._all_tools: Optional[List] = tools  # 完整工具列表
+        self._active_skill: str | None = None
+        self._allowed_tools: set[str] | None = None
+        self._all_tools: list | None = tools  # 完整工具列表
 
-    def set_tools(self, tools: List[Any]) -> None:
+    def set_tools(self, tools: list[Any]) -> None:
         """设置完整工具列表（延迟初始化用）"""
         self._all_tools = tools
 
@@ -51,9 +52,9 @@ class SkillConstraintMiddleware(BaseMiddleware):
 
     async def before_invoke(
         self,
-        messages: List[Any],  # BaseMessage
-        config: Dict[str, Any],
-    ) -> tuple[List[Any], Dict[str, Any]]:
+        messages: list[Any],  # BaseMessage
+        config: dict[str, Any],
+    ) -> tuple[list[Any], dict[str, Any]]:
         """在调用前检测技能激活状态并应用约束
 
         技能激活可以通过以下方式触发：
@@ -131,8 +132,8 @@ class SkillConstraintMiddleware(BaseMiddleware):
 
     def filter_tool_calls(
         self,
-        tool_calls: List[Dict[str, Any]],
-    ) -> tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+        tool_calls: list[dict[str, Any]],
+    ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
         """过滤工具调用
 
         Args:
@@ -168,7 +169,7 @@ class SkillConstraintMiddleware(BaseMiddleware):
             return True
         return tool_name in self._allowed_tools
 
-    def get_filtered_tools(self, all_tools: List) -> List:
+    def get_filtered_tools(self, all_tools: list) -> list:
         """获取过滤后的工具列表"""
         if not self._allowed_tools:
             return all_tools
@@ -184,15 +185,15 @@ class SkillConstraintMiddleware(BaseMiddleware):
 
         return filtered
 
-    def get_active_skill(self) -> Optional[str]:
+    def get_active_skill(self) -> str | None:
         """获取当前激活的技能"""
         return self._active_skill
 
     async def after_invoke(
         self,
-        output: Dict[str, Any],
-        config: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        output: dict[str, Any],
+        config: dict[str, Any],
+    ) -> dict[str, Any]:
         """在调用后检测技能激活
 
         检测以下调用自动激活对应的 skill：

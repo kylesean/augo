@@ -3,8 +3,9 @@
 使用 LangGraph TypedDict + Annotated 模式定义 Agent 状态。
 参考: https://docs.langchain.com/oss/python/langgraph/graph-api#state
 """
+from __future__ import annotations
 
-from typing import Annotated, Any, Dict, List, Literal, Optional, TypedDict
+from typing import Annotated, Any, Literal, TypedDict
 
 from langchain_core.messages import BaseMessage
 from langgraph.graph.message import add_messages
@@ -22,7 +23,7 @@ class AgentState(TypedDict):
     """
 
     # 消息历史 (add_messages reducer 自动处理流式 chunks 累积和 ID 去重)
-    messages: Annotated[List[BaseMessage], add_messages]
+    messages: Annotated[list[BaseMessage], add_messages]
 
     # UI 模式 (用于入口路由)
     ui_mode: Literal[
@@ -31,11 +32,11 @@ class AgentState(TypedDict):
     ]
 
     # GenUI 直接执行参数
-    tool_name: Optional[str]
-    tool_params: Optional[Dict[str, Any]]
+    tool_name: str | None
+    tool_params: dict[str, Any] | None
 
     # 直接执行结果 (供流处理层渲染 UI)
-    direct_execute_result: Optional[Dict[str, Any]]
+    direct_execute_result: dict[str, Any] | None
 
 
 def create_initial_state() -> AgentState:

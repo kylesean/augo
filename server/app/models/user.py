@@ -4,7 +4,6 @@ import uuid as uuid_lib
 from datetime import datetime
 from typing import (
     TYPE_CHECKING,
-    List,
     Optional,
 )
 
@@ -22,7 +21,6 @@ from app.models.base import BaseModel
 
 if TYPE_CHECKING:
     from app.models.financial_account import FinancialAccount
-    from app.models.session import Session
 
 
 class User(BaseModel, table=True):
@@ -68,7 +66,7 @@ class User(BaseModel, table=True):
             "overlaps": "user",
         }
     )
-    financial_accounts: List["FinancialAccount"] = Relationship(
+    financial_accounts: list["FinancialAccount"] = Relationship(
         sa_relationship_kwargs={
             "foreign_keys": "[FinancialAccount.user_uuid]",
             "primaryjoin": "User.uuid == FinancialAccount.user_uuid",

@@ -4,17 +4,17 @@ This module contains models for:
 - AccountDailySnapshot: Daily balance snapshots for high-performance time series analysis
 - AIFeedbackMemory: User feedback on AI predictions for RAG context learning
 """
+from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date
 from decimal import Decimal
-from typing import Any, Dict, List, Optional
+from typing import Any
 from uuid import UUID, uuid4
 
 import sqlalchemy as sa
 from sqlalchemy import Numeric
 from sqlalchemy.dialects.postgresql import (
     JSONB,
-    TIMESTAMP,
     UUID as PGUUID,
 )
 from sqlmodel import Column, Field
@@ -87,7 +87,7 @@ class AccountDailySnapshot(BaseModel, table=True):
     )
 
     # Optional exchange rate for multi-currency support
-    exchange_rate_snapshot: Optional[Decimal] = Field(
+    exchange_rate_snapshot: Decimal | None = Field(
         default=None, sa_column=Column(Numeric(20, 8), nullable=True), description="当日汇率快照"
     )
 
@@ -134,7 +134,7 @@ class AIFeedbackMemory(BaseModel, table=True):
 
     __tablename__ = "ai_feedback_memory"
 
-    id: Optional[UUID] = Field(
+    id: UUID | None = Field(
         default_factory=uuid4, sa_column=Column(PGUUID(as_uuid=True), primary_key=True), description="主键"
     )
 
@@ -151,25 +151,25 @@ class AIFeedbackMemory(BaseModel, table=True):
     )
 
     # Optional relation to specific records
-    target_table: Optional[str] = Field(default=None, max_length=50, description="关联的表名")
+    target_table: str | None = Field(default=None, max_length=50, description="关联的表名")
 
-    target_id: Optional[UUID] = Field(
+    target_id: UUID | None = Field(
         default=None, sa_column=Column(PGUUID(as_uuid=True), nullable=True), description="关联记录的ID"
     )
 
     # AI content snapshot
-    ai_content_snapshot: Dict[str, Any] = Field(
+    ai_content_snapshot: dict[str, Any] = Field(
         default_factory=dict, sa_column=Column(JSONB, nullable=False), description="AI预测的原始内容快照"
     )
 
     # User feedback
     user_action: str = Field(max_length=20, description="用户反馈：THUMBS_UP, DISMISSED, CORRECTED, STOP_REMINDING")
 
-    user_correction_data: Optional[Dict[str, Any]] = Field(
+    user_correction_data: dict[str, Any] | None = Field(
         default=None, sa_column=Column(JSONB, nullable=True), description="用户修正的数据"
     )
 
-    preference_rule: Optional[Dict[str, Any]] = Field(
+    preference_rule: dict[str, Any] | None = Field(
         default=None, sa_column=Column(JSONB, nullable=True), description="用户偏好规则，用于构建Prompt上下文"
     )
 
@@ -180,9 +180,9 @@ class AIFeedbackMemory(BaseModel, table=True):
         cls,
         user_uuid: UUID,
         insight_type: str,
-        ai_content: Dict[str, Any],
-        preference_rule: Optional[Dict[str, Any]] = None,
-    ) -> "AIFeedbackMemory":
+        ai_content: dict[str, Any],
+        preference_rule: dict[str, Any] | None = None,
+    ) -> AIFeedbackMemory:
         """Factory method for creating a dismissal feedback."""
         return cls(
             user_uuid=user_uuid,
@@ -197,11 +197,11 @@ class AIFeedbackMemory(BaseModel, table=True):
         cls,
         user_uuid: UUID,
         insight_type: str,
-        ai_content: Dict[str, Any],
-        correction_data: Dict[str, Any],
-        target_table: Optional[str] = None,
-        target_id: Optional[UUID] = None,
-    ) -> "AIFeedbackMemory":
+        ai_content: dict[str, Any],
+        correction_data: dict[str, Any],
+        target_table: str | None = None,
+        target_id: UUID | None = None,
+    ) -> AIFeedbackMemory:
         """Factory method for creating a correction feedback."""
         return cls(
             user_uuid=user_uuid,

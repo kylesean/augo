@@ -5,7 +5,6 @@ while delegating to specialized services internally.
 """
 
 from datetime import date, datetime
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -36,7 +35,7 @@ class TransactionService:
 
     # ===== CRUD Operations (delegated to TransactionCRUDService) =====
 
-    async def get_financial_account(self, account_id: UUID, user_uuid: UUID) -> Optional[FinancialAccount]:
+    async def get_financial_account(self, account_id: UUID, user_uuid: UUID) -> FinancialAccount | None:
         """Get and validate financial account."""
         return await self._crud.get_financial_account(account_id, user_uuid)
 
@@ -45,15 +44,15 @@ class TransactionService:
         user_uuid: UUID,
         amount: float,
         transaction_type: str = "expense",
-        transaction_at: Optional[datetime] = None,
+        transaction_at: datetime | None = None,
         category_key: str = "OTHERS",
         currency: str = "CNY",
-        raw_input: Optional[str] = None,
-        source_account_id: Optional[UUID] = None,
-        target_account_id: Optional[UUID] = None,
+        raw_input: str | None = None,
+        source_account_id: UUID | None = None,
+        target_account_id: UUID | None = None,
         subject: str = "SELF",
         intent: str = "SURVIVAL",
-        tags: Optional[list[str]] = None,
+        tags: list[str] | None = None,
     ) -> dict:
         """Create a single transaction record."""
         return await self._crud.create_transaction(
@@ -71,7 +70,7 @@ class TransactionService:
             tags=tags,
         )
 
-    async def get_transaction_detail(self, transaction_id: UUID, user_uuid: UUID) -> Optional[dict]:
+    async def get_transaction_detail(self, transaction_id: UUID, user_uuid: UUID) -> dict | None:
         """Get transaction detail (including comments)."""
         return await self._crud.get_transaction_detail(transaction_id, user_uuid)
 
@@ -83,7 +82,7 @@ class TransactionService:
         self,
         user_uuid: UUID,
         data: dict,
-        source_thread_id: Optional[str] = None,
+        source_thread_id: str | None = None,
     ) -> dict:
         """Create multiple transactions."""
         return await self._crud.create_batch_transactions(user_uuid, data, source_thread_id)
@@ -91,8 +90,8 @@ class TransactionService:
     async def update_batch_transactions_account(
         self,
         user_uuid: UUID,
-        transaction_ids: list[str],
-        account_id: Optional[str],
+        transaction_ids: list[UUID],
+        account_id: UUID | None,
     ) -> dict:
         """Update multiple transactions' account."""
         return await self._crud.update_batch_transactions_account(user_uuid, transaction_ids, account_id)
@@ -101,8 +100,8 @@ class TransactionService:
         self,
         transaction_id: UUID,
         user_uuid: UUID,
-        account_id: Optional[str],
-    ) -> Optional[dict]:
+        account_id: UUID | None,
+    ) -> dict | None:
         """Update transaction's account."""
         return await self._crud.update_transaction_account(transaction_id, user_uuid, account_id)
 
@@ -111,7 +110,7 @@ class TransactionService:
     async def get_transaction_feed(
         self,
         user_uuid: UUID,
-        date_filter: Optional[str] = None,
+        date_filter: str | None = None,
         type_filter: str = "all",
         page: int = 1,
         limit: int = 10,
@@ -125,25 +124,25 @@ class TransactionService:
 
     # ===== Recurring Transaction Operations (delegated to RecurringTransactionService) =====
 
-    async def create_recurring_transaction(self, user_uuid: str, data: dict) -> dict:
+    async def create_recurring_transaction(self, user_uuid: UUID, data: dict) -> dict:
         """Create a recurring transaction rule."""
         return await self._recurring.create_recurring_transaction(user_uuid, data)
 
     async def list_recurring_transactions(
-        self, user_uuid: str, type_filter: Optional[str] = None, is_active: Optional[bool] = None
+        self, user_uuid: UUID, type_filter: str | None = None, is_active: bool | None = None
     ) -> list[dict]:
         """List recurring transactions."""
         return await self._recurring.list_recurring_transactions(user_uuid, type_filter, is_active)
 
-    async def get_recurring_transaction(self, recurring_id: str, user_uuid: str) -> Optional[dict]:
+    async def get_recurring_transaction(self, recurring_id: UUID, user_uuid: UUID) -> dict | None:
         """Get recurring transaction details."""
         return await self._recurring.get_recurring_transaction(recurring_id, user_uuid)
 
-    async def update_recurring_transaction(self, recurring_id: str, user_uuid: str, data: dict) -> Optional[dict]:
+    async def update_recurring_transaction(self, recurring_id: UUID, user_uuid: UUID, data: dict) -> dict | None:
         """Update recurring transaction."""
         return await self._recurring.update_recurring_transaction(recurring_id, user_uuid, data)
 
-    async def delete_recurring_transaction(self, recurring_id: str, user_uuid: str) -> bool:
+    async def delete_recurring_transaction(self, recurring_id: UUID, user_uuid: UUID) -> bool:
         """Delete recurring transaction."""
         return await self._recurring.delete_recurring_transaction(recurring_id, user_uuid)
 
@@ -151,7 +150,7 @@ class TransactionService:
         self,
         rrule_string: str,
         start_date: date,
-        end_date: Optional[date],
+        end_date: date | None,
         forecast_start: date,
         forecast_end: date,
     ) -> list[date]:
@@ -164,9 +163,9 @@ class TransactionService:
         self,
         rrule_str: str,
         start_date: date,
-        end_date: Optional[date] = None,
-        exception_dates: Optional[list] = None,
-    ) -> Optional[datetime]:
+        end_date: date | None = None,
+        exception_dates: list | None = None,
+    ) -> datetime | None:
         """Calculate the next execution date for a recurring transaction."""
         return self._recurring._calculate_next_execution(rrule_str, start_date, end_date, exception_dates)
 
@@ -177,27 +176,27 @@ class TransactionService:
         user_uuid: UUID,
         forecast_days: int = 60,
         granularity: str = "daily",
-        scenarios: Optional[list[dict]] = None,
+        scenarios: list[dict] | None = None,
     ) -> dict:
         """Forecast future cash flow."""
         return await self._cash_flow.forecast_cash_flow(user_uuid, forecast_days, granularity, scenarios)
 
     # ===== Comment Operations (delegated to TransactionCRUDService) =====
 
-    async def get_comments_for_transaction(self, transaction_id: int, user_uuid: int) -> list[dict]:
+    async def get_comments_for_transaction(self, transaction_id: UUID, user_uuid: UUID) -> list[dict]:
         """Get comments for a transaction."""
         return await self._crud.get_comments_for_transaction(transaction_id, user_uuid)
 
     async def add_comment(
         self,
-        transaction_id: int,
-        user_uuid: int,
+        transaction_id: UUID,
+        user_uuid: UUID,
         comment_text: str,
-        parent_comment_id: Optional[int] = None,
+        parent_comment_id: int | None = None,
     ) -> dict:
         """Add a comment to a transaction."""
         return await self._crud.add_comment(transaction_id, user_uuid, comment_text, parent_comment_id)
 
-    async def delete_comment(self, comment_id: int, user_uuid: int) -> bool:
+    async def delete_comment(self, comment_id: int, user_uuid: UUID) -> bool:
         """Delete a comment."""
         return await self._crud.delete_comment(comment_id, user_uuid)

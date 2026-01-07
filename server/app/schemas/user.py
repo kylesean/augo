@@ -1,8 +1,8 @@
 """Pydantic schemas for user management endpoints."""
+from __future__ import annotations
 
 from decimal import Decimal
-from typing import List, Literal, Optional
-from uuid import UUID
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -28,9 +28,7 @@ class FinancialAccountItem(BaseModel):
 
     name: str = Field(..., description="Account name", max_length=100)
     nature: Literal["ASSET", "LIABILITY"] = Field(..., description="Account nature")
-    type: Optional[
-        Literal["CASH", "DEPOSIT", "E_MONEY", "INVESTMENT", "RECEIVABLE", "CREDIT_CARD", "LOAN", "PAYABLE"]
-    ] = Field(None, description="Account type", max_length=50)
+    type: Literal["CASH", "DEPOSIT", "E_MONEY", "INVESTMENT", "RECEIVABLE", "CREDIT_CARD", "LOAN", "PAYABLE"] | None = Field(None, description="Account type", max_length=50)
     initialBalance: str = Field(default="0", description="Initial balance", alias="initial_balance")
     currentBalance: str = Field(default="0", description="Current balance", alias="current_balance")
     currencyCode: str = Field(default="CNY", description="Currency code", alias="currency_code", max_length=3)
@@ -40,7 +38,7 @@ class FinancialAccountItem(BaseModel):
     includeInCashFlow: bool = Field(
         default=False, description="Include in cash flow forecast", alias="include_in_cash_flow"
     )
-    display: Optional[TransactionDisplayValue] = Field(None, description="Display value object")
+    display: TransactionDisplayValue | None = Field(None, description="Display value object")
     status: Literal["ACTIVE", "INACTIVE", "CLOSED"] = Field(default="ACTIVE", description="Account status")
 
     model_config = ConfigDict(populate_by_name=True)
@@ -91,11 +89,11 @@ class SaveFinancialAccountsRequest(BaseModel):
         accounts: List of financial account items
     """
 
-    accounts: List[FinancialAccountItem] = Field(..., description="List of financial accounts")
+    accounts: list[FinancialAccountItem] = Field(..., description="List of financial accounts")
 
     @field_validator("accounts")
     @classmethod
-    def validate_accounts_not_empty(cls, v: List[FinancialAccountItem]) -> List[FinancialAccountItem]:
+    def validate_accounts_not_empty(cls, v: list[FinancialAccountItem]) -> list[FinancialAccountItem]:
         """Validate that accounts list is not empty.
 
         Args:
@@ -131,16 +129,16 @@ class FinancialAccountResponse(BaseModel):
     id: str  # UUID as string
     name: str
     nature: str
-    type: Optional[str] = None
+    type: str | None = None
     currencyCode: str
     initialBalance: str
     currentBalance: str = "0"
     includeInNetWorth: bool
     includeInCashFlow: bool = False
-    display: Optional[TransactionDisplayValue] = None
+    display: TransactionDisplayValue | None = None
     status: str = Field(default="ACTIVE")
-    createdAt: Optional[str] = None
-    updatedAt: Optional[str] = None
+    createdAt: str | None = None
+    updatedAt: str | None = None
 
 
 class FinancialAccountsResponse(BaseModel):
@@ -152,7 +150,7 @@ class FinancialAccountsResponse(BaseModel):
         lastUpdatedAt: ISO 8601 timestamp of last update
     """
 
-    accounts: List[FinancialAccountResponse]
+    accounts: list[FinancialAccountResponse]
     totalBalance: str
     lastUpdatedAt: str
 
@@ -174,9 +172,7 @@ class CreateFinancialAccountRequest(BaseModel):
 
     name: str = Field(..., description="Account name", max_length=100)
     nature: Literal["ASSET", "LIABILITY"] = Field(..., description="Account nature")
-    type: Optional[
-        Literal["CASH", "DEPOSIT", "E_MONEY", "INVESTMENT", "RECEIVABLE", "CREDIT_CARD", "LOAN", "PAYABLE"]
-    ] = Field(None, description="Account type", max_length=50)
+    type: Literal["CASH", "DEPOSIT", "E_MONEY", "INVESTMENT", "RECEIVABLE", "CREDIT_CARD", "LOAN", "PAYABLE"] | None = Field(None, description="Account type", max_length=50)
     initialBalance: str = Field(default="0", description="Initial balance")
     currentBalance: str = Field(default="0", description="Current balance")
     currencyCode: str = Field(default="CNY", description="Currency code", max_length=3)
@@ -198,21 +194,19 @@ class CreateFinancialAccountRequest(BaseModel):
 class UpdateFinancialAccountRequest(BaseModel):
     """Request schema for updating a financial account."""
 
-    name: Optional[str] = Field(None, max_length=100)
-    nature: Optional[Literal["ASSET", "LIABILITY"]] = None
-    type: Optional[
-        Literal["CASH", "DEPOSIT", "E_MONEY", "INVESTMENT", "RECEIVABLE", "CREDIT_CARD", "LOAN", "PAYABLE"]
-    ] = Field(None, max_length=50)
-    initialBalance: Optional[str] = None
-    currentBalance: Optional[str] = None
-    currencyCode: Optional[str] = Field(None, max_length=3)
-    includeInNetWorth: Optional[bool] = None
-    includeInCashFlow: Optional[bool] = None
-    status: Optional[Literal["ACTIVE", "INACTIVE", "CLOSED"]] = None
+    name: str | None = Field(None, max_length=100)
+    nature: Literal["ASSET", "LIABILITY"] | None = None
+    type: Literal["CASH", "DEPOSIT", "E_MONEY", "INVESTMENT", "RECEIVABLE", "CREDIT_CARD", "LOAN", "PAYABLE"] | None = Field(None, max_length=50)
+    initialBalance: str | None = None
+    currentBalance: str | None = None
+    currencyCode: str | None = Field(None, max_length=3)
+    includeInNetWorth: bool | None = None
+    includeInCashFlow: bool | None = None
+    status: Literal["ACTIVE", "INACTIVE", "CLOSED"] | None = None
 
     @field_validator("initialBalance", "currentBalance")
     @classmethod
-    def validate_balance(cls, v: Optional[str]) -> Optional[str]:
+    def validate_balance(cls, v: str | None) -> str | None:
         """Validate that the balance string is a valid decimal format or None."""
         if v is None:
             return v
@@ -303,12 +297,12 @@ class UserSettingsRequest(BaseModel):
         estimatedAvgDailySpending: Optional estimated daily spending
     """
 
-    safetyBalanceThreshold: Optional[str] = Field(None, description="Safety balance threshold")
-    estimatedAvgDailySpending: Optional[str] = Field(None, description="Estimated average daily spending")
+    safetyBalanceThreshold: str | None = Field(None, description="Safety balance threshold")
+    estimatedAvgDailySpending: str | None = Field(None, description="Estimated average daily spending")
 
     @field_validator("safetyBalanceThreshold", "estimatedAvgDailySpending")
     @classmethod
-    def validate_decimal_fields(cls, v: Optional[str]) -> Optional[str]:
+    def validate_decimal_fields(cls, v: str | None) -> str | None:
         """Validate decimal fields.
 
         Args:
@@ -331,7 +325,7 @@ class UserSettingsRequest(BaseModel):
             raise ValueError(f"Invalid decimal format: {e}")
 
     @model_validator(mode="after")
-    def validate_at_least_one_field(self) -> "UserSettingsRequest":
+    def validate_at_least_one_field(self) -> UserSettingsRequest:
         """Validate that at least one field is provided.
 
         Returns:
@@ -385,13 +379,13 @@ class UserInfoResponse(BaseModel):
     """
 
     id: str
-    email: Optional[str] = None
-    mobile: Optional[str] = None
+    email: str | None = None
+    mobile: str | None = None
     username: str
-    avatarUrl: Optional[str] = None
+    avatarUrl: str | None = None
     createdAt: str
     updatedAt: str
-    clientLastLoginAt: Optional[str] = None
+    clientLastLoginAt: str | None = None
 
 
 class UpdateUserProfileRequest(BaseModel):
@@ -402,11 +396,11 @@ class UpdateUserProfileRequest(BaseModel):
         avatarUrl: New avatar URL (optional)
     """
 
-    username: Optional[str] = Field(None, min_length=1, max_length=50, description="User's display name")
-    avatarUrl: Optional[str] = Field(None, max_length=500, description="Avatar image URL")
+    username: str | None = Field(None, min_length=1, max_length=50, description="User's display name")
+    avatarUrl: str | None = Field(None, max_length=500, description="Avatar image URL")
 
     @model_validator(mode="after")
-    def validate_at_least_one_field(self) -> "UpdateUserProfileRequest":
+    def validate_at_least_one_field(self) -> UpdateUserProfileRequest:
         """Validate that at least one field is provided."""
         if self.username is None and self.avatarUrl is None:
             raise ValueError("At least one field (username or avatarUrl) must be provided")
@@ -435,7 +429,7 @@ class FinancialSettingsResponseSchema(BaseModel):
     burnRateMode: Literal["MANUAL", "AI_AUTO"] = "AI_AUTO"
     primaryCurrency: str = "CNY"
     monthStartDay: int = 1
-    updatedAt: Optional[str] = None
+    updatedAt: str | None = None
 
 
 class UpdateFinancialSettingsRequest(BaseModel):
@@ -444,15 +438,15 @@ class UpdateFinancialSettingsRequest(BaseModel):
     All fields are optional - only provided fields will be updated.
     """
 
-    safetyThreshold: Optional[str] = Field(None, description="Minimum safe balance threshold")
-    dailyBurnRate: Optional[str] = Field(None, description="Daily spending estimate")
-    burnRateMode: Optional[Literal["MANUAL", "AI_AUTO"]] = Field(None, description="Burn rate mode")
-    primaryCurrency: Optional[str] = Field(None, max_length=3, description="Primary currency code")
-    monthStartDay: Optional[int] = Field(None, ge=1, le=31, description="Month start day")
+    safetyThreshold: str | None = Field(None, description="Minimum safe balance threshold")
+    dailyBurnRate: str | None = Field(None, description="Daily spending estimate")
+    burnRateMode: Literal["MANUAL", "AI_AUTO"] | None = Field(None, description="Burn rate mode")
+    primaryCurrency: str | None = Field(None, max_length=3, description="Primary currency code")
+    monthStartDay: int | None = Field(None, ge=1, le=31, description="Month start day")
 
     @field_validator("safetyThreshold", "dailyBurnRate")
     @classmethod
-    def validate_decimal_fields(cls, v: Optional[str]) -> Optional[str]:
+    def validate_decimal_fields(cls, v: str | None) -> str | None:
         """Validate decimal fields."""
         if v is None:
             return v
@@ -465,7 +459,7 @@ class UpdateFinancialSettingsRequest(BaseModel):
             raise ValueError(f"Invalid decimal format: {e}")
 
     @model_validator(mode="after")
-    def validate_at_least_one_field(self) -> "UpdateFinancialSettingsRequest":
+    def validate_at_least_one_field(self) -> UpdateFinancialSettingsRequest:
         """Validate that at least one field is provided."""
         if all(
             v is None

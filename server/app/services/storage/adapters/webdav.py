@@ -5,9 +5,10 @@ Uses webdav4 async client for connections to NAS devices, cloud drives, etc.
 """
 
 import uuid
-from datetime import datetime, timedelta, timezone
+from collections.abc import AsyncGenerator
+from datetime import UTC, datetime, timedelta
 from pathlib import PurePosixPath
-from typing import Any, AsyncGenerator, Optional, cast
+from typing import Any
 
 from app.core.config import settings
 from app.core.logging import logger
@@ -98,7 +99,7 @@ class WebDAVAdapter(StorageAdapter):
         Returns:
             Generated object key
         """
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         date_prefix = now.strftime("%Y/%m/%d")
 
         ext = PurePosixPath(filename).suffix.lower() or ""
@@ -109,9 +110,9 @@ class WebDAVAdapter(StorageAdapter):
 
     async def save(
         self,
-        file_stream: AsyncGenerator[bytes, None],
+        file_stream: AsyncGenerator[bytes],
         filename: str,
-        content_type: Optional[str] = None,
+        content_type: str | None = None,
     ) -> str:
         """Upload file to WebDAV server.
 
@@ -161,7 +162,7 @@ class WebDAVAdapter(StorageAdapter):
         self,
         object_key: str,
         expire_seconds: int = 3600,
-        filename: Optional[str] = None,
+        filename: str | None = None,
     ) -> str:
         """Generate signed URL for WebDAV file access.
 
@@ -179,7 +180,7 @@ class WebDAVAdapter(StorageAdapter):
         token_data = {
             "object_key": object_key,
             "storage_config_id": self.config.id,
-            "exp": datetime.now(timezone.utc) + timedelta(seconds=expire_seconds),
+            "exp": datetime.now(UTC) + timedelta(seconds=expire_seconds),
         }
 
         if filename:
@@ -196,7 +197,7 @@ class WebDAVAdapter(StorageAdapter):
     async def get_stream(
         self,
         object_key: str,
-    ) -> AsyncGenerator[bytes, None]:
+    ) -> AsyncGenerator[bytes]:
         """Stream file from WebDAV server.
 
         Args:
@@ -274,7 +275,7 @@ class WebDAVAdapter(StorageAdapter):
         except Exception:
             return False
 
-    async def get_file_info(self, object_key: str) -> Optional[dict]:
+    async def get_file_info(self, object_key: str) -> dict | None:
         """Get file metadata from WebDAV server.
 
         Args:

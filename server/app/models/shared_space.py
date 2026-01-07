@@ -1,7 +1,7 @@
 """Shared space models for collaborative financial management."""
 
 from datetime import datetime
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Optional
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -38,7 +38,7 @@ class SharedSpace(BaseModel, table=True):
 
     __tablename__ = "shared_spaces"
 
-    id: Optional[UUID] = Field(
+    id: UUID | None = Field(
         default=None,
         sa_column=Column(PGUUID(as_uuid=True), primary_key=True, server_default=sa.text("gen_random_uuid()")),
     )
@@ -47,9 +47,9 @@ class SharedSpace(BaseModel, table=True):
         sa_column=Column(PGUUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False)
     )
     status: str = Field(max_length=50, default="ACTIVE")
-    description: Optional[str] = Field(default=None)
-    invite_code: Optional[str] = Field(default=None, max_length=20)
-    invite_code_expires_at: Optional[datetime] = Field(
+    description: str | None = Field(default=None)
+    invite_code: str | None = Field(default=None, max_length=20)
+    invite_code_expires_at: datetime | None = Field(
         default=None, sa_column=Column(TIMESTAMP(timezone=True), nullable=True)
     )
 
@@ -60,10 +60,10 @@ class SharedSpace(BaseModel, table=True):
             "primaryjoin": "SharedSpace.creator_uuid == User.uuid",
         }
     )
-    members: List["SpaceMember"] = Relationship(
+    members: list["SpaceMember"] = Relationship(
         back_populates="space", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )
-    space_transactions: List["SpaceTransaction"] = Relationship(
+    space_transactions: list["SpaceTransaction"] = Relationship(
         back_populates="space", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )
 
@@ -101,7 +101,7 @@ class SpaceMember(BaseModel, table=True):
     status: str = Field(max_length=50, default="ACCEPTED")
 
     # Relationships
-    space: Optional[SharedSpace] = Relationship(back_populates="members")
+    space: SharedSpace | None = Relationship(back_populates="members")
     user: Optional["User"] = Relationship(
         sa_relationship_kwargs={
             "foreign_keys": "[SpaceMember.user_uuid]",
@@ -133,7 +133,7 @@ class SpaceTransaction(BaseModel, table=True):
 
     __tablename__ = "space_transactions"
 
-    id: Optional[UUID] = Field(
+    id: UUID | None = Field(
         default=None,
         sa_column=Column(PGUUID(as_uuid=True), primary_key=True, server_default=sa.text("gen_random_uuid()")),
     )
@@ -148,7 +148,7 @@ class SpaceTransaction(BaseModel, table=True):
     )
 
     # Relationships
-    space: Optional[SharedSpace] = Relationship(back_populates="space_transactions")
+    space: SharedSpace | None = Relationship(back_populates="space_transactions")
     transaction: Optional["Transaction"] = Relationship(
         sa_relationship_kwargs={"foreign_keys": "[SpaceTransaction.transaction_id]"}
     )

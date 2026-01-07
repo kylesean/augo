@@ -9,13 +9,13 @@ Providing core system tools via DeepAgents' FilesystemBackend:
 
 Mapped to the project root directory for accessing skills and other project files.
 """
+from __future__ import annotations
 
 import json
 import os
 import subprocess
-import uuid
 from pathlib import Path
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, cast
 
 from deepagents.backends.filesystem import FilesystemBackend
 from deepagents.backends.protocol import ExecuteResponse
@@ -238,7 +238,7 @@ def execute_tool(command: str) -> Any:
 
 # --- 导出工具列表 ---
 # 包含 execute 供 Skills 使用脚本
-filesystem_tools: List[BaseTool] = [
+filesystem_tools: list[BaseTool] = [
     read_file_tool,
     ls_tool,
     write_file_tool,  # 写入文件到用户专属目录 artifacts/{user_id}/

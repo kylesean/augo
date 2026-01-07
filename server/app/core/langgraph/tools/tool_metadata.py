@@ -7,9 +7,10 @@ This module defines metadata for each tool using three orthogonal dimensions:
 
 This design provides clear separation of concerns and enables declarative routing logic.
 """
+from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Dict
+from typing import Any
 
 # ============================================================================
 # Orthogonal Dimension Enums
@@ -100,7 +101,7 @@ class ToolMetadata:
         self.cancellable = cancellable
         self.warning_on_cancel = warning_on_cancel
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert the tool metadata to a serializable dictionary."""
         return {
             "name": self.name,
@@ -127,7 +128,7 @@ class ToolMetadata:
 # Tool Metadata Registry
 # ============================================================================
 
-TOOL_METADATA: Dict[str, ToolMetadata] = {
+TOOL_METADATA: dict[str, ToolMetadata] = {
     # ------------------------------------------------------------------
     # Read-only query tools - return to agent for further processing
     # ------------------------------------------------------------------

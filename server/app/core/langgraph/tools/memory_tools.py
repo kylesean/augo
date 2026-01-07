@@ -3,7 +3,6 @@
 Allows the agent to search for user context, preferences, and long-term facts.
 """
 
-from typing import Optional
 
 from langchain_core.tools import tool
 

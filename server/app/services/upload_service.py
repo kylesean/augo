@@ -5,14 +5,16 @@
 2. 然后一次性批量插入数据库记录
 3. 单次 commit
 """
+from __future__ import annotations
 
 import hashlib
 import io
 import mimetypes
 import uuid
-from datetime import datetime, timezone
+from collections.abc import AsyncGenerator
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, AsyncGenerator, List, Optional, Tuple, Union, cast
+from typing import Any, cast
 from uuid import UUID
 
 import aiofiles
@@ -24,7 +26,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.concurrency import run_in_threadpool
 
 from app.core.config import settings
-from app.core.exceptions import AppException, BusinessException, ErrorCode
+from app.core.exceptions import BusinessException
 from app.core.logging import logger
 from app.models.attachment import Attachment
 from app.models.storage_config import ProviderType, StorageConfig
@@ -108,15 +110,15 @@ class UploadService:
 
     def __init__(self, db: AsyncSession):
         self.db = db
-        self._adapter: Optional[StorageAdapter] = None
+        self._adapter: StorageAdapter | None = None
 
     async def upload_files(
         self,
-        files: List[UploadFile],
-        user_uuid: Union[str, UUID],
+        files: list[UploadFile],
+        user_uuid: UUID,
         compress: bool = True,
-        thread_id: Optional[str] = None,
-    ) -> Tuple[List[dict], List[dict]]:
+        thread_id: UUID | None = None,
+    ) -> tuple[list[dict], list[dict]]:
         """批量上传文件。
 
         最佳实践：
@@ -132,10 +134,6 @@ class UploadService:
         Returns:
             (成功列表, 失败列表)
         """
-        import uuid as uuid_lib
-
-        # Convert user_uuid to UUID if it's a string
-        user_uuid = uuid_lib.UUID(user_uuid) if isinstance(user_uuid, str) else user_uuid
 
         # ====================================================================
         # 阶段 1：获取存储配置并初始化适配器
@@ -225,7 +223,7 @@ class UploadService:
                     "mimeType": info["mime_type"],
                     "hash": info["hash"],
                     "compressed": info["compressed"],
-                    "threadId": thread_id,
+                    "threadId": str(thread_id) if thread_id else None,
                 }
             )
 
@@ -239,13 +237,13 @@ class UploadService:
 
         return successful, failed
 
-    async def _get_or_create_storage_config(self, user_uuid: Union[str, UUID]) -> Tuple[Optional[int], StorageConfig]:
+    async def _get_or_create_storage_config(self, user_uuid: UUID) -> tuple[int | None, StorageConfig]:
         """获取或创建用户的默认存储配置。
 
         根据 settings.STORAGE_PROVIDER 确定存储后端类型。
 
         Args:
-            user_uuid: User UUID (str or UUID object)
+            user_uuid: 用户 UUID
 
         Returns:
             Tuple[config_id, StorageConfig]
@@ -303,7 +301,7 @@ class UploadService:
     async def _process_and_save_file(
         self,
         file: UploadFile,
-        user_uuid: Union[str, UUID],
+        user_uuid: UUID,
         compress: bool,
     ) -> dict:
         """处理并保存单个文件（支持本地存储和 S3 适配器）。
@@ -339,7 +337,7 @@ class UploadService:
         # 6. 保存文件（根据适配器类型选择方式）
         if self._adapter and settings.STORAGE_PROVIDER != "local_uploads":
             # 使用适配器保存到远程存储（S3/Supabase）
-            async def content_generator() -> AsyncGenerator[bytes, None]:
+            async def content_generator() -> AsyncGenerator[bytes]:
                 yield content
 
             object_key = await self._adapter.save(
@@ -380,42 +378,16 @@ class UploadService:
     # 其他公共方法
     # =========================================================================
 
-    async def get_file_path(self, attachment_id: str, user_uuid: Union[str, UUID]) -> Tuple[Path, Attachment]:
+    async def get_file_path(self, attachment_id: UUID, user_uuid: UUID) -> tuple[Path, Attachment]:
         """获取附件的本地文件路径。
 
         Args:
-            attachment_id: 附件 ID (字符串格式的 UUID)
-            user_uuid: 用户 UUID (字符串或 UUID 对象)
+            attachment_id: 附件 ID
+            user_uuid: 用户 UUID
         """
-        import uuid as uuid_lib
-        from uuid import UUID
-
-        # 验证并转换 attachment_id 为 UUID
-        try:
-            if isinstance(attachment_id, str):
-                attachment_uuid = UUID(attachment_id)
-            elif isinstance(attachment_id, UUID):
-                attachment_uuid = attachment_id
-            else:
-                raise ValueError(f"无效的 attachment_id 类型: {type(attachment_id)}")
-        except ValueError as e:
-            logger.warning(
-                "invalid_attachment_id",
-                attachment_id=str(attachment_id)[:50],  # 截断以避免日志过长
-                error=str(e),
-            )
-            raise BusinessException(
-                message="无效的附件 ID 格式",
-                status_code=400,
-                error_code="INVALID_ATTACHMENT_ID",
-            )
-
-        # 确保 user_uuid 是正确的 UUID 类型
-        if isinstance(user_uuid, str):
-            user_uuid = uuid_lib.UUID(user_uuid)
 
         stmt = select(Attachment).where(
-            Attachment.id == attachment_uuid,
+            Attachment.id == attachment_id,
             Attachment.user_uuid == user_uuid,
         )
         result = await self.db.execute(stmt)
@@ -440,7 +412,7 @@ class UploadService:
 
         return file_path, attachment
 
-    async def delete_file(self, attachment_id: str, user_uuid: Union[str, UUID]) -> bool:
+    async def delete_file(self, attachment_id: UUID, user_uuid: UUID) -> bool:
         """删除文件。"""
         file_path, attachment = await self.get_file_path(attachment_id, user_uuid)
 
@@ -499,12 +471,12 @@ class UploadService:
 
     def _generate_object_key(self, extension: str, upload_id: str) -> str:
         """生成存储路径。"""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         date_path = now.strftime("%Y/%m/%d")
         unique_suffix = uuid.uuid4().hex[:12]
         return f"{date_path}/{upload_id}_{unique_suffix}.{extension}"
 
-    def _compress_image(self, content: bytes, extension: str) -> Tuple[bytes, int]:
+    def _compress_image(self, content: bytes, extension: str) -> tuple[bytes, int]:
         """压缩图片（同步方法）。"""
         try:
             image = Image.open(io.BytesIO(content))

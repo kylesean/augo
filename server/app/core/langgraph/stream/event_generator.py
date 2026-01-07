@@ -13,8 +13,9 @@
 import json
 import time
 import uuid
-from datetime import datetime, timezone
-from typing import Any, AsyncGenerator
+from collections.abc import AsyncGenerator
+from datetime import UTC, datetime
+from typing import Any
 
 from langchain_core.messages import AIMessage, ToolMessage
 
@@ -65,7 +66,7 @@ class EventGenerator:
         self,
         chunk: tuple,
         session_id: str,
-    ) -> AsyncGenerator[GenUIEvent, None]:
+    ) -> AsyncGenerator[GenUIEvent]:
         """处理 messages 模式的流块
 
         Args:
@@ -100,7 +101,7 @@ class EventGenerator:
     async def _process_text_content(
         self,
         content: Any,
-    ) -> AsyncGenerator[GenUIEvent, None]:
+    ) -> AsyncGenerator[GenUIEvent]:
         """处理文本内容"""
         if isinstance(content, str):
             if content:
@@ -132,7 +133,7 @@ class EventGenerator:
         self,
         tool_call_chunks: list[dict],
         session_id: str,
-    ) -> AsyncGenerator[GenUIEvent, None]:
+    ) -> AsyncGenerator[GenUIEvent]:
         """处理工具调用块
 
         发送 tool_call_start 事件通知客户端工具开始执行
@@ -169,7 +170,7 @@ class EventGenerator:
                     data={
                         "id": tool_id,
                         "name": tool_name,
-                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                        "timestamp": datetime.now(UTC).isoformat(),
                     },
                 )
 
@@ -181,7 +182,7 @@ class EventGenerator:
         self,
         chunk: dict[str, Any],
         session_id: str,
-    ) -> AsyncGenerator[GenUIEvent, None]:
+    ) -> AsyncGenerator[GenUIEvent]:
         """处理 updates 模式的流块
 
         Args:
@@ -191,13 +192,6 @@ class EventGenerator:
         Yields:
             GenUIEvent 事件
         """
-        from app.core.genui_protocol import (
-            BeginRendering,
-            BeginRenderingPayload,
-            Component,
-            SurfaceUpdate,
-            SurfaceUpdatePayload,
-        )
 
         for node_name, node_output in chunk.items():
             if node_name.startswith("__"):
@@ -229,7 +223,7 @@ class EventGenerator:
         self,
         node_output: Any,
         session_id: str,
-    ) -> AsyncGenerator[GenUIEvent, None]:
+    ) -> AsyncGenerator[GenUIEvent]:
         """处理 tools 节点输出"""
         messages = []
         if isinstance(node_output, dict):
@@ -280,7 +274,7 @@ class EventGenerator:
         tool_name: str,
         session_id: str,
         tool_call_id: str | None,
-    ) -> AsyncGenerator[GenUIEvent, None]:
+    ) -> AsyncGenerator[GenUIEvent]:
         """生成 UI 组件事件（a2ui_message）"""
         from app.core.genui_protocol import (
             BeginRendering,

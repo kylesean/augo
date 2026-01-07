@@ -3,9 +3,10 @@
 This module provides functionality to fetch exchange rates from external APIs
 and cache them in Redis for use in currency conversion across the application.
 """
+from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Any, Dict, Optional, cast
+from datetime import UTC, datetime
+from typing import Any, cast
 
 import httpx
 
@@ -27,7 +28,7 @@ class ExchangeRateService:
         self._cache_key = settings.EXCHANGE_RATE_CACHE_KEY
         self._cache_ttl = settings.EXCHANGE_RATE_CACHE_TTL
 
-    async def fetch_exchange_rates(self) -> Optional[Dict[str, Any]]:
+    async def fetch_exchange_rates(self) -> dict[str, Any] | None:
         """Fetch latest exchange rates from the external API.
 
         Returns:
@@ -62,7 +63,7 @@ class ExchangeRateService:
                     last_update=data.get("time_last_update_utc"),
                 )
 
-                return cast(Optional[Dict[str, Any]], data)
+                return cast(dict[str, Any] | None, data)
 
         except httpx.TimeoutException:
             logger.error(
@@ -103,7 +104,7 @@ class ExchangeRateService:
             "last_update_utc": data.get("time_last_update_utc"),
             "next_update_utc": data.get("time_next_update_utc"),
             "conversion_rates": data.get("conversion_rates", {}),
-            "cached_at": datetime.now(timezone.utc).isoformat(),
+            "cached_at": datetime.now(UTC).isoformat(),
         }
 
         success = await cache_manager.set(
@@ -127,7 +128,7 @@ class ExchangeRateService:
 
         return success
 
-    async def get_cached_rates(self) -> Optional[Dict[str, Any]]:
+    async def get_cached_rates(self) -> dict[str, Any] | None:
         """Get cached exchange rates from Redis.
 
         Returns:
@@ -146,9 +147,9 @@ class ExchangeRateService:
             cached_at=data.get("cached_at"),
         )
 
-        return cast(Optional[Dict[str, Any]], data)
+        return cast(dict[str, Any] | None, data)
 
-    async def get_rate(self, target_currency: str) -> Optional[float]:
+    async def get_rate(self, target_currency: str) -> float | None:
         """Get exchange rate for a specific currency.
 
         Args:
@@ -177,14 +178,14 @@ class ExchangeRateService:
                 target_currency=target_currency,
             )
 
-        return cast(Optional[float], rate)
+        return cast(float | None, rate)
 
     async def convert(
         self,
         amount: float,
         from_currency: str,
         to_currency: str,
-    ) -> Optional[float]:
+    ) -> float | None:
         """Convert amount between currencies.
 
         Args:

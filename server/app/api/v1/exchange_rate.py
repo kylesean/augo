@@ -2,10 +2,11 @@
 
 This module provides API endpoints for managing and accessing exchange rate data.
 """
+from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
@@ -21,9 +22,9 @@ class ExchangeRateResponse(BaseModel):
     """Exchange rate data response model."""
 
     base_code: str = Field(description="Base currency code (e.g., USD)")
-    last_update_utc: Optional[str] = Field(default=None, description="Last update time in UTC")
-    cached_at: Optional[str] = Field(default=None, description="When the data was cached")
-    conversion_rates: Dict[str, float] = Field(description="Exchange rates for supported currencies")
+    last_update_utc: str | None = Field(default=None, description="Last update time in UTC")
+    cached_at: str | None = Field(default=None, description="When the data was cached")
+    conversion_rates: dict[str, float] = Field(description="Exchange rates for supported currencies")
 
 
 class ConversionRequest(BaseModel):
@@ -44,7 +45,7 @@ class ConversionResponse(BaseModel):
     rate: float = Field(description="Exchange rate used for conversion")
 
 
-@router.get("", response_model=Dict[str, Any])
+@router.get("", response_model=dict[str, Any])
 async def get_exchange_rates(
     _: Any = Depends(get_current_user),
 ) -> JSONResponse:
@@ -76,7 +77,7 @@ async def get_exchange_rates(
     return success_response(data=data)
 
 
-@router.get("/rate/{currency}", response_model=Dict[str, Any])
+@router.get("/rate/{currency}", response_model=dict[str, Any])
 async def get_single_rate(
     currency: str,
     _: Any = Depends(get_current_user),
@@ -110,7 +111,7 @@ async def get_single_rate(
     )
 
 
-@router.post("/convert", response_model=Dict[str, Any])
+@router.post("/convert", response_model=dict[str, Any])
 async def convert_currency(
     request: ConversionRequest,
     _: Any = Depends(get_current_user),
@@ -160,7 +161,7 @@ async def convert_currency(
     )
 
 
-@router.post("/refresh", response_model=Dict[str, Any])
+@router.post("/refresh", response_model=dict[str, Any])
 async def refresh_exchange_rates(
     _: Any = Depends(get_current_user),
 ) -> JSONResponse:

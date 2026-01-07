@@ -5,15 +5,16 @@ This module provides:
 - Permission checking decorators
 - Resource ownership validation
 """
+from __future__ import annotations
 
+from collections.abc import Callable
 from enum import Enum
 from functools import wraps
-from typing import Any, Callable, List, Optional
+from typing import Any
 
 from fastapi import Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.dependencies import get_current_user, get_session
+from app.core.dependencies import get_current_user
 from app.core.logging import logger
 from app.models.user import User
 

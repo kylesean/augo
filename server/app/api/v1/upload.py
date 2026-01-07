@@ -5,8 +5,7 @@
 - GET /api/files/view/{id} - 查看/下载文件
 - DELETE /api/files/{id} - 删除文件
 """
-
-from typing import List, Optional
+from __future__ import annotations
 
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
 from fastapi.responses import FileResponse, JSONResponse
@@ -47,7 +46,7 @@ class UploadResultItem(BaseModel):
     mimeType: str
     hash: str
     compressed: bool
-    threadId: Optional[str] = None
+    threadId: str | None = None
 
 
 class UploadFailureItem(BaseModel):
@@ -70,8 +69,8 @@ class UploadResponse(BaseModel):
     """上传响应"""
 
     summary: UploadSummary
-    uploads: List[UploadResultItem]
-    failures: List[UploadFailureItem]
+    uploads: list[UploadResultItem]
+    failures: list[UploadFailureItem]
 
 
 # =============================================================================
@@ -81,13 +80,13 @@ class UploadResponse(BaseModel):
 
 @router.post("/upload", status_code=status.HTTP_200_OK)
 async def upload_files(
-    files: List[UploadFile] = File(
+    files: list[UploadFile] = File(
         ...,
         alias="files[]",
         description="要上传的文件列表。支持的格式: 图片(jpg/png/gif/webp等), 文档(pdf/doc/docx/xls/xlsx/ppt/pptx/txt/md等)",
     ),
     compress: bool = Query(default=True, description="是否压缩图片（仅对 jpg/jpeg/png/webp 有效）"),
-    thread_id: Optional[str] = Query(
+    thread_id: str | None = Query(
         default=None, alias="threadId", description="关联的会话 ID（用于 LangGraph 对话）"
     ),
     current_user: User = Depends(get_current_user),

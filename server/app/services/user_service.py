@@ -1,8 +1,9 @@
 """User service for managing user information, settings, and financial accounts."""
+from __future__ import annotations
 
 from datetime import datetime
 from decimal import Decimal
-from typing import Any, Dict, List, Optional
+from typing import Any
 from uuid import UUID
 
 from sqlmodel import select
@@ -15,11 +16,8 @@ from app.models.financial_account import FinancialAccount
 from app.models.financial_settings import FinancialSettings
 from app.models.transaction import RecurringTransaction
 from app.models.user import User, UserSettings
-from app.schemas.transaction import TransactionDisplayValue
 from app.utils.currency_utils import (
-    BASE_CURRENCY,
     convert_to_display_currency,
-    get_exchange_rate_from_base,
     get_user_display_currency,
 )
 
@@ -39,7 +37,7 @@ def _format_decimal(value: Decimal, precision: int = 8) -> str:
     return str(value.quantize(format_str))
 
 
-def _format_iso_datetime(dt: Optional[datetime]) -> Optional[str]:
+def _format_iso_datetime(dt: datetime | None) -> str | None:
     """Format a datetime to ISO 8601 string with Z suffix.
 
     Ensures consistent formatting by replacing timezone offset with Z suffix.
@@ -124,8 +122,8 @@ class UserService:
         return cast(User, user)
 
     async def update_user_profile(
-        self, user_uuid: UUID, username: Optional[str] = None, avatar_url: Optional[str] = None
-    ) -> Dict[str, Any]:
+        self, user_uuid: UUID, username: str | None = None, avatar_url: str | None = None
+    ) -> dict[str, Any]:
         """Update user profile (username and/or avatar).
 
         Args:
@@ -175,7 +173,7 @@ class UserService:
             "lastLoginAt": _format_iso_datetime(user.last_login_at),
         }
 
-    async def save_financial_accounts(self, user_uuid: UUID, accounts: List[Dict[str, Any]]) -> Dict[str, Any]:
+    async def save_financial_accounts(self, user_uuid: UUID, accounts: list[dict[str, Any]]) -> dict[str, Any]:
         """Save or update user's financial accounts.
 
         Deletes all existing financial accounts and creates new ones based on input.
@@ -268,7 +266,7 @@ class UserService:
 
         return {"totalBalance": f"{total_display_balance:.2f}", "lastUpdatedAt": _format_iso_datetime(now)}
 
-    async def get_user_financial_accounts(self, user_uuid: UUID) -> Dict[str, Any]:
+    async def get_user_financial_accounts(self, user_uuid: UUID) -> dict[str, Any]:
         """Get user's financial accounts.
 
         Args:
@@ -337,7 +335,7 @@ class UserService:
             "lastUpdatedAt": _format_iso_datetime(max_updated_at),
         }
 
-    async def create_financial_account(self, user_uuid: UUID, account_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def create_financial_account(self, user_uuid: UUID, account_data: dict[str, Any]) -> dict[str, Any]:
         """Create a single financial account.
 
         Args:
@@ -388,8 +386,8 @@ class UserService:
         }
 
     async def update_financial_account(
-        self, user_uuid: UUID, account_id: UUID, account_data: Dict[str, Any]
-    ) -> Optional[Dict[str, Any]]:
+        self, user_uuid: UUID, account_id: UUID, account_data: dict[str, Any]
+    ) -> dict[str, Any] | None:
         """Update a financial account.
 
         Args:
@@ -471,7 +469,7 @@ class UserService:
 
         return True
 
-    async def update_financial_safety_line(self, user_uuid: UUID, safety_balance_threshold: str) -> Dict[str, Any]:
+    async def update_financial_safety_line(self, user_uuid: UUID, safety_balance_threshold: str) -> dict[str, Any]:
         """Update user's financial safety line threshold.
 
         Args:
@@ -510,7 +508,7 @@ class UserService:
 
         return {"safetyBalanceThreshold": settings.safety_balance_threshold, "updatedAt": _format_iso_datetime(now)}
 
-    async def check_onboarding_status(self, user_uuid: UUID) -> Dict[str, bool]:
+    async def check_onboarding_status(self, user_uuid: UUID) -> dict[str, bool]:
         """Check if user has completed onboarding.
 
         Onboarding is considered complete when:
@@ -565,8 +563,8 @@ class UserService:
     async def update_user_settings(
         self,
         user_uuid: UUID,
-        safety_balance_threshold: Optional[str] = None,
-        estimated_avg_daily_spending: Optional[str] = None,
+        safety_balance_threshold: str | None = None,
+        estimated_avg_daily_spending: str | None = None,
     ) -> UserSettings:
         """Update user settings.
 
@@ -673,11 +671,11 @@ class UserService:
     async def update_financial_settings(
         self,
         user_uuid: UUID,
-        safety_threshold: Optional[str] = None,
-        daily_burn_rate: Optional[str] = None,
-        burn_rate_mode: Optional[str] = None,
-        primary_currency: Optional[str] = None,
-        month_start_day: Optional[int] = None,
+        safety_threshold: str | None = None,
+        daily_burn_rate: str | None = None,
+        burn_rate_mode: str | None = None,
+        primary_currency: str | None = None,
+        month_start_day: int | None = None,
     ) -> FinancialSettings:
         """Update user's financial settings using UPSERT.
 

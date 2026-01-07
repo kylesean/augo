@@ -9,8 +9,12 @@ The two pools connect to the same database but use different drivers:
 - pg_pool.py: psycopg3 (for LangGraph, required by AsyncPostgresSaver)
 """
 
+from __future__ import annotations
+
+import uuid
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import TYPE_CHECKING, AsyncGenerator, Optional
+from typing import TYPE_CHECKING
 
 from sqlalchemy import delete, desc, select, text
 from sqlalchemy.ext.asyncio import (
@@ -144,7 +148,7 @@ class DatabaseManager:
 db_manager = DatabaseManager()
 
 
-async def get_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_session() -> AsyncGenerator[AsyncSession]:
     """Dependency for getting async database sessions.
 
     Yields:
@@ -171,7 +175,7 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 @asynccontextmanager
-async def get_session_context() -> AsyncGenerator[AsyncSession, None]:
+async def get_session_context() -> AsyncGenerator[AsyncSession]:
     """Context manager for getting async database sessions.
 
     Yields:
@@ -243,10 +247,10 @@ class SessionRepository:
 
     async def create(
         self,
-        session_id: str,
-        user_uuid: str,
+        session_id: uuid.UUID,
+        user_uuid: uuid.UUID,
         name: str = "",
-    ) -> "ChatSession":
+    ) -> ChatSession:
         """Create a new chat session.
 
         Args:
@@ -279,8 +283,8 @@ class SessionRepository:
 
     async def get(
         self,
-        session_id: str,
-    ) -> Optional["ChatSession"]:
+        session_id: uuid.UUID,
+    ) -> ChatSession | None:
         """Get a session by ID.
 
         Args:
@@ -296,8 +300,8 @@ class SessionRepository:
 
     async def get_by_user(
         self,
-        user_uuid: str,
-    ) -> list["ChatSession"]:
+        user_uuid: uuid.UUID,
+    ) -> list[ChatSession]:
         """Get all sessions for a user.
 
         Args:
@@ -315,9 +319,9 @@ class SessionRepository:
 
     async def update_name(
         self,
-        session_id: str,
+        session_id: uuid.UUID,
         name: str,
-    ) -> Optional["ChatSession"]:
+    ) -> ChatSession | None:
         """Update a session's name.
 
         Args:
@@ -347,7 +351,7 @@ class SessionRepository:
 
     async def delete(
         self,
-        session_id: str,
+        session_id: uuid.UUID,
     ) -> bool:
         """Delete a session by ID.
 

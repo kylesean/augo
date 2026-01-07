@@ -4,11 +4,11 @@ This module handles environment-specific configuration loading, parsing, and man
 for the application. It includes environment detection, .env file loading, and
 configuration value parsing using Pydantic Settings.
 """
+from __future__ import annotations
 
 import os
 from enum import Enum
 from pathlib import Path
-from typing import List, Optional
 
 from dotenv import load_dotenv
 from pydantic import Field, field_validator
@@ -113,7 +113,7 @@ class Settings(BaseSettings):
 
     # LLM Configuration
     OPENAI_API_KEY: str = Field("", validation_alias="OPENAI_API_KEY")
-    OPENAI_BASE_URL: Optional[str] = Field(None, validation_alias="OPENAI_BASE_URL")
+    OPENAI_BASE_URL: str | None = Field(None, validation_alias="OPENAI_BASE_URL")
     DEFAULT_LLM_MODEL: str = "gpt-4o-mini"
     DEFAULT_LLM_TEMPERATURE: float = 0.2
     MAX_TOKENS: int = 2000
@@ -126,9 +126,9 @@ class Settings(BaseSettings):
     LONG_TERM_MEMORY_EMBEDDER_MODEL: str = "text-embedding-3-small"
     LONG_TERM_MEMORY_EMBEDDER_DIMS: int = 1024  # Embedding dimensions
     LONG_TERM_MEMORY_COLLECTION_NAME: str = "longterm_memory"
-    LONG_TERM_MEMORY_EMBEDDER_API_KEY: Optional[str] = None  # For openai/huggingface
-    LONG_TERM_MEMORY_EMBEDDER_BASE_URL: Optional[str] = None  # For openai-compatible APIs
-    LONG_TERM_MEMORY_OLLAMA_BASE_URL: Optional[str] = None  # For ollama: http://localhost:11434
+    LONG_TERM_MEMORY_EMBEDDER_API_KEY: str | None = None  # For openai/huggingface
+    LONG_TERM_MEMORY_EMBEDDER_BASE_URL: str | None = None  # For openai-compatible APIs
+    LONG_TERM_MEMORY_OLLAMA_BASE_URL: str | None = None  # For ollama: http://localhost:11434
 
     # JWT Configuration
     JWT_SECRET_KEY: str = Field(default="change-this-secret-key-in-production")
@@ -151,17 +151,17 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str = "postgres"
     POSTGRES_POOL_SIZE: int = 20
     POSTGRES_MAX_OVERFLOW: int = 10
-    CHECKPOINT_TABLES: List[str] = ["checkpoint_blobs", "checkpoint_writes", "checkpoints"]
+    CHECKPOINT_TABLES: list[str] = ["checkpoint_blobs", "checkpoint_writes", "checkpoints"]
 
     # Redis Configuration
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
     REDIS_DB: int = 0
-    REDIS_PASSWORD: Optional[str] = None
+    REDIS_PASSWORD: str | None = None
     REDIS_POOL_SIZE: int = 10
 
     # Exchange Rate API Configuration
-    EXCHANGE_RATE_API_URL: Optional[str] = None  # e.g., https://v6.exchangerate-api.com/v6/{API_KEY}/latest/USD
+    EXCHANGE_RATE_API_URL: str | None = None  # e.g., https://v6.exchangerate-api.com/v6/{API_KEY}/latest/USD
     EXCHANGE_RATE_CACHE_KEY: str = "exchange_rates:usd"  # Redis key for caching exchange rates
     EXCHANGE_RATE_CACHE_TTL: int = 86400  # Cache TTL in seconds (24 hours)
     EXCHANGE_RATE_CRON_HOUR: int = 0  # Hour to run the scheduled update (UTC)
@@ -178,14 +178,14 @@ class Settings(BaseSettings):
 
     # S3 Compatible Storage (Supabase, MinIO, AWS S3)
     # Required when STORAGE_PROVIDER=s3_compatible
-    S3_ENDPOINT: Optional[str] = None
-    S3_ACCESS_KEY: Optional[str] = None
-    S3_SECRET_KEY: Optional[str] = None
+    S3_ENDPOINT: str | None = None
+    S3_ACCESS_KEY: str | None = None
+    S3_SECRET_KEY: str | None = None
     S3_BUCKET: str = "augo-data"
     S3_REGION: str = "us-east-1"
 
     # Storage System Configuration
-    ENCRYPTION_KEY: Optional[str] = None  # Fernet key for credential encryption
+    ENCRYPTION_KEY: str | None = None  # Fernet key for credential encryption
     FILE_URL_EXPIRE_SECONDS: int = 3600  # Signed URL expiration time
     APP_URL: str = "http://localhost:8000"  # Base URL for signed URLs
 
@@ -218,15 +218,15 @@ class Settings(BaseSettings):
     # SMTP Settings
     SMTP_HOST: str = "localhost"
     SMTP_PORT: int = 587
-    SMTP_USER: Optional[str] = None
-    SMTP_PASSWORD: Optional[str] = None
+    SMTP_USER: str | None = None
+    SMTP_PASSWORD: str | None = None
     SMTP_FROM_EMAIL: str = "noreply@localhost"
     SMTP_FROM_NAME: str = "Augo"
 
     # Evaluation Configuration
     EVALUATION_LLM: str = "gpt-4o"
     EVALUATION_BASE_URL: str = "https://api.openai.com/v1"
-    EVALUATION_API_KEY: Optional[str] = None
+    EVALUATION_API_KEY: str | None = None
     EVALUATION_SLEEP_TIME: int = 10
 
     # Monitoring
@@ -234,14 +234,14 @@ class Settings(BaseSettings):
     METRICS_PORT: int = 9090
 
     @property
-    def allowed_origins_list(self) -> List[str]:
+    def allowed_origins_list(self) -> list[str]:
         """Get CORS origins as a list."""
         if isinstance(self.ALLOWED_ORIGINS, list):
             return self.ALLOWED_ORIGINS
         return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",") if origin.strip()]
 
     @property
-    def allowed_mime_types_list(self) -> List[str]:
+    def allowed_mime_types_list(self) -> list[str]:
         """Get allowed MIME types as a list."""
         if isinstance(self.ALLOWED_MIME_TYPES, list):
             return self.ALLOWED_MIME_TYPES

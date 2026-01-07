@@ -1,17 +1,17 @@
 """Shared space service for managing collaborative spaces."""
+from __future__ import annotations
 
 import secrets
 from collections import defaultdict
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
-from typing import Any, Dict, List, Optional
+from typing import Any
 from uuid import UUID
 
 import structlog
-from sqlalchemy import and_, desc, func, or_, select
+from sqlalchemy import and_, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from sqlalchemy.sql.elements import ColumnElement
 
 from app.core.exceptions import AuthorizationError, BusinessError, NotFoundError
 from app.models.shared_space import (
@@ -35,7 +35,7 @@ class SharedSpaceService:
     # Space CRUD Operations
     # =========================================================================
 
-    async def create_space(self, user_uuid: UUID, name: str, description: Optional[str] = None) -> SharedSpace:
+    async def create_space(self, user_uuid: UUID, name: str, description: str | None = None) -> SharedSpace:
         """Create a new shared space.
 
         Args:
@@ -69,7 +69,7 @@ class SharedSpaceService:
         logger.info("shared_space_created", space_id=space.id, creator=str(user_uuid))
         return space
 
-    async def get_user_spaces(self, user_uuid: UUID, page: int = 1, limit: int = 20) -> Dict[str, Any]:
+    async def get_user_spaces(self, user_uuid: UUID, page: int = 1, limit: int = 20) -> dict[str, Any]:
         """Get all spaces the user is a member of with pagination.
 
         Args:
@@ -122,7 +122,7 @@ class SharedSpaceService:
 
         return {"spaces": items, "total": total, "page": page, "limit": limit}
 
-    async def get_space_detail(self, space_id: UUID, user_uuid: UUID) -> Dict[str, Any]:
+    async def get_space_detail(self, space_id: UUID, user_uuid: UUID) -> dict[str, Any]:
         """Get detailed space info including members.
 
         Args:
@@ -174,10 +174,10 @@ class SharedSpaceService:
         self,
         space_id: UUID,
         user_uuid: UUID,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        status: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        name: str | None = None,
+        description: str | None = None,
+        status: str | None = None,
+    ) -> dict[str, Any]:
         """Update space info (owner/admin only).
 
         Args:
@@ -249,7 +249,7 @@ class SharedSpaceService:
     # Invitation Management
     # =========================================================================
 
-    async def generate_invite_code(self, space_id: UUID, user_uuid: UUID, expires_days: int = 1) -> Dict[str, Any]:
+    async def generate_invite_code(self, space_id: UUID, user_uuid: UUID, expires_days: int = 1) -> dict[str, Any]:
         """Generate a new invite code for the space.
 
         Args:
@@ -276,7 +276,7 @@ class SharedSpaceService:
 
         # Generate 6-digit numeric invite code
         code = "".join(secrets.choice("0123456789") for _ in range(6))
-        expires_at = datetime.now(timezone.utc) + timedelta(days=expires_days)
+        expires_at = datetime.now(UTC) + timedelta(days=expires_days)
 
         # Update space with new invite code
         space.invite_code = code
@@ -291,7 +291,7 @@ class SharedSpaceService:
             "expiresAt": expires_at.isoformat(),
         }
 
-    async def join_with_code(self, code: str, user_uuid: UUID) -> Dict[str, Any]:
+    async def join_with_code(self, code: str, user_uuid: UUID) -> dict[str, Any]:
         """Join a space using invite code.
 
         Args:
@@ -314,7 +314,7 @@ class SharedSpaceService:
             raise NotFoundError("invalid invitation code")
 
         # Check expiration
-        if space.invite_code_expires_at and space.invite_code_expires_at < datetime.now(timezone.utc):
+        if space.invite_code_expires_at and space.invite_code_expires_at < datetime.now(UTC):
             raise BusinessError("invitation code expired")
 
         # Check if already a member
@@ -423,7 +423,7 @@ class SharedSpaceService:
     # Transaction Management
     # =========================================================================
 
-    async def add_transaction_to_space(self, space_id: UUID, user_uuid: UUID, transaction_id: UUID) -> Dict[str, Any]:
+    async def add_transaction_to_space(self, space_id: UUID, user_uuid: UUID, transaction_id: UUID) -> dict[str, Any]:
         """Add a transaction to the space.
 
         Args:
@@ -478,16 +478,16 @@ class SharedSpaceService:
         space_id: UUID,
         amount: float,
         transaction_type: str = "expense",
-        transaction_at: Optional[datetime] = None,
+        transaction_at: datetime | None = None,
         category_key: str = "OTHERS",
         currency: str = "CNY",
-        raw_input: Optional[str] = None,
-        source_account_id: Optional[UUID] = None,
-        target_account_id: Optional[UUID] = None,
+        raw_input: str | None = None,
+        source_account_id: UUID | None = None,
+        target_account_id: UUID | None = None,
         subject: str = "SELF",
         intent: str = "SURVIVAL",
-        tags: Optional[List[str]] = None,
-    ) -> Dict[str, Any]:
+        tags: list[str] | None = None,
+    ) -> dict[str, Any]:
         """Create a transaction and immediately add it to a shared space."""
         from app.services.transaction_service import TransactionService
 
@@ -517,8 +517,8 @@ class SharedSpaceService:
         self,
         user_uuid: UUID,
         space_id: UUID,
-        data: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        data: dict[str, Any],
+    ) -> dict[str, Any]:
         """Record multiple transactions and link them to a shared space."""
         from app.services.transaction_service import TransactionService
 
@@ -543,7 +543,7 @@ class SharedSpaceService:
 
     async def get_space_transactions(
         self, space_id: UUID, user_uuid: UUID, page: int = 1, limit: int = 20
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Get transactions in a space.
 
         Args:
@@ -579,7 +579,7 @@ class SharedSpaceService:
     # Settlement Calculation
     # =========================================================================
 
-    async def get_settlement(self, space_id: UUID, user_uuid: UUID) -> Dict[str, Any]:
+    async def get_settlement(self, space_id: UUID, user_uuid: UUID) -> dict[str, Any]:
         """Calculate settlement for the space.
 
         This calculates who owes whom based on transactions in the space.
@@ -620,12 +620,12 @@ class SharedSpaceService:
                 "spaceId": str(space_id),
                 "items": [],
                 "totalAmount": "0.00",
-                "calculatedAt": datetime.now(timezone.utc).isoformat(),
+                "calculatedAt": datetime.now(UTC).isoformat(),
                 "isSettled": True,
             }
 
         # Calculate balances: positive = others owe this person, negative = owes others
-        balances: Dict[UUID, Decimal] = defaultdict(Decimal)
+        balances: dict[UUID, Decimal] = defaultdict(Decimal)
         total_amount = Decimal("0")
 
         for st in space_txs:
@@ -681,7 +681,7 @@ class SharedSpaceService:
             "spaceId": str(space_id),
             "items": items,
             "totalAmount": f"{total_amount:.2f}",
-            "calculatedAt": datetime.now(timezone.utc).isoformat(),
+            "calculatedAt": datetime.now(UTC).isoformat(),
             "isSettled": len(items) == 0,
         }
 
@@ -717,7 +717,7 @@ class SharedSpaceService:
             raise AuthorizationError("you need owner permissions")
         return member
 
-    async def _get_space_financial_stats(self, space_id: UUID) -> Dict[str, Any]:
+    async def _get_space_financial_stats(self, space_id: UUID) -> dict[str, Any]:
         """Retrieve aggregated financial statistics data across spatial dimensions."""
         # 1. Total count (including all types)
         count_query = select(func.count()).where(SpaceTransaction.space_id == space_id)
@@ -750,10 +750,10 @@ class SharedSpaceService:
         space: SharedSpace,
         tx_count: int = 0,
         total_expense: Decimal = Decimal("0"),
-        member_contributions: Optional[Dict[UUID, Decimal]] = None,
+        member_contributions: dict[UUID, Decimal] | None = None,
         include_members: bool = False,
-        role: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        role: str | None = None,
+    ) -> dict[str, Any]:
         """Convert space to dictionary."""
         data: dict[str, Any] = {
             "id": str(space.id),
@@ -790,7 +790,7 @@ class SharedSpaceService:
             # Get current valid invite code
             if space.invite_code:
                 is_valid = not space.invite_code_expires_at or space.invite_code_expires_at > datetime.now(
-                    timezone.utc
+                    UTC
                 )
                 if is_valid:
                     data["currentInviteCode"] = space.invite_code
@@ -803,15 +803,15 @@ class SharedSpaceService:
     def _space_to_dict_with_creator(
         self,
         space: SharedSpace,
-        creator: Optional[User],
+        creator: User | None,
         tx_count: int = 0,
         total_expense: Decimal = Decimal("0"),
-        member_contributions: Optional[Dict[UUID, Decimal]] = None,
+        member_contributions: dict[UUID, Decimal] | None = None,
         include_members: bool = False,
-        role: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        role: str | None = None,
+    ) -> dict[str, Any]:
         """Convert space to dictionary with externally loaded creator."""
-        data: Dict[str, Any] = {
+        data: dict[str, Any] = {
             "id": str(space.id),
             "name": space.name,
             "role": role,
@@ -846,7 +846,7 @@ class SharedSpaceService:
             # Get current valid invite code
             if space.invite_code:
                 is_valid = not space.invite_code_expires_at or space.invite_code_expires_at > datetime.now(
-                    timezone.utc
+                    UTC
                 )
                 if is_valid:
                     data["currentInviteCode"] = space.invite_code
@@ -856,7 +856,7 @@ class SharedSpaceService:
 
         return data
 
-    def _space_transaction_to_dict(self, st: SpaceTransaction) -> Dict[str, Any]:
+    def _space_transaction_to_dict(self, st: SpaceTransaction) -> dict[str, Any]:
         """Convert space transaction to dictionary."""
         from app.schemas.transaction import TransactionDisplayValue
 

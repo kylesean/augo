@@ -1,11 +1,9 @@
 """LLM service for managing LLM calls with retries and fallback mechanisms."""
+from __future__ import annotations
 
 import logging
 from typing import (
     Any,
-    Dict,
-    List,
-    Optional,
     cast,
 )
 
@@ -41,7 +39,7 @@ class LLMRegistry:
     """
 
     # Class-level variable containing all available LLM models
-    LLMS: List[Dict[str, Any]] = [
+    LLMS: list[dict[str, Any]] = [
         {
             "name": "gpt-5-mini",
             "llm": ChatOpenAI(
@@ -192,7 +190,7 @@ class LLMRegistry:
         return cast(BaseChatModel, model_entry["llm"])
 
     @classmethod
-    def get_all_names(cls) -> List[str]:
+    def get_all_names(cls) -> list[str]:
         """Get all registered LLM names in order.
 
         Returns:
@@ -201,7 +199,7 @@ class LLMRegistry:
         return [entry["name"] for entry in cls.LLMS]
 
     @classmethod
-    def get_model_at_index(cls, index: int) -> Dict[str, Any]:
+    def get_model_at_index(cls, index: int) -> dict[str, Any]:
         """Get model entry at specific index.
 
         Args:
@@ -224,7 +222,7 @@ class LLMService:
 
     def __init__(self) -> None:
         """Initialize the LLM service."""
-        self._llm: Optional[BaseChatModel] = None
+        self._llm: BaseChatModel | None = None
         self._current_model_index: int = 0
 
         # Find index of default model in registry
@@ -293,7 +291,7 @@ class LLMService:
         before_sleep=before_sleep_log(logger, logging.WARNING),
         reraise=True,
     )
-    async def _call_llm_with_retry(self, messages: List[BaseMessage]) -> BaseMessage:
+    async def _call_llm_with_retry(self, messages: list[BaseMessage]) -> BaseMessage:
         """Call the LLM with automatic retry logic.
 
         Args:
@@ -330,8 +328,8 @@ class LLMService:
 
     async def call(
         self,
-        messages: List[BaseMessage],
-        model_name: Optional[str] = None,
+        messages: list[BaseMessage],
+        model_name: str | None = None,
         **model_kwargs: Any,
     ) -> BaseMessage:
         """Call the LLM with the specified messages and circular fallback.
@@ -419,7 +417,7 @@ class LLMService:
             f"failed to get response from llm after trying {models_tried} models. last error: {str(last_error)}"
         )
 
-    def get_llm(self) -> Optional[BaseChatModel]:
+    def get_llm(self) -> BaseChatModel | None:
         """Get the current LLM instance.
 
         Returns:
@@ -427,7 +425,7 @@ class LLMService:
         """
         return self._llm
 
-    def bind_tools(self, tools: List) -> "LLMService":
+    def bind_tools(self, tools: list) -> LLMService:
         """Bind tools to the current LLM.
 
         Args:

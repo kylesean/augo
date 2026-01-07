@@ -6,7 +6,6 @@
 import random
 import time
 from abc import ABC, abstractmethod
-from typing import Optional
 
 from app.core.cache import cache_manager
 from app.core.config import settings
@@ -215,7 +214,7 @@ class CodeManager:
         max_value = 10**self.code_length - 1
         return str(random.randint(min_value, max_value))
 
-    def _find_sender(self, code_type: str) -> Optional[CodeSenderInterface]:
+    def _find_sender(self, code_type: str) -> CodeSenderInterface | None:
         """根据类型查找对应的发送器"""
         for sender in self.senders:
             if sender.supports(code_type):

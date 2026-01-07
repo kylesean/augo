@@ -8,8 +8,7 @@
 
 参考: docs/ROUTE_AFTER_GAENT.md
 """
-
-from typing import List, Optional
+from __future__ import annotations
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.tools import BaseTool
@@ -27,9 +26,9 @@ from app.core.skills.loader import SkillLoader
 
 def build_agent_graph(
     llm: BaseChatModel,
-    tools: List[BaseTool],
+    tools: list[BaseTool],
     system_prompt: str,
-    checkpointer: Optional[BaseCheckpointSaver] = None,
+    checkpointer: BaseCheckpointSaver | None = None,
     name: str = "AugoAgent",
 ) -> CompiledStateGraph:
     """构建 Agent 图

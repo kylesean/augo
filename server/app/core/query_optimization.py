@@ -5,15 +5,16 @@ This module provides utilities for:
 - Query result caching
 - Batch loading utilities
 """
+from __future__ import annotations
 
-from typing import Any, List, Optional, Type, TypeVar, cast
+from typing import Any, TypeVar, cast
 
 from sqlalchemy import Select, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 from sqlmodel import SQLModel
 
-from app.core.cache import cache_manager, cached
+from app.core.cache import cache_manager
 from app.core.logging import logger
 
 T = TypeVar("T", bound=SQLModel)
@@ -85,11 +86,11 @@ class QueryOptimizer:
     @staticmethod
     async def get_with_cache(
         session: AsyncSession,
-        model: Type[T],
+        model: type[T],
         id_value: Any,
         cache_ttl: int = 300,
-        relationships: Optional[List[str]] = None,
-    ) -> Optional[T]:
+        relationships: list[str] | None = None,
+    ) -> T | None:
         """Get a model instance by ID with caching.
 
         Args:
@@ -144,7 +145,7 @@ class QueryOptimizer:
         return instance
 
     @staticmethod
-    async def invalidate_cache(model: Type[SQLModel], id_value: Any) -> bool:
+    async def invalidate_cache(model: type[SQLModel], id_value: Any) -> bool:
         """Invalidate cache for a specific model instance.
 
         Args:
@@ -165,10 +166,10 @@ class QueryOptimizer:
     @staticmethod
     async def batch_get(
         session: AsyncSession,
-        model: Type[T],
-        ids: List[Any],
-        relationships: Optional[List[str]] = None,
-    ) -> List[T]:
+        model: type[T],
+        ids: list[Any],
+        relationships: list[str] | None = None,
+    ) -> list[T]:
         """Batch get multiple model instances by IDs.
 
         This is more efficient than multiple individual queries.
@@ -360,7 +361,7 @@ async def get_conversation_with_messages_optimized(
     session: AsyncSession,
     conversation_id: str,
     user_uuid: str,
-) -> Optional[Any]:
+) -> Any | None:
     """Get conversation with all messages in a single query.
 
     Args:

@@ -9,7 +9,7 @@
 - 静态工具类 + 策略钩子
 """
 
-from typing import Any, Optional, cast
+from typing import Any, cast
 
 
 class ComponentDetector:

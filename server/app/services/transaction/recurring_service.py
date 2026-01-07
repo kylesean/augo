@@ -1,8 +1,7 @@
 """Recurring transaction service for scheduled transactions."""
 
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal
-from typing import Optional
 from uuid import UUID
 
 import structlog
@@ -22,7 +21,7 @@ class RecurringTransactionService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def create_recurring_transaction(self, user_uuid: str, data: dict) -> dict:
+    async def create_recurring_transaction(self, user_uuid: UUID, data: dict) -> dict:
         """创建周期性交易规则
 
         Args:
@@ -52,10 +51,10 @@ class RecurringTransactionService:
         )
 
         recurring_tx = RecurringTransaction(
-            user_uuid=UUID(user_uuid),
+            user_uuid=user_uuid,
             type=data["type"],
-            source_account_id=UUID(data["source_account_id"]) if data.get("source_account_id") else None,
-            target_account_id=UUID(data["target_account_id"]) if data.get("target_account_id") else None,
+            source_account_id=UUID(str(data["source_account_id"])) if data.get("source_account_id") else None,
+            target_account_id=UUID(str(data["target_account_id"])) if data.get("target_account_id") else None,
             amount_type=data.get("amount_type", "FIXED"),
             requires_confirmation=data.get("requires_confirmation", False),
             amount=Decimal(str(data["amount"])),
@@ -82,9 +81,9 @@ class RecurringTransactionService:
         self,
         rrule_str: str,
         start_date: date,
-        end_date: Optional[date] = None,
-        exception_dates: Optional[list] = None,
-    ) -> Optional[datetime]:
+        end_date: date | None = None,
+        exception_dates: list | None = None,
+    ) -> datetime | None:
         """计算下次执行日期
 
         Args:
@@ -98,17 +97,16 @@ class RecurringTransactionService:
         """
         from datetime import (
             datetime as dt,
-            timezone,
         )
 
         from dateutil.rrule import rrulestr
 
         try:
             # 使用 UTC 时区，与 RRULE 中的 UNTIL 保持一致
-            dtstart = dt.combine(start_date, dt.min.time(), tzinfo=timezone.utc)
+            dtstart = dt.combine(start_date, dt.min.time(), tzinfo=UTC)
             rrule = rrulestr(rrule_str, dtstart=dtstart)
 
-            now = dt.now(timezone.utc)
+            now = dt.now(UTC)
             exception_set = set(exception_dates or [])
 
             for occurrence in rrule:
@@ -159,7 +157,7 @@ class RecurringTransactionService:
         }
 
     async def list_recurring_transactions(
-        self, user_uuid: str, type_filter: Optional[str] = None, is_active: Optional[bool] = None
+        self, user_uuid: UUID, type_filter: str | None = None, is_active: bool | None = None
     ) -> list[dict]:
         """获取周期性交易列表
 
@@ -172,7 +170,7 @@ class RecurringTransactionService:
             周期性交易列表
         """
         # 构建查询
-        query = select(RecurringTransaction).where(RecurringTransaction.user_uuid == UUID(user_uuid))
+        query = select(RecurringTransaction).where(RecurringTransaction.user_uuid == user_uuid)
 
         # 类型过滤
         if type_filter:
@@ -190,7 +188,7 @@ class RecurringTransactionService:
 
         return [self._recurring_tx_to_dict(tx) for tx in recurring_txs]
 
-    async def get_recurring_transaction(self, recurring_id: str, user_uuid: str) -> Optional[dict]:
+    async def get_recurring_transaction(self, recurring_id: UUID, user_uuid: UUID) -> dict | None:
         """获取周期性交易详情
 
         Args:
@@ -200,15 +198,10 @@ class RecurringTransactionService:
         Returns:
             周期性交易字典，如果不存在则返回None
         """
-        try:
-            rid = UUID(recurring_id)
-        except ValueError:
-            return None
-
         query = select(RecurringTransaction).where(
             and_(
-                RecurringTransaction.id == rid,
-                RecurringTransaction.user_uuid == UUID(user_uuid),
+                RecurringTransaction.id == recurring_id,
+                RecurringTransaction.user_uuid == user_uuid,
             )
         )
         result = await self.db.execute(query)
@@ -219,7 +212,7 @@ class RecurringTransactionService:
 
         return self._recurring_tx_to_dict(recurring_tx)
 
-    async def update_recurring_transaction(self, recurring_id: str, user_uuid: str, data: dict) -> Optional[dict]:
+    async def update_recurring_transaction(self, recurring_id: UUID, user_uuid: UUID, data: dict) -> dict | None:
         """更新周期性交易
 
         Args:
@@ -230,15 +223,10 @@ class RecurringTransactionService:
         Returns:
             更新后的周期性交易字典，如果不存在则返回None
         """
-        try:
-            rid = UUID(recurring_id)
-        except ValueError:
-            return None
-
         query = select(RecurringTransaction).where(
             and_(
-                RecurringTransaction.id == rid,
-                RecurringTransaction.user_uuid == UUID(user_uuid),
+                RecurringTransaction.id == recurring_id,
+                RecurringTransaction.user_uuid == user_uuid,
             )
         )
         result = await self.db.execute(query)
@@ -251,9 +239,9 @@ class RecurringTransactionService:
         if "type" in data:
             recurring_tx.type = data["type"]
         if "source_account_id" in data:
-            recurring_tx.source_account_id = UUID(data["source_account_id"]) if data["source_account_id"] else None
+            recurring_tx.source_account_id = UUID(str(data["source_account_id"])) if data["source_account_id"] else None
         if "target_account_id" in data:
-            recurring_tx.target_account_id = UUID(data["target_account_id"]) if data["target_account_id"] else None
+            recurring_tx.target_account_id = UUID(str(data["target_account_id"])) if data["target_account_id"] else None
         if "amount_type" in data:
             recurring_tx.amount_type = data["amount_type"]
         if "requires_confirmation" in data:
@@ -306,7 +294,7 @@ class RecurringTransactionService:
 
         return self._recurring_tx_to_dict(recurring_tx)
 
-    async def delete_recurring_transaction(self, recurring_id: str, user_uuid: str) -> bool:
+    async def delete_recurring_transaction(self, recurring_id: UUID, user_uuid: UUID) -> bool:
         """删除周期性交易
 
         Args:
@@ -316,15 +304,10 @@ class RecurringTransactionService:
         Returns:
             是否删除成功
         """
-        try:
-            rid = UUID(recurring_id)
-        except ValueError:
-            return False
-
         query = select(RecurringTransaction).where(
             and_(
-                RecurringTransaction.id == rid,
-                RecurringTransaction.user_uuid == UUID(user_uuid),
+                RecurringTransaction.id == recurring_id,
+                RecurringTransaction.user_uuid == user_uuid,
             )
         )
         result = await self.db.execute(query)
@@ -342,7 +325,7 @@ class RecurringTransactionService:
         self,
         rrule_string: str,
         start_date: date,
-        end_date: Optional[date],
+        end_date: date | None,
         forecast_start: date,
         forecast_end: date,
     ) -> list[date]:
@@ -360,14 +343,13 @@ class RecurringTransactionService:
         """
         from datetime import (
             datetime as dt,
-            timezone,
         )
 
         from dateutil.rrule import rrulestr
 
         try:
             # 使用 UTC 时区，与 RRULE 中的 UNTIL 保持一致
-            dtstart = dt.combine(start_date, dt.min.time(), tzinfo=timezone.utc)
+            dtstart = dt.combine(start_date, dt.min.time(), tzinfo=UTC)
             rrule = rrulestr(rrule_string, dtstart=dtstart)
 
             # 确定实际的结束日期

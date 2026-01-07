@@ -2,7 +2,7 @@
 
 from datetime import date, datetime
 from decimal import Decimal
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Optional
 from uuid import UUID, uuid4
 
 import sqlalchemy as sa
@@ -20,7 +20,6 @@ from app.models.base import BaseModel
 
 if TYPE_CHECKING:
     from app.models.financial_account import FinancialAccount
-    from app.models.shared_space import SharedSpace
     from app.models.user import User
 
 
@@ -83,7 +82,7 @@ class Transaction(BaseModel, table=True):
     exchange_rate: Optional[Decimal] = Field(default=None, sa_column=Column(Numeric(20, 8)))
     transaction_at: datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False, index=True))
     transaction_timezone: str = Field(max_length=50, default="UTC")
-    tags: Optional[List[str]] = Field(default=None, sa_column=Column(JSONB))
+    tags: Optional[list[str]] = Field(default=None, sa_column=Column(JSONB))
     location: Optional[str] = Field(default=None, max_length=255)
     latitude: Optional[Decimal] = Field(default=None, sa_column=Column(Numeric(9, 6)))
     longitude: Optional[Decimal] = Field(default=None, sa_column=Column(Numeric(9, 6)))
@@ -101,10 +100,10 @@ class Transaction(BaseModel, table=True):
     )
 
     # Relationships
-    comments: List["TransactionComment"] = Relationship(
+    comments: list["TransactionComment"] = Relationship(
         back_populates="transaction", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )
-    shares: List["TransactionShare"] = Relationship(
+    shares: list["TransactionShare"] = Relationship(
         back_populates="transaction", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )
 
@@ -206,7 +205,7 @@ class TransactionComment(BaseModel, table=True):
     )
     parent_comment_id: Optional[int] = Field(default=None, foreign_key="transaction_comments.id")
     comment_text: str
-    mentioned_user_ids: Optional[List[int]] = Field(default=None, sa_column=Column(JSONB))
+    mentioned_user_ids: Optional[list[int]] = Field(default=None, sa_column=Column(JSONB))
 
     # Relationships
     transaction: Optional[Transaction] = Relationship(back_populates="comments")
@@ -288,7 +287,7 @@ class RecurringTransaction(BaseModel, table=True):
 
     # Classification
     category_key: str = Field(max_length=50, default="OTHERS")
-    tags: Optional[List[str]] = Field(default=None, sa_column=Column(JSONB))
+    tags: Optional[list[str]] = Field(default=None, sa_column=Column(JSONB))
 
     # Rule engine
     recurrence_rule: str = Field(max_length=255)  # RRULE format (iCalendar)
@@ -297,7 +296,7 @@ class RecurringTransaction(BaseModel, table=True):
     end_date: Optional[date] = None
 
     # Execution control
-    exception_dates: Optional[List[str]] = Field(default=None, sa_column=Column(JSONB, default=[]))
+    exception_dates: Optional[list[str]] = Field(default=None, sa_column=Column(JSONB, default=[]))
     last_generated_at: Optional[datetime] = Field(
         default=None, sa_column=Column(TIMESTAMP(timezone=True), nullable=True)
     )
@@ -470,5 +469,4 @@ class TransactionShare(BaseModel, table=True):
 
 
 # Avoid circular imports
-from app.models.shared_space import SharedSpace  # noqa: E402
 from app.models.user import User  # noqa: E402

@@ -1,15 +1,14 @@
 """Budget service for managing budgets and budget periods."""
+from __future__ import annotations
 
 from calendar import monthrange
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from decimal import Decimal
-from typing import List, Optional
 from uuid import UUID
 
-from sqlalchemy import String, and_, asc, cast, desc, func, or_, select
+from sqlalchemy import asc, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from sqlalchemy.sql.elements import ColumnElement
 
 from app.core.logging import logger
 from app.models.budget import (
@@ -27,9 +26,7 @@ from app.models.transaction import Transaction
 from app.schemas.budget import (
     BudgetAlert,
     BudgetCreateRequest,
-    BudgetPeriodResponse,
     BudgetResponse,
-    BudgetSettingsResponse,
     BudgetSettingsUpdateRequest,
     BudgetSuggestion,
     BudgetSummaryResponse,
@@ -52,7 +49,7 @@ class BudgetService:
         user_uuid: UUID,
         request: BudgetCreateRequest,
         source: BudgetSource = BudgetSource.USER_DEFINED,
-        ai_confidence: Optional[float] = None,
+        ai_confidence: float | None = None,
     ) -> Budget:
         """Create a new budget.
 
@@ -127,7 +124,7 @@ class BudgetService:
 
         return budget
 
-    async def get_budget(self, budget_id: UUID, user_uuid: UUID) -> Optional[Budget]:
+    async def get_budget(self, budget_id: UUID, user_uuid: UUID) -> Budget | None:
         """Get a budget by ID.
 
         Args:
@@ -147,9 +144,9 @@ class BudgetService:
     async def get_user_budgets(
         self,
         user_uuid: UUID,
-        status: Optional[BudgetStatus] = None,
-        scope: Optional[BudgetScope] = None,
-    ) -> List[Budget]:
+        status: BudgetStatus | None = None,
+        scope: BudgetScope | None = None,
+    ) -> list[Budget]:
         """Get all budgets for a user.
 
         Args:
@@ -177,7 +174,7 @@ class BudgetService:
         budget_id: UUID,
         user_uuid: UUID,
         request: BudgetUpdateRequest,
-    ) -> Optional[Budget]:
+    ) -> Budget | None:
         """Update a budget.
 
         Args:
@@ -300,7 +297,7 @@ class BudgetService:
     # Period Management
     # ========================================================================
 
-    async def _get_current_period(self, budget: Budget) -> Optional[BudgetPeriod]:
+    async def _get_current_period(self, budget: Budget) -> BudgetPeriod | None:
         """Get current active period for a budget."""
         today = date.today()
 
@@ -460,7 +457,7 @@ class BudgetService:
         user_uuid: UUID,
         period_start: date,
         period_end: date,
-        category_key: Optional[str] = None,
+        category_key: str | None = None,
     ) -> Decimal:
         """Calculate total spending for a period.
 
@@ -649,7 +646,7 @@ class BudgetService:
     async def suggest_budget(
         self,
         user_uuid: UUID,
-        category_key: Optional[str] = None,
+        category_key: str | None = None,
         months: int = 3,
     ) -> BudgetSuggestion:
         """Generate AI budget suggestion based on historical data.
@@ -730,7 +727,7 @@ class BudgetService:
         self,
         user_uuid: UUID,
         months: int = 3,
-    ) -> List[str]:
+    ) -> list[str]:
         """Detect categories with high variance that might benefit from budgeting.
 
         Args:

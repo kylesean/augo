@@ -8,7 +8,7 @@ Provides user-facing APIs for managing long-term memories:
 - Get memory statistics
 """
 
-from typing import Annotated, Optional
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Path, Query
 from fastapi.responses import JSONResponse
@@ -34,9 +34,9 @@ class MemoryItem(BaseModel):
 
     id: str = Field(..., description="Memory unique identifier")
     memory: str = Field(..., description="Memory content")
-    score: Optional[float] = Field(None, description="Relevance score (for search results)")
-    metadata: Optional[dict] = Field(None, description="Memory metadata")
-    createdAt: Optional[str] = Field(None, description="Creation timestamp")
+    score: float | None = Field(None, description="Relevance score (for search results)")
+    metadata: dict | None = Field(None, description="Memory metadata")
+    createdAt: str | None = Field(None, description="Creation timestamp")
 
 
 class MemoryListResponse(BaseModel):
@@ -65,7 +65,7 @@ class DeleteMemoryResponse(BaseModel):
     """Response for memory deletion."""
 
     deleted: bool
-    memoryId: Optional[str] = None
+    memoryId: str | None = None
 
 
 class DeleteAllMemoriesResponse(BaseModel):

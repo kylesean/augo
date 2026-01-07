@@ -5,8 +5,9 @@ Uses s3fs/aiobotocore for async operations and generates presigned URLs.
 """
 
 import uuid
-from datetime import datetime, timezone
-from typing import Any, AsyncGenerator, Optional
+from collections.abc import AsyncGenerator
+from datetime import UTC, datetime
+from typing import Any
 
 from app.core.logging import logger
 from app.models.storage_config import StorageConfig
@@ -107,7 +108,7 @@ class S3Adapter(StorageAdapter):
         """
         from pathlib import Path
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         date_prefix = now.strftime("%Y/%m/%d")
 
         ext = Path(filename).suffix.lower() or ""
@@ -118,9 +119,9 @@ class S3Adapter(StorageAdapter):
 
     async def save(
         self,
-        file_stream: AsyncGenerator[bytes, None],
+        file_stream: AsyncGenerator[bytes],
         filename: str,
-        content_type: Optional[str] = None,
+        content_type: str | None = None,
     ) -> str:
         """Upload file to S3 bucket.
 
@@ -169,7 +170,7 @@ class S3Adapter(StorageAdapter):
         self,
         object_key: str,
         expire_seconds: int = 3600,
-        filename: Optional[str] = None,
+        filename: str | None = None,
     ) -> str:
         """Generate presigned URL for S3 object.
 
@@ -207,7 +208,7 @@ class S3Adapter(StorageAdapter):
     async def get_stream(
         self,
         object_key: str,
-    ) -> AsyncGenerator[bytes, None]:
+    ) -> AsyncGenerator[bytes]:
         """Stream S3 object content.
 
         Args:
@@ -285,7 +286,7 @@ class S3Adapter(StorageAdapter):
         except Exception:
             return False
 
-    async def get_object_info(self, object_key: str) -> Optional[dict]:
+    async def get_object_info(self, object_key: str) -> dict | None:
         """Get object metadata from S3.
 
         Args:

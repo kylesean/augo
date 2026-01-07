@@ -3,8 +3,7 @@
 Factory pattern for creating appropriate storage adapters
 based on StorageConfig provider type.
 """
-
-from typing import Dict, Type
+from __future__ import annotations
 
 from app.core.logging import logger
 from app.models.storage_config import ProviderType, StorageConfig
@@ -24,10 +23,10 @@ class StorageAdapterFactory:
     """
 
     # Registry of adapter classes by provider type
-    _adapters: Dict[str, Type[StorageAdapter]] = {}
+    _adapters: dict[str, type[StorageAdapter]] = {}
 
     @classmethod
-    def register(cls, provider_type: str, adapter_class: Type[StorageAdapter]) -> None:
+    def register(cls, provider_type: str, adapter_class: type[StorageAdapter]) -> None:
         """Register an adapter class for a provider type.
 
         Args:

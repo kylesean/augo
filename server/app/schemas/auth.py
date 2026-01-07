@@ -2,7 +2,7 @@
 
 import re
 from datetime import datetime
-from typing import Literal, Optional
+from typing import Literal
 from uuid import UUID
 
 from pydantic import (
@@ -193,7 +193,7 @@ class RegisterRequest(BaseModel):
     password: str = Field(..., min_length=6, max_length=20, description="User's password", examples=["password123"])
     code: str = Field(default="", description="Verification code (Optional in current dev mode)", examples=["123456"])
     timezone: str = Field(default="Asia/Shanghai", description="User's timezone", examples=["Asia/Shanghai"])
-    locale: Optional[str] = Field(
+    locale: str | None = Field(
         default=None,
         description="Device locale for smart currency defaults (e.g., 'zh_CN', 'en_US', 'ja_JP')",
         examples=["zh_CN", "en_US"],
@@ -276,13 +276,13 @@ class UserInfo(BaseModel):
     """
 
     id: UUID = Field(..., description="User's UUID")
-    email: Optional[str] = Field(None, description="User's email")
-    mobile: Optional[str] = Field(None, description="User's mobile number")
+    email: str | None = Field(None, description="User's email")
+    mobile: str | None = Field(None, description="User's mobile number")
     username: str = Field(..., description="User's username")
-    avatarUrl: Optional[str] = Field(None, description="User's avatar URL")
+    avatarUrl: str | None = Field(None, description="User's avatar URL")
     createdAt: str = Field(..., description="Account creation timestamp (ISO 8601)")
     updatedAt: str = Field(..., description="Last update timestamp (ISO 8601)")
-    clientLastLoginAt: Optional[str] = Field(None, description="Last login timestamp (ISO 8601)")
+    clientLastLoginAt: str | None = Field(None, description="Last login timestamp (ISO 8601)")
 
 
 class AuthResponse(BaseModel):

@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import os
 from dataclasses import dataclass
-from typing import Dict, List, Optional
 
 import yaml
 
@@ -12,10 +13,10 @@ class SkillMetadata:
     name: str
     description: str
     location: str
-    license: Optional[str] = None
-    metadata: Optional[Dict[str, str]] = None
-    allowed_tools: Optional[List[str]] = None  # 技能可使用的工具白名单
-    content: Optional[str] = None  # 完整的 SKILL.md 内容（用于激活时注入）
+    license: str | None = None
+    metadata: dict[str, str] | None = None
+    allowed_tools: list[str] | None = None  # 技能可使用的工具白名单
+    content: str | None = None  # 完整的 SKILL.md 内容（用于激活时注入）
 
 
 class SkillLoader:
@@ -24,7 +25,7 @@ class SkillLoader:
     def __init__(self, skills_dir: str = "app/skills"):
         self.skills_dir = skills_dir
 
-    def load_skills(self, max_depth: int = 2) -> List[SkillMetadata]:
+    def load_skills(self, max_depth: int = 2) -> list[SkillMetadata]:
         """Load skills from skills directory, supporting nested directories.
 
         This allows for community skills in subdirectories like:
@@ -63,9 +64,9 @@ class SkillLoader:
         scan_directory(self.skills_dir)
         return sorted(skills, key=lambda x: x.name)
 
-    def _parse_skill_md(self, file_path: str) -> Optional[SkillMetadata]:
+    def _parse_skill_md(self, file_path: str) -> SkillMetadata | None:
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 content = f.read()
 
             # Simple YAML frontmatter extraction
@@ -132,7 +133,7 @@ class SkillLoader:
 
         return "\n".join(xml_parts)
 
-    def get_skill(self, skill_name: str) -> Optional[SkillMetadata]:
+    def get_skill(self, skill_name: str) -> SkillMetadata | None:
         """获取指定名称的技能。"""
         skills = self.load_skills()
         for skill in skills:
@@ -140,7 +141,7 @@ class SkillLoader:
                 return skill
         return None
 
-    def activate_skill_prompt(self, skill_name: str) -> Optional[str]:
+    def activate_skill_prompt(self, skill_name: str) -> str | None:
         """生成技能激活的系统提示词片段。
 
         用于动态注入到对话上下文中，让 AI 切换到该技能模式。
@@ -161,7 +162,7 @@ class SkillLoader:
 """
         return activation_prompt
 
-    def get_allowed_tools(self, skill_name: str) -> Optional[List[str]]:
+    def get_allowed_tools(self, skill_name: str) -> list[str] | None:
         """获取技能的工具白名单。
 
         直接返回 SKILL.md 中 allowed-tools 声明的工具名列表。

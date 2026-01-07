@@ -8,8 +8,10 @@
 
 此文件作为 Facade 类，协调各模块的工作。
 """
+from __future__ import annotations
 
-from typing import Any, AsyncGenerator, Dict, List, Optional, Union, cast
+from collections.abc import AsyncGenerator
+from typing import Any, cast
 from urllib.parse import quote_plus
 
 from langchain_core.messages import AIMessage, HumanMessage
@@ -53,10 +55,10 @@ class SimpleLangChainAgent:
         self.llm_service = llm_service
         self.llm_service.bind_tools(tools)
 
-        self._agent: Optional[MiddlewareAgent] = None
-        self._conn_pool: Optional[AsyncConnectionPool] = None
-        self._memory_service: Optional[MemoryService] = None
-        self._middlewares: Optional[list] = None
+        self._agent: MiddlewareAgent | None = None
+        self._conn_pool: AsyncConnectionPool | None = None
+        self._memory_service: MemoryService | None = None
+        self._middlewares: list | None = None
         self._stream_processor = StreamProcessor()
 
         logger.info(
@@ -172,10 +174,10 @@ class SimpleLangChainAgent:
         self,
         messages: list[Message],
         session_id: str,
-        user_uuid: Optional[str] = None,
-        attachment_ids: Optional[list[str]] = None,
-        client_state: Optional[ClientStateMutation] = None,
-    ) -> AsyncGenerator[GenUIEvent, None]:
+        user_uuid: str | None = None,
+        attachment_ids: list[str] | None = None,
+        client_state: ClientStateMutation | None = None,
+    ) -> AsyncGenerator[GenUIEvent]:
         """GenUI 核心流处理器
 
         GenUI 原子模式的核心入口：
@@ -195,7 +197,7 @@ class SimpleLangChainAgent:
         """
         agent = await self.get_agent()
 
-        config: Dict[str, Any] = {
+        config: dict[str, Any] = {
             "configurable": {
                 "thread_id": session_id,
                 "user_uuid": str(user_uuid) if user_uuid else None,
@@ -298,7 +300,7 @@ class SimpleLangChainAgent:
         config = {"configurable": {"thread_id": session_id}}
         return await agent.aget_state(config)
 
-    async def update_state(self, session_id: str, values: Dict[str, Any], as_node: Optional[str] = None) -> Any:
+    async def update_state(self, session_id: str, values: dict[str, Any], as_node: str | None = None) -> Any:
         """更新会话的当前 LangGraph 状态
 
         Args:
@@ -316,8 +318,8 @@ class SimpleLangChainAgent:
     async def resume_stream(
         self,
         session_id: str,
-        user_uuid: Optional[str] = None,
-    ) -> AsyncGenerator[GenUIEvent, None]:
+        user_uuid: str | None = None,
+    ) -> AsyncGenerator[GenUIEvent]:
         """从 checkpoint 恢复未完成的流式执行
 
         当 get_session_state() 返回的 state.next 不为 None 时，
@@ -332,7 +334,7 @@ class SimpleLangChainAgent:
         """
         agent = await self.get_agent()
 
-        config: Dict[str, Any] = {
+        config: dict[str, Any] = {
             "configurable": {
                 "thread_id": session_id,
                 "user_uuid": str(user_uuid) if user_uuid else None,  # 确保是字符串
@@ -428,7 +430,7 @@ class SimpleLangChainAgent:
             return result
         return []
 
-    async def get_detailed_history(self, session_id: str, user_uuid: Optional[str] = None) -> list[dict[str, Any]]:
+    async def get_detailed_history(self, session_id: str, user_uuid: str | None = None) -> list[dict[str, Any]]:
         """获取会话的详细历史消息，包含 UI 组件和附件信息。
 
         从 LangGraph checkpoint 读取消息并解析：
@@ -913,11 +915,11 @@ class SimpleLangChainAgent:
 
     async def _update_long_term_memory(
         self,
-        user_uuid: Optional[str],
+        user_uuid: str | None,
         messages: list[dict],
-        session_id: Optional[str] = None,
+        session_id: str | None = None,
         category: str = "conversation",
-        additional_metadata: Optional[dict] = None,
+        additional_metadata: dict | None = None,
     ) -> None:
         """Update long-term memory (background task).
 
@@ -967,7 +969,7 @@ class SimpleLangChainAgent:
                 error=str(e),
             )
 
-    def _get_langfuse_callback(self, thread_id: str, user_id: Optional[str] = None) -> Any:
+    def _get_langfuse_callback(self, thread_id: str, user_id: str | None = None) -> Any:
         """获取 Langfuse Callback Handler 用于追踪执行过程。"""
         # 深度诊断日志
         logger.info(
@@ -1000,12 +1002,12 @@ class SimpleLangChainAgent:
         self,
         messages: list[Message],
         session_id: str,
-        user_uuid: Optional[str] = None,
+        user_uuid: str | None = None,
     ) -> list[Message]:
         """非流式获取响应（支持 Langfuse 追踪）"""
         agent = await self.get_agent()
 
-        config: Dict[str, Any] = {
+        config: dict[str, Any] = {
             "configurable": {
                 "thread_id": session_id,
                 "user_uuid": str(user_uuid) if user_uuid else None,

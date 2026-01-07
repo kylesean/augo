@@ -8,8 +8,8 @@ Authorization: Session ownership is verified via get_authorized_session.
 """
 
 import json
-import uuid
-from typing import AsyncGenerator, Optional
+from uuid import UUID, uuid4
+from collections.abc import AsyncGenerator
 
 from fastapi import (
     APIRouter,
@@ -37,7 +37,6 @@ from app.schemas.chat import (
     ChatRequest,
     ChatRequestWithAttachments,
     ChatResponse,
-    Message,
 )
 from app.schemas.genui import GenUIEvent
 
@@ -47,9 +46,9 @@ agent = LangGraphAgent()
 
 async def _update_memory_background(
     agent: LangGraphAgent,
-    user_uuid: str,
+    user_uuid: UUID,
     messages: list[dict],
-    session_id: str,
+    session_id: UUID,
 ) -> None:
     """Update long-term memory in background (fire-and-forget).
 
@@ -72,7 +71,7 @@ async def _update_memory_background(
 
 
 async def resolve_chat_session(
-    session_id: Optional[str],
+    session_id: UUID | None,
     current_user: User,
 ) -> tuple[Session, bool]:
     """Resolve session for chat: get existing or create new.
@@ -103,12 +102,12 @@ async def resolve_chat_session(
             return session, False
         else:
             # Create new session
-            new_session_id = str(uuid.uuid4())
+            new_uuid = uuid4()
             repo = SessionRepository(db)
-            session = await repo.create(new_session_id, str(current_user.uuid), name="New Chat")
+            session = await repo.create(new_uuid, current_user.uuid, name="New Chat")
             logger.info(
                 "created_new_session",
-                session_id=new_session_id,
+                session_id=new_uuid,
                 user_uuid=current_user.uuid,
             )
             return session, True
@@ -222,7 +221,7 @@ async def chat_stream(
         if msg.attachments:
             attachment_ids.extend([att.id for att in msg.attachments])
 
-    async def event_generator() -> AsyncGenerator[str, None]:
+    async def event_generator() -> AsyncGenerator[str]:
         try:
             # 1. Session init event (only for new sessions)
             if is_new:
@@ -327,7 +326,7 @@ async def chat_stream(
 @limiter.limit(settings.RATE_LIMIT_ENDPOINTS["messages"][0])
 async def update_session_state(
     request: Request,
-    session_id: str,
+    session_id: UUID,
     updates: dict,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
@@ -375,7 +374,7 @@ async def update_session_state(
 @limiter.limit(settings.RATE_LIMIT_ENDPOINTS["messages"][0])
 async def get_session_messages(
     request: Request,
-    session_id: str,
+    session_id: UUID,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
@@ -400,7 +399,7 @@ async def get_session_messages(
 
     try:
         # Use new detailed history method
-        messages = await agent.get_detailed_history(session.id, user_uuid=str(session.user_uuid))
+        messages = await agent.get_detailed_history(session.id, user_uuid=session.user_uuid)
 
         return success_response(
             data={
@@ -428,7 +427,7 @@ async def get_session_messages(
 @limiter.limit(settings.RATE_LIMIT_ENDPOINTS["messages"][0])
 async def clear_session_messages(
     request: Request,
-    session_id: str,
+    session_id: UUID,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
@@ -474,7 +473,7 @@ async def clear_session_messages(
 @limiter.limit(settings.RATE_LIMIT_ENDPOINTS["messages"][0])
 async def cancel_last_turn(
     request: Request,
-    session_id: str,
+    session_id: UUID,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
@@ -498,7 +497,7 @@ async def cancel_last_turn(
     session = await get_authorized_session(session_id, current_user, db)
 
     try:
-        result = await agent.cancel_last_turn(str(session.id))
+        result = await agent.cancel_last_turn(session.id)
         logger.info(
             "last_turn_cancelled",
             session_id=session.id,
@@ -527,7 +526,7 @@ async def cancel_last_turn(
 @limiter.limit(settings.RATE_LIMIT_ENDPOINTS["messages"][0])
 async def get_resume_status(
     request: Request,
-    session_id: str,
+    session_id: UUID,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
@@ -548,7 +547,7 @@ async def get_resume_status(
     session = await get_authorized_session(session_id, current_user, db)
 
     try:
-        state = await agent.get_session_state(str(session.id))
+        state = await agent.get_session_state(session.id)
 
         # state.next 是一个元组，包含待执行的节点名称
         can_resume = state.next is not None and len(state.next) > 0
@@ -585,7 +584,7 @@ async def get_resume_status(
 @limiter.limit(settings.RATE_LIMIT_ENDPOINTS["chat_stream"][0])
 async def resume_session(
     request: Request,
-    session_id: str,
+    session_id: UUID,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> StreamingResponse:
@@ -605,11 +604,11 @@ async def resume_session(
     # Verify session ownership
     session = await get_authorized_session(session_id, current_user, db)
 
-    async def event_generator() -> AsyncGenerator[str, None]:
+    async def event_generator() -> AsyncGenerator[str]:
         try:
             async for event in agent.resume_stream(
-                str(session.id),
-                user_uuid=str(session.user_uuid),
+                session.id,
+                user_uuid=session.user_uuid,
             ):
                 yield f"data: {json.dumps(event.model_dump(mode='json', exclude_none=True), ensure_ascii=False)}\n\n"
         except Exception as e:

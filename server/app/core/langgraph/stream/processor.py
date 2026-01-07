@@ -13,7 +13,8 @@
 """
 
 import asyncio
-from typing import Any, AsyncGenerator, Optional
+from collections.abc import AsyncGenerator
+from typing import Any
 
 from app.core.langgraph.stream.event_generator import EventGenerator
 from app.core.langgraph.stream.render_policy import (
@@ -81,8 +82,8 @@ class StreamProcessor:
         input_data: dict[str, Any] | None,
         config: dict[str, Any],
         session_id: str,
-        user_uuid: Optional[str] = None,
-    ) -> AsyncGenerator[GenUIEvent, None]:
+        user_uuid: str | None = None,
+    ) -> AsyncGenerator[GenUIEvent]:
         """处理 LangGraph 流并生成 GenUI 事件
 
         Args:
@@ -250,7 +251,7 @@ class StreamProcessor:
         chunk: Any,
         session_id: str,
         event_buffer: list[GenUIEvent],
-    ) -> AsyncGenerator[GenUIEvent, None]:
+    ) -> AsyncGenerator[GenUIEvent]:
         """处理单个流块
 
         Args:
@@ -283,7 +284,7 @@ class StreamProcessor:
         chunk: tuple,
         session_id: str,
         event_buffer: list[GenUIEvent],
-    ) -> AsyncGenerator[GenUIEvent, None]:
+    ) -> AsyncGenerator[GenUIEvent]:
         """处理 messages 模式
 
         注意：
@@ -329,7 +330,7 @@ class StreamProcessor:
     async def _process_custom_mode(
         self,
         chunk: dict[str, Any],
-    ) -> AsyncGenerator[GenUIEvent, None]:
+    ) -> AsyncGenerator[GenUIEvent]:
         """处理 custom 模式"""
         if isinstance(chunk, dict) and chunk.get("type") == "progress":
             yield GenUIEvent(
@@ -342,7 +343,7 @@ class StreamProcessor:
         chunk: dict[str, Any],
         session_id: str,
         event_buffer: list[GenUIEvent],
-    ) -> AsyncGenerator[GenUIEvent, None]:
+    ) -> AsyncGenerator[GenUIEvent]:
         """处理 updates 模式
 
         注意：渲染策略在此应用

@@ -3,8 +3,8 @@
 Provides session title search with Chinese tokenization support using jieba.
 """
 
-import re
-from typing import Optional
+
+from uuid import UUID
 
 import jieba
 from sqlalchemy import desc, or_, select
@@ -14,7 +14,6 @@ from app.core.logging import logger
 from app.models.searchable_message import SearchableMessage
 from app.models.session import Session
 from app.schemas.search import HighlightRange, SearchResult
-from app.utils.types import UUIDLike
 
 
 class SearchService:
@@ -122,7 +121,7 @@ class SearchService:
 
     async def search_sessions(
         self,
-        user_uuid: UUIDLike,
+        user_uuid: UUID,
         query: str,
         limit: int = 20,
     ) -> list[SearchResult]:
@@ -158,7 +157,7 @@ class SearchService:
         try:
             async with get_session_context() as db:
                 # Build query with OR conditions for each token
-                base_query = select(Session).where(Session.user_uuid == str(user_uuid))
+                base_query = select(Session).where(Session.user_uuid == user_uuid)
 
                 conditions = []
                 for token in tokens:
@@ -211,7 +210,7 @@ class SearchService:
 
     async def search_messages(
         self,
-        user_uuid: UUIDLike,
+        user_uuid: UUID,
         query: str,
         limit: int = 20,
     ) -> list[SearchResult]:
@@ -245,7 +244,7 @@ class SearchService:
 
         try:
             async with get_session_context() as db:
-                base_query = select(SearchableMessage).where(SearchableMessage.user_uuid == str(user_uuid))
+                base_query = select(SearchableMessage).where(SearchableMessage.user_uuid == user_uuid)
 
                 conditions = []
                 for token in tokens:
@@ -303,7 +302,7 @@ class SearchService:
 
     async def combined_search(
         self,
-        user_uuid: UUIDLike,
+        user_uuid: UUID,
         query: str,
         limit: int = 20,
     ) -> list[SearchResult]:

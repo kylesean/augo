@@ -1,6 +1,5 @@
 """Schemas for conversation management API."""
-
-from typing import List, Optional
+from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
@@ -27,7 +26,7 @@ class PaginationMeta(BaseModel):
 class ConversationListResponse(BaseModel):
     """Schema for conversation list response."""
 
-    data: List[ConversationListItem]
+    data: list[ConversationListItem]
     meta: PaginationMeta
 
 
@@ -50,7 +49,7 @@ class ToolComponent(BaseModel):
     name: str
     type: str
     props: dict
-    transactionId: Optional[int] = None
+    transactionId: int | None = None
 
 
 class MessageDetail(BaseModel):
@@ -60,8 +59,8 @@ class MessageDetail(BaseModel):
     role: str
     timestamp: str
     text: str
-    attachments: List[AttachmentInfo] = Field(default_factory=list)
-    toolComponents: Optional[List[ToolComponent]] = None
+    attachments: list[AttachmentInfo] = Field(default_factory=list)
+    toolComponents: list[ToolComponent] | None = None
 
 
 class ConversationDetail(BaseModel):
@@ -70,7 +69,7 @@ class ConversationDetail(BaseModel):
     id: str
     title: str
     updatedAt: str
-    messages: List[MessageDetail]
+    messages: list[MessageDetail]
 
 
 class SearchResult(BaseModel):
@@ -87,4 +86,4 @@ class SearchResult(BaseModel):
 class SearchResultsResponse(BaseModel):
     """Schema for search results response."""
 
-    data: List[SearchResult]
+    data: list[SearchResult]

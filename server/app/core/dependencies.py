@@ -7,7 +7,8 @@ This module provides reusable dependency functions for:
 - Session management
 """
 
-from typing import Any, AsyncGenerator, Optional
+from collections.abc import AsyncGenerator
+from typing import Any
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -23,7 +24,7 @@ from app.utils.auth import verify_token
 security = HTTPBearer()
 
 
-async def get_redis_client() -> AsyncGenerator[Any, None]:
+async def get_redis_client() -> AsyncGenerator[Any]:
     """Get Redis client for caching and session management.
 
     Yields:
@@ -161,9 +162,9 @@ class OptionalAuth:
 
     async def __call__(
         self,
-        credentials: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer(auto_error=False)),
+        credentials: HTTPAuthorizationCredentials | None = Depends(HTTPBearer(auto_error=False)),
         db: AsyncSession = Depends(get_session),
-    ) -> Optional[User]:
+    ) -> User | None:
         """Get current user if authenticated, None otherwise.
 
         Args:

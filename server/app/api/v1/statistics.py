@@ -1,6 +1,5 @@
 """Statistics API endpoints for financial analysis."""
 
-from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
@@ -19,9 +18,9 @@ router = APIRouter(prefix="/statistics", tags=["statistics"])
 @router.get("/overview")
 async def get_statistics_overview(
     time_range: str = Query(default="month", description="Time range: week, month, year, or custom"),
-    start_date: Optional[str] = Query(default=None, description="Start date for custom range (ISO 8601)"),
-    end_date: Optional[str] = Query(default=None, description="End date for custom range (ISO 8601)"),
-    account_types: Optional[str] = Query(default=None, description="Comma-separated account types to filter"),
+    start_date: str | None = Query(default=None, description="Start date for custom range (ISO 8601)"),
+    end_date: str | None = Query(default=None, description="End date for custom range (ISO 8601)"),
+    account_types: str | None = Query(default=None, description="Comma-separated account types to filter"),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
@@ -61,9 +60,9 @@ async def get_statistics_overview(
 async def get_trend_data(
     time_range: str = Query(default="month"),
     transaction_type: str = Query(default="expense", description="Transaction type: expense or income"),
-    start_date: Optional[str] = Query(default=None),
-    end_date: Optional[str] = Query(default=None),
-    account_types: Optional[str] = Query(default=None),
+    start_date: str | None = Query(default=None),
+    end_date: str | None = Query(default=None),
+    account_types: str | None = Query(default=None),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
@@ -102,9 +101,9 @@ async def get_trend_data(
 @router.get("/categories")
 async def get_category_breakdown(
     time_range: str = Query(default="month"),
-    start_date: Optional[str] = Query(default=None),
-    end_date: Optional[str] = Query(default=None),
-    account_types: Optional[str] = Query(default=None),
+    start_date: str | None = Query(default=None),
+    end_date: str | None = Query(default=None),
+    account_types: str | None = Query(default=None),
     transaction_type: str = Query(default="expense", description="Transaction type: expense or income"),
     limit: int = Query(default=10, ge=1, le=50),
     current_user: User = Depends(get_current_user),
@@ -146,9 +145,9 @@ async def get_category_breakdown(
 @router.get("/top-transactions")
 async def get_top_transactions(
     time_range: str = Query(default="month"),
-    start_date: Optional[str] = Query(default=None),
-    end_date: Optional[str] = Query(default=None),
-    account_types: Optional[str] = Query(default=None),
+    start_date: str | None = Query(default=None),
+    end_date: str | None = Query(default=None),
+    account_types: str | None = Query(default=None),
     transaction_type: str = Query(default="expense", description="Transaction type: expense or income"),
     sort_by: str = Query(default="amount", description="Sort by: amount or date"),
     page: int = Query(default=1, ge=1),
@@ -194,9 +193,9 @@ async def get_top_transactions(
 @router.get("/cash-flow")
 async def get_cash_flow_analysis(
     time_range: str = Query(default="month"),
-    start_date: Optional[str] = Query(default=None),
-    end_date: Optional[str] = Query(default=None),
-    account_types: Optional[str] = Query(default=None),
+    start_date: str | None = Query(default=None),
+    end_date: str | None = Query(default=None),
+    account_types: str | None = Query(default=None),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
@@ -242,9 +241,9 @@ async def get_cash_flow_analysis(
 @router.get("/health-score")
 async def get_health_score(
     time_range: str = Query(default="month"),
-    start_date: Optional[str] = Query(default=None),
-    end_date: Optional[str] = Query(default=None),
-    account_types: Optional[str] = Query(default=None),
+    start_date: str | None = Query(default=None),
+    end_date: str | None = Query(default=None),
+    account_types: str | None = Query(default=None),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:

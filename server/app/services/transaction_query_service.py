@@ -6,11 +6,10 @@ This service provides a unified interface for querying transactions, used by bot
 
 Best practice: Business logic lives here, not in API routes or tool definitions.
 """
+from __future__ import annotations
 
 from datetime import datetime
-from decimal import Decimal
 from enum import Enum
-from typing import Any, List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -52,25 +51,25 @@ class TransactionItem(BaseModel):
     amount: float
     amount_original: str
     currency: str
-    category_key: Optional[str] = None
-    description: Optional[str] = None
+    category_key: str | None = None
+    description: str | None = None
     transaction_at: str
     transaction_timezone: str
-    location: Optional[str] = None
-    tags: Optional[List[str]] = None
+    location: str | None = None
+    tags: list[str] | None = None
     source: str
     status: str
-    raw_input: Optional[str] = None
-    source_account_id: Optional[str] = None
-    target_account_id: Optional[str] = None
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
+    raw_input: str | None = None
+    source_account_id: str | None = None
+    target_account_id: str | None = None
+    created_at: str | None = None
+    updated_at: str | None = None
     display: TransactionDisplayValue
 
     @classmethod
     def from_transaction(
         cls, tx: Transaction, display_currency: str = "CNY", exchange_rate: float = 1.0
-    ) -> "TransactionItem":
+    ) -> TransactionItem:
         """从 Transaction 模型创建响应实例
 
         Args:
@@ -110,7 +109,7 @@ class TransactionItem(BaseModel):
 class TransactionQueryResult(BaseModel):
     """交易查询结果"""
 
-    items: List[TransactionItem]
+    items: list[TransactionItem]
     total: int
     page: int
     per_page: int
@@ -126,15 +125,15 @@ class TransactionQueryResult(BaseModel):
 class TransactionQueryParams(BaseModel):
     """交易查询参数"""
 
-    keyword: Optional[str] = Field(None, description="关键词搜索（描述、地点、标签）")
-    min_amount: Optional[float] = Field(None, description="最小金额（绝对值）")
-    max_amount: Optional[float] = Field(None, description="最大金额（绝对值）")
-    transaction_types: Optional[List[TransactionType]] = Field(None, description="交易类型列表")
-    category_keys: Optional[List[str]] = Field(None, description="分类键列表")
-    tags: Optional[List[str]] = Field(None, description="标签列表")
-    start_date: Optional[str] = Field(None, description="开始日期 (ISO 8601)")
-    end_date: Optional[str] = Field(None, description="结束日期 (ISO 8601)")
-    date: Optional[str] = Field(None, description="指定日期 (YYYY-MM-DD)，用于首页日历")
+    keyword: str | None = Field(None, description="关键词搜索（描述、地点、标签）")
+    min_amount: float | None = Field(None, description="最小金额（绝对值）")
+    max_amount: float | None = Field(None, description="最大金额（绝对值）")
+    transaction_types: list[TransactionType] | None = Field(None, description="交易类型列表")
+    category_keys: list[str] | None = Field(None, description="分类键列表")
+    tags: list[str] | None = Field(None, description="标签列表")
+    start_date: str | None = Field(None, description="开始日期 (ISO 8601)")
+    end_date: str | None = Field(None, description="结束日期 (ISO 8601)")
+    date: str | None = Field(None, description="指定日期 (YYYY-MM-DD)，用于首页日历")
     page: int = Field(1, ge=1, description="页码")
     per_page: int = Field(20, ge=1, le=100, description="每页数量")
 
@@ -144,7 +143,7 @@ class TransactionQueryParams(BaseModel):
 # ============================================================================
 
 
-def _parse_date_to_utc(date_str: str, end_of_day: bool = False) -> Optional[datetime]:
+def _parse_date_to_utc(date_str: str, end_of_day: bool = False) -> datetime | None:
     """将日期字符串解析为 UTC 时区的 datetime 对象。
 
     使用 dateutil.parser 处理各种日期格式，包括:
@@ -328,8 +327,8 @@ class TransactionQueryService:
     async def get_feed(
         self,
         user_uuid: str,
-        date: Optional[str] = None,
-        transaction_type: Optional[TransactionType] = None,
+        date: str | None = None,
+        transaction_type: TransactionType | None = None,
         page: int = 1,
         per_page: int = 20,
     ) -> TransactionQueryResult:

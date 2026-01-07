@@ -3,15 +3,14 @@
 This module provides helper functions for currency conversion
 and user display currency preferences.
 """
+from __future__ import annotations
 
 from decimal import Decimal
-from typing import List, Optional
 from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import settings
 from app.core.logging import logger
 
 

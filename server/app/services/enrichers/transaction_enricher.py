@@ -2,18 +2,17 @@
 
 Hydrates TransactionReceipt components with live data from the database.
 """
+from __future__ import annotations
 
 import uuid
-from decimal import Decimal
-from typing import Any, Dict
+from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from app.core.database import db_manager
-from app.core.genui.enricher import ComponentEnricher, EnricherRegistry
+from app.core.genui.enricher import ComponentEnricher
 from app.core.logging import logger
-from app.models.financial_account import FinancialAccount
 from app.models.transaction import Transaction
 
 
@@ -25,7 +24,7 @@ class TransactionReceiptEnricher(ComponentEnricher):
         """Name of the GenUI component for frontend rendering."""
         return "TransactionReceipt"
 
-    async def enrich(self, tool_call_id: str, data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+    async def enrich(self, tool_call_id: str, data: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
         """Enrich transaction receipt with latest status and account info.
 
         Args:

@@ -10,12 +10,10 @@ Enhanced Features:
 - Graceful degradation on errors
 """
 
-from typing import Optional
 
-from langchain_core.messages import BaseMessage, HumanMessage
+from langchain_core.messages import BaseMessage
 
 from app.core.langgraph.middleware.base import BaseMiddleware
-from app.core.logging import logger
 from app.services.memory import MemoryService, get_memory_service
 
 
@@ -46,16 +44,16 @@ class LongTermMemoryMiddleware(BaseMiddleware):
 
     def __init__(
         self,
-        memory: Optional[object] = None,  # Deprecated, kept for compatibility
+        memory: object | None = None,  # Deprecated, kept for compatibility
         max_memories: int = 5,
         min_relevance_score: float = 0.0,
-        categories: Optional[list[str]] = None,
+        categories: list[str] | None = None,
     ):
         """Initialize the middleware."""
         self.max_memories = max_memories
         self.min_relevance_score = min_relevance_score
         self.categories = categories
-        self._memory_service: Optional[MemoryService] = None
+        self._memory_service: MemoryService | None = None
 
     async def _get_memory_service(self) -> MemoryService:
         """Get or initialize the memory service."""

@@ -1,6 +1,5 @@
-from typing import Optional
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy import and_, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,7 +9,7 @@ from app.core.dependencies import get_current_user
 from app.core.responses import error_response, get_error_code_int, success_response
 from app.models.notification import Notification
 from app.models.user import User
-from app.schemas.notification import NotificationListResponse, NotificationResponse
+from app.schemas.notification import NotificationListResponse
 
 router = APIRouter(prefix="/notifications", tags=["notifications"])
 

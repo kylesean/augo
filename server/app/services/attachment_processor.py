@@ -1,8 +1,8 @@
 """Attachment processing service for handling file attachments in conversations."""
+from __future__ import annotations
 
 import base64
 from pathlib import Path
-from typing import Dict, List, Optional
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,7 +23,7 @@ class AttachmentProcessor:
         """
         self.db_session = db_session
 
-    async def load_attachments(self, attachment_ids: List[int], user_uuid: int) -> List[Dict]:
+    async def load_attachments(self, attachment_ids: list[int], user_uuid: int) -> list[dict]:
         """Load attachments from database by IDs.
 
         Args:
@@ -147,7 +147,7 @@ class AttachmentProcessor:
         # Fallback to API URL
         return f"{settings.API_V1_STR}/files/view/{attachment.id}"
 
-    def get_image_attachments(self, attachments: List[Dict]) -> List[Dict]:
+    def get_image_attachments(self, attachments: list[dict]) -> list[dict]:
         """Filter attachments to get only images.
 
         Args:
@@ -158,7 +158,7 @@ class AttachmentProcessor:
         """
         return [att for att in attachments if att.get("type") == "image"]
 
-    def process_attachments_to_text(self, attachments: List[Dict], user_text: str) -> str:
+    def process_attachments_to_text(self, attachments: list[dict], user_text: str) -> str:
         """Process attachments and combine with user text.
 
         For text files, embeds content.
@@ -192,7 +192,7 @@ class AttachmentProcessor:
 
         return processed_text
 
-    def _process_text_file(self, attachment: Dict) -> str:
+    def _process_text_file(self, attachment: dict) -> str:
         """Process a text file attachment.
 
         Args:
@@ -204,7 +204,7 @@ class AttachmentProcessor:
         try:
             file_path = Path(attachment["file_path"])
             if file_path.exists():
-                with open(file_path, "r", encoding="utf-8") as f:
+                with open(file_path, encoding="utf-8") as f:
                     content = f.read()
 
                 # Limit content length
@@ -222,7 +222,7 @@ class AttachmentProcessor:
 
         return f"\n\n[附件: {attachment['filename']} - 读取失败]"
 
-    def _process_document(self, attachment: Dict) -> str:
+    def _process_document(self, attachment: dict) -> str:
         """Process a document attachment.
 
         Args:
@@ -234,7 +234,7 @@ class AttachmentProcessor:
         size_formatted = self._format_file_size(attachment["size"])
         return f"\n\n[文档附件: {attachment['filename']}, 大小: {size_formatted}]"
 
-    def _process_other_file(self, attachment: Dict) -> str:
+    def _process_other_file(self, attachment: dict) -> str:
         """Process other file types.
 
         Args:
@@ -262,7 +262,7 @@ class AttachmentProcessor:
         else:
             return f"{size_bytes / 1048576:.2f} MB"
 
-    def format_attachments_for_storage(self, attachments: List[Dict]) -> List[Dict]:
+    def format_attachments_for_storage(self, attachments: list[dict]) -> list[dict]:
         """Format attachments for database storage.
 
         Args:

@@ -5,9 +5,10 @@ supporting both real-time streaming and historical message restoration using Pyd
 
 Schema Version: 2.0 (Refactored)
 """
+from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
@@ -62,12 +63,12 @@ class UIComponentData(BaseModel):
 
     surface_id: str
     component_type: str
-    data: Dict[str, Any]
+    data: dict[str, Any]
     mode: UIComponentMode = UIComponentMode.LIVE
-    user_selection: Optional[Dict[str, Any]] = None
-    created_at: Optional[str] = None
-    tool_call_id: Optional[str] = None
-    tool_name: Optional[str] = None
+    user_selection: dict[str, Any] | None = None
+    created_at: str | None = None
+    tool_call_id: str | None = None
+    tool_name: str | None = None
 
 
 class GenUIEvent(BaseModel):
@@ -85,12 +86,12 @@ class GenUIEvent(BaseModel):
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
 
     type: str
-    content: Optional[str] = None
-    data: Optional[Dict[str, Any]] = None
-    surface_id: Optional[str] = None
-    title: Optional[str] = None
-    metadata: Optional[Dict[str, Any]] = None
-    insight_slot_id: Optional[str] = None
+    content: str | None = None
+    data: dict[str, Any] | None = None
+    surface_id: str | None = None
+    title: str | None = None
+    metadata: dict[str, Any] | None = None
+    insight_slot_id: str | None = None
 
     def to_sse(self) -> str:
         """Convert to SSE format."""
@@ -105,6 +106,6 @@ class HistoricalUIComponent(BaseModel):
 
     surface_id: str
     component_type: str
-    data: Dict[str, Any]
+    data: dict[str, Any]
     mode: str = "historical"
-    user_selection: Optional[Dict[str, Any]] = None
+    user_selection: dict[str, Any] | None = None

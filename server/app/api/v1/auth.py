@@ -6,9 +6,9 @@ This module provides endpoints for user authentication including:
 - User login
 - Token verification and user/session dependencies
 """
+from __future__ import annotations
 
 import uuid
-from typing import List
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request, status
 from fastapi.responses import JSONResponse
@@ -24,7 +24,7 @@ from app.models.session import Session as ChatSession
 from app.models.user import User
 from app.schemas.auth import AuthResponse, LoginRequest, RegisterRequest, SendCodeRequest, SessionResponse, UserInfo
 from app.services.auth_service import AuthService
-from app.utils.auth import create_access_token, verify_token
+from app.utils.auth import verify_token
 from app.utils.sanitization import sanitize_string
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -534,7 +534,6 @@ async def get_user_sessions(
     Returns:
         JSONResponse: Unified response with paginated sessions
     """
-    from fastapi_pagination import Params
     from fastapi_pagination.ext.sqlalchemy import apaginate
 
     from app.core.responses import error_response, get_error_code_int, success_response

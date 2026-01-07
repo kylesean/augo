@@ -3,9 +3,9 @@
 These tools are called directly from UI via direct_execute, bypassing LLM.
 Similar to execute_transfer for transfer confirmation.
 """
+from __future__ import annotations
 
-import uuid as uuid_module
-from typing import Any, Dict, List, Optional
+from typing import Any
 from uuid import UUID
 
 from langchain_core.runnables import RunnableConfig
@@ -15,7 +15,7 @@ from app.core.database import db_manager
 from app.core.logging import logger
 
 
-def _get_user_uuid(config: RunnableConfig) -> Optional[UUID]:
+def _get_user_uuid(config: RunnableConfig) -> UUID | None:
     """Extract user UUID from configuration"""
     val = config.get("configurable", {}).get("user_uuid")
     if val is None:
@@ -25,12 +25,12 @@ def _get_user_uuid(config: RunnableConfig) -> Optional[UUID]:
 
 @tool("associate_transactions_to_space")
 async def associate_transactions_to_space(
-    transaction_ids: List[str],
+    transaction_ids: list[str],
     space_id: int,
-    surface_id: Optional[str] = None,
+    surface_id: str | None = None,
     *,
     config: RunnableConfig,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Associate existing transactions with a shared space.
 
     This is a GenUI atomic tool - called directly from UI via direct_execute,

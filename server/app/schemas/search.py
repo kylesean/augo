@@ -1,7 +1,6 @@
 """Search-related schemas for conversation search API."""
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -20,9 +19,9 @@ class SearchResult(BaseModel):
     id: str = Field(..., description="Session ID")
     title: str = Field(..., description="Session title")
     snippet: str = Field(..., description="Matching content snippet")
-    message_id: Optional[str] = Field(None, alias="messageId", description="Message ID if applicable")
-    created_at: Optional[datetime] = Field(None, alias="createdAt", description="Creation time")
-    updated_at: Optional[datetime] = Field(None, alias="updatedAt", description="Last update time")
+    message_id: str | None = Field(None, alias="messageId", description="Message ID if applicable")
+    created_at: datetime | None = Field(None, alias="createdAt", description="Creation time")
+    updated_at: datetime | None = Field(None, alias="updatedAt", description="Last update time")
     highlights: list[HighlightRange] = Field(default_factory=list, description="Highlight ranges")
 
     model_config = {

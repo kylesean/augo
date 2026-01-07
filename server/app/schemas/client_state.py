@@ -3,8 +3,9 @@
 定义客户端允许操作的状态子集，用于 GenUI 原子模式。
 这是 Client 与 Server 共享 StateGraph 的协议契约。
 """
+from __future__ import annotations
 
-from typing import Any, Dict, Literal, Optional
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -27,11 +28,11 @@ class ClientStateMutation(BaseModel):
         tool_params: 工具参数
     """
 
-    ui_mode: Optional[Literal["idle", "direct_execute"]] = Field(
+    ui_mode: Literal["idle", "direct_execute"] | None = Field(
         default=None, description="UI 模式：idle=走 agent，direct_execute=跳过 LLM 直接执行工具"
     )
-    tool_name: Optional[str] = Field(default=None, description="要直接执行的工具名（需在内部工具注册表中）")
-    tool_params: Optional[Dict[str, Any]] = Field(
+    tool_name: str | None = Field(default=None, description="要直接执行的工具名（需在内部工具注册表中）")
+    tool_params: dict[str, Any] | None = Field(
         default=None, description="工具参数，ui_mode=direct_execute 时必须提供"
     )
 
@@ -42,7 +43,7 @@ class ClientStateMutation(BaseModel):
 
         只包含非 None 的字段，避免覆盖已有状态。
         """
-        result: Dict[str, Any] = {}
+        result: dict[str, Any] = {}
         if self.ui_mode is not None:
             result["ui_mode"] = self.ui_mode
         if self.tool_name is not None:

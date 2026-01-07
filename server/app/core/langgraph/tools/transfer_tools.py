@@ -4,10 +4,11 @@ This tool executes a transfer between two accounts.
 - Requires source_account_id and target_account_id (typically provided by GenUI).
 - Usually triggered by interaction with the TransferPathBuilder UI.
 """
+from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool
@@ -25,13 +26,13 @@ class ExecuteTransferInput(BaseModel):
     target_account_id: str = Field(..., description="ID of the target account (provided by UI)")
     amount: float = Field(..., gt=0, description="Transfer amount")
     memo: str = Field(default="", description="Optional transfer memo/note")
-    transaction_at: Optional[str] = Field(
+    transaction_at: str | None = Field(
         default=None, description="Transaction time in ISO 8601 format (defaults to current time)"
     )
-    surface_id: Optional[str] = Field(default=None, description="GenUI surface ID for in-place updates")
+    surface_id: str | None = Field(default=None, description="GenUI surface ID for in-place updates")
 
 
-def _get_user_uuid(config: RunnableConfig) -> Optional[uuid.UUID]:
+def _get_user_uuid(config: RunnableConfig) -> uuid.UUID | None:
     """Extract user UUID from config, return UUID object."""
     val = config.get("configurable", {}).get("user_uuid")
     if val is None:
@@ -39,14 +40,14 @@ def _get_user_uuid(config: RunnableConfig) -> Optional[uuid.UUID]:
     return uuid.UUID(val) if isinstance(val, str) else val
 
 
-def _parse_time(time_str: Optional[str]) -> datetime:
+def _parse_time(time_str: str | None) -> datetime:
     """Parse time string, return current time if failed."""
     if not time_str:
-        return datetime.now(timezone.utc)
+        return datetime.now(UTC)
     try:
         return datetime.fromisoformat(time_str.replace("Z", "+00:00"))
     except (ValueError, AttributeError):
-        return datetime.now(timezone.utc)
+        return datetime.now(UTC)
 
 
 @tool("execute_transfer", args_schema=ExecuteTransferInput)
@@ -55,11 +56,11 @@ async def execute_transfer(
     target_account_id: str,
     amount: float,
     memo: str = "",
-    transaction_at: Optional[str] = None,
-    surface_id: Optional[str] = None,
+    transaction_at: str | None = None,
+    surface_id: str | None = None,
     *,
     config: RunnableConfig,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Execute a transfer between two accounts.
 
     IMPORTANT: This tool requires specific account IDs, which should be provided by the

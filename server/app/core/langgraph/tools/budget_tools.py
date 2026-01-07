@@ -6,20 +6,18 @@ These tools enable AI-driven budget management:
 - suggest_budget: AI-generated budget suggestions
 - rebalance_budget: Transfer between budgets
 """
+from __future__ import annotations
 
-from decimal import Decimal
-from typing import Any, Dict, Literal, Optional
+from typing import Any, Literal
 from uuid import UUID
 
 from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field
 
 from app.core.constants.transaction_constants import EXPENSE_CATEGORIES
 from app.core.database import db_manager
 from app.core.logging import logger
-from app.models.budget import BudgetPeriodType, BudgetScope, BudgetSource
-from app.schemas.budget import BudgetCreateRequest
 from app.services.budget_service import BudgetService
 
 # 预算支持的分类键（只允许支出分类）
@@ -58,7 +56,7 @@ def get_user_uuid(config: RunnableConfig) -> str | None:
 class QueryBudgetStatusInput(BaseModel):
     """Input for query_budget_status tool."""
 
-    category_key: Optional[BUDGET_CATEGORY_KEYS] = Field(
+    category_key: BUDGET_CATEGORY_KEYS | None = Field(
         default=None,
         description="Category key (NULL for total budget). Supported categories: FOOD_DINING, SHOPPING_RETAIL, TRANSPORTATION, HOUSING_UTILITIES, PERSONAL_CARE, ENTERTAINMENT, EDUCATION, MEDICAL_HEALTH, INSURANCE, SOCIAL_GIFTING, FINANCIAL_TAX, OTHERS",
     )
@@ -66,10 +64,10 @@ class QueryBudgetStatusInput(BaseModel):
 
 @tool("query_budget_status", args_schema=QueryBudgetStatusInput)
 async def query_budget_status(
-    category_key: Optional[str] = None,
+    category_key: str | None = None,
     *,
     config: RunnableConfig,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Query budget balance and usage percentage. Suitable for quick inquiries like 'how much budget is left?'. For deep analysis, use the budget-expert skill."""
     user_uuid = get_user_uuid(config)
 

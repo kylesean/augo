@@ -3,7 +3,7 @@
 This module provides utility functions for message processing in LangGraph workflows.
 """
 
-from typing import Any, Union
+from typing import Any
 
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import (
@@ -16,7 +16,7 @@ from app.core.logging import logger
 from app.schemas import Message
 
 
-def dump_messages(messages: list[Union[Message, dict]]) -> list[dict]:
+def dump_messages(messages: list[Message | dict]) -> list[dict]:
     """Dump messages to a list of dictionaries.
 
     Args:
@@ -83,7 +83,7 @@ def process_llm_response(response: BaseMessage) -> BaseMessage:
 
 
 def prepare_messages(
-    messages: list[Union[Message, dict]],
+    messages: list[Message | dict],
     llm: BaseChatModel,
     system_prompt: str,
 ) -> list[dict]:

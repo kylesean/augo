@@ -4,16 +4,16 @@
 - Fuzzy matches accounts based on user hints
 - Pre-populates GenUI component
 """
+from __future__ import annotations
 
 import asyncio
 import json
 import logging
 import os
-import re
 import sys
 from io import StringIO
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 from uuid import UUID
 
 # CRITICAL: Suppress ALL output during imports
@@ -36,7 +36,7 @@ from app.services.account_service import AccountService  # noqa: E402
 sys.stdout = _original_stdout
 
 
-def fuzzy_match_account(accounts: List[Any], hint: str) -> List[str]:
+def fuzzy_match_account(accounts: list[Any], hint: str) -> list[str]:
     """Find account IDs that match the given hint (name or type)."""
     if not hint:
         return []

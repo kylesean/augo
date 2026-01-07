@@ -1,8 +1,8 @@
 """Budget schemas for API request/response handling."""
+from __future__ import annotations
 
 from datetime import date, time
 from decimal import Decimal
-from typing import List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
@@ -11,12 +11,9 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validat
 # Enums (imported from models for consistency)
 # ============================================================================
 from app.models.budget import (
-    BudgetPeriodStatus,
     BudgetPeriodType,
     BudgetScope,
-    BudgetSource,
     BudgetStatus,
-    BudgetType,
     OverspendBehavior,
 )
 
@@ -30,13 +27,13 @@ class BudgetCreateRequest(BaseModel):
 
     model_config = ConfigDict(use_enum_values=True)
 
-    name: Optional[str] = Field(
+    name: str | None = Field(
         default=None, max_length=100, description="Budget name. If not provided, will be auto-generated."
     )
     scope: BudgetScope = Field(
         ..., description="Budget scope: TOTAL for overall budget, CATEGORY for category-specific."
     )
-    category_key: Optional[str] = Field(
+    category_key: str | None = Field(
         default=None, max_length=25, description="Category key for category budgets. Required if scope is CATEGORY."
     )
     amount: Decimal = Field(..., gt=0, description="Budget limit amount. Must be greater than 0.")
@@ -49,7 +46,7 @@ class BudgetCreateRequest(BaseModel):
 
     @field_validator("category_key")
     @classmethod
-    def validate_category_key(cls, v: Optional[str], info: ValidationInfo) -> Optional[str]:
+    def validate_category_key(cls, v: str | None, info: ValidationInfo) -> str | None:
         """Validate category_key based on scope."""
         scope = info.data.get("scope")
         if scope == BudgetScope.CATEGORY and not v:
@@ -64,11 +61,11 @@ class BudgetUpdateRequest(BaseModel):
 
     model_config = ConfigDict(use_enum_values=True)
 
-    name: Optional[str] = Field(default=None, max_length=100)
-    amount: Optional[Decimal] = Field(default=None, gt=0)
-    rollover_enabled: Optional[bool] = None
-    status: Optional[BudgetStatus] = None
-    period_anchor_day: Optional[int] = Field(default=None, ge=1, le=31)
+    name: str | None = Field(default=None, max_length=100)
+    amount: Decimal | None = Field(default=None, gt=0)
+    rollover_enabled: bool | None = None
+    status: BudgetStatus | None = None
+    period_anchor_day: int | None = Field(default=None, ge=1, le=31)
 
 
 class BudgetRebalanceRequest(BaseModel):
@@ -93,20 +90,20 @@ class BudgetSettingsUpdateRequest(BaseModel):
 
     model_config = ConfigDict(use_enum_values=True)
 
-    warning_threshold: Optional[int] = Field(default=None, ge=0, le=100)
-    alert_threshold: Optional[int] = Field(default=None, ge=0, le=100)
-    overspend_behavior: Optional[OverspendBehavior] = None
-    weekly_summary_enabled: Optional[bool] = None
-    weekly_summary_day: Optional[str] = None
-    monthly_summary_enabled: Optional[bool] = None
-    anomaly_detection_enabled: Optional[bool] = None
-    anomaly_threshold: Optional[Decimal] = Field(default=None, ge=0)
-    quiet_hours_start: Optional[time] = None
-    quiet_hours_end: Optional[time] = None
+    warning_threshold: int | None = Field(default=None, ge=0, le=100)
+    alert_threshold: int | None = Field(default=None, ge=0, le=100)
+    overspend_behavior: OverspendBehavior | None = None
+    weekly_summary_enabled: bool | None = None
+    weekly_summary_day: str | None = None
+    monthly_summary_enabled: bool | None = None
+    anomaly_detection_enabled: bool | None = None
+    anomaly_threshold: Decimal | None = Field(default=None, ge=0)
+    quiet_hours_start: time | None = None
+    quiet_hours_end: time | None = None
 
     @field_validator("weekly_summary_day")
     @classmethod
-    def validate_weekly_day(cls, v: Optional[str]) -> Optional[str]:
+    def validate_weekly_day(cls, v: str | None) -> str | None:
         """Validate weekly summary day."""
         if v is not None:
             valid_days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
@@ -136,8 +133,8 @@ class BudgetPeriodResponse(BaseModel):
     remaining_amount: float
     usage_percentage: float
     status: str
-    ai_forecast: Optional[float] = None
-    notes: Optional[str] = None
+    ai_forecast: float | None = None
+    notes: str | None = None
 
 
 class BudgetResponse(BaseModel):
@@ -148,7 +145,7 @@ class BudgetResponse(BaseModel):
     id: UUID
     name: str
     scope: str
-    category_key: Optional[str] = None
+    category_key: str | None = None
     amount: float
     currency_code: str
     period_type: str
@@ -156,7 +153,7 @@ class BudgetResponse(BaseModel):
     rollover_enabled: bool
     rollover_balance: float
     source: str
-    ai_confidence: Optional[float] = None
+    ai_confidence: float | None = None
     status: str
 
     # Calculated fields for current period
@@ -164,13 +161,13 @@ class BudgetResponse(BaseModel):
     remaining_amount: float = 0.0
     usage_percentage: float = 0.0
     period_status: str = "ON_TRACK"
-    period_start: Optional[date] = None
-    period_end: Optional[date] = None
-    ai_forecast: Optional[float] = None
+    period_start: date | None = None
+    period_end: date | None = None
+    ai_forecast: float | None = None
 
     # Timestamps
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
+    created_at: str | None = None
+    updated_at: str | None = None
 
 
 class BudgetAlert(BaseModel):
@@ -178,7 +175,7 @@ class BudgetAlert(BaseModel):
 
     budget_id: UUID
     budget_name: str
-    category_key: Optional[str] = None
+    category_key: str | None = None
     alert_type: str  # "warning" | "exceeded" | "forecast_exceed"
     message: str
     usage_percentage: float
@@ -188,21 +185,21 @@ class BudgetAlert(BaseModel):
 class BudgetSummaryResponse(BaseModel):
     """Response schema for budget overview."""
 
-    total_budget: Optional[BudgetResponse] = None
-    category_budgets: List[BudgetResponse] = []
+    total_budget: BudgetResponse | None = None
+    category_budgets: list[BudgetResponse] = []
     overall_spent: float = 0.0
     overall_remaining: float = 0.0
     overall_percentage: float = 0.0
-    alerts: List[BudgetAlert] = []
-    period_start: Optional[date] = None
-    period_end: Optional[date] = None
+    alerts: list[BudgetAlert] = []
+    period_start: date | None = None
+    period_end: date | None = None
 
 
 class BudgetSuggestion(BaseModel):
     """AI-generated budget suggestion."""
 
     scope: str  # TOTAL or CATEGORY
-    category_key: Optional[str] = None
+    category_key: str | None = None
     suggested_amount: float
     confidence: float
     reasoning: str
@@ -223,5 +220,5 @@ class BudgetSettingsResponse(BaseModel):
     monthly_summary_enabled: bool
     anomaly_detection_enabled: bool
     anomaly_threshold: float
-    quiet_hours_start: Optional[time] = None
-    quiet_hours_end: Optional[time] = None
+    quiet_hours_start: time | None = None
+    quiet_hours_end: time | None = None

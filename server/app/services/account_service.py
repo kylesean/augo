@@ -1,6 +1,6 @@
 """Account service for managing financial accounts."""
+from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 import structlog
@@ -19,8 +19,8 @@ class AccountService:
         self.db = db
 
     async def list_user_accounts(
-        self, user_uuid: UUID, account_type: Optional[str] = None, include_inactive: bool = False
-    ) -> List[FinancialAccount]:
+        self, user_uuid: UUID, account_type: str | None = None, include_inactive: bool = False
+    ) -> list[FinancialAccount]:
         """Get user's financial account list."""
         query = select(FinancialAccount).where(FinancialAccount.user_uuid == user_uuid)
 
@@ -36,7 +36,7 @@ class AccountService:
         result = await self.db.execute(query)
         return list(result.scalars().all())
 
-    async def get_account_by_id(self, account_id: UUID, user_uuid: UUID) -> Optional[FinancialAccount]:
+    async def get_account_by_id(self, account_id: UUID, user_uuid: UUID) -> FinancialAccount | None:
         """Get a specific account and verify ownership."""
         query = select(FinancialAccount).where(
             and_(FinancialAccount.id == account_id, FinancialAccount.user_uuid == user_uuid)

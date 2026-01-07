@@ -1,7 +1,8 @@
 """Utilities for LangGraph tools."""
+from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -37,7 +38,7 @@ def map_to_genui(data: Any) -> Any:
     return data
 
 
-def genui_response(data: Any, type: str, success: bool = True, message: Optional[str] = None) -> Dict[str, Any]:
+def genui_response(data: Any, type: str, success: bool = True, message: str | None = None) -> dict[str, Any]:
     """生成统一的扁平化 GenUI 响应字典。
 
     保持后端原始的 camelCase 命名风格，与 RESTful API 保持一致。

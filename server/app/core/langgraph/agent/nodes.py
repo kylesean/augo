@@ -2,8 +2,10 @@
 
 LangGraph 节点函数，每个节点专注于单一职责。
 """
+from __future__ import annotations
 
-from typing import Any, Callable, Dict, List
+from collections.abc import Callable
+from typing import Any
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage, SystemMessage
@@ -16,7 +18,7 @@ from app.core.logging import logger
 
 def create_agent_node(
     llm: BaseChatModel,
-    tools: List[BaseTool],
+    tools: list[BaseTool],
     system_prompt: str,
 ) -> Callable[[AgentState, RunnableConfig], Any]:
     """创建 Agent 节点
@@ -24,7 +26,7 @@ def create_agent_node(
     Agent 节点调用 LLM 生成响应，支持动态工具过滤。
     """
 
-    async def agent_node(state: AgentState, config: RunnableConfig) -> Dict[str, List[BaseMessage]]:
+    async def agent_node(state: AgentState, config: RunnableConfig) -> dict[str, list[BaseMessage]]:
         messages = state["messages"]
 
         # 支持 SkillConstraintMiddleware 动态过滤工具
@@ -50,7 +52,7 @@ def create_agent_node(
 # === 内部工具注册表 ===
 # GenUI 直接执行的工具，不暴露给 LLM
 # 新增工具只需在此添加
-def _get_internal_tools() -> Dict[str, BaseTool]:
+def _get_internal_tools() -> dict[str, BaseTool]:
     """延迟加载内部工具，避免循环导入"""
     from app.core.langgraph.tools.space_association_tools import associate_transactions_to_space
     from app.core.langgraph.tools.transfer_tools import execute_transfer
@@ -62,7 +64,7 @@ def _get_internal_tools() -> Dict[str, BaseTool]:
 
 
 def create_direct_execute_node(
-    tools: List[BaseTool],  # 保留参数以兼容图构建接口
+    tools: list[BaseTool],  # 保留参数以兼容图构建接口
 ) -> Callable[[AgentState, RunnableConfig], Any]:
     """创建直接执行节点
 
@@ -74,7 +76,7 @@ def create_direct_execute_node(
     """
     INTERNAL_TOOLS = _get_internal_tools()
 
-    async def direct_execute_node(state: AgentState, config: RunnableConfig) -> Dict[str, Any]:
+    async def direct_execute_node(state: AgentState, config: RunnableConfig) -> dict[str, Any]:
         tool_name = state.get("tool_name")
         tool_params = state.get("tool_params")
 

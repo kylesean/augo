@@ -7,9 +7,9 @@ and cache invalidation strategies for the application.
 import functools
 import json
 import pickle
-from typing import Any, Callable, Optional, Union, cast
+from collections.abc import Callable
+from typing import Any, cast
 
-from redis import asyncio as redis_async
 from redis.asyncio import Redis
 from redis.asyncio.connection import ConnectionPool
 
@@ -22,8 +22,8 @@ class CacheManager:
 
     def __init__(self) -> None:
         """Initialize cache manager."""
-        self._pool: Optional[ConnectionPool] = None
-        self._redis: Optional[Redis] = None
+        self._pool: ConnectionPool | None = None
+        self._redis: Redis | None = None
 
     def init_pool(self) -> ConnectionPool:
         """Initialize Redis connection pool.
@@ -126,7 +126,7 @@ class CacheManager:
         self,
         key: str,
         value: Any,
-        ttl: Optional[int] = None,
+        ttl: int | None = None,
         serialize: bool = True,
     ) -> bool:
         """Set value in cache.
@@ -146,7 +146,7 @@ class CacheManager:
             if serialize:
                 try:
                     # Try JSON first (for simple types)
-                    serialized_value: Union[str, bytes] = json.dumps(value)
+                    serialized_value: str | bytes = json.dumps(value)
                 except (TypeError, ValueError):
                     # Fall back to pickle for complex objects
                     serialized_value = pickle.dumps(value)
@@ -226,7 +226,7 @@ class CacheManager:
             logger.error("cache_exists_failed", key=key, error=str(e))
             return False
 
-    async def increment(self, key: str, amount: int = 1) -> Optional[int]:
+    async def increment(self, key: str, amount: int = 1) -> int | None:
         """Increment a counter in cache.
 
         Args:
@@ -290,9 +290,9 @@ def cache_key(*args: Any, **kwargs: Any) -> str:
 
 
 def cached(
-    ttl: Optional[int] = 300,
-    key_prefix: Optional[str] = None,
-    key_builder: Optional[Callable[..., str]] = None,
+    ttl: int | None = 300,
+    key_prefix: str | None = None,
+    key_builder: Callable[..., str] | None = None,
 ) -> Callable[[Callable], Callable]:
     """Decorator for caching function results.
 

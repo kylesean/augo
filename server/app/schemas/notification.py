@@ -1,7 +1,9 @@
-from datetime import datetime
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict, Field
+from datetime import datetime
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict
 
 
 class NotificationResponse(BaseModel):
@@ -11,10 +13,10 @@ class NotificationResponse(BaseModel):
     user_uuid: str
     type: str
     title: str
-    content: Optional[str] = None
-    data: Optional[Dict[str, Any]] = None
+    content: str | None = None
+    data: dict[str, Any] | None = None
     is_read: bool
-    read_at: Optional[datetime] = None
+    read_at: datetime | None = None
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
@@ -23,7 +25,7 @@ class NotificationResponse(BaseModel):
 class NotificationListResponse(BaseModel):
     """Response schema for notification list."""
 
-    notifications: List[NotificationResponse]
+    notifications: list[NotificationResponse]
     total: int
     unread_count: int
     page: int

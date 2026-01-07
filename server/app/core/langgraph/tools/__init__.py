@@ -10,9 +10,10 @@
 - 转账通过 transfer-expert 技能触发，由 UI 收集账户信息
 - 财务分析、共享空间等通过 Skills + 脚本实现，节省 token 消耗
 """
+from __future__ import annotations
 
 from contextvars import ContextVar
-from typing import Dict, List
+from typing import Any
 
 from langchain_core.tools.base import BaseTool
 
@@ -34,13 +35,13 @@ from .transfer_tools import execute_transfer, transfer_tools  # execute_transfer
 # - record_transactions: 记录交易（支持混合类型批量）
 # - search_transactions: 查询交易
 # 注意：execute_transfer 不在此列表中，LLM 看不到它
-transaction_semantic_tools: List[BaseTool] = record_tools
+transaction_semantic_tools: list[BaseTool] = record_tools
 
 # 业务工具
-business_tools: List[BaseTool] = transaction_semantic_tools + budget_tools
+business_tools: list[BaseTool] = transaction_semantic_tools + budget_tools
 
 # 2. 通用工具
-utility_tools: List[BaseTool] = [
+utility_tools: list[BaseTool] = [
     duckduckgo_search_tool,
 ]
 
@@ -48,12 +49,12 @@ utility_tools: List[BaseTool] = [
 # 包含 read_file, ls, execute
 
 # 4. 最终暴露给 LLM 的工具集（日常对话）
-tools: List[BaseTool] = utility_tools + business_tools + filesystem_tools + memory_tools
+tools: list[BaseTool] = utility_tools + business_tools + filesystem_tools + memory_tools
 
 # 5. 技能专属工具（已迁移到脚本模式，不再需要）
 # - finance-analyst: 通过 analyze_finance.py, forecast_finance.py 脚本
 # - shared-space: 通过 list_spaces.py, query_space_summary.py 脚本
-skill_exclusive_tools: Dict[str, List[BaseTool]] = {}
+skill_exclusive_tools: dict[str, list[BaseTool]] = {}
 
 # 6. 内部工具（不暴露给 LLM，仅供 GenUI 回调等内部使用）
 # execute_transfer 已通过上面的 import 导出，供需要时调用

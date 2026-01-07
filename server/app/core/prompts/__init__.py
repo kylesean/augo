@@ -20,7 +20,7 @@ def _load_core_prompt_template() -> str:
     This is cached because the file content never changes at runtime.
     """
     prompt_path = os.path.join(os.path.dirname(__file__), "system.md")
-    with open(prompt_path, "r", encoding="utf-8") as f:
+    with open(prompt_path, encoding="utf-8") as f:
         return f.read()
 
 

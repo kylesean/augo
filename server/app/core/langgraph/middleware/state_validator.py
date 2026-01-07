@@ -3,9 +3,10 @@
 防御性状态校验器，在图执行前校验客户端提交的状态突变。
 实现 "Trust, but Verify" 原则。
 """
+from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from app.core.logging import logger
 from app.schemas.client_state import ClientStateMutation
@@ -16,7 +17,7 @@ class ValidationResult:
     """校验结果"""
 
     valid: bool
-    errors: List[str] = field(default_factory=list)
+    errors: list[str] = field(default_factory=list)
 
     def __bool__(self) -> bool:
         """Return True if the validation is successful, False otherwise."""
@@ -30,7 +31,7 @@ class StateValidator:
     校验失败时返回 ValidationResult，让调用方决定降级策略。
     """
 
-    def validate(self, client_state: Optional[ClientStateMutation]) -> ValidationResult:
+    def validate(self, client_state: ClientStateMutation | None) -> ValidationResult:
         """校验客户端状态突变"""
         if client_state is None:
             return ValidationResult(valid=True)
@@ -64,7 +65,7 @@ class StateValidator:
         )
         return ValidationResult(valid=True)
 
-    def _validate_tool_params(self, tool_name: Optional[str], params: Dict[str, Any]) -> ValidationResult:
+    def _validate_tool_params(self, tool_name: str | None, params: dict[str, Any]) -> ValidationResult:
         """根据工具名校验参数
 
         可扩展：针对不同工具实施不同的校验规则。

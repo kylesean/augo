@@ -6,16 +6,16 @@ This middleware handles image and document attachments in chat messages:
 
 Based on LangChain 1.0 middleware best practices.
 """
+from __future__ import annotations
 
 import base64
 from pathlib import Path
-from typing import Any, List, Optional
+from typing import Any
 from uuid import UUID
 
 import aiofiles
 from langchain_core.messages import BaseMessage, HumanMessage
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.langgraph.middleware.base import BaseMiddleware
@@ -137,10 +137,10 @@ class AttachmentMiddleware(BaseMiddleware):
 
     async def _load_attachments(
         self,
-        attachment_ids: List[str],
+        attachment_ids: list[str],
         user_uuid: str,
-        thread_id: Optional[str] = None,
-    ) -> List[Attachment]:
+        thread_id: str | None = None,
+    ) -> list[Attachment]:
         """Load attachments from database and optionally link to thread.
 
         Args:
@@ -151,7 +151,6 @@ class AttachmentMiddleware(BaseMiddleware):
         Returns:
             List of Attachment objects
         """
-        from sqlalchemy import update
 
         async with self.db_session_factory() as session:
             # Convert string IDs to UUIDs
@@ -189,8 +188,8 @@ class AttachmentMiddleware(BaseMiddleware):
 
     def _classify_attachments(
         self,
-        attachments: List[Attachment],
-    ) -> tuple[List[Attachment], List[Attachment]]:
+        attachments: list[Attachment],
+    ) -> tuple[list[Attachment], list[Attachment]]:
         """Classify attachments into images and documents.
 
         Args:
@@ -219,7 +218,7 @@ class AttachmentMiddleware(BaseMiddleware):
     async def _inject_images(
         self,
         messages: list[BaseMessage],
-        images: List[Attachment],
+        images: list[Attachment],
     ) -> list[BaseMessage]:
         """Convert images to base64 and inject into messages.
 
@@ -308,7 +307,7 @@ class AttachmentMiddleware(BaseMiddleware):
     async def _register_documents(
         self,
         config: dict,
-        documents: List[Attachment],
+        documents: list[Attachment],
     ) -> dict:
         """Register documents in config for RAG tool access.
 
@@ -370,7 +369,7 @@ class AttachmentMiddleware(BaseMiddleware):
 
         # Plain text and markdown
         if attachment.mime_type in {"text/plain", "text/markdown"}:
-            async with aiofiles.open(file_path, "r", encoding="utf-8") as f:
+            async with aiofiles.open(file_path, encoding="utf-8") as f:
                 return await f.read()
 
         # PDF - placeholder for Phase 2

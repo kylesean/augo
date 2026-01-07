@@ -9,8 +9,9 @@ Design principles:
 3. Business logic success/failure is indicated by the 'code' field
 4. code=0 means success, non-zero means business error
 """
+from __future__ import annotations
 
-from typing import Any, Dict, Generic, Optional, TypeVar
+from typing import Any, TypeVar
 
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
@@ -19,7 +20,7 @@ from pydantic import BaseModel, ConfigDict
 T = TypeVar("T")
 
 
-class ResponseEnvelope(BaseModel, Generic[T]):
+class ResponseEnvelope[T](BaseModel):
     """Generic response envelope for type-safe API responses.
 
     This model is used for OpenAPI documentation and type hints.
@@ -33,7 +34,7 @@ class ResponseEnvelope(BaseModel, Generic[T]):
 
     code: int
     message: str
-    data: Optional[T] = None
+    data: T | None = None
 
     model_config = ConfigDict(
         json_schema_extra={
@@ -65,7 +66,7 @@ def success_response(
         >>> return success_response(data={"user_uuid": 123})
         # Returns: {"code": 0, "message": "Success", "data": {"user_uuid": 123}}
     """
-    body: Dict[str, Any] = {
+    body: dict[str, Any] = {
         "code": 0,
         "message": message,
     }
@@ -101,7 +102,7 @@ def error_response(
         >>> return error_response(code=1001, message="User not found")
         # Returns: {"code": 1001, "message": "User not found"}
     """
-    body: Dict[str, Any] = {
+    body: dict[str, Any] = {
         "code": code,
         "message": message,
     }

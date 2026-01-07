@@ -1,8 +1,8 @@
 """Cash flow service for forecasting and analysis."""
 
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
 import structlog
@@ -30,7 +30,7 @@ class CashFlowService:
         user_uuid: UUID,
         forecast_days: int = 60,
         granularity: str = "daily",
-        scenarios: Optional[list[dict]] = None,
+        scenarios: list[dict] | None = None,
     ) -> dict:
         """Forecast future cash flow."""
         from app.models.financial_settings import FinancialSettings

@@ -30,6 +30,7 @@ Note:
     - Frontend GenUI components handle localization via i18n
     - LLM generates localized text responses based on SKILL.md rules
 """
+from __future__ import annotations
 
 import asyncio
 import json
@@ -39,7 +40,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Dict, List, cast
+from typing import Any, cast
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
@@ -53,7 +54,7 @@ from app.services.transaction_query_service import (  # noqa: E402
 )
 
 
-def analyze_spending(transactions: List[Dict[str, Any]], days: int = 90) -> Dict:
+def analyze_spending(transactions: list[dict[str, Any]], days: int = 90) -> dict:
     """Analyze spending patterns from transaction records.
 
     Returns structured data only - no localized text.
@@ -158,7 +159,7 @@ def analyze_spending(transactions: List[Dict[str, Any]], days: int = 90) -> Dict
             suggestions.append({"type": "monthly_increase", "percentage": pct})
 
     # Find high-frequency small expenses
-    small_frequent: Dict[str, int] = defaultdict(int)
+    small_frequent: dict[str, int] = defaultdict(int)
     for tx in all_expenses:
         if tx["amount"] < 50:
             small_frequent[tx["category"]] += 1

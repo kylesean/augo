@@ -1,15 +1,14 @@
 """Statistics service for financial analysis."""
+from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
-from typing import List, Optional, Tuple
 from uuid import UUID
 
-from sqlalchemy import Select, String, and_, asc, case, cast, desc, func, select
+from sqlalchemy import Select, and_, case, cast, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.elements import ColumnElement
 
-from app.core.logging import logger
 from app.models.financial_account import FinancialAccount
 from app.models.transaction import Transaction
 from app.schemas.statistics import (
@@ -24,7 +23,7 @@ from app.schemas.statistics import (
     TrendDataPoint,
     TrendDataResponse,
 )
-from app.utils.currency_utils import BASE_CURRENCY, get_exchange_rate_from_base, get_user_display_currency
+from app.utils.currency_utils import get_exchange_rate_from_base, get_user_display_currency
 
 
 class StatisticsService:
@@ -36,8 +35,8 @@ class StatisticsService:
     def _build_account_filter(
         self,
         user_uuid: UUID,
-        account_types: Optional[List[str]],
-    ) -> Optional[Select]:
+        account_types: list[str] | None,
+    ) -> Select | None:
         """Build account type filter subquery if account_types is provided."""
         if not account_types:
             return None
@@ -63,11 +62,11 @@ class StatisticsService:
     def _get_date_range(
         self,
         time_range: str,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-    ) -> Tuple[datetime, datetime]:
+        start_date: str | None = None,
+        end_date: str | None = None,
+    ) -> tuple[datetime, datetime]:
         """Calculate date range based on time_range parameter."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         if time_range == "week":
             # Start of current week (Monday) to end of current week (Sunday)
@@ -107,7 +106,7 @@ class StatisticsService:
         self,
         start: datetime,
         end: datetime,
-    ) -> Tuple[datetime, datetime]:
+    ) -> tuple[datetime, datetime]:
         """Get the previous period range for comparison."""
         duration = end - start
         prev_end = start - timedelta(seconds=1)
@@ -118,9 +117,9 @@ class StatisticsService:
         self,
         user_uuid: UUID,
         time_range: str = "month",
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-        account_types: Optional[List[str]] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        account_types: list[str] | None = None,
     ) -> StatisticsOverviewResponse:
         """Get statistics overview for the period."""
         period_start, period_end = self._get_date_range(time_range, start_date, end_date)
@@ -235,9 +234,9 @@ class StatisticsService:
         user_uuid: UUID,
         time_range: str = "month",
         transaction_type: str = "expense",
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-        account_types: Optional[List[str]] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        account_types: list[str] | None = None,
     ) -> TrendDataResponse:
         """Get trend data for chart visualization."""
         period_start, period_end = self._get_date_range(time_range, start_date, end_date)
@@ -348,9 +347,9 @@ class StatisticsService:
         self,
         user_uuid: UUID,
         time_range: str = "month",
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-        account_types: Optional[List[str]] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        account_types: list[str] | None = None,
         transaction_type: str = "expense",
         limit: int = 10,
     ) -> CategoryBreakdownResponse:
@@ -418,9 +417,9 @@ class StatisticsService:
         self,
         user_uuid: UUID,
         time_range: str = "month",
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-        account_types: Optional[List[str]] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        account_types: list[str] | None = None,
         transaction_type: str = "expense",
         sort_by: str = "amount",
         page: int = 1,
@@ -502,9 +501,9 @@ class StatisticsService:
         self,
         user_uuid: UUID,
         time_range: str = "month",
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-        account_types: Optional[List[str]] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        account_types: list[str] | None = None,
     ) -> CashFlowResponse:
         """Get comprehensive cash flow analysis for the period."""
         period_start, period_end = self._get_date_range(time_range, start_date, end_date)
@@ -649,9 +648,9 @@ class StatisticsService:
         self,
         user_uuid: UUID,
         time_range: str = "month",
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-        account_types: Optional[List[str]] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        account_types: list[str] | None = None,
     ) -> HealthScoreResponse:
         """Calculate comprehensive financial health score based on multiple dimensions."""
         # First get cash flow data as base

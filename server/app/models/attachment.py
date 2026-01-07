@@ -15,7 +15,6 @@ from app.models.base import BaseModel
 
 if TYPE_CHECKING:
     from app.models.storage_config import StorageConfig
-    from app.models.user import User
 
 
 class Attachment(BaseModel, table=True):

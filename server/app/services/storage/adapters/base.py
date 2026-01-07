@@ -5,7 +5,7 @@ All adapters must implement async methods for file operations.
 """
 
 from abc import ABC, abstractmethod
-from typing import AsyncGenerator, Optional
+from collections.abc import AsyncGenerator
 
 from app.models.storage_config import StorageConfig
 
@@ -39,9 +39,9 @@ class StorageAdapter(ABC):
     @abstractmethod
     async def save(
         self,
-        file_stream: AsyncGenerator[bytes, None],
+        file_stream: AsyncGenerator[bytes],
         filename: str,
-        content_type: Optional[str] = None,
+        content_type: str | None = None,
     ) -> str:
         """Upload a file to storage.
 
@@ -64,7 +64,7 @@ class StorageAdapter(ABC):
         self,
         object_key: str,
         expire_seconds: int = 3600,
-        filename: Optional[str] = None,
+        filename: str | None = None,
     ) -> str:
         """Get a browser-accessible temporary URL for file download.
 
@@ -88,7 +88,7 @@ class StorageAdapter(ABC):
     def get_stream(
         self,
         object_key: str,
-    ) -> AsyncGenerator[bytes, None]:
+    ) -> AsyncGenerator[bytes]:
         """Get file content as an async stream.
 
         Used by AI Agent to read file contents for processing.
@@ -133,7 +133,7 @@ class StorageAdapter(ABC):
         """
         pass
 
-    async def get_file_info(self, object_key: str) -> Optional[dict]:
+    async def get_file_info(self, object_key: str) -> dict | None:
         """Get file metadata (size, modified time, etc.).
 
         Args:

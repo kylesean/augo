@@ -3,11 +3,11 @@
 Provides CRUD operations for StorageConfig with credential encryption
 and user default storage initialization.
 """
-
-from typing import List, Optional
+from __future__ import annotations
 
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from uuid import UUID
 
 from app.core.logging import logger
 from app.models.storage_config import ProviderType, StorageConfig
@@ -31,11 +31,11 @@ class StorageConfigService:
 
     async def create(
         self,
-        user_uuid: str,
+        user_uuid: UUID,
         provider_type: str,
         name: str,
         base_path: str,
-        credentials: Optional[dict] = None,
+        credentials: dict | None = None,
         is_readonly: bool = True,
     ) -> StorageConfig:
         """Create a new storage configuration.
@@ -88,8 +88,8 @@ class StorageConfigService:
     async def get_by_id(
         self,
         config_id: int,
-        user_uuid: Optional[int] = None,
-    ) -> Optional[StorageConfig]:
+        user_uuid: UUID | None = None,
+    ) -> StorageConfig | None:
         """Get storage config by ID.
 
         Args:
@@ -109,9 +109,9 @@ class StorageConfigService:
 
     async def get_user_configs(
         self,
-        user_uuid: int,
-        provider_type: Optional[str] = None,
-    ) -> List[StorageConfig]:
+        user_uuid: UUID,
+        provider_type: str | None = None,
+    ) -> list[StorageConfig]:
         """Get all storage configs for a user.
 
         Args:
@@ -131,7 +131,7 @@ class StorageConfigService:
         result = await self.db.execute(query)
         return list(result.scalars().all())
 
-    async def get_default_local(self, user_uuid: str) -> Optional[StorageConfig]:
+    async def get_default_local(self, user_uuid: UUID) -> StorageConfig | None:
         """Get user's default local storage config.
 
         Args:
@@ -153,7 +153,7 @@ class StorageConfigService:
         result = await self.db.execute(query)
         return result.scalar_one_or_none()
 
-    async def ensure_default_local(self, user_uuid: int) -> StorageConfig:
+    async def ensure_default_local(self, user_uuid: UUID) -> StorageConfig:
         """Ensure user has a default local storage config.
 
         Creates one if it doesn't exist.
@@ -179,12 +179,12 @@ class StorageConfigService:
     async def update(
         self,
         config_id: int,
-        user_uuid: int,
-        name: Optional[str] = None,
-        base_path: Optional[str] = None,
-        credentials: Optional[dict] = None,
-        is_readonly: Optional[bool] = None,
-    ) -> Optional[StorageConfig]:
+        user_uuid: UUID,
+        name: str | None = None,
+        base_path: str | None = None,
+        credentials: dict | None = None,
+        is_readonly: bool | None = None,
+    ) -> StorageConfig | None:
         """Update a storage configuration.
 
         Args:
@@ -221,7 +221,7 @@ class StorageConfigService:
 
         return config
 
-    async def delete(self, config_id: int, user_uuid: int) -> bool:
+    async def delete(self, config_id: int, user_uuid: UUID) -> bool:
         """Delete a storage configuration.
 
         Note: Will fail if attachments still reference this config.

@@ -1,10 +1,9 @@
 """This file contains the chat schema for the application."""
+from __future__ import annotations
 
 import re
 from typing import (
-    List,
     Literal,
-    Optional,
 )
 
 from pydantic import (
@@ -62,12 +61,12 @@ class ChatRequest(BaseModel):
         session_id: Optional session ID for existing sessions.
     """
 
-    messages: List[Message] = Field(
+    messages: list[Message] = Field(
         ...,
         description="List of messages in the session",
         min_length=1,
     )
-    session_id: Optional[str] = Field(
+    session_id: str | None = Field(
         default=None, description="Session ID for existing session. If null, a new session will be created."
     )
 
@@ -89,7 +88,7 @@ class MessageWithAttachments(Message):
     by allowing references to uploaded files (images, documents).
     """
 
-    attachments: Optional[List[AttachmentRef]] = Field(default=None, description="List of attachment references")
+    attachments: list[AttachmentRef] | None = Field(default=None, description="List of attachment references")
 
 
 class ChatRequestWithAttachments(BaseModel):
@@ -101,15 +100,15 @@ class ChatRequestWithAttachments(BaseModel):
         client_state: Optional client state mutation for GenUI atomic mode.
     """
 
-    messages: List[MessageWithAttachments] = Field(
+    messages: list[MessageWithAttachments] = Field(
         ...,
         description="List of messages with optional attachments",
         min_length=1,
     )
-    session_id: Optional[str] = Field(
+    session_id: str | None = Field(
         default=None, description="Session ID for existing session. If null, a new session will be created."
     )
-    client_state: Optional[ClientStateMutation] = Field(
+    client_state: ClientStateMutation | None = Field(
         default=None, description="Client state mutation for GenUI atomic mode (replaces state_updates)"
     )
 
@@ -122,7 +121,7 @@ class ChatResponse(BaseModel):
         session_id: Optional session ID (only for new sessions).
     """
 
-    messages: List[Message] = Field(..., description="List of messages in the session")
+    messages: list[Message] = Field(..., description="List of messages in the session")
     session_id: str | None = Field(default=None, description="Session ID for new sessions")
 
 
@@ -172,8 +171,8 @@ class AttachmentInfo(BaseModel):
     filename: str = Field(..., description="Original filename")
     objectKey: str = Field(..., description="Object storage key, required by client")
     mimeType: str = Field(..., description="MIME type")
-    signedUrl: Optional[str] = Field(default=None, description="Time-limited access URL")
-    expiresAt: Optional[str] = Field(default=None, description="Expiration timestamp")
+    signedUrl: str | None = Field(default=None, description="Time-limited access URL")
+    expiresAt: str | None = Field(default=None, description="Expiration timestamp")
 
 
 class HistoryMessage(BaseModel):
@@ -186,16 +185,16 @@ class HistoryMessage(BaseModel):
     id: str = Field(..., description="Message UUID")
     role: Literal["user", "assistant", "tool"] = Field(..., description="Message role")
     content: str = Field(default="", description="Text content")
-    timestamp: Optional[str] = Field(default=None, description="ISO timestamp")
-    attachments: List[AttachmentInfo] = Field(default_factory=list, description="Attached files")
-    toolCalls: List[ToolCallInfo] = Field(default_factory=list, description="Tool calls made")
-    uiComponents: List[UIComponentInfo] = Field(default_factory=list, description="GenUI components")
-    toolCallId: Optional[str] = Field(default=None, description="For tool messages, the call ID being responded to")
+    timestamp: str | None = Field(default=None, description="ISO timestamp")
+    attachments: list[AttachmentInfo] = Field(default_factory=list, description="Attached files")
+    toolCalls: list[ToolCallInfo] = Field(default_factory=list, description="Tool calls made")
+    uiComponents: list[UIComponentInfo] = Field(default_factory=list, description="GenUI components")
+    toolCallId: str | None = Field(default=None, description="For tool messages, the call ID being responded to")
 
 
 class HistoryMessagesResponse(BaseModel):
     """Response model for session messages endpoint."""
 
-    messages: List[HistoryMessage] = Field(..., description="Complete message history")
+    messages: list[HistoryMessage] = Field(..., description="Complete message history")
     session_id: str = Field(..., description="Session ID")
-    title: Optional[str] = Field(default=None, description="Session title")
+    title: str | None = Field(default=None, description="Session title")

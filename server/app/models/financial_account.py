@@ -1,6 +1,5 @@
 """Financial account model for storing user's financial accounts."""
 
-from datetime import datetime
 from decimal import Decimal
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
