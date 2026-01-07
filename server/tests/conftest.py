@@ -100,6 +100,26 @@ def client() -> Generator[TestClient, None, None]:
 
 
 @pytest.fixture(autouse=True)
+def setup_test_env(monkeypatch):
+    """Setup test environment variables and core mocks."""
+    # 1. Inject mandatory keys to prevent init errors
+    monkeypatch.setenv("ENCRYPTION_KEY", "v3u8eA7-R5i_oX6DozID8lH_l6ApxfGqI8Xh-8o9mG4=")
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test-key-for-unit-tests")
+    monkeypatch.setenv("JWT_SECRET_KEY", "test-secret-key")
+
+    # 2. Prevent mem0 from actually trying to connect to anything
+    from unittest.mock import AsyncMock
+
+    from mem0 import AsyncMemory
+
+    # We mock from_config so MemoryService initialization succeeds seamlessly
+    mock_mem0 = AsyncMock(spec=AsyncMemory)
+    monkeypatch.setattr(AsyncMemory, "from_config", AsyncMock(return_value=mock_mem0))
+
+    return mock_mem0
+
+
+@pytest.fixture(autouse=True)
 def mock_settings():
     """Mock settings if needed."""
     pass
