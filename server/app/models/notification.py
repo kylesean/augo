@@ -104,7 +104,3 @@ class Notification(BaseModel, table=True):
             bool: True if notification is unread
         """
         return not self.is_read
-
-
-# Avoid circular imports
-from app.models.user import User  # noqa: E402

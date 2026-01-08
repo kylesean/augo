@@ -158,8 +158,3 @@ class SpaceTransaction(BaseModel, table=True):
             "primaryjoin": "SpaceTransaction.added_by_user_uuid == User.uuid",
         }
     )
-
-
-# Avoid circular imports
-from app.models.transaction import Transaction  # noqa: E402
-from app.models.user import User  # noqa: E402

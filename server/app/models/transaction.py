@@ -466,7 +466,3 @@ class TransactionShare(BaseModel, table=True):
             "primaryjoin": "TransactionShare.shared_with_user_uuid == User.uuid",
         }
     )
-
-
-# Avoid circular imports
-from app.models.user import User  # noqa: E402

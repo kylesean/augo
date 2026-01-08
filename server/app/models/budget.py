@@ -374,7 +374,3 @@ class BudgetSettings(BaseModel, table=True):
     def anomaly_threshold_float(self) -> float:
         """Get anomaly threshold as float."""
         return float(self.anomaly_threshold)
-
-
-# Avoid circular imports
-from app.models.user import User  # noqa: E402
