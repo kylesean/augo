@@ -11,7 +11,6 @@ import '../models/media_file.dart';
 class MediaThumbnailService {
   static final _logger = Logger('MediaThumbnailService');
   static const int _thumbnailSize = 200; // Maximum thumbnail size
-  static const int _quality = 85; // JPEG quality (0-100)
 
   // Cache for generated thumbnails
   static final Map<String, Uint8List> _thumbnailCache = {};

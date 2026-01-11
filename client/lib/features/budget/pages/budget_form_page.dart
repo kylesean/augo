@@ -44,8 +44,6 @@ class _BudgetFormPageState extends ConsumerState<BudgetFormPage> {
 
   bool _isLoadingEdit = false;
 
-  Budget? _editingBudget;
-
   late FPickerController _periodPickerController;
   late FPickerController _anchorDayPickerController;
 
@@ -68,7 +66,7 @@ class _BudgetFormPageState extends ConsumerState<BudgetFormPage> {
 
       if (mounted) {
         setState(() {
-          _editingBudget = budget;
+          // Destructure budget into form fields
           _scope = budget.scope;
           _amountController.text = budget.amount.toString();
           _periodType = budget.periodType;

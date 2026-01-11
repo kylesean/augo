@@ -3,8 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 const String _authTokenKey = 'auth_token';
-const String _userIdKey = 'user_id'; // Optional, if also want to store user ID
-const String _userDataKey = 'user_data'; // Optional, if also store user info
+// Note: _userIdKey and _userDataKey removed - add back when implementing user data storage
 
 class SecureStorageService {
   final _logger = Logger('SecureStorageService');

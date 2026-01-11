@@ -46,9 +46,6 @@ class _TransactionGroupReceiptState
   int _currentIndex = 0;
   late final PageController _pageController;
 
-  /// 是否正在加载账户关联信息
-  bool _isLoadingAssociations = false;
-
   /// 每笔交易的账户关联状态
   final Map<String, String?> _accountAssociations = {};
 
@@ -109,8 +106,6 @@ class _TransactionGroupReceiptState
 
     if (transactionIds.isEmpty) return;
 
-    setState(() => _isLoadingAssociations = true);
-
     try {
       final networkClient = ref.read(networkClientProvider);
 
@@ -163,8 +158,9 @@ class _TransactionGroupReceiptState
         });
       }
     } finally {
+      // Refresh UI after loading
       if (mounted) {
-        setState(() => _isLoadingAssociations = false);
+        setState(() {});
       }
     }
   }

@@ -4,11 +4,12 @@ import 'custom_content_generator.dart';
 
 final _logger = Logger('ExtendedGenUiConversation');
 
-/// Extended GenUI conversation manager (Requirement 1.1, 1.4)
+/// Extended GenUI conversation manager
 ///
 /// Encapsulates GenUI 0.6.0's core Facade and Host logic.
 class ExtendedGenUiConversation {
   final CustomContentGenerator _customGenerator;
+  // ignore: unused_field - configured through constructor callbacks
   final genui.GenUiConversation _conversation;
   final genui.A2uiMessageProcessor _host;
   String? _currentSessionId;

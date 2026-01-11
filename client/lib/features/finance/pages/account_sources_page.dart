@@ -505,13 +505,6 @@ class _AccountSourcesPageState extends ConsumerState<AccountSourcesPage> {
     );
   }
 
-  /// 判断账户是否为负债账户（已废弃，使用 account.nature 替代）
-  @Deprecated('Use account.nature == FinancialNature.liability instead')
-  bool _isLiability(AccountTypeDefinition def) {
-    return def.nature == AccountNature.creditAccounts ||
-        def.nature == AccountNature.longTermLiabilities;
-  }
-
   Future<void> _showCurrencyPicker() async {
     final result = await CurrencySelectionSheet.show(context, _viewCurrency);
     if (result != null && mounted) {

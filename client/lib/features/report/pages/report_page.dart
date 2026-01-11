@@ -9,7 +9,6 @@ import '../models/statistics_models.dart';
 import '../providers/statistics_provider.dart';
 import '../widgets/statistics_widgets.dart';
 import '../widgets/filter_sheet.dart';
-import '../widgets/category_detail_sheet.dart';
 import '../widgets/date_range_picker_sheet.dart';
 import '../../../app/router/app_routes.dart';
 
@@ -56,13 +55,6 @@ class _ReportPageState extends ConsumerState<ReportPage> {
         ref.read(statisticsProvider.notifier).setAccountTypes(accountTypes);
       },
     );
-  }
-
-  void _showCategoryDetailSheet() {
-    final state = ref.read(statisticsProvider);
-    if (state.categoryBreakdown != null) {
-      CategoryDetailSheet.show(context, breakdown: state.categoryBreakdown!);
-    }
   }
 
   void _showDateRangePicker() {

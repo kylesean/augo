@@ -15,7 +15,6 @@ import '../providers/transaction_detail_provider.dart';
 import '../widgets/transaction_detail_skeleton.dart';
 import 'package:augo/shared/widgets/amount_text.dart';
 import 'package:augo/shared/widgets/themed_icon.dart';
-import 'package:augo/shared/utils/amount_formatter.dart';
 import 'package:augo/core/constants/category_constants.dart';
 import 'package:augo/features/profile/providers/financial_account_provider.dart';
 import 'package:augo/features/profile/models/financial_account.dart';
@@ -43,22 +42,6 @@ class TransactionDetailPage extends ConsumerWidget {
       return TransactionCategory.fromKey(transaction.categoryKey!).displayText;
     }
     return transaction.category;
-  }
-
-  /// 获取金额显示文本
-  String _getAmountDisplayText(TransactionModel transaction) {
-    // 优先使用API返回的display字段
-    if (transaction.display != null) {
-      return transaction.display!.fullString;
-    }
-
-    // 回退：使用 AmountFormatter 确保符号一致
-    return AmountFormatter.formatTransaction(
-      type: transaction.type,
-      amount: transaction.amount,
-      currency: transaction.paymentMethod ?? 'CNY',
-      showSign: true,
-    );
   }
 
   @override

@@ -97,19 +97,6 @@ class MediaValidationService {
     }
   }
 
-  /// Validate file size (compatibility method)
-  static ValidationResult _validateFileSize(XFile file) {
-    try {
-      final fileSize = File(file.path).lengthSync();
-      return validateFileSizeByBytes(fileSize);
-    } catch (e) {
-      return ValidationResult(
-        isValid: false,
-        errorMessage: 'Unable to read file size: ${e.toString()}',
-      );
-    }
-  }
-
   /// Validate file size by bytes (throw exception version)
   ///
   /// [fileSize] File size in bytes
@@ -147,12 +134,6 @@ class MediaValidationService {
   static void _validateFileFormatThrows(XFile file) {
     final extension = getFileExtension(file.name);
     validateFileFormatByExtensionThrows(extension, file.name);
-  }
-
-  /// Validate file format (compatibility method)
-  static ValidationResult _validateFileFormat(XFile file) {
-    final extension = getFileExtension(file.name);
-    return validateFileFormatByExtension(extension);
   }
 
   /// Validate file format by extension (throw exception version)

@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 /// Network diagnostic utility class
 /// Used to detect network connection status and server reachability
 class NetworkDiagnostics {
-  static const String _tag = 'NetworkDiagnostics';
   static final _logger = Logger('NetworkDiagnostics');
 
   /// Check internet connection status

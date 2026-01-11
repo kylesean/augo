@@ -550,28 +550,3 @@ class _TransferWizardState extends State<TransferWizard> {
     );
   }
 }
-
-class _DashedLinePainter extends CustomPainter {
-  final Color color;
-  _DashedLinePainter({required this.color});
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color.withValues(alpha: 0.5)
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-    const double dashHeight = 5, dashSpace = 3;
-    double startY = 0;
-    while (startY < size.height) {
-      canvas.drawLine(
-        Offset(size.shortestSide / 2, startY),
-        Offset(size.shortestSide / 2, startY + dashHeight),
-        paint,
-      );
-      startY += dashHeight + dashSpace;
-    }
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}

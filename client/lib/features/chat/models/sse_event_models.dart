@@ -4,10 +4,6 @@
 /// 和 SseEventHandlerRegistry 共同使用。
 library;
 
-import 'package:logging/logging.dart';
-
-final _logger = Logger('SseEventModels');
-
 /// 工具调用开始事件
 class ToolCallStartEvent {
   final String id;

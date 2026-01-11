@@ -40,7 +40,6 @@ abstract class CommentModel with _$CommentModel {
 }
 
 // Helper functions for date serialization/deserialization
-String _dateTimeToIso8601String(DateTime dt) => dt.toIso8601String();
 DateTime? _dateTimeNullableParse(String? dateString) =>
     dateString != null ? DateTime.parse(dateString) : null;
 String? _dateTimeNullableToIso8601String(DateTime? dt) => dt?.toIso8601String();

@@ -270,34 +270,6 @@ IconData lucideIconFromString(String raw) {
   return lucideIconMap[key] ?? FIcons.shoppingBag;
 }
 
-// TransactionType serialization/deserialization
-TransactionType _transactionTypeFromString(String typeStr) {
-  switch (typeStr.toLowerCase()) {
-    case 'income':
-      return TransactionType.income;
-    case 'expense':
-    default:
-      return TransactionType.expense;
-  }
-}
-
-String _transactionTypeToString(TransactionType type) {
-  switch (type) {
-    case TransactionType.income:
-      return 'income';
-    case TransactionType.expense:
-      return 'expense';
-    case TransactionType.transfer:
-      return 'transfer';
-    case TransactionType.other:
-      return 'other';
-  }
-}
-
-// DateTime serialization/deserialization (only date part, if API needs full timestamp use .toIso8601String())
-String _dateTimeToIso8601String(DateTime dt) =>
-    dt.toIso8601String(); // API usually expects full ISO string
-
 // Parse amount field, support string and number format
 double _parseAmount(dynamic value) {
   if (value == null) return 0.0;

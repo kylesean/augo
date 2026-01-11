@@ -7,7 +7,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/network/network_client.dart';
 import '../../../core/network/exceptions/app_exception.dart';
 
@@ -26,10 +25,9 @@ class ProgressEvent {
 
 class FileUploadService {
   final NetworkClient _networkClient;
-  final SecureStorageService _storageService;
   final _logger = Logger('FileUploadService');
 
-  FileUploadService(this._networkClient, this._storageService);
+  FileUploadService(this._networkClient);
 
   /// Get correct MIME type from file extension
   static String? _getMimeTypeFromExtension(String fileName) {
@@ -336,6 +334,5 @@ class FileUploadException implements Exception {
 // Provider for FileUploadService
 final fileUploadServiceProvider = Provider<FileUploadService>((ref) {
   final networkClient = ref.watch(networkClientProvider);
-  final storageService = ref.watch(secureStorageServiceProvider);
-  return FileUploadService(networkClient, storageService);
+  return FileUploadService(networkClient);
 });

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:uuid/uuid.dart';
 import 'package:genui/genui.dart' as genui;
 import '../models/chat_history_state.dart';
 import '../models/chat_message.dart';
@@ -38,7 +37,6 @@ part 'chat_history_provider.g.dart';
 @Riverpod(keepAlive: true)
 class ChatHistory extends _$ChatHistory {
   final _logger = Logger('ChatHistory');
-  final _uuid = const Uuid();
 
   // GenUI service instance (delegate to manager)
   GenUiService? get _genUiService => _genUiLifecycleManager.service;
@@ -57,7 +55,8 @@ class ChatHistory extends _$ChatHistory {
   final HistoricalMessageProcessor _historicalProcessor =
       HistoricalMessageProcessor();
 
-  // Conversation manager
+  // Conversation manager - works through callback pattern
+  // ignore: unused_field
   late final ConversationManager _conversationManager;
 
   // Attachment manager

@@ -37,7 +37,6 @@ class GenUiErrorBoundary extends StatefulWidget {
 
 class _GenUiErrorBoundaryState extends State<GenUiErrorBoundary> {
   Object? _error;
-  StackTrace? _stackTrace;
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +77,6 @@ class _GenUiErrorBoundaryState extends State<GenUiErrorBoundary> {
       if (mounted) {
         setState(() {
           _error = error;
-          _stackTrace = stackTrace;
         });
       }
     });

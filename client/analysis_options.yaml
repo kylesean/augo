@@ -22,6 +22,16 @@ linter:
   # producing the lint.
   rules:
     always_use_package_imports: false
+
+    # ============================================================
+    # Strict rules for better code quality (enable progressively)
+    # Uncomment these after cleaning up existing warnings
+    # ============================================================
+    # prefer_const_constructors: true
+    # prefer_const_declarations: true
+    # prefer_final_locals: true
+    # unawaited_futures: true
+
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
 
@@ -29,25 +39,24 @@ linter:
 # https://dart.dev/guides/language/analysis-options
 
 analyzer:
-  # 完全忽略这些文件
+  # Exclude auto-generated files from analysis
+  # These files are machine-generated and should not be manually edited
   exclude:
-    - '**/*.g.dart'
-    - '**/*.freezed.dart'
-    - '**/*.gen.dart'
-  # 禁用特定规则
+    - '**/*.g.dart'           # json_serializable, riverpod_generator
+    - '**/*.freezed.dart'     # freezed
+    - '**/*.gen.dart'         # other generators
+    - 'lib/i18n/strings*.dart' # slang i18n generated files
+
+  # Error severity configuration
+  # Only ignore errors that are unavoidable due to code generation patterns
   errors:
-    # 忽略 mixin 类相关的警告
-    undefined_class: ignore
-    mixin_of_non_class: ignore
+    # invalid_annotation_target: Freezed uses annotations that may trigger this
+    # This is safe to ignore as Freezed handles it correctly
     invalid_annotation_target: ignore
 
-    # 忽略 freezed 常见提示
-    unused_element: ignore
-    unused_field: ignore
-    prefer_constructors_over_static_methods: ignore
-    unnecessary_this: ignore
-
-  # 放宽 lint 规则
+  # Language settings
   language:
+    # Enable strict mode for better type safety (recommended for production)
+    # Set to true once codebase is cleaned up
     strict-raw-types: false
     strict-inference: false

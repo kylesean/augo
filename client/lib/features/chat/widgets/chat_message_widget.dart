@@ -348,50 +348,6 @@ class _ChatMessageWidgetState extends ConsumerState<ChatMessageWidget>
     );
   }
 
-  /// Build error placeholder for GenUI surfaces
-  Widget _buildErrorPlaceholder(FThemeData theme, String errorMessage) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: theme.colors.destructive.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.colors.destructive.withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(FIcons.triangleAlert, color: theme.colors.destructive, size: 16),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Component loading failed',
-                  style: theme.typography.sm.copyWith(
-                    color: theme.colors.destructive,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  errorMessage,
-                  style: theme.typography.sm.copyWith(
-                    color: theme.colors.mutedForeground,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   /// Build streaming indicator with shimmer effect
   Widget _buildStreamingIndicator(BuildContext context, FThemeData theme) {
     final colors = theme.colors;

@@ -21,11 +21,6 @@ class OverviewCard extends ConsumerWidget {
 
   const OverviewCard({super.key, required this.overview});
 
-  String _formatAmount(String amount) {
-    final numberFormat = NumberFormat("#,##0.00", "zh_CN");
-    return numberFormat.format(double.tryParse(amount) ?? 0);
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = context.theme;
@@ -224,11 +219,6 @@ class MetricComparisonCard extends ConsumerWidget {
     required this.compareLabel,
     this.isExpense = false,
   });
-
-  String _formatAmount(String amount) {
-    final numberFormat = NumberFormat("#,##0.00", "zh_CN");
-    return numberFormat.format(double.tryParse(amount) ?? 0);
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -899,21 +889,6 @@ class _CategoryAnalysisSectionState
     );
   }
 
-  Widget _buildBadge(IconData icon, Color color) {
-    return Container(
-      width: 24,
-      height: 24,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 4),
-        ],
-      ),
-      child: Icon(icon, size: 12, color: color),
-    );
-  }
-
   Widget _buildRadarChart(FThemeData theme, FColors colors) {
     // Take top 6 categories for radar chart
     final items = widget.breakdown.items.take(6).toList();
@@ -1067,11 +1042,6 @@ class TopTransactionCard extends ConsumerWidget {
     required this.transaction,
     required this.onTap,
   });
-
-  String _formatAmount(String amount) {
-    final numberFormat = NumberFormat("#,##0.00", "zh_CN");
-    return numberFormat.format(double.tryParse(amount) ?? 0);
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

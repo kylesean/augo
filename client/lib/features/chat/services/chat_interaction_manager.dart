@@ -25,31 +25,28 @@ class ChatInteractionManager {
   final MessageRepository _messageRepository;
   final GenUiLifecycleManager _genUiLifecycleManager;
   final StreamingController _streamingController;
-  final DataUriService _dataUriService;
 
   final Uuid _uuid = const Uuid();
 
   // Callbacks
   final Function(bool isStreaming) _setStreamingStatus;
   final String Function() _getCurrentConversationId;
-  final String Function() _getCurrentConversationTitle;
 
   ChatInteractionManager({
     required MessageRepository messageRepository,
     required GenUiLifecycleManager genUiLifecycleManager,
     required StreamingController streamingController,
-    required DataUriService dataUriService,
+    required DataUriService
+    dataUriService, // kept for DI but unused (static methods)
     required Function(bool) setStreamingStatus,
     required String Function() getCurrentConversationId,
-    required String Function() getCurrentConversationTitle,
+    required String Function()
+    getCurrentConversationTitle, // kept for DI but unused
   }) : _messageRepository = messageRepository,
        _genUiLifecycleManager = genUiLifecycleManager,
        _streamingController = streamingController,
-       _dataUriService =
-           dataUriService, // DataUriService instance (or Type if static methods?)
        _setStreamingStatus = setStreamingStatus,
-       _getCurrentConversationId = getCurrentConversationId,
-       _getCurrentConversationTitle = getCurrentConversationTitle;
+       _getCurrentConversationId = getCurrentConversationId;
 
   // Note: DataUriService methods are static in the file seen previously.
   // But usage in Notifier was ref.read(dataUriServiceProvider).

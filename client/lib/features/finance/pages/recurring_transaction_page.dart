@@ -76,13 +76,15 @@ class _RecurringTransactionPageState
   // 描述
   final _descriptionController = TextEditingController();
 
-  // 是否正在保存
+  // Is saving in progress
   bool _isSaving = false;
 
-  // 是否正在加载编辑数据
+  // Is loading edit data
+  // ignore: unused_field - used for future loading indicator
   bool _isLoadingEdit = false;
 
-  // 编辑模式下的原始数据
+  // Original data in edit mode
+  // ignore: unused_field - stores original for comparison/reset
   RecurringTransaction? _editingTransaction;
 
   @override
@@ -375,6 +377,7 @@ class _RecurringTransactionPageState
     );
   }
 
+  // ignore: unused_element - reserved for future use
   IconData _getTypeIcon(RecurringTransactionType type) {
     switch (type) {
       case RecurringTransactionType.expense:
@@ -386,6 +389,7 @@ class _RecurringTransactionPageState
     }
   }
 
+  // ignore: unused_element - reserved for future use
   Color _getTypeColor(RecurringTransactionType type, FColors colors) {
     switch (type) {
       case RecurringTransactionType.expense:
@@ -770,6 +774,7 @@ class _RecurringTransactionPageState
   }
 
   /// Tag input area - removable tags + add button
+  // ignore: unused_element - alternate implementation of tags section
   Widget _buildTagsSection(FThemeData theme, FColors colors) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1244,6 +1249,7 @@ class _RecurringTransactionPageState
     }
   }
 
+  // ignore: unused_element - delete functionality to be activated from UI
   Future<void> _handleDelete() async {
     final confirmed = await showDialog<bool>(
       context: context,

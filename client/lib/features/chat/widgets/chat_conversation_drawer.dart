@@ -154,6 +154,7 @@ class _ChatConversationDrawerState
   }
 
   // Build conversation list
+  // ignore: unused_element - legacy implementation, kept for reference
   Widget _buildConversationList(
     BuildContext context,
     List<dynamic> conversations,
@@ -507,6 +508,7 @@ class _ChatConversationDrawerState
   }
 
   // Build category column
+  // ignore: unused_element - reserved for future library feature
   Widget _buildCategoryColumn(
     BuildContext context,
     FThemeData theme,
@@ -941,6 +943,7 @@ class _ChatConversationDrawerState
   }
 
   // Build search suggestions
+  // ignore: unused_element - reserved for future search suggestions feature
   Widget _buildSearchSuggestions(BuildContext context, FThemeData theme) {
     final suggestions = [
       {'icon': FIcons.hash, 'title': 'First Principles Engine Breakdown'},
@@ -1223,6 +1226,7 @@ class _ChatConversationDrawerState
   }
 
   // Build fullscreen conversation list (simplified version, no icons, no dates)
+  // ignore: unused_element - alternative layout implementation
   Widget _buildFullscreenConversationList(
     BuildContext context,
     WidgetRef ref,

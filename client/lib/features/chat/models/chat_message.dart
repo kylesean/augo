@@ -112,28 +112,6 @@ abstract class ChatMessage with _$ChatMessage {
   );
 }
 
-// Custom deserializer for DateTime
-DateTime _dateTimeFromJson(dynamic json) {
-  if (json == null) {
-    return DateTime.now(); // Provide a default if null
-  }
-  if (json is String) {
-    return DateTime.parse(json);
-  }
-  throw FormatException('Invalid DateTime format: $json');
-}
-
-// Custom serializer for DateTime (optional, but good practice)
-String _dateTimeToJson(DateTime dateTime) => dateTime.toIso8601String();
-
-// Custom deserializer for Map fields
-Map<String, dynamic>? _mapFromJson(dynamic json) {
-  if (json == null) return null;
-  if (json is Map<String, dynamic>) return json;
-  if (json is Map) return Map<String, dynamic>.from(json);
-  throw FormatException('Invalid Map format: $json');
-}
-
 // Custom serializers for MessageSender (handling role/sender field differences)
 MessageSender _senderFromJson(dynamic json) {
   if (json == null) return MessageSender.ai;

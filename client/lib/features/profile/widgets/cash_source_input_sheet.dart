@@ -318,35 +318,6 @@ class _FinancialAccountInputSheetState
     }
   }
 
-  /// Infer FinancialAccountType from definition.id
-  FinancialAccountType? _inferAccountType(String id) {
-    switch (id) {
-      case 'cash':
-        return FinancialAccountType.cash;
-      case 'bank_account':
-        return FinancialAccountType.deposit;
-      case 'digital_wallet':
-        return FinancialAccountType.eMoney;
-      case 'credit_card':
-        return FinancialAccountType.creditCard;
-      case 'stocks_funds':
-      case 'other_investments':
-        return FinancialAccountType.investment;
-      case 'receivable':
-      case 'reimbursement':
-        return FinancialAccountType.receivable;
-      case 'payable':
-        return FinancialAccountType.payable;
-      case 'mortgage':
-      case 'auto_loan':
-      case 'consumer_student_loan':
-      case 'line_of_credit':
-        return FinancialAccountType.loan;
-      default:
-        return null;
-    }
-  }
-
   /// Gets localized title
   String _getLocalizedTitle(AccountTypeDefinition definition) {
     switch (definition.id) {

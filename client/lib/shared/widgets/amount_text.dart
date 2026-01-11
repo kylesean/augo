@@ -266,12 +266,6 @@ class AmountText extends ConsumerWidget {
       ),
     ];
   }
-
-  /// Build text with dimmed decimals
-  @Deprecated('Use _buildDimDecimalsSpans instead')
-  Widget _buildWithDimDecimals(String text, TextStyle style) {
-    return Container();
-  }
 }
 
 /// Amount change indicator
