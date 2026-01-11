@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,8 +28,8 @@ class ExpenseSummaryCard extends ConsumerWidget {
 
     final summary = data['summary'] as Map<String, dynamic>? ?? {};
     final totalExpense = (summary['total_expense'] as num?)?.toDouble() ?? 0.0;
-    final distribution = (summary['distribution'] as List?) ?? [];
-    final topItems = (summary['top_items'] as List?) ?? [];
+    final distribution = (summary['distribution'] as List<dynamic>?) ?? [];
+    final topItems = (summary['top_items'] as List<dynamic>?) ?? [];
     final totalCount = (summary['count'] as num?)?.toInt() ?? 0;
 
     return Container(
@@ -102,7 +103,7 @@ class ExpenseSummaryCard extends ConsumerWidget {
     BuildContext context,
     FThemeData theme,
     FColors colors,
-    List distribution,
+    List<dynamic> distribution,
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -178,7 +179,7 @@ class ExpenseSummaryCard extends ConsumerWidget {
     BuildContext context,
     FThemeData theme,
     FColors colors,
-    List topItems,
+    List<dynamic> topItems,
   ) {
     final t = Translations.of(context);
     return Padding(
@@ -280,13 +281,15 @@ class ExpenseSummaryCard extends ConsumerWidget {
 
   void _showAllTransactions(BuildContext context) {
     final t = Translations.of(context);
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => GenUIBottomSheet(
-        title: t.chat.genui.expenseSummary.details,
-        child: TransactionListView(data: data),
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => GenUIBottomSheet(
+          title: t.chat.genui.expenseSummary.details,
+          child: TransactionListView(data: data),
+        ),
       ),
     );
   }

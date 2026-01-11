@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
+import 'dart:async';
 
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/constants/api_constants.dart';
@@ -35,14 +36,14 @@ class _AuthenticatedImageState extends ConsumerState<AuthenticatedImage> {
   @override
   void initState() {
     super.initState();
-    _loadImage();
+    unawaited(_loadImage());
   }
 
   @override
   void didUpdateWidget(covariant AuthenticatedImage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.attachmentId != widget.attachmentId) {
-      _loadImage();
+      unawaited(_loadImage());
     }
   }
 

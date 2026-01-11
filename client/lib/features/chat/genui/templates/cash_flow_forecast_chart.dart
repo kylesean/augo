@@ -31,12 +31,16 @@ class _CashFlowForecastChartState extends State<CashFlowForecastChart> {
   // Parse data points from the response
   List<_ForecastDataPoint> get _dataPoints {
     final points = widget.data['data_points'] as List<dynamic>? ?? [];
-    return points.map((p) => _ForecastDataPoint.fromJson(p)).toList();
+    return points
+        .map((p) => _ForecastDataPoint.fromJson(p as Map<String, dynamic>))
+        .toList();
   }
 
   List<_ForecastWarning> get _warnings {
     final warnings = widget.data['warnings'] as List<dynamic>? ?? [];
-    return warnings.map((w) => _ForecastWarning.fromJson(w)).toList();
+    return warnings
+        .map((w) => _ForecastWarning.fromJson(w as Map<String, dynamic>))
+        .toList();
   }
 
   Map<String, dynamic>? get _summary =>
@@ -200,7 +204,9 @@ class _CashFlowForecastChartState extends State<CashFlowForecastChart> {
                     ),
                   ),
                   Text(
-                    t.chat.genui.cashFlowForecast.nextDays(days: days),
+                    t.chat.genui.cashFlowForecast.nextDays(
+                      days: days as Object,
+                    ),
                     style: theme.typography.xs.copyWith(
                       color: colors.mutedForeground,
                     ),
@@ -491,7 +497,7 @@ class _CashFlowForecastChartState extends State<CashFlowForecastChart> {
                   amountTheme,
                   label: t.chat.genui.cashFlowForecast.netChange,
                   value: summary['net_change'],
-                  isPositive: (summary['net_change'] ?? 0) >= 0,
+                  isPositive: ((summary['net_change'] as num?) ?? 0) >= 0,
                 ),
               ),
             ],

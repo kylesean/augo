@@ -8,7 +8,10 @@ const fromJsonTKey = 'fromJsonT';
 
 class BusinessInterceptor extends Interceptor {
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
+  void onResponse(
+    Response<dynamic> response,
+    ResponseInterceptorHandler handler,
+  ) {
     if (response.statusCode != null &&
         response.statusCode! >= 200 &&
         response.statusCode! < 300) {
@@ -57,7 +60,10 @@ class BusinessInterceptor extends Interceptor {
       if (!isSuccess) {
         final errorCode = code is int ? code : -1;
         // Localize error message
-        final localizedMessage = ErrorTranslator.translate(errorCode, message);
+        final localizedMessage = ErrorTranslator.translate(
+          errorCode,
+          message as String,
+        );
         return handler.reject(
           DioException(
             requestOptions: response.requestOptions,

@@ -33,14 +33,18 @@ class _RecurringTransactionListPageState
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      ref.read(recurringTransactionProvider.notifier).loadList();
-    });
+    unawaited(
+      Future<void>.microtask(() {
+        unawaited(ref.read(recurringTransactionProvider.notifier).loadList());
+      }),
+    );
   }
 
   void _onFilterChanged(RecurringTransactionType? type) {
     setState(() => _filterType = type);
-    ref.read(recurringTransactionProvider.notifier).loadList(type: type);
+    unawaited(
+      ref.read(recurringTransactionProvider.notifier).loadList(type: type),
+    );
   }
 
   void _toggleSort() {
@@ -482,7 +486,7 @@ class _RecurringTransactionListPageState
   ) async {
     bool confirmed = false;
 
-    await showFDialog(
+    await showFDialog<void>(
       context: context,
       builder: (dialogContext, style, animation) => FDialog(
         style: style.call,
@@ -534,7 +538,7 @@ class _RecurringTransactionListPageState
     final newState = !transaction.isActive;
     bool confirmed = false;
 
-    await showFDialog(
+    await showFDialog<void>(
       context: context,
       builder: (dialogContext, style, animation) => FDialog(
         style: style.call,

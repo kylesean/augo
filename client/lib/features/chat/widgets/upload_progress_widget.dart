@@ -1,5 +1,6 @@
 // features/chat/widgets/upload_progress_widget.dart
 import 'dart:io' show File;
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
@@ -169,7 +170,7 @@ class UploadProgressWidget extends StatelessWidget {
           }
 
           return Image.memory(
-            snapshot.data! as dynamic,
+            snapshot.data as Uint8List,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
               return _buildFileIcon(colors);
@@ -335,9 +336,9 @@ class UploadProgressWidget extends StatelessWidget {
 /// 批量上传进度显示组件
 class BatchUploadProgressWidget extends StatelessWidget {
   final List<UploadProgressData> uploadList;
-  final Function(String id)? onCancel;
-  final Function(String id)? onRetry;
-  final Function(String id)? onRemove;
+  final void Function(String id)? onCancel;
+  final void Function(String id)? onRetry;
+  final void Function(String id)? onRemove;
 
   const BatchUploadProgressWidget({
     super.key,

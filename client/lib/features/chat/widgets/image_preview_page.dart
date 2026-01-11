@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:async';
 
 /// 图片预览页面，支持缩放、滑动浏览多张图片
 /// iOS/Android：使用高效的 FileImage
@@ -13,7 +14,7 @@ import 'package:image_picker/image_picker.dart';
 class ImagePreviewPage extends StatefulWidget {
   final List<XFile> images;
   final int initialIndex;
-  final Function(int)? onDelete;
+  final void Function(int)? onDelete;
 
   const ImagePreviewPage({
     super.key,
@@ -52,7 +53,7 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
       if (index >= 0 &&
           index < widget.images.length &&
           !_imageCache.containsKey(index)) {
-        _loadImage(index);
+        unawaited(_loadImage(index));
       }
     }
   }
@@ -143,7 +144,7 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
         return MemoryImage(_imageCache[index]!);
       }
       // 如果还没加载，先触发加载，返回一个临时的空图片
-      _loadImage(index);
+      unawaited(_loadImage(index));
       return MemoryImage(Uint8List(0));
     } else {
       // iOS/Android：使用高效的 FileImage
@@ -152,27 +153,29 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
   }
 
   void _showDeleteConfirmation() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('删除图片'),
-          content: const Text('确定要删除这张图片吗？'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('取消'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _deleteCurrentImage();
-              },
-              child: const Text('删除', style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('删除图片'),
+            content: const Text('确定要删除这张图片吗？'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('取消'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _deleteCurrentImage();
+                },
+                child: const Text('删除', style: TextStyle(color: Colors.red)),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 

@@ -1,4 +1,4 @@
-// features/home/providers/transaction_detail_provider.dart
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/transaction_model.dart';
 import '../services/home_service.dart';
@@ -41,7 +41,9 @@ class TransactionDetailNotifier extends Notifier<TransactionDetailState> {
     _mounted = true;
     ref.onDispose(() => _mounted = false);
     // Auto-load data
-    Future.microtask(() => fetchTransactionDetail(transactionId));
+    unawaited(
+      Future<void>.microtask(() => fetchTransactionDetail(transactionId)),
+    );
     return const TransactionDetailState();
   }
 

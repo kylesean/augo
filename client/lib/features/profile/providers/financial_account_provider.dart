@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -48,7 +49,7 @@ class FinancialAccountNotifier extends _$FinancialAccountNotifier {
   @override
   FinancialAccountState build() {
     // Auto-load logic: automatically trigger loading when the provider is first created or reset
-    Future.microtask(() => loadFinancialAccounts());
+    unawaited(Future<void>.microtask(() => unawaited(loadFinancialAccounts())));
     return const FinancialAccountState();
   }
 

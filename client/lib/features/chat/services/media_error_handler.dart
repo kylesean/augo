@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/media_upload_exception.dart';
 import 'package:augo/i18n/strings.g.dart';
 import 'package:augo/shared/services/toast_service.dart';
+import 'dart:async';
 
 /// Media upload error handling service
 /// Provides user-friendly error handling and guidance functionality
@@ -149,7 +150,7 @@ class MediaErrorHandler {
               onPressed: () {
                 Navigator.of(context).pop();
                 _logger.info('User chose to open app settings');
-                _openAppSettings();
+                unawaited(_openAppSettings());
               },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -898,7 +899,7 @@ class MediaErrorHandler {
           onRetryAttempt(attempt, delay);
         }
 
-        await Future.delayed(delay);
+        await Future<void>.delayed(delay);
 
         // Exponential backoff: double delay for next attempt
         delay = Duration(milliseconds: delay.inMilliseconds * 2);

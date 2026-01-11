@@ -52,7 +52,7 @@ class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
 
       ref.read(verificationProvider.notifier).reset();
 
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
       if (!mounted) return;
 
       context.pushReplacement('/home');

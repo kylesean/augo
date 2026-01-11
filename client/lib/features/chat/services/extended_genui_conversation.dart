@@ -15,17 +15,17 @@ class ExtendedGenUiConversation {
   String? _currentSessionId;
 
   // Callbacks
-  final Function(String) _onTextResponse;
-  final Function(String, dynamic) _onError;
+  final void Function(String) _onTextResponse;
+  final void Function(String, dynamic) _onError;
 
   ExtendedGenUiConversation({
     required genui.A2uiMessageProcessor host,
     required CustomContentGenerator contentGenerator,
-    required Function(String) onSurfaceAdded,
-    required Function(String) onSurfaceDeleted,
-    required Function(String) onTextResponse,
-    required Function(String, dynamic) onError,
-    Function(String, String?)? onSessionInit,
+    required void Function(String) onSurfaceAdded,
+    required void Function(String) onSurfaceDeleted,
+    required void Function(String) onTextResponse,
+    required void Function(String, dynamic) onError,
+    void Function(String, String?)? onSessionInit,
   }) : _host = host,
        _customGenerator = contentGenerator,
        _onTextResponse = onTextResponse,
@@ -33,13 +33,13 @@ class ExtendedGenUiConversation {
        _conversation = genui.GenUiConversation(
          a2uiMessageProcessor: host,
          contentGenerator: contentGenerator,
-         onSurfaceAdded: (event) {
+         onSurfaceAdded: (genui.SurfaceAdded event) {
            _logger.info(
              'ExtendedGenUiConversation: Surface added: ${event.surfaceId}',
            );
            onSurfaceAdded(event.surfaceId);
          },
-         onSurfaceDeleted: (event) {
+         onSurfaceDeleted: (genui.SurfaceRemoved event) {
            _logger.info(
              'ExtendedGenUiConversation: Surface deleted: ${event.surfaceId}',
            );
@@ -47,7 +47,7 @@ class ExtendedGenUiConversation {
          },
        ) {
     // Listen to Session initialization events
-    _customGenerator.onSessionInit = (sessionId, messageId) {
+    _customGenerator.onSessionInit = (String sessionId, String? messageId) {
       _logger.info(
         'ExtendedGenUiConversation: Session initialized: $sessionId',
       );
@@ -115,7 +115,7 @@ class ExtendedGenUiConversation {
   }
 
   /// Compatibility setter for old code
-  set onUserMessageSent(Function(String)? callback) {
+  set onUserMessageSent(void Function(String)? callback) {
     _customGenerator.onUserMessageSent = callback;
   }
 

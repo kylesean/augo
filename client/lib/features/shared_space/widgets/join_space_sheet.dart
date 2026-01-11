@@ -5,7 +5,7 @@ import '../providers/shared_space_provider.dart';
 import '../models/shared_space_models.dart';
 
 class JoinSpaceSheet extends ConsumerStatefulWidget {
-  final Function(SharedSpace) onSpaceJoined;
+  final void Function(SharedSpace) onSpaceJoined;
   final String? initialCode;
 
   const JoinSpaceSheet({

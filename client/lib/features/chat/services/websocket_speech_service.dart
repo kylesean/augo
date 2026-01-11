@@ -205,7 +205,7 @@ class WebSocketSpeechService implements SpeechRecognitionService {
             _logger.info('Sending audio data: ${audioData.length} bytes');
             sendAudioData(audioData);
           },
-          onError: (error) {
+          onError: (Object error) {
             // Some platforms may trigger errors when stopping recording, ignore during manual stop or non-listening state
             if (_isManualStop || !_isListening) {
               _logger.info(
@@ -331,20 +331,25 @@ class WebSocketSpeechService implements SpeechRecognitionService {
     switch (type) {
       case 'result':
       case 'recognition_result':
-        final text = jsonData['text'] ?? jsonData['result'] ?? '';
+        final text =
+            (jsonData['text'] as String?) ??
+            (jsonData['result'] as String?) ??
+            '';
         if (text.isNotEmpty) {
           _resultController.add(text);
         }
         break;
       case 'status':
-        final status = jsonData['status'] ?? '';
+        final status = (jsonData['status'] as String?) ?? '';
         if (status.isNotEmpty) {
           _statusController.add(status);
         }
         break;
       case 'error':
         final error =
-            jsonData['error'] ?? jsonData['message'] ?? 'Unknown error';
+            (jsonData['error'] as String?) ??
+            (jsonData['message'] as String?) ??
+            'Unknown error';
         // Ignore errors from server during manual stop or non-listening state
         if (_isManualStop || !_isListening) {
           _logger.info(
@@ -406,10 +411,12 @@ class WebSocketSpeechService implements SpeechRecognitionService {
     _isListening = false;
 
     // Clean up audio related resources
-    _audioRecorder.stopRecording().catchError((e) {
-      _logger.warning('Error stopping recording: $e');
-    });
-    _audioSubscription?.cancel();
+    unawaited(
+      _audioRecorder.stopRecording().catchError((Object e) {
+        _logger.warning('Error stopping recording: $e');
+      }),
+    );
+    unawaited(_audioSubscription?.cancel());
     _audioSubscription = null;
   }
 

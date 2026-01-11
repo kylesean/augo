@@ -48,7 +48,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       ToastService.success(description: Text(t.auth.loginSuccess));
 
       // Delay briefly before navigation to ensure state updates complete
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
       if (!mounted) return;
 
       // Use pushReplacement instead of go to avoid returning to login page
@@ -170,7 +170,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           onPress: () {
                             // Reset verification code state to avoid state residue when entering registration process next time
                             ref.read(verificationProvider.notifier).reset();
-                            context.pushNamed('registerStep1');
+                            unawaited(context.pushNamed('registerStep1'));
                           },
                           child: Text(t.auth.noAccount),
                         ),

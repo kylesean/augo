@@ -1,15 +1,16 @@
-// features/chat/widgets/media_upload_button.dart
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
 
+import '../providers/chat_input_provider.dart';
 import 'media_upload_bottom_sheet.dart';
 
 /// 媒体上传按钮组件
 /// 点击后弹出底部菜单，显示多个功能选项
 class MediaUploadButton extends ConsumerWidget {
   final bool enabled;
-  final dynamic chatInputProvider;
+  final ChatInputNotifierProvider chatInputProvider;
 
   const MediaUploadButton({
     super.key,
@@ -53,14 +54,16 @@ class MediaUploadButton extends ConsumerWidget {
 
   /// 处理上传按钮点击事件
   void _handleUploadButtonPressed(BuildContext context, WidgetRef ref) {
-    MediaUploadBottomSheet.show(
-      context,
-      onFilesSelected: (files) {
-        if (files.isNotEmpty) {
-          final notifier = ref.read(chatInputProvider.notifier);
-          notifier.addSelectedFiles(files);
-        }
-      },
+    unawaited(
+      MediaUploadBottomSheet.show(
+        context,
+        onFilesSelected: (files) {
+          if (files.isNotEmpty) {
+            final notifier = ref.read(chatInputProvider.notifier);
+            notifier.addSelectedFiles(files);
+          }
+        },
+      ),
     );
   }
 }

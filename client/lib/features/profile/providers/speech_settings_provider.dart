@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:logging/logging.dart';
@@ -17,7 +18,7 @@ class SpeechSettingsNotifier extends _$SpeechSettingsNotifier {
 
   @override
   SpeechSettingsState build() {
-    Future.microtask(() => _loadSettings());
+    unawaited(Future<void>.microtask(() => unawaited(_loadSettings())));
     return const SpeechSettingsState();
   }
 

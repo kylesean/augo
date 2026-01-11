@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:forui/forui.dart';
 import '../providers/notification_provider.dart';
+import 'dart:async';
 
 class NotificationIcon extends ConsumerStatefulWidget {
   const NotificationIcon({super.key});
@@ -17,7 +18,7 @@ class _NotificationIconState extends ConsumerState<NotificationIcon> {
     super.initState();
     // 初始加载未读数量
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(notificationProvider.notifier).loadUnreadCount();
+      unawaited(ref.read(notificationProvider.notifier).loadUnreadCount());
     });
   }
 
@@ -63,6 +64,6 @@ class _NotificationIconState extends ConsumerState<NotificationIcon> {
   }
 
   void _navigateToNotifications(BuildContext context) {
-    context.push('/notifications');
+    unawaited(context.push('/notifications'));
   }
 }

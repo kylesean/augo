@@ -47,7 +47,7 @@ class NetworkClient {
         );
 
         // Execute request
-        final Response response = await _dio.request(
+        final Response<dynamic> response = await _dio.request(
           path,
           data: data,
           queryParameters: queryParameters,
@@ -66,7 +66,7 @@ class NetworkClient {
 
   /// Request executor with retry mechanism
   Future<T> _executeWithRetry<T>(
-    Future<Response> Function() requestFunction, {
+    Future<Response<dynamic>> Function() requestFunction, {
     FromJsonT<T>? fromJsonT,
     required bool enableRetry,
     required int maxRetries,
@@ -96,7 +96,7 @@ class NetworkClient {
           // If no parser provided, assume caller expects raw data
           // and perform safe type check
           if (response.data is T) {
-            return response.data;
+            return response.data as T;
           } else {
             // Type mismatch is also a parsing error
             throw DataParsingException(
@@ -118,7 +118,7 @@ class NetworkClient {
         );
 
         // Wait before retry (exponential backoff)
-        await Future.delayed(Duration(milliseconds: 500 * attempts));
+        await Future<void>.delayed(Duration(milliseconds: 500 * attempts));
         continue;
       } catch (e) {
         if (e is AppException) rethrow;

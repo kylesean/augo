@@ -1,6 +1,7 @@
 // features/chat/widgets/enhanced_user_message_bubble.dart
 import 'dart:convert';
 import 'dart:typed_data';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -127,9 +128,11 @@ class _UserMessageBubbleState extends ConsumerState<UserMessageBubble> {
     if (_hasRequestedSignedUrls) return;
 
     _hasRequestedSignedUrls = true;
-    ref
-        .read(chatHistoryProvider.notifier)
-        .ensureAttachmentsSignedUrls(widget.message.id);
+    unawaited(
+      ref
+          .read(chatHistoryProvider.notifier)
+          .ensureAttachmentsSignedUrls(widget.message.id),
+    );
   }
 
   Widget _buildAttachmentsSection(ThemeData theme) {
@@ -256,17 +259,19 @@ class _UserMessageBubbleState extends ConsumerState<UserMessageBubble> {
   }
 
   void _showImagePreview(Uint8List bytes, String heroTag) {
-    Navigator.of(context).push(
-      PageRouteBuilder<void>(
-        opaque: false,
-        barrierColor: Colors.black87,
-        barrierDismissible: true,
-        pageBuilder: (context, animation, secondaryAnimation) {
-          return _ImagePreviewOverlay(bytes: bytes, heroTag: heroTag);
-        },
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
+    unawaited(
+      Navigator.of(context).push(
+        PageRouteBuilder<void>(
+          opaque: false,
+          barrierColor: Colors.black87,
+          barrierDismissible: true,
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return _ImagePreviewOverlay(bytes: bytes, heroTag: heroTag);
+          },
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
       ),
     );
   }
@@ -579,7 +584,7 @@ class _UserMessageBubbleState extends ConsumerState<UserMessageBubble> {
     final heroTag = 'media_${_mediaCacheKey(file)}';
 
     await Navigator.of(context).push(
-      PageRouteBuilder(
+      PageRouteBuilder<void>(
         opaque: false,
         barrierColor: Colors.black87,
         barrierDismissible: true,
@@ -598,7 +603,7 @@ class _UserMessageBubbleState extends ConsumerState<UserMessageBubble> {
 
   Future<void> _handleRemoteImageTap(ChatMessageAttachment attachment) async {
     await Navigator.of(context).push(
-      PageRouteBuilder(
+      PageRouteBuilder<void>(
         opaque: false,
         barrierColor: Colors.black87,
         barrierDismissible: true,
@@ -616,13 +621,15 @@ class _UserMessageBubbleState extends ConsumerState<UserMessageBubble> {
   }
 
   void _retryAttachment(ChatMessageAttachment attachment) {
-    ref
-        .read(chatHistoryProvider.notifier)
-        .ensureAttachmentsSignedUrls(
-          widget.message.id,
-          attachmentIds: [attachment.id],
-          forceRetry: true,
-        );
+    unawaited(
+      ref
+          .read(chatHistoryProvider.notifier)
+          .ensureAttachmentsSignedUrls(
+            widget.message.id,
+            attachmentIds: [attachment.id],
+            forceRetry: true,
+          ),
+    );
     _hasRequestedSignedUrls = false;
   }
 

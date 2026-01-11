@@ -68,7 +68,7 @@ class _TransactionGroupReceiptState
     _pageController = PageController();
     _initializeAccountAssociations();
     // 异步刷新最新的账户关联状态
-    _refreshAccountAssociations();
+    unawaited(_refreshAccountAssociations());
   }
 
   void _initializeAccountAssociations() {
@@ -146,10 +146,10 @@ class _TransactionGroupReceiptState
               _accountAssociations[txId] = accountId;
 
               // 同步共享空间关联
-              final spaces = data['spaces'] as List?;
+              final spaces = data['spaces'] as List<dynamic>?;
               if (spaces != null) {
                 _spaceAssociations[txId] = spaces
-                    .whereType<Map>()
+                    .whereType<Map<String, dynamic>>()
                     .map((s) => s['id']?.toString())
                     .whereType<String>()
                     .toList();
@@ -556,7 +556,7 @@ class _TransactionGroupReceiptState
   Widget _buildCarouselView(
     FThemeData theme,
     FColors colors,
-    List transactions,
+    List<dynamic> transactions,
   ) {
     return Column(
       children: [
@@ -603,7 +603,7 @@ class _TransactionGroupReceiptState
     FColors colors,
     Map<String, dynamic> tx,
   ) {
-    final category = TransactionCategory.fromKey(tx['category_key']);
+    final category = TransactionCategory.fromKey(tx['category_key'] as String?);
     final tags = (tx['tags'] as List?)?.map((e) => e.toString()).toList() ?? [];
 
     // 优先使用原始币种和金额（针对汇率转换场景）
@@ -649,7 +649,11 @@ class _TransactionGroupReceiptState
     );
   }
 
-  Widget _buildListView(FThemeData theme, FColors colors, List transactions) {
+  Widget _buildListView(
+    FThemeData theme,
+    FColors colors,
+    List<dynamic> transactions,
+  ) {
     return Container(
       constraints: const BoxConstraints(maxHeight: 400),
       child: ListView.separated(
@@ -672,7 +676,7 @@ class _TransactionGroupReceiptState
     FColors colors,
     Map<String, dynamic> tx,
   ) {
-    final category = TransactionCategory.fromKey(tx['category_key']);
+    final category = TransactionCategory.fromKey(tx['category_key'] as String?);
     final tags = (tx['tags'] as List?)?.map((e) => e.toString()).toList() ?? [];
 
     // 优先使用原始币种和金额（针对汇率转换场景）
@@ -723,10 +727,12 @@ class _TransactionGroupReceiptState
       _log.warning('Transaction ID is null or empty, cannot navigate');
       return;
     }
-    HapticFeedback.lightImpact();
-    context.pushNamed(
-      AppRouteNames.transactionDetail,
-      pathParameters: {'transactionId': transactionId},
+    unawaited(HapticFeedback.lightImpact());
+    unawaited(
+      context.pushNamed(
+        AppRouteNames.transactionDetail,
+        pathParameters: {'transactionId': transactionId},
+      ),
     );
   }
 
@@ -788,7 +794,7 @@ class _TransactionGroupReceiptState
     if (!mounted) return;
 
     unawaited(
-      showModalBottomSheet(
+      showModalBottomSheet<String>(
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
@@ -810,7 +816,7 @@ class _TransactionGroupReceiptState
           ),
         ),
       ).then((selectedId) async {
-        if (selectedId != null && selectedId is String) {
+        if (selectedId != null) {
           // 获取选中的账户
           final selectedAccount = accountState.accounts
               .where((a) => a.id == selectedId)
@@ -850,7 +856,7 @@ class _TransactionGroupReceiptState
     final colors = theme.colors;
     bool confirmed = false;
 
-    await showFDialog(
+    await showFDialog<void>(
       context: context,
       builder: (dialogContext, style, animation) => FDialog(
         style: style.call,
@@ -1066,7 +1072,7 @@ class _TransactionGroupReceiptState
     if (!mounted) return;
 
     unawaited(
-      showModalBottomSheet(
+      showModalBottomSheet<dynamic>(
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.transparent,

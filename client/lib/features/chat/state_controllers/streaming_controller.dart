@@ -308,7 +308,7 @@ class StreamingController {
                 _logger.info('StreamingController: Checkpoint cleanup failed');
               }
             })
-            .catchError((e) {
+            .catchError((Object e) {
               _logger.warning('StreamingController: Cancel error: $e');
             })
             .whenComplete(() {
@@ -350,7 +350,7 @@ class StreamingController {
 
   /// Dispose controller
   void dispose() {
-    cancelStreamAndTimers();
+    unawaited(cancelStreamAndTimers());
     _pendingCancelCompleter = null;
   }
 

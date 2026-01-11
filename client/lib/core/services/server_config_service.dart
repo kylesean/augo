@@ -117,7 +117,7 @@ class ServerConfigService {
       ..options.receiveTimeout = const Duration(seconds: 10);
 
     try {
-      final response = await dio.get(healthUrl);
+      final response = await dio.get<dynamic>(healthUrl);
 
       if (response.statusCode == 200) {
         final data = response.data;

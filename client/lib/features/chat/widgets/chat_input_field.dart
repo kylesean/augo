@@ -9,6 +9,7 @@ import '../models/message_attachments.dart';
 import 'media_upload_button.dart';
 import 'media_preview_widget.dart';
 import 'package:augo/i18n/strings.g.dart';
+import 'dart:async';
 
 class ChatInputField extends ConsumerStatefulWidget {
   final Future<void> Function(
@@ -168,7 +169,7 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField>
     // Control breathing animation start/stop
     if (isWaitingState) {
       if (!_breathingController.isAnimating) {
-        _breathingController.repeat(reverse: true);
+        unawaited(_breathingController.repeat(reverse: true));
       }
     } else {
       if (_breathingController.isAnimating) {
@@ -275,7 +276,7 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField>
                       onSubmitted: (_) {
                         if (chatInputState.text.trim().isNotEmpty &&
                             canInteractWithTextField) {
-                          chatInputNotifier.onMainButtonPressed();
+                          unawaited(chatInputNotifier.onMainButtonPressed());
                         }
                       },
                       minLines: 1,

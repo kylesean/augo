@@ -66,7 +66,7 @@ class AccountSelector extends ConsumerStatefulWidget {
     final controller = FPickerController(initialIndexes: [currentIndex]);
     AccountPickerResult? result;
 
-    await showFDialog(
+    await showFDialog<void>(
       context: context,
       builder: (context, style, animation) => FDialog.raw(
         style: style.call,

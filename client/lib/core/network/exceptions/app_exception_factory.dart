@@ -18,7 +18,7 @@ class AppExceptionFactory {
         final code = responseData['code'];
         if (code is int && code != 0) {
           return BusinessException(
-            responseData['message'] ?? "Unknown business error",
+            (responseData['message'] as String?) ?? "Unknown business error",
             code,
           );
         }
@@ -65,7 +65,7 @@ class AppExceptionFactory {
 
   static String _extractMessage(dynamic data) {
     if (data is Map<String, dynamic> && data['message'] is String) {
-      return data['message'];
+      return data['message'] as String;
     } else if (data is String && data.isNotEmpty) {
       return data;
     }

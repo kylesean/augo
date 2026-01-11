@@ -1,4 +1,5 @@
 // features/chat/widgets/ai_thinking_indicator.dart
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 class AiThinkingIndicator extends StatefulWidget {
@@ -26,8 +27,8 @@ class _AiThinkingIndicatorState extends State<AiThinkingIndicator>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: widget.duration)
-      ..repeat();
+    _controller = AnimationController(vsync: this, duration: widget.duration);
+    unawaited(_controller.repeat());
   }
 
   @override

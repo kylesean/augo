@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:decimal/decimal.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:logging/logging.dart';
@@ -16,7 +17,7 @@ class FinancialSettingsNotifier extends _$FinancialSettingsNotifier {
 
   @override
   FinancialSettingsState build() {
-    Future.microtask(() => loadFinancialSettings());
+    unawaited(Future<void>.microtask(() => unawaited(loadFinancialSettings())));
     return const FinancialSettingsState();
   }
 

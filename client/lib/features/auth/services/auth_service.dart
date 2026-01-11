@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:logging/logging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +28,7 @@ class AuthService {
 
   AuthService(this._networkClient, this._timezoneService)
     : _storage = const FlutterSecureStorage() {
-    _initPrefs();
+    unawaited(_initPrefs());
   }
 
   Future<void> _initPrefs() async {
@@ -192,7 +193,7 @@ class AuthService {
 
   Future<void> logout() async {
     // Simulate logout delay
-    await Future.delayed(const Duration(seconds: 1));
+    await Future<void>.delayed(const Duration(seconds: 1));
     await _deleteAuthData(); // Clear token and user data from secure storage and shared preferences
     _logger.info('User logged out and data cleared.');
   }

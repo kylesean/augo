@@ -7,6 +7,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../../../shared/services/toast_service.dart';
 import '../models/shared_space_models.dart';
 import '../services/shared_space_service.dart';
+import 'dart:async';
 
 class InviteSuccessPage extends ConsumerStatefulWidget {
   final SharedSpace space;
@@ -25,7 +26,7 @@ class _InviteSuccessPageState extends ConsumerState<InviteSuccessPage> {
   @override
   void initState() {
     super.initState();
-    _generateInviteCode();
+    unawaited(_generateInviteCode());
   }
 
   Future<void> _generateInviteCode() async {
@@ -51,7 +52,7 @@ class _InviteSuccessPageState extends ConsumerState<InviteSuccessPage> {
 
   void _copyCode() {
     if (_inviteCode != null) {
-      Clipboard.setData(ClipboardData(text: _inviteCode!.code));
+      unawaited(Clipboard.setData(ClipboardData(text: _inviteCode!.code)));
       ToastService.show(description: const Text('Invite code copied'));
     }
   }
@@ -139,8 +140,10 @@ class _InviteSuccessPageState extends ConsumerState<InviteSuccessPage> {
                     child: FButton(
                       onPress: () {
                         context.pop();
-                        context.push(
-                          '/profile/shared-space/${widget.space.id}',
+                        unawaited(
+                          context.push(
+                            '/profile/shared-space/${widget.space.id}',
+                          ),
                         );
                       },
                       child: const Text('Enter Space'),
@@ -198,7 +201,7 @@ class _InviteSuccessPageState extends ConsumerState<InviteSuccessPage> {
                   _isLoading = true;
                   _error = null;
                 });
-                _generateInviteCode();
+                unawaited(_generateInviteCode());
               },
               child: const Text('Retry'),
             ),

@@ -14,7 +14,7 @@ class NetworkStatusNotifier extends Notifier<NetworkStatus> {
   @override
   NetworkStatus build() {
     // Schedule the check to run after the build phase
-    Future.microtask(() => _startPeriodicCheck());
+    unawaited(Future.microtask(() => _startPeriodicCheck()));
 
     // Register cleanup
     ref.onDispose(() {
@@ -29,11 +29,11 @@ class NetworkStatusNotifier extends Notifier<NetworkStatus> {
     _periodicTimer
         ?.cancel(); // Cancel logic if called multiple times (though build is once per ref life)
     _periodicTimer = Timer.periodic(_checkInterval, (_) {
-      checkNetworkStatus();
+      unawaited(checkNetworkStatus());
     });
 
     // Execute check immediately
-    checkNetworkStatus();
+    unawaited(checkNetworkStatus());
   }
 
   /// Check network status

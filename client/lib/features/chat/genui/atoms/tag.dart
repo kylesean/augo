@@ -15,7 +15,7 @@ class Tag extends StatelessWidget {
   final String label;
 
   /// Optional style override
-  final dynamic style;
+  final FBadgeStyle? style;
 
   /// Standard variant (default: secondary)
   final bool isPrimary;
@@ -36,7 +36,7 @@ class Tag extends StatelessWidget {
     var badgeStyle = FBadgeStyle.secondary();
 
     if (style != null) {
-      badgeStyle = style!;
+      badgeStyle = style!.call;
     } else if (isPrimary) {
       badgeStyle = FBadgeStyle.primary();
     } else if (isOutline) {

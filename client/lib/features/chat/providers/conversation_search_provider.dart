@@ -88,7 +88,7 @@ class ConversationSearch extends _$ConversationSearch {
 
     // Set debounce timer
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-      _performSearch(query.trim());
+      unawaited(_performSearch(query.trim()));
     });
   }
 

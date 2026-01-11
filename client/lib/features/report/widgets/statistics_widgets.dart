@@ -327,7 +327,7 @@ class MetricComparisonCard extends ConsumerWidget {
 class TrendChart extends ConsumerWidget {
   final TrendDataResponse trendData;
   final ChartType chartType;
-  final Function(ChartType) onChartTypeChanged;
+  final void Function(ChartType) onChartTypeChanged;
 
   const TrendChart({
     super.key,

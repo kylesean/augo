@@ -4,6 +4,7 @@ import 'package:forui/forui.dart';
 import 'package:share_plus/share_plus.dart';
 import '../models/shared_space_models.dart';
 import '../../../shared/services/toast_service.dart';
+import 'dart:async';
 
 class InviteCodeCard extends StatelessWidget {
   final InviteCode inviteCode;
@@ -172,7 +173,7 @@ class InviteCodeCard extends StatelessWidget {
   }
 
   void _copyInviteCode(BuildContext context) {
-    Clipboard.setData(ClipboardData(text: inviteCode.code));
+    unawaited(Clipboard.setData(ClipboardData(text: inviteCode.code)));
     ToastService.show(description: const Text('邀请码已复制'));
   }
 
@@ -185,6 +186,6 @@ class InviteCodeCard extends StatelessWidget {
         '邀请码将于${_formatExpiryTime(inviteCode.expiresAt)}';
 
     // ignore: deprecated_member_use
-    Share.share(shareText);
+    unawaited(Share.share(shareText));
   }
 }

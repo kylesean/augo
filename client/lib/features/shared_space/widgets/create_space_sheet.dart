@@ -5,7 +5,7 @@ import '../providers/shared_space_provider.dart';
 import '../models/shared_space_models.dart';
 
 class CreateSpaceSheet extends ConsumerStatefulWidget {
-  final Function(SharedSpace) onSpaceCreated;
+  final void Function(SharedSpace) onSpaceCreated;
 
   const CreateSpaceSheet({super.key, required this.onSpaceCreated});
 

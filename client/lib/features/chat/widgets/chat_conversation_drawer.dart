@@ -35,7 +35,9 @@ class _ChatConversationDrawerState
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final paginatedState = ref.read(paginatedConversationProvider);
       if (paginatedState.conversations.isEmpty && !paginatedState.isLoading) {
-        ref.read(paginatedConversationProvider.notifier).loadFirstPage();
+        unawaited(
+          ref.read(paginatedConversationProvider.notifier).loadFirstPage(),
+        );
       }
     });
   }
@@ -186,7 +188,9 @@ class _ChatConversationDrawerState
                 if (!isSelected) {
                   context.goNamed(
                     'conversation',
-                    pathParameters: {'conversationId': conversation.id},
+                    pathParameters: {
+                      'conversationId': conversation.id as String,
+                    },
                   );
                 }
                 // Safely close the drawer
@@ -216,7 +220,7 @@ class _ChatConversationDrawerState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            conversation.title,
+                            (conversation as dynamic).title as String,
                             style: theme.typography.sm.copyWith(
                               fontWeight: FontWeight.w500,
                               color: isSelected
@@ -233,7 +237,9 @@ class _ChatConversationDrawerState
                               TranslationProvider.of(
                                 context,
                               ).locale.languageCode,
-                            ).format(conversation.updatedAt),
+                            ).format(
+                              (conversation as dynamic).updatedAt as DateTime,
+                            ),
                             style: theme.typography.xs.copyWith(
                               color: theme.colors.mutedForeground,
                             ),
@@ -570,7 +576,9 @@ class _ChatConversationDrawerState
         if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
             paginatedState.hasMore &&
             !paginatedState.isLoadingMore) {
-          ref.read(paginatedConversationProvider.notifier).loadNextPage();
+          unawaited(
+            ref.read(paginatedConversationProvider.notifier).loadNextPage(),
+          );
         }
         return false;
       },
@@ -1018,12 +1026,14 @@ class _ChatConversationDrawerState
         final currentConversationId = ref.read(
           chatHistoryProvider.select((state) => state.currentConversationId),
         );
-        _showDeleteConfirmation(
-          context,
-          ref,
-          result.id,
-          result.title,
-          result.id == currentConversationId,
+        unawaited(
+          _showDeleteConfirmation(
+            context,
+            ref,
+            result.id,
+            result.title,
+            result.id == currentConversationId,
+          ),
         );
       },
       child: Container(

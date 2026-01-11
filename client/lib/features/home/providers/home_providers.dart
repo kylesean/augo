@@ -127,14 +127,14 @@ class TransactionFeed extends _$TransactionFeed {
     ) {
       if (previous != next) {
         ref.read(selectedDateProvider.notifier).set(null);
-        refreshFeed();
+        unawaited(refreshFeed());
       }
     });
 
     // Listen to selected date changes
     ref.listen<DateTime?>(selectedDateProvider, (previous, next) {
       if (previous != next) {
-        refreshFeed();
+        unawaited(refreshFeed());
       }
     });
 
@@ -149,14 +149,14 @@ class TransactionFeed extends _$TransactionFeed {
         _logger.info(
           "Currency changed from ${previous.primaryCurrency} to ${next.primaryCurrency}, refreshing feed",
         );
-        refreshFeed();
+        unawaited(refreshFeed());
       }
     });
 
     // Watch auth token to trigger initial load
     final token = ref.watch(authTokenProvider);
     if (token != null) {
-      Future.microtask(() => refreshFeed());
+      unawaited(refreshFeed());
     }
 
     return TransactionFeedState();

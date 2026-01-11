@@ -22,7 +22,7 @@ class AuthInterceptor extends Interceptor {
   AuthInterceptor(this.storageService);
 
   @override
-  void onRequest(
+  Future<void> onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
@@ -45,7 +45,10 @@ class AuthInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     if (err.response?.statusCode == 401) {
       _logger.warning(
         'Received 401 Unauthorized error for ${err.requestOptions.path}',

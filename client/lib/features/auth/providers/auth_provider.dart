@@ -7,6 +7,7 @@ import 'package:augo/core/storage/secure_storage_service.dart';
 import 'package:augo/features/auth/models/user.dart';
 import '../services/auth_service.dart';
 import 'auth_state.dart';
+import 'dart:async';
 
 // Re-export AuthState and AuthStatus for convenience
 export 'auth_state.dart';
@@ -28,7 +29,7 @@ class Auth extends _$Auth {
     // Use addPostFrameCallback to ensure post-frame rendering before performing
     // SecureStorage operations to avoid blocking the main thread during UI rendering
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      _initializeAuthState();
+      unawaited(_initializeAuthState());
     });
 
     return const AuthState();

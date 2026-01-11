@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:async';
 
 import '../../../core/constants/category_constants.dart';
 import '../../../core/widgets/top_toast.dart';
@@ -54,7 +55,7 @@ class _BudgetFormPageState extends ConsumerState<BudgetFormPage> {
     _anchorDayPickerController = FPickerController(initialIndexes: [0]);
 
     if (widget.editId != null) {
-      _loadEditData();
+      unawaited(_loadEditData());
     }
   }
 
@@ -569,7 +570,7 @@ class _BudgetFormPageState extends ConsumerState<BudgetFormPage> {
   }
 
   Future<void> _showPeriodTypePicker() async {
-    await showModalBottomSheet(
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -584,7 +585,7 @@ class _BudgetFormPageState extends ConsumerState<BudgetFormPage> {
   }
 
   Future<void> _showAnchorDayPicker() async {
-    await showModalBottomSheet(
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,

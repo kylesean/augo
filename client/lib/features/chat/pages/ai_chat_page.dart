@@ -1,6 +1,7 @@
 // features/chat/pages/ai_chat_page.dart
 import 'dart:convert';
 import 'package:logging/logging.dart';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -75,7 +76,7 @@ class _AIChatPageState extends ConsumerState<AIChatPage> {
     // 添加一个检查，避免在ID相同时重复加载。
     if (widget.conversationId != null) {
       // 如果有ID，加载对应的会话
-      notifier.loadConversation(widget.conversationId!);
+      unawaited(notifier.loadConversation(widget.conversationId!));
     } else {
       // 如果没有ID，检查当前 Notifier 中是否有会话，如果没有则创建新的
       // 如果路由是 /ai (conversationId 为 null)，
@@ -83,7 +84,7 @@ class _AIChatPageState extends ConsumerState<AIChatPage> {
       // 这处理了“新建聊天”和应用首次启动进入 /ai 的情况。
       final currentConvId = ref.read(chatHistoryProvider).currentConversationId;
       if (currentConvId == null) {
-        notifier.createNewConversation();
+        unawaited(notifier.createNewConversation());
       }
     }
   }
@@ -377,7 +378,9 @@ class _AIChatPageState extends ConsumerState<AIChatPage> {
           FButton.icon(
             style: FButtonStyle.ghost(),
             onPress: () {
-              ref.read(chatHistoryProvider.notifier).createNewConversation();
+              unawaited(
+                ref.read(chatHistoryProvider.notifier).createNewConversation(),
+              );
               context.go('/ai');
             },
             child: const Icon(FIcons.plus),
@@ -413,8 +416,10 @@ class _AIChatPageState extends ConsumerState<AIChatPage> {
                         )
                       : WelcomeGuideWidget(
                           onSuggestionTap: (prompt) {
-                            chatHistoryNotifier.addUserMessageAndGetResponse(
-                              prompt,
+                            unawaited(
+                              chatHistoryNotifier.addUserMessageAndGetResponse(
+                                prompt,
+                              ),
                             );
                           },
                         )

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:async';
 
 import '../models/recurring_transaction.dart';
 import '../providers/recurring_transaction_provider.dart';
@@ -92,7 +93,7 @@ class _RecurringTransactionPageState
     super.initState();
     _recurrenceDescription = t.budget.periodMonthly;
     if (widget.editId != null) {
-      _loadEditData();
+      unawaited(_loadEditData());
     }
   }
 
@@ -1032,7 +1033,7 @@ class _RecurringTransactionPageState
     );
   }
 
-  void _showRecurrenceRuleSheet() async {
+  Future<void> _showRecurrenceRuleSheet() async {
     final result = await RecurrenceRuleSheet.show(
       context,
       initialStartDate: _startDate,
@@ -1049,7 +1050,7 @@ class _RecurringTransactionPageState
     }
   }
 
-  void _showDatePicker() async {
+  Future<void> _showDatePicker() async {
     final picked = await DatePickerSheet.show(
       context,
       initialDate: _startDate,
@@ -1102,7 +1103,7 @@ class _RecurringTransactionPageState
     }
   }
 
-  void _showAccountSelector({required bool isSource}) async {
+  Future<void> _showAccountSelector({required bool isSource}) async {
     final title = _selectedType == RecurringTransactionType.transfer
         ? (isSource
               ? (isZh ? '选择转出账户' : 'Source')
@@ -1130,7 +1131,7 @@ class _RecurringTransactionPageState
     }
   }
 
-  void _showCategoryPicker() async {
+  Future<void> _showCategoryPicker() async {
     final result = await CategorySelectionSheet.show(
       context,
       selectedCategory: _category,

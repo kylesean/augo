@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:forui/forui.dart';
+import 'dart:async';
 
 class AppFilterChip extends StatelessWidget {
   final String? label;
@@ -41,7 +42,7 @@ class AppFilterChip extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            HapticFeedback.lightImpact();
+            unawaited(HapticFeedback.lightImpact());
             onTap();
           },
           borderRadius: BorderRadius.circular(borderRadius),

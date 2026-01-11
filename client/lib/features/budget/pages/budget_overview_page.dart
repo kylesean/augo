@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:async';
 
 import '../../../core/constants/category_constants.dart';
 import '../../../shared/models/currency.dart';
@@ -25,7 +26,7 @@ class _BudgetOverviewPageState extends ConsumerState<BudgetOverviewPage> {
     super.initState();
     // page init load budget data
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(budgetSummaryProvider.notifier).load();
+      unawaited(ref.read(budgetSummaryProvider.notifier).load());
     });
   }
 
@@ -183,7 +184,7 @@ class _BudgetOverviewPageState extends ConsumerState<BudgetOverviewPage> {
                   ref
                       .read(budgetFilterStateProvider.notifier)
                       .setFilter(filter);
-                  ref.read(budgetSummaryProvider.notifier).refresh();
+                  unawaited(ref.read(budgetSummaryProvider.notifier).refresh());
                 },
               ),
             ),

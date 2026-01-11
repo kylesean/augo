@@ -7,6 +7,7 @@ import 'package:augo/shared/providers/amount_theme_provider.dart';
 import 'package:augo/shared/services/toast_service.dart';
 import 'package:augo/shared/theme/amount_theme.dart';
 import 'package:augo/i18n/strings.g.dart';
+import 'dart:async';
 
 class AmountSettingsPage extends ConsumerWidget {
   const AmountSettingsPage({super.key});
@@ -97,7 +98,7 @@ class AmountSettingsPage extends ConsumerWidget {
                       ? Icon(FIcons.check, size: 20, color: colors.primary)
                       : null,
                   onPress: () {
-                    ref.read(amountThemeProvider.notifier).setTheme(option.id);
+                    unawaited(ref.read(amountThemeProvider.notifier).setTheme(option.id));
                     ToastService.success(
                       description: Text(t.settings.appearanceUpdated),
                     );

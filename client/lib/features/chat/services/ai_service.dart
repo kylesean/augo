@@ -106,7 +106,7 @@ class AIService {
         isClosed = true;
         _currentSseClient?.close();
         if (!controller.isClosed) {
-          controller.close();
+          unawaited(controller.close());
         }
         _logger.info("AIService: Stream cancelled by listener");
       }
@@ -178,7 +178,7 @@ class AIService {
                 controller.add(parsedEvent);
                 if (!isClosed) {
                   isClosed = true;
-                  controller.close();
+                  unawaited(controller.close());
                   sseClient.close();
                   _logger.info("AIService: Stream completed (done event)");
                 }
@@ -197,7 +197,7 @@ class AIService {
             if (parsedEvent.done && parsedEvent.type != SseEventType.done) {
               if (!isClosed) {
                 isClosed = true;
-                controller.close();
+                unawaited(controller.close());
                 sseClient.close();
                 _logger.info("AIService: Stream completed (done: true)");
               }
@@ -209,7 +209,7 @@ class AIService {
             }
           }
         },
-        onError: (error) {
+        onError: (Object error) {
           _logger.info("AIService: ===== SSE ERROR =====");
           _logger.info("AIService: Error: $error");
           _logger.info("AIService: ====================");
@@ -218,14 +218,16 @@ class AIService {
           controller.addError(
             NetworkException("SSE stream error: ${error.toString()}"),
           );
-          if (!controller.isClosed) controller.close();
+          if (!controller.isClosed) {
+            unawaited(controller.close());
+          }
         },
         onDone: () {
           _logger.info("AIService: ===== SSE STREAM DONE =====");
           if (!isClosed) {
             isClosed = true;
             if (!controller.isClosed) {
-              controller.close();
+              unawaited(controller.close());
             }
             _logger.info("AIService: Stream closed normally");
           }
@@ -277,7 +279,7 @@ class AIService {
         "AIService: Calling cancel endpoint for session: $sessionId",
       );
 
-      final response = await _dio.post(
+      final response = await _dio.post<Map<String, dynamic>>(
         url,
         options: Options(
           headers: {

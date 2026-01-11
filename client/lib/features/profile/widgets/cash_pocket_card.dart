@@ -1,4 +1,5 @@
 import 'package:logging/logging.dart';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,7 +36,7 @@ class _CashPocketCardState extends ConsumerState<CashPocketCard>
 
     // Initial load of summary data
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadSummary();
+      unawaited(_loadSummary());
     });
   }
 
@@ -62,7 +63,7 @@ class _CashPocketCardState extends ConsumerState<CashPocketCard>
           );
 
       _animationController.reset();
-      _animationController.forward();
+      unawaited(_animationController.forward());
       _previousBalance = newBalance;
     }
   }
@@ -118,7 +119,7 @@ class _CashPocketCardState extends ConsumerState<CashPocketCard>
     return GestureDetector(
       onTap: () {
         // Navigate to account management on tap
-        context.push('/forecast', extra: 1);
+        unawaited(context.push('/forecast', extra: 1));
       },
       child: FCard(
         child: Container(
@@ -273,7 +274,7 @@ class _CashPocketCardState extends ConsumerState<CashPocketCard>
               // Update Now button
               FButton(
                 style: FButtonStyle.outline(),
-                onPress: () => context.push('/forecast', extra: 1),
+                onPress: () => unawaited(context.push('/forecast', extra: 1)),
                 child: Text(
                   'Update Now',
                   style: TextStyle(

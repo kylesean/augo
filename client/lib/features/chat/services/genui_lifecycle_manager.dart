@@ -24,15 +24,15 @@ class GenUiLifecycleManager {
 
   // Callbacks to interact with standard ChatNotifier state
   final String Function() _getCurrentStreamingMessageId;
-  final Function(double amount, String type, String currency)
+  final void Function(double amount, String type, String currency)
   _onTransactionCreated;
-  final Function(String sessionId, String? messageId) _onSessionInit;
-  final Function(String text) _onTextResponse;
-  final Function() _onStreamComplete;
-  final Function() _markFirstChunkReceived;
-  final Function(String title) _onTitleUpdate;
-  final Function(ToolCallInfo)? _onToolCallStart;
-  final Function(ToolCallInfo)? _onToolCallEnd;
+  final void Function(String sessionId, String? messageId) _onSessionInit;
+  final void Function(String text) _onTextResponse;
+  final void Function() _onStreamComplete;
+  final void Function() _markFirstChunkReceived;
+  final void Function(String title) _onTitleUpdate;
+  final void Function(ToolCallInfo)? _onToolCallStart;
+  final void Function(ToolCallInfo)? _onToolCallEnd;
 
   GenUiService? _genUiService;
 
@@ -43,14 +43,14 @@ class GenUiLifecycleManager {
     required SecureStorageService secureStorageService,
     required MessageRepository messageRepository,
     required String Function() getCurrentStreamingMessageId,
-    required Function(double, String, String) onTransactionCreated,
-    required Function(String, String?) onSessionInit,
-    required Function(String) onTextResponse,
-    required Function() onStreamComplete,
-    required Function() markFirstChunkReceived,
-    required Function(String) onTitleUpdate,
-    Function(ToolCallInfo)? onToolCallStart,
-    Function(ToolCallInfo)? onToolCallEnd,
+    required void Function(double, String, String) onTransactionCreated,
+    required void Function(String, String?) onSessionInit,
+    required void Function(String) onTextResponse,
+    required void Function() onStreamComplete,
+    required void Function() markFirstChunkReceived,
+    required void Function(String) onTitleUpdate,
+    void Function(ToolCallInfo)? onToolCallStart,
+    void Function(ToolCallInfo)? onToolCallEnd,
   }) : _secureStorageService = secureStorageService,
        _messageRepository = messageRepository,
        _getCurrentStreamingMessageId = getCurrentStreamingMessageId,
@@ -140,14 +140,14 @@ class GenUiLifecycleManager {
     }
   }
 
-  void setOnUserMessageSent(Function(String) callback) {
+  void setOnUserMessageSent(void Function(String) callback) {
     if (_genUiService != null) {
       _genUiService!.conversation.onUserMessageSent = callback;
     }
   }
 
   void dispose() {
-    _genUiService?.dispose();
+    unawaited(_genUiService?.dispose());
     _messageSurfaces.clear();
   }
 

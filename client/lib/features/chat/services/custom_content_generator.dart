@@ -82,7 +82,7 @@ class CustomContentGenerator implements genui.ContentGenerator {
   OnTransactionCreated? onTransactionCreated;
 
   /// User message send callback - notifies upper layer to update UI when GenUI internally sends request
-  Function(String content)? onUserMessageSent;
+  void Function(String content)? onUserMessageSent;
 
   // Processing state
   final ValueNotifier<bool> _isProcessing = ValueNotifier(false);
@@ -451,7 +451,7 @@ class CustomContentGenerator implements genui.ContentGenerator {
           // IMPORTANT: Yield to event loop to allow UI to update during streaming.
           // Without this, rapid SSE events are processed synchronously in a single frame,
           // causing Flutter to batch all state updates and only render at stream end.
-          await Future.delayed(Duration.zero);
+          await Future<void>.delayed(Duration.zero);
         }
         break;
 
@@ -475,7 +475,7 @@ class CustomContentGenerator implements genui.ContentGenerator {
             'CustomContentGenerator: Tool call start - ${event.name} (${event.id})',
           );
           onToolCallStart?.call(event);
-          await Future.delayed(Duration.zero);
+          await Future<void>.delayed(Duration.zero);
         }
         break;
 
@@ -488,7 +488,7 @@ class CustomContentGenerator implements genui.ContentGenerator {
             'status: ${event.status}, duration: ${event.durationMs}ms',
           );
           onToolCallEnd?.call(event);
-          await Future.delayed(Duration.zero);
+          await Future<void>.delayed(Duration.zero);
         }
         break;
 
@@ -762,9 +762,9 @@ class CustomContentGenerator implements genui.ContentGenerator {
 
   @override
   void dispose() {
-    _a2uiMessageController.close();
-    _textResponseController.close();
-    _errorResponseController.close();
+    unawaited(_a2uiMessageController.close());
+    unawaited(_textResponseController.close());
+    unawaited(_errorResponseController.close());
     _cancelToken?.cancel('Disposed');
   }
 }

@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io' show File;
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
@@ -11,7 +13,7 @@ import 'image_preview_page.dart';
 class MediaPreviewWidget extends StatelessWidget {
   final List<XFile> selectedFiles;
   final Map<String, bool> uploadingFiles;
-  final Function(int) onRemove;
+  final void Function(int) onRemove;
 
   const MediaPreviewWidget({
     super.key,
@@ -147,7 +149,7 @@ class MediaPreviewWidget extends StatelessWidget {
           }
 
           return Image.memory(
-            snapshot.data! as dynamic,
+            snapshot.data as Uint8List,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
               return _buildFileIcon();
@@ -190,21 +192,23 @@ class MediaPreviewWidget extends StatelessWidget {
     final currentFile = selectedFiles[initialIndex];
     final imageIndex = images.indexWhere((img) => img.path == currentFile.path);
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ImagePreviewPage(
-          images: images,
-          initialIndex: imageIndex >= 0 ? imageIndex : 0,
-          onDelete: (imageIndex) {
-            // Find the index of the image to delete in the original list.
-            final imageToDelete = images[imageIndex];
-            final originalIndex = selectedFiles.indexWhere(
-              (file) => file.path == imageToDelete.path,
-            );
-            if (originalIndex >= 0) {
-              onRemove(originalIndex);
-            }
-          },
+    unawaited(
+      Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(
+          builder: (context) => ImagePreviewPage(
+            images: images,
+            initialIndex: imageIndex >= 0 ? imageIndex : 0,
+            onDelete: (imageIndex) {
+              // Find the index of the image to delete in the original list.
+              final imageToDelete = images[imageIndex];
+              final originalIndex = selectedFiles.indexWhere(
+                (file) => file.path == imageToDelete.path,
+              );
+              if (originalIndex >= 0) {
+                onRemove(originalIndex);
+              }
+            },
+          ),
         ),
       ),
     );

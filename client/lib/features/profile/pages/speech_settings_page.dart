@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
@@ -282,13 +283,15 @@ class _SpeechSettingsPageState extends ConsumerState<SpeechSettingsPage> {
       return;
     }
 
-    ref
-        .read(speechSettingsProvider.notifier)
-        .updateWebsocketConfig(
-          host: host,
-          port: port,
-          path: path.isEmpty ? '/ws' : path,
-        );
+    unawaited(
+      ref
+          .read(speechSettingsProvider.notifier)
+          .updateWebsocketConfig(
+            host: host,
+            port: port,
+            path: path.isEmpty ? '/ws' : path,
+          ),
+    );
 
     ToastService.success(description: Text(t.speech.configSaved));
   }

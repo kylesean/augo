@@ -105,9 +105,9 @@ class AudioRecorderService {
   void dispose() {
     _logger.info('Releasing audio recorder service resources');
     if (_isRecording) {
-      _recorder.stop();
+      unawaited(_recorder.stop());
     }
     _stopRecordingInternal();
-    _recorder.dispose();
+    unawaited(_recorder.dispose());
   }
 }

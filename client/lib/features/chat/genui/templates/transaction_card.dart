@@ -136,10 +136,12 @@ class _TransactionCardState extends ConsumerState<TransactionCard> {
       );
       return;
     }
-    HapticFeedback.lightImpact();
-    context.pushNamed(
-      AppRouteNames.transactionDetail,
-      pathParameters: {'transactionId': transactionId},
+    unawaited(HapticFeedback.lightImpact());
+    unawaited(
+      context.pushNamed(
+        AppRouteNames.transactionDetail,
+        pathParameters: {'transactionId': transactionId},
+      ),
     );
   }
 
@@ -283,7 +285,7 @@ class _TransactionCardState extends ConsumerState<TransactionCard> {
   }) {
     return GestureDetector(
       onTap: () {
-        HapticFeedback.lightImpact();
+        unawaited(HapticFeedback.lightImpact());
         onTap?.call();
       },
       child: Container(
@@ -535,7 +537,7 @@ class _TransactionCardState extends ConsumerState<TransactionCard> {
                           ? colors.primary
                           : colors.mutedForeground,
                     ),
-                    title: Text(space['name'] ?? ''),
+                    title: Text((space['name'] as String?) ?? ''),
                     trailing: isSelected
                         ? Icon(FIcons.check, color: colors.primary)
                         : null,

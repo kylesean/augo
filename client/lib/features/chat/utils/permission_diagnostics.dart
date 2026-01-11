@@ -125,10 +125,10 @@ class PermissionDiagnostics {
     }
 
     buffer.writeln(
-      'Permission status: ${result['hasPermission'] ? "✅ Granted" : "❌ Not granted"}',
+      'Permission status: ${result['hasPermission'] == true ? "✅ Granted" : "❌ Not granted"}',
     );
     buffer.writeln(
-      'Device check: ${result['deviceCheckPassed'] ? "✅ Passed" : "❌ Failed"}',
+      'Device check: ${result['deviceCheckPassed'] == true ? "✅ Passed" : "❌ Failed"}',
     );
 
     if (result['platformSpecific'] != null) {
@@ -141,7 +141,7 @@ class PermissionDiagnostics {
     if (result['suggestions'] != null) {
       buffer.writeln('');
       buffer.writeln('🔧 Suggestions:');
-      for (final suggestion in result['suggestions']) {
+      for (final suggestion in (result['suggestions'] as List? ?? [])) {
         buffer.writeln('- $suggestion');
       }
     }

@@ -9,6 +9,7 @@ import '../../shared_space/widgets/notification_icon.dart';
 import 'package:augo/i18n/strings.g.dart';
 import 'package:augo/shared/utils/amount_formatter.dart';
 import '../models/total_expense_model.dart';
+import 'dart:async';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -26,7 +27,7 @@ class HomePage extends ConsumerWidget {
           final notifier = ref.read(transactionFeedProvider.notifier);
           final feedState = ref.read(transactionFeedProvider);
           if (!feedState.isLoadingMore && !feedState.hasReachedMax) {
-            notifier.fetchMoreTransactions();
+            unawaited(notifier.fetchMoreTransactions());
           }
         }
         return false;

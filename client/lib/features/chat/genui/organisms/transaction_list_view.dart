@@ -8,6 +8,7 @@ import '../../../../shared/widgets/themed_icon.dart';
 import '../../../home/services/home_service.dart';
 import '../../../home/models/transaction_model.dart';
 import '../../../../core/constants/category_constants.dart';
+import 'dart:async';
 
 /// 交易列表视图组件
 ///
@@ -74,9 +75,9 @@ class _TransactionListViewState extends ConsumerState<TransactionListView> {
       final result = await homeService.searchTransactions(
         page: _currentPage + 1,
         size: widget.pageSize,
-        keyword: _searchMetadata?['keyword'],
-        startDate: _searchMetadata?['start_date'],
-        endDate: _searchMetadata?['end_date'],
+        keyword: _searchMetadata?['keyword'] as String?,
+        startDate: _searchMetadata?['start_date'] as String?,
+        endDate: _searchMetadata?['end_date'] as String?,
         type: typesString,
       );
 
@@ -120,7 +121,7 @@ class _TransactionListViewState extends ConsumerState<TransactionListView> {
                   _hasMore &&
                   scrollInfo.metrics.pixels >=
                       scrollInfo.metrics.maxScrollExtent - 200) {
-                _loadMore();
+                unawaited(_loadMore());
               }
               return false;
             },
@@ -142,7 +143,7 @@ class _TransactionListViewState extends ConsumerState<TransactionListView> {
                   onTap: () {
                     final id = item['id'] as String?;
                     if (id != null) {
-                      context.push('/home/transaction/$id');
+                      unawaited(context.push('/home/transaction/$id'));
                     }
                   },
                 );
@@ -251,7 +252,8 @@ class _TransactionListItem extends StatelessWidget {
     final categoryKey = data['category'] as String?;
     final categoryEnum = TransactionCategory.fromKey(categoryKey);
     final tags =
-        (data['tags'] as List?)?.map((e) => e.toString()).toList() ?? [];
+        (data['tags'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
+        [];
     final type = (data['type'] as String? ?? 'EXPENSE').toUpperCase();
     final time = data['transaction_time'] as String? ?? '';
 
@@ -314,7 +316,7 @@ class _TransactionListItem extends StatelessWidget {
                         child: Text(
                           tags.isNotEmpty
                               ? tags.join(' · ')
-                              : (data['description'] ?? ''),
+                              : (data['description'] as String? ?? ''),
                           style: theme.typography.sm.copyWith(
                             color: colors.mutedForeground,
                           ),

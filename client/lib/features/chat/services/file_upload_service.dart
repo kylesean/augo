@@ -117,7 +117,7 @@ class FileUploadService {
       _logger.info('FormData built, sending request...');
 
       // Use NetworkClient's Dio instance directly, enjoying all interceptors
-      final response = await _networkClient.dio.post(
+      final response = await _networkClient.dio.post<dynamic>(
         '/files/upload',
         data: formData,
         onSendProgress: (sent, total) {
@@ -222,13 +222,18 @@ class FileUploadResult {
 
   factory FileUploadResult.fromJson(Map<String, dynamic> json) {
     return FileUploadResult(
-      summary: UploadSummary.fromJson(json['summary']),
+      summary: UploadSummary.fromJson(json['summary'] as Map<String, dynamic>),
       uploads: (json['uploads'] as List)
-          .map((upload) => UploadedFile.fromJson(upload))
+          .map(
+            (upload) => UploadedFile.fromJson(upload as Map<String, dynamic>),
+          )
           .toList(),
       failures:
           (json['failures'] as List?)
-              ?.map((failure) => UploadFailure.fromJson(failure))
+              ?.map(
+                (failure) =>
+                    UploadFailure.fromJson(failure as Map<String, dynamic>),
+              )
               .toList() ??
           [],
     );

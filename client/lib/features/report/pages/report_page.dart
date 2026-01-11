@@ -11,6 +11,7 @@ import '../widgets/statistics_widgets.dart';
 import '../widgets/filter_sheet.dart';
 import '../widgets/date_range_picker_sheet.dart';
 import '../../../app/router/app_routes.dart';
+import 'dart:async';
 
 class ReportPage extends ConsumerStatefulWidget {
   const ReportPage({super.key});
@@ -29,7 +30,7 @@ class _ReportPageState extends ConsumerState<ReportPage> {
     _scrollController.addListener(_onScroll);
     // Load statistics on first build
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(statisticsProvider.notifier).loadStatistics();
+      unawaited(ref.read(statisticsProvider.notifier).loadStatistics());
     });
   }
 
@@ -42,36 +43,46 @@ class _ReportPageState extends ConsumerState<ReportPage> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      ref.read(statisticsProvider.notifier).loadMoreTopTransactions();
+      unawaited(
+        ref.read(statisticsProvider.notifier).loadMoreTopTransactions(),
+      );
     }
   }
 
   void _showFilterSheet() {
     final state = ref.read(statisticsProvider);
-    FilterSheet.show(
-      context,
-      selectedAccountTypes: state.selectedAccountTypes,
-      onApply: (accountTypes) {
-        ref.read(statisticsProvider.notifier).setAccountTypes(accountTypes);
-      },
+    unawaited(
+      FilterSheet.show(
+        context,
+        selectedAccountTypes: state.selectedAccountTypes,
+        onApply: (accountTypes) {
+          unawaited(
+            ref.read(statisticsProvider.notifier).setAccountTypes(accountTypes),
+          );
+        },
+      ),
     );
   }
 
   void _showDateRangePicker() {
     final state = ref.read(statisticsProvider);
-    DateRangePickerSheet.show(
-      context,
-      initialStart: state.customStartDate,
-      initialEnd: state.customEndDate,
-      onConfirm: (startDate, endDate) {
-        ref
-            .read(statisticsProvider.notifier)
-            .setTimeRange(
-              TimeRange.custom,
-              startDate: startDate,
-              endDate: endDate,
-            );
-      },
+    unawaited(
+      DateRangePickerSheet.show(
+        context,
+        initialStart: state.customStartDate,
+        initialEnd: state.customEndDate,
+        onConfirm: (startDate, endDate) {
+          unawaited(
+            ref
+                .read(statisticsProvider.notifier)
+                .setTimeRange(
+                  TimeRange.custom,
+                  startDate: startDate,
+                  endDate: endDate,
+                ),
+          );
+        },
+      ),
     );
   }
 
@@ -79,7 +90,7 @@ class _ReportPageState extends ConsumerState<ReportPage> {
     if (timeRange == TimeRange.custom) {
       _showDateRangePicker();
     } else {
-      ref.read(statisticsProvider.notifier).setTimeRange(timeRange);
+      unawaited(ref.read(statisticsProvider.notifier).setTimeRange(timeRange));
     }
   }
 
@@ -204,7 +215,9 @@ class _ReportPageState extends ConsumerState<ReportPage> {
               height: 40,
               child: FButton(
                 onPress: () {
-                  ref.read(statisticsProvider.notifier).loadStatistics();
+                  unawaited(
+                    ref.read(statisticsProvider.notifier).loadStatistics(),
+                  );
                 },
                 child: Text(t.common.retry),
               ),
@@ -302,9 +315,11 @@ class _ReportPageState extends ConsumerState<ReportPage> {
                     trendData: state.trendData!,
                     chartType: state.chartType,
                     onChartTypeChanged: (chartType) {
-                      ref
-                          .read(statisticsProvider.notifier)
-                          .setChartType(chartType);
+                      unawaited(
+                        ref
+                            .read(statisticsProvider.notifier)
+                            .setChartType(chartType),
+                      );
                     },
                   ),
                 ),
@@ -400,9 +415,11 @@ class _ReportPageState extends ConsumerState<ReportPage> {
               return TopTransactionCard(
                 transaction: transactions[index],
                 onTap: () {
-                  context.pushNamed(
-                    AppRouteNames.transactionDetail,
-                    pathParameters: {'transactionId': transactions[index].id},
+                  unawaited(
+                    context.pushNamed(
+                      AppRouteNames.transactionDetail,
+                      pathParameters: {'transactionId': transactions[index].id},
+                    ),
                   );
                 },
               );

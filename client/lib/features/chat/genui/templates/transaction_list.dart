@@ -66,9 +66,9 @@ class _TransactionListState extends ConsumerState<TransactionList> {
       final result = await homeService.searchTransactions(
         page: _currentPage + 1,
         size: (widget.data['per_page'] as num?)?.toInt() ?? 10,
-        keyword: _searchMetadata?['keyword'],
-        startDate: _searchMetadata?['start_date'],
-        endDate: _searchMetadata?['end_date'],
+        keyword: _searchMetadata?['keyword'] as String?,
+        startDate: _searchMetadata?['start_date'] as String?,
+        endDate: _searchMetadata?['end_date'] as String?,
         type: typesString,
       );
 
@@ -116,7 +116,7 @@ class _TransactionListState extends ConsumerState<TransactionList> {
                   _hasMore &&
                   scrollInfo.metrics.pixels >=
                       scrollInfo.metrics.maxScrollExtent - 200) {
-                _loadMore();
+                unawaited(_loadMore());
               }
               return false;
             },
@@ -295,7 +295,7 @@ class _TransactionListState extends ConsumerState<TransactionList> {
                         child: Text(
                           tags.isNotEmpty
                               ? tags.join(' · ')
-                              : (item['description'] ?? ''),
+                              : (item['description'] as String? ?? ''),
                           style: theme.typography.sm.copyWith(
                             color: colors.mutedForeground,
                           ),

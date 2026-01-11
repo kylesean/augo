@@ -5,6 +5,7 @@ import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'dart:async';
 
 import '../providers/server_config_provider.dart';
 import '../../../core/services/server_config_service.dart';
@@ -115,7 +116,7 @@ class _ServerSetupPageState extends ConsumerState<ServerSetupPage> {
       _connectionError = null;
     });
     // Auto-test connection after QR scan
-    _testConnection();
+    unawaited(_testConnection());
   }
 
   @override
@@ -364,7 +365,7 @@ class _QrScannerViewState extends State<_QrScannerView> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    unawaited(_controller.dispose());
     super.dispose();
   }
 
@@ -378,7 +379,7 @@ class _QrScannerViewState extends State<_QrScannerView> {
         // Check if it looks like a URL
         if (value.contains('.') || value.contains(':')) {
           _hasScanned = true;
-          HapticFeedback.mediumImpact();
+          unawaited(HapticFeedback.mediumImpact());
           widget.onDetected(value);
           return;
         }
@@ -412,7 +413,7 @@ class _QrScannerViewState extends State<_QrScannerView> {
                   ),
                   const Spacer(),
                   IconButton(
-                    onPressed: () => _controller.toggleTorch(),
+                    onPressed: () => unawaited(_controller.toggleTorch()),
                     icon: const Icon(Icons.flash_on, color: Colors.white),
                   ),
                 ],

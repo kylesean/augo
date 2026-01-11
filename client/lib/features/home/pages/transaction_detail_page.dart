@@ -87,13 +87,15 @@ class TransactionDetailPage extends ConsumerWidget {
                       const SizedBox(height: 24),
                       FButton(
                         onPress: () {
-                          ref
-                              .read(
-                                transactionDetailProvider(
-                                  transactionId,
-                                ).notifier,
-                              )
-                              .reload();
+                          unawaited(
+                            ref
+                                .read(
+                                  transactionDetailProvider(
+                                    transactionId,
+                                  ).notifier,
+                                )
+                                .reload(),
+                          );
                         },
                         child: Text(t.common.retry),
                       ),
@@ -227,7 +229,9 @@ class TransactionDetailPage extends ConsumerWidget {
                                 valueWidget: GestureDetector(
                                   onTap: transaction.sourceThreadId != null
                                       ? () {
-                                          HapticFeedback.lightImpact();
+                                          unawaited(
+                                            HapticFeedback.lightImpact(),
+                                          );
                                           context.go(
                                             '/ai/${transaction.sourceThreadId}',
                                           );
@@ -507,7 +511,7 @@ class TransactionDetailPage extends ConsumerWidget {
   }) {
     return GestureDetector(
       onTap: () {
-        HapticFeedback.lightImpact();
+        unawaited(HapticFeedback.lightImpact());
         onTap();
       },
       child: Container(
@@ -726,7 +730,7 @@ class TransactionDetailPage extends ConsumerWidget {
                             ? colors.primary
                             : colors.mutedForeground,
                       ),
-                      title: Text(space['name'] ?? ''),
+                      title: Text((space['name'] as String?) ?? ''),
                       trailing: isSelected
                           ? Icon(FIcons.check, color: colors.primary)
                           : null,
@@ -818,53 +822,59 @@ class TransactionDetailPage extends ConsumerWidget {
           if (rootContext == null) return;
 
           // 延迟显示对话框，等待 BottomSheet 动画完成
-          Future.delayed(const Duration(milliseconds: 100), () {
-            if (!rootContext.mounted) return;
-            showFDialog(
-              context: rootContext,
-              builder: (dialogContext, style, animation) => FDialog(
-                style: style.call,
-                animation: animation,
-                title: Text(t.transaction.confirmDelete),
-                body: Text(t.transaction.deleteTransactionConfirm),
-                actions: [
-                  FButton(
-                    style: FButtonStyle.outline(),
-                    onPress: () => Navigator.of(dialogContext).pop(),
-                    child: Text(t.common.cancel),
-                  ),
-                  FButton(
-                    onPress: () async {
-                      Navigator.of(dialogContext).pop();
-                      // 执行删除操作
-                      try {
-                        final networkClient = ref.read(networkClientProvider);
-                        final result = await networkClient.requestMap(
-                          '/transactions/${transaction.id}',
-                          method: HttpMethod.delete,
-                        );
+          unawaited(
+            Future<void>.delayed(const Duration(milliseconds: 100), () {
+              if (!rootContext.mounted) return;
+              unawaited(
+                showFDialog<void>(
+                  context: rootContext,
+                  builder: (dialogContext, style, animation) => FDialog(
+                    style: style.call,
+                    animation: animation,
+                    title: Text(t.transaction.confirmDelete),
+                    body: Text(t.transaction.deleteTransactionConfirm),
+                    actions: [
+                      FButton(
+                        style: FButtonStyle.outline(),
+                        onPress: () => Navigator.of(dialogContext).pop(),
+                        child: Text(t.common.cancel),
+                      ),
+                      FButton(
+                        onPress: () async {
+                          Navigator.of(dialogContext).pop();
+                          // 执行删除操作
+                          try {
+                            final networkClient = ref.read(
+                              networkClientProvider,
+                            );
+                            final result = await networkClient.requestMap(
+                              '/transactions/${transaction.id}',
+                              method: HttpMethod.delete,
+                            );
 
-                        if (result['code'] == 0) {
-                          ToastService.success(
-                            description: Text(t.transaction.deleted),
-                          );
-                          // 返回上一页
-                          if (rootContext.mounted) {
-                            GoRouter.of(rootContext).pop();
+                            if (result['code'] == 0) {
+                              ToastService.success(
+                                description: Text(t.transaction.deleted),
+                              );
+                              // 返回上一页
+                              if (rootContext.mounted) {
+                                GoRouter.of(rootContext).pop();
+                              }
+                            }
+                          } catch (e) {
+                            ToastService.showDestructive(
+                              description: Text(t.transaction.deleteFailed),
+                            );
                           }
-                        }
-                      } catch (e) {
-                        ToastService.showDestructive(
-                          description: Text(t.transaction.deleteFailed),
-                        );
-                      }
-                    },
-                    child: Text(t.common.delete),
+                        },
+                        child: Text(t.common.delete),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            );
-          });
+                ),
+              );
+            }),
+          );
         },
       ),
     );
@@ -873,24 +883,26 @@ class TransactionDetailPage extends ConsumerWidget {
       return;
     }
 
-    showModalBottomSheet(
-      context: GoRouter.of(context)
-          .routerDelegate
-          .navigatorKey
-          .currentContext!, // 获取GoRouter的根Navigator的context
-      // 或者，如果你的 MaterialApp 有一个全局的 navigatorKey:
-      // context: rootNavigatorKey.currentContext!,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (BuildContext sheetContext) {
-        // sheetContext 现在是根Navigator下的context
-        return ActionBottomSheet(
-          actions: primaryActions,
-          destructiveActions: destructiveActions.isNotEmpty
-              ? destructiveActions
-              : null,
-        );
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: GoRouter.of(context)
+            .routerDelegate
+            .navigatorKey
+            .currentContext!, // 获取GoRouter的根Navigator的context
+        // 或者，如果你的 MaterialApp 有一个全局的 navigatorKey:
+        // context: rootNavigatorKey.currentContext!,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (BuildContext sheetContext) {
+          // sheetContext 现在是根Navigator下的context
+          return ActionBottomSheet(
+            actions: primaryActions,
+            destructiveActions: destructiveActions.isNotEmpty
+                ? destructiveActions
+                : null,
+          );
+        },
+      ),
     );
   }
 }

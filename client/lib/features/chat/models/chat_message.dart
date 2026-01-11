@@ -159,7 +159,7 @@ String? _dateTimeNullableToJson(DateTime? dateTime) =>
     dateTime?.toIso8601String();
 
 // Custom readValue function to handle both 'role' and 'sender' fields
-Object? _readSenderValue(Map json, String key) {
+Object? _readSenderValue(Map<dynamic, dynamic> json, String key) {
   // Prioritize reading 'role' field, if it doesn't exist, read 'sender' field
   return json['role'] ?? json['sender'];
 }
@@ -270,7 +270,7 @@ List<Map<String, dynamic>> _fullContentToJson(List<MessageContentPart> parts) {
 }
 
 /// Custom readValue for fullContent to support interleaving and legacy compatibility
-Object? _readFullContentValue(Map json, String key) {
+Object? _readFullContentValue(Map<dynamic, dynamic> json, String key) {
   // 1. If 'fullContent' already exists, use it
   if (json.containsKey('fullContent') && json['fullContent'] != null) {
     return json['fullContent'];

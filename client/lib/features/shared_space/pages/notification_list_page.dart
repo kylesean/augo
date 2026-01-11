@@ -26,7 +26,11 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
     _scrollController.addListener(_onScroll);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(notificationProvider.notifier).loadNotifications(refresh: true);
+      unawaited(
+        ref
+            .read(notificationProvider.notifier)
+            .loadNotifications(refresh: true),
+      );
     });
   }
 
@@ -39,7 +43,7 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      ref.read(notificationProvider.notifier).loadNotifications();
+      unawaited(ref.read(notificationProvider.notifier).loadNotifications());
     }
   }
 
@@ -124,7 +128,10 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
     );
   }
 
-  Widget _buildNotificationsList(BuildContext context, state) {
+  Widget _buildNotificationsList(
+    BuildContext context,
+    NotificationState state,
+  ) {
     return ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.all(16.0),
@@ -160,7 +167,9 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
   void _handleNotificationTap(NotificationModel notification) {
     // Mark as read
     if (!notification.isRead) {
-      ref.read(notificationProvider.notifier).markAsRead(notification.id);
+      unawaited(
+        ref.read(notificationProvider.notifier).markAsRead(notification.id),
+      );
     }
 
     // Navigate based on notification type
@@ -172,14 +181,14 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
         // New transaction notification, navigate to transaction detail
         final transactionId = notification.data?['transactionId'] as String?;
         if (transactionId != null) {
-          context.push('/home/transaction/$transactionId');
+          unawaited(context.push('/home/transaction/$transactionId'));
         }
         break;
       case NotificationType.settlementUpdate:
         // Settlement update notification, navigate to space detail
         final spaceId = notification.data?['spaceId'] as String?;
         if (spaceId != null) {
-          context.push('/profile/shared-space/$spaceId');
+          unawaited(context.push('/profile/shared-space/$spaceId'));
         }
         break;
       case NotificationType.memberJoined:
@@ -187,7 +196,7 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
         // Member change notification, navigate to space settings
         final spaceId = notification.data?['spaceId'] as String?;
         if (spaceId != null) {
-          context.push('/profile/shared-space/$spaceId/settings');
+          unawaited(context.push('/profile/shared-space/$spaceId/settings'));
         }
         break;
     }

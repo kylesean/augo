@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:logging/logging.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +50,8 @@ class _ChatMessageWidgetState extends ConsumerState<ChatMessageWidget>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
-    )..repeat();
+    );
+    unawaited(_controller.repeat());
   }
 
   @override
@@ -185,12 +187,12 @@ class _ChatMessageWidgetState extends ConsumerState<ChatMessageWidget>
             final amount = context['amount'];
             final currency = context['currency'] ?? 'CNY';
 
-            final sourceDisplay = sourceId.isNotEmpty
+            final sourceDisplay = (sourceId as String).isNotEmpty
                 ? '$sourceName ($sourceId)'
-                : sourceName;
-            final targetDisplay = targetId.isNotEmpty
+                : sourceName as String;
+            final targetDisplay = (targetId as String).isNotEmpty
                 ? '$targetName ($targetId)'
-                : targetName;
+                : targetName as String;
 
             return 'Confirmed transfer path: from $sourceDisplay to $targetDisplay, amount $currency $amount. Please execute this transfer operation.';
           }

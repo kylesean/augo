@@ -172,7 +172,9 @@ class _CashFlowAnalysisCardState extends State<CashFlowAnalysisCard> {
                               label: t.chat.genui.cashFlowCard.totalIncome,
                               value:
                                   '¥${_formatAmount(widget.data['totalIncome'])}',
-                              change: widget.data['incomeChangePercent'],
+                              change:
+                                  (widget.data['incomeChangePercent'] as num?)
+                                      ?.toDouble(),
                               valueColor: amountTheme.incomeColor,
                             ),
                           ),
@@ -184,7 +186,9 @@ class _CashFlowAnalysisCardState extends State<CashFlowAnalysisCard> {
                               label: t.chat.genui.cashFlowCard.totalExpense,
                               value:
                                   '¥${_formatAmount(widget.data['totalExpense'])}',
-                              change: widget.data['expenseChangePercent'],
+                              change:
+                                  (widget.data['expenseChangePercent'] as num?)
+                                      ?.toDouble(),
                               inverseColor: true,
                               valueColor: amountTheme.expenseColor,
                             ),

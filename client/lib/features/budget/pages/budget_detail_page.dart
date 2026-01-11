@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:async';
 
 import '../../../core/constants/category_constants.dart';
 import '../../../core/widgets/top_toast.dart';
@@ -39,7 +40,7 @@ class _BudgetDetailPageState extends ConsumerState<BudgetDetailPage> {
   @override
   void initState() {
     super.initState();
-    _loadBudgetDetail();
+    unawaited(_loadBudgetDetail());
   }
 
   Future<void> _loadBudgetDetail() async {
@@ -605,7 +606,7 @@ class _BudgetDetailPageState extends ConsumerState<BudgetDetailPage> {
   }
 
   void _showDeleteConfirmation() {
-    showFDialog(
+    unawaited(showFDialog(
       context: context,
       builder: (context, style, animation) => FDialog(
         style: style.call,
@@ -615,9 +616,9 @@ class _BudgetDetailPageState extends ConsumerState<BudgetDetailPage> {
         actions: [
           FButton(
             style: FButtonStyle.destructive(),
-            onPress: () {
-              Navigator.pop(context);
-              _handleDelete();
+            onPress: () async {
+              await Navigator.maybePop(context);
+              unawaited(_handleDelete());
             },
             child: Text(t.common.delete),
           ),
@@ -628,7 +629,7 @@ class _BudgetDetailPageState extends ConsumerState<BudgetDetailPage> {
           ),
         ],
       ),
-    );
+    ));
   }
 
   Future<void> _handleDelete() async {

@@ -17,6 +17,7 @@ import '../../../core/constants/category_constants.dart';
 import '../../../shared/config/category_config.dart';
 import '../../../i18n/strings.g.dart';
 import 'package:shimmer/shimmer.dart';
+import 'dart:async';
 
 class SharedSpaceDetailPage extends ConsumerStatefulWidget {
   final String spaceId;
@@ -691,20 +692,23 @@ class _SharedSpaceDetailPageState extends ConsumerState<SharedSpaceDetailPage> {
     );
   }
 
-  /// Show invite member BottomSheet
   void _showInviteSheet(SharedSpace space) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => _InviteCodeSheet(space: space),
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => _InviteCodeSheet(space: space),
+      ),
     );
   }
 
   void _navigateToSettings(SharedSpace space) {
-    context.push(
-      '/profile/shared-space/${widget.spaceId}/settings',
-      extra: space,
+    unawaited(
+      context.push(
+        '/profile/shared-space/${widget.spaceId}/settings',
+        extra: space,
+      ),
     );
   }
 }
@@ -727,7 +731,7 @@ class _InviteCodeSheetState extends ConsumerState<_InviteCodeSheet> {
   @override
   void initState() {
     super.initState();
-    _generateInviteCode();
+    unawaited(_generateInviteCode());
   }
 
   Future<void> _generateInviteCode() async {
@@ -815,7 +819,7 @@ class _InviteCodeSheetState extends ConsumerState<_InviteCodeSheet> {
                       _isLoading = true;
                       _error = null;
                     });
-                    _generateInviteCode();
+                    unawaited(_generateInviteCode());
                   },
                   child: const Text('Retry'),
                 ),
@@ -867,7 +871,9 @@ class _InviteCodeSheetState extends ConsumerState<_InviteCodeSheet> {
                 FButton(
                   style: FButtonStyle.primary(),
                   onPress: () {
-                    Clipboard.setData(ClipboardData(text: _inviteCode!.code));
+                    unawaited(
+                      Clipboard.setData(ClipboardData(text: _inviteCode!.code)),
+                    );
                     ToastService.show(
                       description: Text(
                         'Invite code copied: ${_inviteCode!.code}',

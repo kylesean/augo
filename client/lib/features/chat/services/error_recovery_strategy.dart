@@ -116,7 +116,7 @@ class ErrorRecoveryStrategy {
         }
 
         _logger.info('Retrying after ${delay.inSeconds}s delay');
-        await Future.delayed(delay);
+        await Future<void>.delayed(delay);
         delay *= 2;
       }
     }

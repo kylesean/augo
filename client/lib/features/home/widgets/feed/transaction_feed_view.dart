@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:augo/features/home/models/transaction_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,7 +38,7 @@ class _TransactionFeedViewState extends ConsumerState<TransactionFeedView> {
           transactionFeedProvider,
         );
         if (!feedState.isLoadingMore && !feedState.hasReachedMax) {
-          notifier.fetchMoreTransactions();
+          unawaited(notifier.fetchMoreTransactions());
         }
       }
     }
@@ -165,8 +166,9 @@ class _TransactionFeedViewState extends ConsumerState<TransactionFeedView> {
             ),
             const SizedBox(height: 16),
             FButton(
-              onPress: () =>
-                  ref.read(transactionFeedProvider.notifier).refreshFeed(),
+              onPress: () async => await ref
+                  .read(transactionFeedProvider.notifier)
+                  .refreshFeed(),
               child: Text(t.common.retry),
             ),
           ],
@@ -191,8 +193,9 @@ class _TransactionFeedViewState extends ConsumerState<TransactionFeedView> {
             const SizedBox(height: 16),
             FButton(
               mainAxisSize: MainAxisSize.min,
-              onPress: () =>
-                  ref.read(transactionFeedProvider.notifier).refreshFeed(),
+              onPress: () async => await ref
+                  .read(transactionFeedProvider.notifier)
+                  .refreshFeed(),
               child: Text(t.home.tryRefresh),
             ),
           ],

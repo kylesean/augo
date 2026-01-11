@@ -106,7 +106,7 @@ void main() {
       verify(mockStreamingController.startInitialDelayTimer()).called(1);
 
       // Wait for unawaited async call
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
 
       // 6. Send request
       verify(
@@ -146,7 +146,7 @@ void main() {
       expect(messages[0].attachments[0].id, 'att-1');
 
       // Wait for unawaited async call and data uri conversion
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
 
       // Verify request sent with attachment payload
       // DataUriService converts to data uri, we expect base64 encoded [0,1,2,3]
@@ -184,7 +184,7 @@ void main() {
 
       // 4. Send request (internal)
       // Wait for unawaited async call
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
       verify(
         mockConversation.sendRequestWithAttachments(text, attachments: null),
       ).called(1);
@@ -195,7 +195,7 @@ void main() {
 
       await manager.addUserMessageAndGetResponse("Test");
 
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
 
       verify(mockConversation.setSessionId('session-123')).called(1);
     });
@@ -205,7 +205,7 @@ void main() {
 
       await manager.addUserMessageAndGetResponse("Test");
 
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
 
       verifyNever(mockConversation.sendRequestWithAttachments(any));
       verify(mockStreamingController.handleStreamError(any)).called(1);

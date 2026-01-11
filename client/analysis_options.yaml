@@ -31,6 +31,8 @@ linter:
     prefer_const_declarations: true
     prefer_final_locals: true
     unawaited_futures: true
+    avoid_void_async: true
+    discarded_futures: true
 
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
@@ -57,6 +59,6 @@ analyzer:
   # Language settings
   language:
     # Enable strict mode for better type safety (recommended for production)
-    # Set to true once codebase is cleaned up
-    strict-raw-types: false
-    strict-inference: false
+    strict-raw-types: true
+    strict-inference: true
+    strict-casts: true

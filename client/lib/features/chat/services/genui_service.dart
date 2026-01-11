@@ -25,24 +25,24 @@ class GenUiService {
   bool _isInitialized = false;
 
   /// Callbacks for surface lifecycle events
-  Function(genui.SurfaceAdded)? _onSurfaceAdded;
-  Function(genui.SurfaceRemoved)? _onSurfaceRemoved;
-  Function(String)? _onTextResponse;
-  Function(String surfaceId)? _onSurfaceIdAdded;
+  void Function(genui.SurfaceAdded)? _onSurfaceAdded;
+  void Function(genui.SurfaceRemoved)? _onSurfaceRemoved;
+  void Function(String)? _onTextResponse;
+  void Function(String surfaceId)? _onSurfaceIdAdded;
 
   /// Initialize GenUI with the provided catalog and callbacks
   Future<void> initialize({
     required genui.Catalog catalog,
     required SecureStorageService storageService,
     required String sseBaseUrl,
-    required Function(genui.SurfaceAdded) onSurfaceAdded,
-    required Function(genui.SurfaceRemoved) onSurfaceRemoved,
-    required Function(String) onTextResponse,
+    required void Function(genui.SurfaceAdded) onSurfaceAdded,
+    required void Function(genui.SurfaceRemoved) onSurfaceRemoved,
+    required void Function(String) onTextResponse,
     OnSessionInit? onSessionInit,
     OnStreamComplete? onStreamComplete,
     OnTitleUpdate? onTitleUpdate,
     OnErrorCallback? onError,
-    Function(String surfaceId)? onSurfaceIdAdded,
+    void Function(String surfaceId)? onSurfaceIdAdded,
     void Function(Map<String, dynamic>)? onTransactionCreated,
     dynamic configuration,
     Dio? dio,

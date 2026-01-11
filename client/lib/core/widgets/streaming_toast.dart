@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:shimmer/shimmer.dart';
+import 'dart:async';
 
 /// Streaming Analysis Toast - Displays streaming text at the top when GenUI components are rendering.
 ///
@@ -91,7 +92,7 @@ class _StreamingToastState extends State<_StreamingToastWidget>
       end: 1,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
-    _controller.forward();
+    unawaited(_controller.forward());
   }
 
   /// Appends streaming text.
@@ -134,10 +135,10 @@ class _StreamingToastState extends State<_StreamingToastWidget>
           child: Material(
             color: Colors.transparent,
             child: GestureDetector(
-              onTap: dismiss,
+              onTap: () => unawaited(dismiss()),
               onVerticalDragEnd: (details) {
                 if (details.velocity.pixelsPerSecond.dy < 0) {
-                  dismiss();
+                  unawaited(dismiss());
                 }
               },
               child: Container(

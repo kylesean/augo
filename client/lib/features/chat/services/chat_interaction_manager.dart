@@ -29,7 +29,7 @@ class ChatInteractionManager {
   final Uuid _uuid = const Uuid();
 
   // Callbacks
-  final Function(bool isStreaming) _setStreamingStatus;
+  final void Function(bool isStreaming) _setStreamingStatus;
   final String Function() _getCurrentConversationId;
 
   ChatInteractionManager({
@@ -38,7 +38,7 @@ class ChatInteractionManager {
     required StreamingController streamingController,
     required DataUriService
     dataUriService, // kept for DI but unused (static methods)
-    required Function(bool) setStreamingStatus,
+    required void Function(bool) setStreamingStatus,
     required String Function() getCurrentConversationId,
     required String Function()
     getCurrentConversationTitle, // kept for DI but unused

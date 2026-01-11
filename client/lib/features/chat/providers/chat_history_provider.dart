@@ -74,13 +74,13 @@ class ChatHistory extends _$ChatHistory {
     _initializeControllers();
 
     ref.onDispose(() {
-      _streamingController.cancelStreamAndTimers();
+      unawaited(_streamingController.cancelStreamAndTimers());
       _streamingController.dispose();
       _genUiLifecycleManager.dispose();
     });
 
     // Initialize GenUI
-    Future.microtask(() => _initializeGenUi());
+    unawaited(Future.microtask(() => _initializeGenUi()));
 
     return const ChatHistoryState();
   }
@@ -342,7 +342,7 @@ class ChatHistory extends _$ChatHistory {
     ref
         .read(conversationExpenseProvider.notifier)
         .addExpense(amount, transactionType: transactionType);
-    ref.read(transactionFeedProvider.notifier).refreshFeed();
+    unawaited(ref.read(transactionFeedProvider.notifier).refreshFeed());
     ref.invalidate(totalExpenseProvider);
     final currentMonth = ref.read(currentDisplayMonthProvider);
     ref.invalidate(calendarMonthDataProvider(currentMonth));

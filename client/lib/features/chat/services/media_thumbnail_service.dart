@@ -204,7 +204,7 @@ class MediaThumbnailService {
       if (mediaFile.type == MediaType.image && !hasCachedThumbnail(mediaFile)) {
         // Generate asynchronously without waiting for result
         unawaited(
-          generateThumbnail(mediaFile).catchError((error) {
+          generateThumbnail(mediaFile).catchError((Object error) {
             _logger.warning('Failed to preload thumbnail', error);
             return null;
           }),

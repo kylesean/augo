@@ -21,7 +21,7 @@ class SseClient {
 
   Dio? _dio;
   CancelToken? _cancelToken;
-  StreamSubscription? _responseSubscription;
+  StreamSubscription<dynamic>? _responseSubscription;
   Timer? _retryTimer;
   int _retryCount = 0;
   bool _isClosed = false;
@@ -87,7 +87,7 @@ class SseClient {
           .transform(const LineSplitter())
           .listen(
             _handleLine,
-            onError: (error) {
+            onError: (Object error) {
               if (error is DioException && CancelToken.isCancel(error)) {
                 _logger.info('SseClient: Connection cancelled');
                 return;
@@ -170,7 +170,7 @@ class SseClient {
       _retryTimer = Timer(delay, () {
         if (!_isClosed) {
           _cleanup();
-          connect();
+          unawaited(connect());
         }
       });
     } else {
@@ -188,7 +188,7 @@ class SseClient {
   }
 
   void _cleanup() {
-    _responseSubscription?.cancel();
+    unawaited(_responseSubscription?.cancel());
     _responseSubscription = null;
     _cancelToken?.cancel('reconnect');
     _cancelToken = null;
@@ -205,7 +205,7 @@ class SseClient {
     _cleanup();
 
     if (!_eventController.isClosed) {
-      _eventController.close();
+      unawaited(_eventController.close());
     }
   }
 

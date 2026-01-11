@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:forui/forui.dart';
+import 'dart:async';
 
 import '../../profile/models/financial_account.dart';
 import '../../profile/providers/financial_account_provider.dart';
@@ -30,7 +31,9 @@ class _AccountSourcesPageState extends ConsumerState<AccountSourcesPage> {
     super.initState();
     // 页面初始化时调用 API 加载账户列表
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(financialAccountProvider.notifier).loadFinancialAccounts();
+      unawaited(
+        ref.read(financialAccountProvider.notifier).loadFinancialAccounts(),
+      );
     });
   }
 
@@ -119,9 +122,11 @@ class _AccountSourcesPageState extends ConsumerState<AccountSourcesPage> {
               FButton(
                 style: FButtonStyle.outline(),
                 onPress: () {
-                  ref
-                      .read(financialAccountProvider.notifier)
-                      .loadFinancialAccounts();
+                  unawaited(
+                    ref
+                        .read(financialAccountProvider.notifier)
+                        .loadFinancialAccounts(),
+                  );
                 },
                 child: const Text('Retry'),
               ),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
@@ -168,17 +169,19 @@ class _TopToastWidgetState extends State<_TopToastWidget>
       end: 1,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
-    _controller.forward();
+    unawaited(_controller.forward());
 
     // Auto dismiss
-    Future.delayed(widget.duration, () {
-      if (mounted) {
-        _dismiss();
-      }
-    });
+    unawaited(
+      Future<void>.delayed(widget.duration).then((_) {
+        if (mounted) {
+          unawaited(_dismiss());
+        }
+      }),
+    );
   }
 
-  void _dismiss() async {
+  Future<void> _dismiss() async {
     await _controller.reverse();
     widget.onDismiss();
   }
@@ -208,7 +211,7 @@ class _TopToastWidgetState extends State<_TopToastWidget>
               onTap: _dismiss,
               onVerticalDragEnd: (details) {
                 if (details.velocity.pixelsPerSecond.dy < 0) {
-                  _dismiss();
+                  unawaited(_dismiss());
                 }
               },
               child: Container(

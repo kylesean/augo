@@ -1,4 +1,5 @@
 // features/chat/widgets/media_upload_bottom_sheet.dart
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,9 +12,9 @@ class MediaUploadBottomSheet {
   /// Show media selection menu
   static Future<void> show(
     BuildContext context, {
-    required Function(List<XFile>) onFilesSelected,
+    required void Function(List<XFile>) onFilesSelected,
   }) {
-    return showModalBottomSheet(
+    return showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -26,7 +27,7 @@ class MediaUploadBottomSheet {
 
 /// Media selection interface component
 class _MediaSelectionSheet extends StatelessWidget {
-  final Function(List<XFile>) onFilesSelected;
+  final void Function(List<XFile>) onFilesSelected;
 
   const _MediaSelectionSheet({required this.onFilesSelected});
 
@@ -148,19 +149,21 @@ class _MediaSelectionSheet extends StatelessWidget {
     final errorColor = context.theme.colors.destructive;
     Navigator.of(context).pop();
 
-    MediaPickerService.takePhoto()
-        .then((photo) {
-          onFilesSelected([photo]);
-        })
-        .catchError((e) {
-          if (!context.mounted) return;
-          messenger.showSnackBar(
-            SnackBar(
-              content: Text('${t.common.error}: $e'),
-              backgroundColor: errorColor,
-            ),
-          );
-        });
+    unawaited(
+      MediaPickerService.takePhoto()
+          .then((photo) {
+            onFilesSelected([photo]);
+          })
+          .catchError((Object e) {
+            if (!context.mounted) return;
+            messenger.showSnackBar(
+              SnackBar(
+                content: Text('${t.common.error}: $e'),
+                backgroundColor: errorColor,
+              ),
+            );
+          }),
+    );
   }
 
   /// Handle select photos
@@ -169,21 +172,23 @@ class _MediaSelectionSheet extends StatelessWidget {
     final errorColor = context.theme.colors.destructive;
     Navigator.of(context).pop();
 
-    MediaPickerService.pickGalleryPhotos()
-        .then((photos) {
-          if (photos.isNotEmpty) {
-            onFilesSelected(photos);
-          }
-        })
-        .catchError((e) {
-          if (!context.mounted) return;
-          messenger.showSnackBar(
-            SnackBar(
-              content: Text('${t.common.error}: $e'),
-              backgroundColor: errorColor,
-            ),
-          );
-        });
+    unawaited(
+      MediaPickerService.pickGalleryPhotos()
+          .then((photos) {
+            if (photos.isNotEmpty) {
+              onFilesSelected(photos);
+            }
+          })
+          .catchError((Object e) {
+            if (!context.mounted) return;
+            messenger.showSnackBar(
+              SnackBar(
+                content: Text('${t.common.error}: $e'),
+                backgroundColor: errorColor,
+              ),
+            );
+          }),
+    );
   }
 
   /// Handle select files
@@ -192,20 +197,22 @@ class _MediaSelectionSheet extends StatelessWidget {
     final errorColor = context.theme.colors.destructive;
     Navigator.of(context).pop();
 
-    MediaPickerService.pickFiles()
-        .then((files) {
-          if (files.isNotEmpty) {
-            onFilesSelected(files);
-          }
-        })
-        .catchError((e) {
-          if (!context.mounted) return;
-          messenger.showSnackBar(
-            SnackBar(
-              content: Text('${t.common.error}: $e'),
-              backgroundColor: errorColor,
-            ),
-          );
-        });
+    unawaited(
+      MediaPickerService.pickFiles()
+          .then((files) {
+            if (files.isNotEmpty) {
+              onFilesSelected(files);
+            }
+          })
+          .catchError((Object e) {
+            if (!context.mounted) return;
+            messenger.showSnackBar(
+              SnackBar(
+                content: Text('${t.common.error}: $e'),
+                backgroundColor: errorColor,
+              ),
+            );
+          }),
+    );
   }
 }

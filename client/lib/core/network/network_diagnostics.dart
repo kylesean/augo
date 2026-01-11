@@ -58,7 +58,7 @@ class NetworkDiagnostics {
       dio.options.receiveTimeout = const Duration(seconds: 10);
 
       // Try to access health check endpoint or base endpoint
-      final response = await dio.get('$baseUrl/health');
+      final response = await dio.get<dynamic>('$baseUrl/health');
 
       if (response.statusCode == 200) {
         _logger.info('Server HTTP health check passed');
@@ -82,7 +82,7 @@ class NetworkDiagnostics {
       dio.options.receiveTimeout = const Duration(seconds: 10);
 
       // Try to access a simple endpoint
-      await dio.get(baseUrl);
+      await dio.get<dynamic>(baseUrl);
 
       _logger.info('Server base URL accessible');
       return ServerStatus.reachable;

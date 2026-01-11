@@ -8,6 +8,7 @@ import '../widgets/shared_space_card.dart';
 import '../widgets/create_space_sheet.dart';
 import '../widgets/join_space_sheet.dart';
 import '../../../shared/services/toast_service.dart';
+import 'dart:async';
 
 class SharedSpaceListPage extends ConsumerStatefulWidget {
   const SharedSpaceListPage({super.key});
@@ -26,7 +27,9 @@ class _SharedSpaceListPageState extends ConsumerState<SharedSpaceListPage> {
     _scrollController.addListener(_onScroll);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(sharedSpaceProvider.notifier).loadSpaces(refresh: true);
+      unawaited(
+        ref.read(sharedSpaceProvider.notifier).loadSpaces(refresh: true),
+      );
 
       _checkForInviteCode();
     });
@@ -51,7 +54,7 @@ class _SharedSpaceListPageState extends ConsumerState<SharedSpaceListPage> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      ref.read(sharedSpaceProvider.notifier).loadSpaces();
+      unawaited(ref.read(sharedSpaceProvider.notifier).loadSpaces());
     }
   }
 
@@ -211,56 +214,64 @@ class _SharedSpaceListPageState extends ConsumerState<SharedSpaceListPage> {
   }
 
   void _showCreateSpaceSheet() {
-    showFSheet(
-      context: context,
-      side: FLayout.btt,
-      builder: (context) => CreateSpaceSheet(
-        onSpaceCreated: (space) {
-          Navigator.of(context).pop();
-          _navigateToInviteSuccess(space);
-        },
+    unawaited(
+      showFSheet<void>(
+        context: context,
+        side: FLayout.btt,
+        builder: (context) => CreateSpaceSheet(
+          onSpaceCreated: (space) {
+            Navigator.of(context).pop();
+            _navigateToInviteSuccess(space);
+          },
+        ),
       ),
     );
   }
 
   void _showJoinSpaceSheet() {
-    showFSheet(
-      context: context,
-      side: FLayout.btt,
-      builder: (context) => JoinSpaceSheet(
-        onSpaceJoined: (space) {
-          Navigator.of(context).pop();
-          ToastService.show(
-            description: Text('Successfully joined "${space.name}"!'),
-          );
-          _navigateToSpaceDetail(space.id);
-        },
+    unawaited(
+      showFSheet<void>(
+        context: context,
+        side: FLayout.btt,
+        builder: (context) => JoinSpaceSheet(
+          onSpaceJoined: (space) {
+            Navigator.of(context).pop();
+            ToastService.show(
+              description: Text('Successfully joined "${space.name}"!'),
+            );
+            _navigateToSpaceDetail(space.id);
+          },
+        ),
       ),
     );
   }
 
   void _showJoinSpaceSheetWithCode(String inviteCode) {
-    showFSheet(
-      context: context,
-      side: FLayout.btt,
-      builder: (context) => JoinSpaceSheet(
-        initialCode: inviteCode,
-        onSpaceJoined: (space) {
-          Navigator.of(context).pop();
-          ToastService.show(
-            description: Text('Successfully joined "${space.name}"!'),
-          );
-          _navigateToSpaceDetail(space.id);
-        },
+    unawaited(
+      showFSheet<void>(
+        context: context,
+        side: FLayout.btt,
+        builder: (context) => JoinSpaceSheet(
+          initialCode: inviteCode,
+          onSpaceJoined: (space) {
+            Navigator.of(context).pop();
+            ToastService.show(
+              description: Text('Successfully joined "${space.name}"!'),
+            );
+            _navigateToSpaceDetail(space.id);
+          },
+        ),
       ),
     );
   }
 
   void _navigateToSpaceDetail(String spaceId) {
-    context.push('/profile/shared-space/$spaceId');
+    unawaited(context.push('/profile/shared-space/$spaceId'));
   }
 
   void _navigateToInviteSuccess(SharedSpace space) {
-    context.push('/profile/shared-space/invite-success', extra: space);
+    unawaited(
+      context.push('/profile/shared-space/invite-success', extra: space),
+    );
   }
 }

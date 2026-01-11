@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:forui/forui.dart';
+import 'dart:async';
 
 import '../../profile/models/financial_account.dart';
 import '../../profile/providers/financial_account_provider.dart';
@@ -422,27 +423,29 @@ class _FinancialAccountEditPageState
   }
 
   void _handleDelete() {
-    showFDialog(
-      context: context,
-      builder: (context, style, animation) => FDialog(
-        style: style.call,
-        animation: animation,
-        title: Text(t.account.deleteAccount),
-        body: Text(t.account.deleteConfirm),
-        actions: [
-          FButton(
-            onPress: () {
-              Navigator.pop(context);
-              _performDelete();
-            },
-            child: Text(t.common.delete),
-          ),
-          FButton(
-            style: FButtonStyle.outline(),
-            onPress: () => Navigator.pop(context),
-            child: Text(t.common.cancel),
-          ),
-        ],
+    unawaited(
+      showFDialog<void>(
+        context: context,
+        builder: (context, style, animation) => FDialog(
+          style: style.call,
+          animation: animation,
+          title: Text(t.account.deleteAccount),
+          body: Text(t.account.deleteConfirm),
+          actions: [
+            FButton(
+              onPress: () {
+                Navigator.pop(context);
+                unawaited(_performDelete());
+              },
+              child: Text(t.common.delete),
+            ),
+            FButton(
+              style: FButtonStyle.outline(),
+              onPress: () => Navigator.pop(context),
+              child: Text(t.common.cancel),
+            ),
+          ],
+        ),
       ),
     );
   }

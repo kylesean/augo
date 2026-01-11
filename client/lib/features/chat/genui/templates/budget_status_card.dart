@@ -42,7 +42,12 @@ class BudgetStatusCard extends StatelessWidget {
 
     // 检查是单个预算还是摘要
     if (data.containsKey('budget')) {
-      return _buildSingleBudgetCard(context, theme, colors, data['budget']);
+      return _buildSingleBudgetCard(
+        context,
+        theme,
+        colors,
+        data['budget'] as Map<String, dynamic>,
+      );
     } else {
       return _buildBudgetSummaryCard(context, theme, colors);
     }

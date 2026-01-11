@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import '../models/tool_call_info.dart';
 import '../../../i18n/strings.g.dart';
+import 'dart:async';
 
 /// A simplified row showing tool execution status
 /// Consistent with the semantic "Processing..." indicator
@@ -34,7 +35,7 @@ class _ToolExecutionBlockState extends State<ToolExecutionBlock>
 
     if (widget.toolCall.status == ToolExecutionStatus.running ||
         widget.toolCall.status == ToolExecutionStatus.pending) {
-      _controller.repeat();
+      unawaited(_controller.repeat());
     }
     // cancelled/success/error 状态不启动动画
   }
@@ -45,7 +46,7 @@ class _ToolExecutionBlockState extends State<ToolExecutionBlock>
     if (widget.toolCall.status == ToolExecutionStatus.running ||
         widget.toolCall.status == ToolExecutionStatus.pending) {
       if (!_controller.isAnimating) {
-        _controller.repeat();
+        unawaited(_controller.repeat());
       }
     } else {
       _controller.stop();

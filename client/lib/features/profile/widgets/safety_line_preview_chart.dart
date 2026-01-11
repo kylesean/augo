@@ -1,4 +1,4 @@
-// features/profile/widgets/safety_line_preview_chart.dart
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'dart:math' as math;
@@ -29,7 +29,7 @@ class _SafetyLinePreviewChartState extends State<SafetyLinePreviewChart>
       parent: _animationController,
       curve: Curves.easeInOut,
     );
-    _animationController.forward();
+    unawaited(_animationController.forward());
   }
 
   @override
@@ -37,7 +37,7 @@ class _SafetyLinePreviewChartState extends State<SafetyLinePreviewChart>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.safetyLineValue != widget.safetyLineValue) {
       _animationController.reset();
-      _animationController.forward();
+      unawaited(_animationController.forward());
     }
   }
 

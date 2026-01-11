@@ -40,9 +40,8 @@ class BudgetAnalysisCard extends ConsumerWidget {
     final periodDays = data['period_days'] as int? ?? 90;
     final byCategory = data['by_category'] as Map<String, dynamic>? ?? {};
     final trends = data['trends'] as Map<String, dynamic>? ?? {};
-    final topSpenders = data['top_spenders'] as List? ?? [];
-    final suggestions = data['suggestions'] as List? ?? [];
-    // aiInsight 已移除 - LLM 的流式文本输出已包含分析内容
+    final topSpenders = data['top_spenders'] as List<dynamic>? ?? [];
+    final suggestions = data['suggestions'] as List<dynamic>? ?? [];
 
     return Container(
       width: double.infinity,
@@ -349,7 +348,7 @@ class BudgetAnalysisCard extends ConsumerWidget {
   Widget _buildTopSpendersSection(
     FThemeData theme,
     FColors colors,
-    List topSpenders,
+    List<dynamic> topSpenders,
     String currency,
   ) {
     return Padding(
@@ -435,7 +434,7 @@ class BudgetAnalysisCard extends ConsumerWidget {
   Widget _buildSuggestionsSection(
     FThemeData theme,
     FColors colors,
-    List suggestions,
+    List<dynamic> suggestions,
   ) {
     // 使用主题 primary 色的变体，保持 warning 语义但与主题统一
     final accentColor = colors.primary;

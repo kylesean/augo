@@ -40,9 +40,9 @@ class ChatInputNotifier extends _$ChatInputNotifier {
   String _textBeforeSpeechSession = '';
   Timer? _noSpeechInputTimer;
   bool _isManualStop = false;
-  StreamSubscription? _resultSubscription;
-  StreamSubscription? _statusSubscription;
-  StreamSubscription? _errorSubscription;
+  StreamSubscription<String>? _resultSubscription;
+  StreamSubscription<String>? _statusSubscription;
+  StreamSubscription<String>? _errorSubscription;
 
   @override
   ChatInputState build(OnSendMessageCallback onSendMessage) {
@@ -97,9 +97,9 @@ class ChatInputNotifier extends _$ChatInputNotifier {
     _logger.info('Cleaning up current speech service...');
 
     // Cancel all subscriptions
-    _resultSubscription?.cancel();
-    _statusSubscription?.cancel();
-    _errorSubscription?.cancel();
+    unawaited(_resultSubscription?.cancel());
+    unawaited(_statusSubscription?.cancel());
+    unawaited(_errorSubscription?.cancel());
     _noSpeechInputTimer?.cancel();
 
     _resultSubscription = null;
@@ -108,7 +108,7 @@ class ChatInputNotifier extends _$ChatInputNotifier {
     _noSpeechInputTimer = null;
 
     // Release old service
-    _speechService?.dispose();
+    unawaited(_speechService?.dispose());
     _speechService = null;
 
     // Reset state flags
@@ -189,13 +189,15 @@ class ChatInputNotifier extends _$ChatInputNotifier {
       }
 
       if (state.hintType == HintType.speechNotRecognized) {
-        Future.delayed(const Duration(seconds: 2), () {
-          if (state.hintType == HintType.speechNotRecognized &&
-              !state.isListening &&
-              !state.isLoadingResponse) {
-            state = state.copyWith(hintType: HintType.normal);
-          }
-        });
+        unawaited(
+          Future<void>.delayed(const Duration(seconds: 2), () {
+            if (state.hintType == HintType.speechNotRecognized &&
+                !state.isListening &&
+                !state.isLoadingResponse) {
+              state = state.copyWith(hintType: HintType.normal);
+            }
+          }),
+        );
       }
     } else if (!state.isListening && isCurrentlyListening) {
       _logger.info("Started listening.");
@@ -316,7 +318,7 @@ class ChatInputNotifier extends _$ChatInputNotifier {
           _logger.info(
             "No valid speech input after 30 seconds, stopping actively",
           );
-          _speechService?.stopListening();
+          unawaited(_speechService?.stopListening());
         }
       });
     } catch (e) {
@@ -335,7 +337,7 @@ class ChatInputNotifier extends _$ChatInputNotifier {
     if (state.isListening) {
       _logger.info("User manually input, stopping current speech listening");
       _noSpeechInputTimer?.cancel();
-      _speechService?.stopListening();
+      unawaited(_speechService?.stopListening());
     }
     _textBeforeSpeechSession = newText;
     state = state.copyWith(text: newText, hintType: HintType.normal);
@@ -444,7 +446,7 @@ class ChatInputNotifier extends _$ChatInputNotifier {
       showError: false,
       errorMessage: '',
     );
-    _uploadFilesInBackground(files);
+    unawaited(_uploadFilesInBackground(files));
   }
 
   void removeSelectedFile(int index) {

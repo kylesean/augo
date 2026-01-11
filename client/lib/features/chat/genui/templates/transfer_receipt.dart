@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:augo/i18n/strings.g.dart';
@@ -212,10 +213,12 @@ class _TransferAnimationState extends State<_TransferAnimation>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    )..repeat();
+    unawaited(
+      (_controller = AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 1500),
+      )).repeat(),
+    );
   }
 
   @override

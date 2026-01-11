@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
 import 'package:augo/i18n/strings.g.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'dart:async';
 
 import '../../models/comment_model.dart';
 import '../../providers/comment_providers.dart';
@@ -87,7 +88,7 @@ class CommentItemWidget extends ConsumerWidget {
           style: FButtonStyle.ghost(),
           onPress: () {
             Navigator.of(context).pop();
-            _showDeleteConfirmDialog(context, ref);
+            unawaited(_showDeleteConfirmDialog(context, ref));
           },
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -113,18 +114,20 @@ class CommentItemWidget extends ConsumerWidget {
       return;
     }
 
-    showModalBottomSheet(
-      context: context, // Use the context of CommentItemWidget
-      builder: (sheetContext) {
-        return Container(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: actions,
-          ),
-        );
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context, // Use the context of CommentItemWidget
+        builder: (sheetContext) {
+          return Container(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: actions,
+            ),
+          );
+        },
+      ),
     );
   }
 

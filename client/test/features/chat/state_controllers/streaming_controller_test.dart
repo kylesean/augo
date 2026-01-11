@@ -79,7 +79,7 @@ void main() {
         controller.startInitialDelayTimer();
 
         // Wait for delay + buffer
-        await Future.delayed(const Duration(milliseconds: 150));
+        await Future<void>.delayed(const Duration(milliseconds: 150));
 
         expect(lastDelayExceededReceived, "Exceeded");
       },
@@ -96,7 +96,7 @@ void main() {
       verify(mockStreamState.markFirstChunkReceived()).called(1);
 
       // Wait to ensure timer was cancelled (callback shouldn't fire)
-      await Future.delayed(const Duration(milliseconds: 150));
+      await Future<void>.delayed(const Duration(milliseconds: 150));
       expect(lastDelayExceededReceived, null);
     });
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:async';
 
 import '../../profile/models/financial_account.dart';
 import '../../profile/providers/financial_account_provider.dart';
@@ -141,9 +142,11 @@ class _FinancialAccountsPageState extends ConsumerState<FinancialAccountsPage> {
               const SizedBox(height: 24),
               FButton(
                 onPress: () {
-                  ref
-                      .read(financialAccountProvider.notifier)
-                      .loadFinancialAccounts();
+                  unawaited(
+                    ref
+                        .read(financialAccountProvider.notifier)
+                        .loadFinancialAccounts(),
+                  );
                 },
                 child: Text(t.common.retry),
               ),
@@ -742,13 +745,17 @@ class _FinancialAccountsPageState extends ConsumerState<FinancialAccountsPage> {
                           onPress: () {
                             Navigator.of(context).pop(); // 关闭抽屉栏
                             // 延迟导航，等待抽屉栏关闭动画完成
-                            Future.delayed(
-                              const Duration(milliseconds: 100),
-                              () {
-                                if (context.mounted) {
-                                  context.pushNamed('budgetOverview');
-                                }
-                              },
+                            unawaited(
+                              Future<void>.delayed(
+                                const Duration(milliseconds: 100),
+                                () {
+                                  if (context.mounted) {
+                                    unawaited(
+                                      context.pushNamed('budgetOverview'),
+                                    );
+                                  }
+                                },
+                              ),
                             );
                           },
                         ),
@@ -759,13 +766,19 @@ class _FinancialAccountsPageState extends ConsumerState<FinancialAccountsPage> {
                           onPress: () {
                             Navigator.of(context).pop(); // 关闭抽屉栏
                             // 延迟导航，等待抽屉栏关闭动画完成
-                            Future.delayed(
-                              const Duration(milliseconds: 100),
-                              () {
-                                if (context.mounted) {
-                                  context.pushNamed('recurringTransactions');
-                                }
-                              },
+                            unawaited(
+                              Future<void>.delayed(
+                                const Duration(milliseconds: 100),
+                                () {
+                                  if (context.mounted) {
+                                    unawaited(
+                                      context.pushNamed(
+                                        'recurringTransactions',
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
                             );
                           },
                         ),
@@ -863,25 +876,29 @@ class _FinancialAccountsPageState extends ConsumerState<FinancialAccountsPage> {
 
   /// 显示财务安全线设置
   void _showSafetyThresholdSettings(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (BuildContext sheetContext) {
-        return const _SafetyThresholdBottomSheet();
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (BuildContext sheetContext) {
+          return const _SafetyThresholdBottomSheet();
+        },
+      ),
     );
   }
 
   /// 显示日常消费预估设置
   void _showDailySpendingSettings(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (BuildContext sheetContext) {
-        return const _DailySpendingBottomSheet();
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (BuildContext sheetContext) {
+          return const _DailySpendingBottomSheet();
+        },
+      ),
     );
   }
 }

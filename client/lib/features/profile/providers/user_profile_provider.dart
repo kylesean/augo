@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../services/profile_service.dart';
 import '../models/user_info.dart';
 import '../../chat/services/file_upload_service.dart';
+import 'dart:async';
 
 part 'user_profile_provider.g.dart';
 
@@ -45,7 +46,7 @@ class UserProfile extends _$UserProfile {
   @override
   UserProfileState build() {
     // Auto-load user info when provider is first accessed
-    Future.microtask(loadUser);
+    unawaited(Future.microtask(loadUser));
     return const UserProfileState(isLoading: true);
   }
 

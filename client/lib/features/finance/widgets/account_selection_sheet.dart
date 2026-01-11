@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
 import 'package:augo/i18n/strings.g.dart';
 import 'package:augo/shared/widgets/themed_icon.dart';
+import 'dart:async';
 
 import '../../profile/models/financial_account.dart';
 import '../../profile/providers/financial_account_provider.dart';
@@ -60,7 +61,7 @@ class _AccountSelectionSheetState extends ConsumerState<AccountSelectionSheet> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(financialAccountProvider.notifier).loadFinancialAccounts();
+      unawaited(ref.read(financialAccountProvider.notifier).loadFinancialAccounts());
     });
   }
 

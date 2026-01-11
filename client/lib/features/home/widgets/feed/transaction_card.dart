@@ -161,9 +161,11 @@ class TransactionCard extends ConsumerWidget {
       ),
       child: AppCard(
         onTap: () {
-          context.pushNamed(
-            'transactionDetail',
-            pathParameters: {'transactionId': transaction.id},
+          unawaited(
+            context.pushNamed(
+              'transactionDetail',
+              pathParameters: {'transactionId': transaction.id},
+            ),
           );
         },
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

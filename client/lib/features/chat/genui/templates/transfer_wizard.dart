@@ -37,11 +37,11 @@ class TransferWizardData {
     return TransferWizardData(
       amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
       currency: json['currency'] as String? ?? 'CNY',
-      sourceAccounts: (json['sourceAccounts'] as List? ?? [])
-          .map((e) => Map<String, dynamic>.from(e as Map))
+      sourceAccounts: (json['sourceAccounts'] as List<dynamic>? ?? [])
+          .map((e) => Map<String, dynamic>.from(e as Map<dynamic, dynamic>))
           .toList(),
-      targetAccounts: (json['targetAccounts'] as List? ?? [])
-          .map((e) => Map<String, dynamic>.from(e as Map))
+      targetAccounts: (json['targetAccounts'] as List<dynamic>? ?? [])
+          .map((e) => Map<String, dynamic>.from(e as Map<dynamic, dynamic>))
           .toList(),
       preselectedSourceId: json['preselectedSourceId'] as String?,
       preselectedTargetId: json['preselectedTargetId'] as String?,
@@ -375,7 +375,7 @@ class _TransferWizardState extends State<TransferWizard> {
     required String label,
     required String? accountId,
     required List<Map<String, dynamic>> accounts,
-    required Function(String) onSelect,
+    required void Function(String) onSelect,
     required FThemeData theme,
     required FColors colors,
     required bool isSource,
