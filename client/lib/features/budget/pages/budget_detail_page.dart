@@ -606,30 +606,32 @@ class _BudgetDetailPageState extends ConsumerState<BudgetDetailPage> {
   }
 
   void _showDeleteConfirmation() {
-    unawaited(showFDialog(
-      context: context,
-      builder: (context, style, animation) => FDialog(
-        style: style.call,
-        animation: animation,
-        title: Text(t.budget.deleteBudget),
-        body: Text(t.budget.deleteConfirm),
-        actions: [
-          FButton(
-            style: FButtonStyle.destructive(),
-            onPress: () async {
-              await Navigator.maybePop(context);
-              unawaited(_handleDelete());
-            },
-            child: Text(t.common.delete),
-          ),
-          FButton(
-            style: FButtonStyle.outline(),
-            onPress: () => Navigator.pop(context),
-            child: Text(t.common.cancel),
-          ),
-        ],
+    unawaited(
+      showFDialog(
+        context: context,
+        builder: (context, style, animation) => FDialog(
+          style: style.call,
+          animation: animation,
+          title: Text(t.budget.deleteBudget),
+          body: Text(t.budget.deleteConfirm),
+          actions: [
+            FButton(
+              style: FButtonStyle.destructive(),
+              onPress: () async {
+                await Navigator.maybePop(context);
+                unawaited(_handleDelete());
+              },
+              child: Text(t.common.delete),
+            ),
+            FButton(
+              style: FButtonStyle.outline(),
+              onPress: () => Navigator.pop(context),
+              child: Text(t.common.cancel),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   Future<void> _handleDelete() async {

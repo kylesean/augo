@@ -98,7 +98,11 @@ class AmountSettingsPage extends ConsumerWidget {
                       ? Icon(FIcons.check, size: 20, color: colors.primary)
                       : null,
                   onPress: () {
-                    unawaited(ref.read(amountThemeProvider.notifier).setTheme(option.id));
+                    unawaited(
+                      ref
+                          .read(amountThemeProvider.notifier)
+                          .setTheme(option.id),
+                    );
                     ToastService.success(
                       description: Text(t.settings.appearanceUpdated),
                     );

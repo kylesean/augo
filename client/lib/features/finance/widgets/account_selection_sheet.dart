@@ -61,7 +61,9 @@ class _AccountSelectionSheetState extends ConsumerState<AccountSelectionSheet> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      unawaited(ref.read(financialAccountProvider.notifier).loadFinancialAccounts());
+      unawaited(
+        ref.read(financialAccountProvider.notifier).loadFinancialAccounts(),
+      );
     });
   }
 

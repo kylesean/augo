@@ -12,10 +12,10 @@ from typing import (
     Union,
 )
 
-from evals.schemas import ScoreSchema
 from langfuse.api.resources.commons.types.trace_with_details import TraceWithDetails
 
 from app.core.logging import logger
+from evals.schemas import ScoreSchema
 
 
 def format_messages(messages: list[dict]) -> str:
