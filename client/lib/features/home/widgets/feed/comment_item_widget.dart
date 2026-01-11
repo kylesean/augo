@@ -79,7 +79,7 @@ class CommentItemWidget extends ConsumerWidget {
     final String currentLoggedInUserId = ref.watch(currentUserIdProvider);
     final bool canDelete = comment.userId == currentLoggedInUserId;
 
-    List<Widget> actions = [];
+    final List<Widget> actions = [];
 
     if (canDelete) {
       actions.add(

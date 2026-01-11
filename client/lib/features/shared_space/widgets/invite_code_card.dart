@@ -119,12 +119,12 @@ class InviteCodeCard extends StatelessWidget {
                   child: FButton(
                     style: FButtonStyle.outline(),
                     onPress: () => _copyInviteCode(context),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(FIcons.copy, size: 16),
-                        const SizedBox(width: 8),
-                        const Text('复制邀请码'),
+                        SizedBox(width: 8),
+                        Text('复制邀请码'),
                       ],
                     ),
                   ),
@@ -133,12 +133,12 @@ class InviteCodeCard extends StatelessWidget {
                 Expanded(
                   child: FButton(
                     onPress: () => _shareInviteLink(context),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(FIcons.share, size: 16),
-                        const SizedBox(width: 8),
-                        const Text('分享邀请链接'),
+                        SizedBox(width: 8),
+                        Text('分享邀请链接'),
                       ],
                     ),
                   ),

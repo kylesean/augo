@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:forui/forui.dart';
@@ -67,7 +68,7 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
         suffixes: [
           if (state.unreadCount > 0)
             FHeaderAction(
-              icon: Icon(FIcons.checkCheck),
+              icon: const Icon(FIcons.checkCheck),
               onPress: _markAllAsRead,
             ),
         ],
@@ -213,11 +214,13 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
         ToastService.show(description: const Text('Invite accepted!'));
 
         // Refresh shared space list
-        ref.read(sharedSpaceProvider.notifier).loadSpaces(refresh: true);
+        unawaited(
+          ref.read(sharedSpaceProvider.notifier).loadSpaces(refresh: true),
+        );
 
         // Navigate to space detail
         if (mounted) {
-          context.push('/profile/shared-space/$spaceId');
+          unawaited(context.push('/profile/shared-space/$spaceId'));
         }
       } else {
         ToastService.show(description: const Text('Invite rejected'));

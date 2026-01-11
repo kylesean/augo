@@ -52,7 +52,7 @@ class PermissionDiagnostics {
       result['suggestions'] = _generateSuggestions(result);
 
       // Cleanup
-      recorder.dispose();
+      await recorder.dispose();
 
       _logger.info('Permission diagnostics completed');
       return result;

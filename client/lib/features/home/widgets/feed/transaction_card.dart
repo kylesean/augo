@@ -1,3 +1,4 @@
+import "dart:async";
 // features/home/widgets/feed/transaction_card.dart
 import 'package:flutter/material.dart';
 import 'package:augo/shared/widgets/cards/app_card.dart';
@@ -100,16 +101,16 @@ class TransactionCard extends ConsumerWidget {
     final confirmed = await _showDeleteConfirmation(context);
     if (!confirmed) return false;
 
-    AppHaptics.medium();
+    unawaited(AppHaptics.medium());
 
     final notifier = ref.read(transactionFeedProvider.notifier);
     final success = await notifier.deleteTransaction(transaction.id);
 
     if (success && context.mounted) {
-      AppHaptics.success();
+      unawaited(AppHaptics.success());
       TopToast.success(context, t.transaction.deleted);
     } else if (!success && context.mounted) {
-      AppHaptics.error();
+      unawaited(AppHaptics.error());
       TopToast.error(context, t.transaction.deleteFailed);
     }
 
@@ -248,7 +249,7 @@ class TransactionCard extends ConsumerWidget {
 
   /// 构建标签行
   Widget _buildTagsRow(FThemeData theme, FColors colors, List<String> tags) {
-    final maxVisible = 2;
+    const maxVisible = 2;
     final visibleTags = tags.take(maxVisible).toList();
     final extraCount = tags.length - maxVisible;
 

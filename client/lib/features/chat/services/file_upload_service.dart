@@ -178,7 +178,7 @@ class FileUploadService {
 
     for (final file in files) {
       // Determine correct MIME type based on file extension
-      String? mimeType = _getMimeTypeFromExtension(file.name);
+      final mimeType = _getMimeTypeFromExtension(file.name);
       _logger.fine('File: ${file.name}, MIME: ${mimeType ?? "auto"}');
 
       late MultipartFile multipartFile;

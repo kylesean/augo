@@ -224,7 +224,7 @@ class _CommentInputBarState extends ConsumerState<CommentInputBar> {
                     )
                   : FButton.icon(
                       onPress: _submitComment,
-                      child: Icon(FIcons.send),
+                      child: const Icon(FIcons.send),
                     ),
             ],
           ),

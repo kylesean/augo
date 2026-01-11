@@ -1,4 +1,5 @@
 // features/chat/services/sound_feedback_service.dart
+import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:logging/logging.dart';
@@ -92,8 +93,8 @@ class SoundFeedbackService {
       _isInitialized = true;
 
       // Clean up players
-      _startPlayer?.dispose();
-      _stopPlayer?.dispose();
+      unawaited(_startPlayer?.dispose());
+      unawaited(_stopPlayer?.dispose());
       _startPlayer = null;
       _stopPlayer = null;
     }

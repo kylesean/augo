@@ -1,3 +1,4 @@
+import "dart:async";
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -746,7 +747,7 @@ class _ChatConversationDrawerState
       if (!context.mounted) return;
 
       // Refresh the conversation list
-      ref.read(paginatedConversationProvider.notifier).refresh();
+      unawaited(ref.read(paginatedConversationProvider.notifier).refresh());
 
       // If we are in search mode, refresh search results as well
       final searchState = ref.read(conversationSearchProvider);
@@ -760,7 +761,9 @@ class _ChatConversationDrawerState
       // If we deleted the current conversation, navigate to new chat and reset history
       if (isSelected) {
         // Reset chat history state
-        ref.read(chatHistoryProvider.notifier).createNewConversation();
+        unawaited(
+          ref.read(chatHistoryProvider.notifier).createNewConversation(),
+        );
         context.goNamed('chat');
       }
 
@@ -1180,7 +1183,7 @@ class _ChatConversationDrawerState
                             color: theme.colors.mutedForeground,
                           ),
                           const SizedBox(width: 8),
-                          Expanded(child: _FullscreenSearchTextField()),
+                          const Expanded(child: _FullscreenSearchTextField()),
                         ],
                       ),
                     ),

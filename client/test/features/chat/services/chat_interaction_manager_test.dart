@@ -86,7 +86,7 @@ void main() {
 
   group('ChatInteractionManager', () {
     test('addUserMessageAndGetResponse basic flow', () async {
-      final text = "Hello AI";
+      const text = "Hello AI";
 
       await manager.addUserMessageAndGetResponse(text);
 
@@ -115,12 +115,12 @@ void main() {
     });
 
     test('addUserMessageAndGetResponse with attachments', () async {
-      final text = "Check this file";
+      const text = "Check this file";
       final fakeFile = FakeXFile('test.jpg', Uint8List.fromList([0, 1, 2, 3]));
 
       final attachment = PendingMessageAttachment(
         file: fakeFile,
-        uploadInfo: UploadedAttachmentInfo(
+        uploadInfo: const UploadedAttachmentInfo(
           id: 'att-1',
           attachmentId: 'att-1',
           originalName: 'test.jpg',
@@ -169,7 +169,7 @@ void main() {
     });
 
     test('handleOptimisticUserMessage basic flow', () async {
-      final text = "Optimistic Msg";
+      const text = "Optimistic Msg";
 
       await manager.handleOptimisticUserMessage(text);
 

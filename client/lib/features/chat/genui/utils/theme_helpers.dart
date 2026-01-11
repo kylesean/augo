@@ -90,72 +90,72 @@ CategoryStyle getCategoryStyle(String? categoryKey) {
   switch (categoryKey?.toLowerCase()) {
     case 'dining':
     case '1':
-      return CategoryStyle(
+      return const CategoryStyle(
         name: '餐饮美食',
         icon: Icons.restaurant,
-        color: const Color(0xFFF97316), // Orange
+        color: Color(0xFFF97316), // Orange
       );
     case 'transport':
     case '2':
-      return CategoryStyle(
+      return const CategoryStyle(
         name: '交通出行',
         icon: Icons.directions_car,
-        color: const Color(0xFF3B82F6), // Blue
+        color: Color(0xFF3B82F6), // Blue
       );
     case 'shopping':
     case '3':
-      return CategoryStyle(
+      return const CategoryStyle(
         name: '购物消费',
         icon: Icons.shopping_bag,
-        color: const Color(0xFFEC4899), // Pink
+        color: Color(0xFFEC4899), // Pink
       );
     case 'life':
     case '4':
-      return CategoryStyle(
+      return const CategoryStyle(
         name: '生活服务',
         icon: Icons.home,
-        color: const Color(0xFF10B981), // Green
+        color: Color(0xFF10B981), // Green
       );
     case 'medical':
     case '5':
-      return CategoryStyle(
+      return const CategoryStyle(
         name: '医疗健康',
         icon: Icons.medical_services,
-        color: const Color(0xFFEF4444), // Red
+        color: Color(0xFFEF4444), // Red
       );
     case 'education':
     case '6':
-      return CategoryStyle(
+      return const CategoryStyle(
         name: '教育培训',
         icon: Icons.school,
-        color: const Color(0xFF8B5CF6), // Purple
+        color: Color(0xFF8B5CF6), // Purple
       );
     case 'entertainment':
     case '7':
-      return CategoryStyle(
+      return const CategoryStyle(
         name: '休闲娱乐',
         icon: Icons.sports_esports,
-        color: const Color(0xFFF59E0B), // Amber
+        color: Color(0xFFF59E0B), // Amber
       );
     case 'salary':
     case 'income':
     case '8':
-      return CategoryStyle(
+      return const CategoryStyle(
         name: '工资收入',
         icon: Icons.attach_money,
-        color: const Color(0xFF22C55E), // Green
+        color: Color(0xFF22C55E), // Green
       );
     case 'transfer':
-      return CategoryStyle(
+      return const CategoryStyle(
         name: '转账',
         icon: Icons.swap_horiz,
-        color: const Color(0xFF6366F1), // Indigo
+        color: Color(0xFF6366F1), // Indigo
       );
     default:
-      return CategoryStyle(
+      return const CategoryStyle(
         name: '其他',
         icon: Icons.receipt_long,
-        color: const Color(0xFFF97316), // Default orange
+        color: Color(0xFFF97316), // Default orange
       );
   }
 }

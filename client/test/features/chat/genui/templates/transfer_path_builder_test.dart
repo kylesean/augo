@@ -108,7 +108,7 @@ void main() {
       SharedPreferences.setMockInitialValues({});
       final prefs = await SharedPreferences.getInstance();
 
-      List<UiEvent> dispatchedEvents = [];
+      final List<UiEvent> dispatchedEvents = [];
       // Use unique surfaceId to avoid cache interference
       final data = Map<String, dynamic>.from(testData);
       data['_surfaceId'] = 'surface_confirm_test';

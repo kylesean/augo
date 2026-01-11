@@ -645,7 +645,7 @@ class _BudgetFormPageState extends ConsumerState<BudgetFormPage> {
       }
 
       // Refresh budget list
-      ref.read(budgetSummaryProvider.notifier).refresh();
+      await ref.read(budgetSummaryProvider.notifier).refresh();
 
       if (mounted) {
         context.pop();

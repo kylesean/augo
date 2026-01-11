@@ -72,7 +72,7 @@ class _InviteSuccessPageState extends ConsumerState<InviteSuccessPage> {
         leading: FButton.icon(
           style: FButtonStyle.ghost(),
           onPress: () => context.pop(),
-          child: Icon(FIcons.x, size: 20),
+          child: const Icon(FIcons.x, size: 20),
         ),
       ),
       body: SafeArea(

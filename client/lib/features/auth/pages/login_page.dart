@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:augo/core/network/exceptions/app_exception.dart';
 import 'package:augo/features/auth/providers/auth_provider.dart';
 import 'package:augo/features/auth/providers/verification_provider.dart'; // Import new verification code Provider
@@ -52,7 +53,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
       // Use pushReplacement instead of go to avoid returning to login page
       if (mounted) {
-        GoRouter.of(this.context).pushReplacement('/home');
+        unawaited(GoRouter.of(this.context).pushReplacement('/home'));
       }
     } on AppException catch (e) {
       if (!mounted) return;

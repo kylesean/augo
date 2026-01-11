@@ -111,8 +111,8 @@ class CommentSectionWidget extends ConsumerWidget {
               if (replies.isNotEmpty ||
                   parentComments.indexOf(parent) < parentComments.length - 1) {
                 commentWidgets.add(
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
+                  const Padding(
+                    padding: EdgeInsets.symmetric(
                       horizontal: 16.0,
                       vertical: 8.0,
                     ),

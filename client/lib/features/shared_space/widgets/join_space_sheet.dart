@@ -144,7 +144,7 @@ class _JoinSpaceSheetState extends ConsumerState<JoinSpaceSheet> {
                 const SizedBox(height: 12),
                 FAlert(
                   style: FAlertStyle.destructive(),
-                  icon: Icon(FIcons.circleAlert, size: 16),
+                  icon: const Icon(FIcons.circleAlert, size: 16),
                   title: Text(_errorMessage!),
                 ),
               ],

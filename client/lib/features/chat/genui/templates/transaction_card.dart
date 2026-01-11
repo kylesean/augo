@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -430,7 +431,9 @@ class _TransactionCardState extends ConsumerState<TransactionCard> {
           ),
         );
 
-        ref.read(financialAccountProvider.notifier).loadFinancialAccounts();
+        unawaited(
+          ref.read(financialAccountProvider.notifier).loadFinancialAccounts(),
+        );
       } else {
         throw Exception(result['message'] ?? t.financial.saveFailed);
       }

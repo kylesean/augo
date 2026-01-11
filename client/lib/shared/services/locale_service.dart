@@ -1,4 +1,5 @@
 // shared/services/locale_service.dart
+import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../i18n/strings.g.dart';
 
@@ -51,7 +52,7 @@ class LocaleService {
 
       if (success) {
         // Apply new language settings
-        LocaleSettings.setLocale(locale);
+        unawaited(LocaleSettings.setLocale(locale));
       }
 
       return success;

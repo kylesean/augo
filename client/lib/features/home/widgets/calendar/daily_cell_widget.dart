@@ -36,7 +36,7 @@ class DailyCellWidget extends StatelessWidget {
     final baseHotForegroundColor = colors.primaryForeground;
 
     // Lowest heat background (near transparent or background color)
-    final baseColdBackgroundColor = Colors.transparent; // Or colors.background
+    const baseColdBackgroundColor = Colors.transparent; // Or colors.background
 
     // Lowest heat text color
     final baseColdForegroundColor = colors.foreground;

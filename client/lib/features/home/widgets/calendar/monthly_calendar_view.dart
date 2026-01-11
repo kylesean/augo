@@ -227,7 +227,7 @@ class MonthlyCalendarView extends ConsumerWidget {
                 1,
               );
               final firstWeekdayOfMonth = firstDayOfMonth.weekday;
-              int daysToPadAtStart =
+              final daysToPadAtStart =
                   firstWeekdayOfMonth -
                   1; // Assume Monday (1) corresponds to index 0, Sunday (7) to index 6
               final List<Widget> dayWidgets = [];
@@ -284,8 +284,8 @@ class MonthlyCalendarView extends ConsumerWidget {
               }
 
               // Fill beginning of next month
-              int totalCellsFilled = daysToPadAtStart + daysInMonth;
-              int daysToPadAtEnd = (totalCellsFilled % 7 == 0)
+              final totalCellsFilled = daysToPadAtStart + daysInMonth;
+              final daysToPadAtEnd = (totalCellsFilled % 7 == 0)
                   ? 0
                   : 7 - (totalCellsFilled % 7);
               final DateTime firstDayOfNextCalendarMonth = DateTime(

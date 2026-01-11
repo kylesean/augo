@@ -1267,7 +1267,10 @@ class _RecurringTransactionPageState
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(t.common.delete, style: TextStyle(color: Colors.red)),
+            child: Text(
+              t.common.delete,
+              style: const TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),

@@ -158,9 +158,9 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField>
     VoidCallback? currentAction = chatInputNotifier.onMainButtonPressed;
 
     // Disable input box during streaming response
-    bool canInteractWithTextField =
+    final canInteractWithTextField =
         !chatInputState.isListening && !isStreamingResponse;
-    bool canUseAddButton = !chatInputState.isListening && !isStreamingResponse;
+    final canUseAddButton = !chatInputState.isListening && !isStreamingResponse;
 
     // Whether in waiting state (requires breathing animation)
     final isWaitingState = isStreamingResponse || chatInputState.isListening;

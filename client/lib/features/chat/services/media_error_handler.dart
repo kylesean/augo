@@ -553,7 +553,7 @@ class MediaErrorHandler {
                   Navigator.of(context).pop();
                   onRetry();
                 },
-                child: Text('Select again'),
+                child: const Text('Select again'),
               ),
           ],
         );

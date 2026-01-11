@@ -297,25 +297,27 @@ class StreamingController {
       _pendingCancelCompleter = Completer<void>();
       final completer = _pendingCancelCompleter!;
 
-      cancelLastTurn(sessionId)
-          .then((success) {
-            if (success) {
-              _logger.info(
-                'StreamingController: Checkpoint cleaned successfully',
-              );
-            } else {
-              _logger.info('StreamingController: Checkpoint cleanup failed');
-            }
-          })
-          .catchError((e) {
-            _logger.warning('StreamingController: Cancel error: $e');
-          })
-          .whenComplete(() {
-            if (!completer.isCompleted) {
-              completer.complete();
-            }
-            _pendingCancelCompleter = null;
-          });
+      unawaited(
+        cancelLastTurn(sessionId)
+            .then((success) {
+              if (success) {
+                _logger.info(
+                  'StreamingController: Checkpoint cleaned successfully',
+                );
+              } else {
+                _logger.info('StreamingController: Checkpoint cleanup failed');
+              }
+            })
+            .catchError((e) {
+              _logger.warning('StreamingController: Cancel error: $e');
+            })
+            .whenComplete(() {
+              if (!completer.isCompleted) {
+                completer.complete();
+              }
+              _pendingCancelCompleter = null;
+            }),
+      );
     }
 
     _logger.info('StreamingController: Pending operation cancelled');
@@ -342,7 +344,7 @@ class StreamingController {
 
   /// Cancel stream subscription and timers
   Future<void> cancelStreamAndTimers() async {
-    _streamSubscription?.cancel();
+    await _streamSubscription?.cancel();
     _initialResponseDelayTimer?.cancel();
   }
 

@@ -1,4 +1,5 @@
 // features/chat/services/media_thumbnail_service.dart
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -202,10 +203,12 @@ class MediaThumbnailService {
     for (final mediaFile in mediaFiles) {
       if (mediaFile.type == MediaType.image && !hasCachedThumbnail(mediaFile)) {
         // Generate asynchronously without waiting for result
-        generateThumbnail(mediaFile).catchError((error) {
-          _logger.warning('Failed to preload thumbnail', error);
-          return null;
-        });
+        unawaited(
+          generateThumbnail(mediaFile).catchError((error) {
+            _logger.warning('Failed to preload thumbnail', error);
+            return null;
+          }),
+        );
       }
     }
   }

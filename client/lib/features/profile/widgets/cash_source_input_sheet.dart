@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:forui/forui.dart';
 import 'package:decimal/decimal.dart';
@@ -281,17 +282,19 @@ class _FinancialAccountInputSheetState
     } catch (e) {
       if (mounted) {
         // Show error dialog instead of SnackBar
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Save Failed'),
-            content: Text(e.toString()),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
+        unawaited(
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Save Failed'),
+              content: Text(e.toString()),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
           ),
         );
       }

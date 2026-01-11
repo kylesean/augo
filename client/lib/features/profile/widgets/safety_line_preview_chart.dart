@@ -104,7 +104,7 @@ class SafetyLineChartPainter extends CustomPainter {
     paint.color = colorScheme.border;
 
     // Y-axis
-    canvas.drawLine(Offset(40, 20), Offset(40, size.height - 40), paint);
+    canvas.drawLine(const Offset(40, 20), Offset(40, size.height - 40), paint);
 
     // X-axis
     canvas.drawLine(
@@ -160,7 +160,7 @@ class SafetyLineChartPainter extends CustomPainter {
 
     // Calculate safety line Y position
     final chartHeight = size.height - 60;
-    final maxValue = 8000.0; // Chart max value
+    const maxValue = 8000.0; // Chart max value
     final safetyLineY =
         20 + chartHeight - (safetyLineValue / maxValue * chartHeight);
 
@@ -177,7 +177,7 @@ class SafetyLineChartPainter extends CustomPainter {
     final textPainter = TextPainter(
       text: TextSpan(
         text: labelText,
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.red,
           fontSize: 12,
           fontWeight: FontWeight.w600,

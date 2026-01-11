@@ -161,7 +161,7 @@ class ChatInputNotifier extends _$ChatInputNotifier {
         return;
       }
 
-      String recognizedNewContent = state.text
+      final recognizedNewContent = state.text
           .replaceFirst(_textBeforeSpeechSession, '')
           .trim();
 
@@ -239,7 +239,7 @@ class ChatInputNotifier extends _$ChatInputNotifier {
 
   void _onSpeechResult(String recognizedText) {
     _noSpeechInputTimer?.cancel();
-    String newText = _textBeforeSpeechSession.isEmpty
+    final newText = _textBeforeSpeechSession.isEmpty
         ? recognizedText
         : '${_textBeforeSpeechSession.trim()} $recognizedText'.trim();
     _logger.info(

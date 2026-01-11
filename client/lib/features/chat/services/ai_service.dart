@@ -63,7 +63,7 @@ class AIService {
     if (token == null || token.isEmpty) {
       _logger.info("AIService: ERROR - No auth token found!");
       controller.addError("User not logged in or token invalid.");
-      controller.close();
+      unawaited(controller.close());
       return controller.stream;
     }
     _logger.info("AIService: Using access token for authentication");
@@ -240,7 +240,7 @@ class AIService {
       _logger.info("AIService: StackTrace: $stackTrace");
       _logger.info("AIService: =============================================");
       controller.addError("Failed to create SSE connection: ${e.toString()}");
-      controller.close();
+      unawaited(controller.close());
       return controller.stream;
     }
 
@@ -257,7 +257,7 @@ class AIService {
 
     if (_currentController != null && !_currentController!.isClosed) {
       _logger.info("AIService: Closing existing controller");
-      _currentController!.close();
+      unawaited(_currentController!.close());
       _currentController = null;
     }
   }

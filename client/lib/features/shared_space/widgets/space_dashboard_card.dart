@@ -260,7 +260,7 @@ class SpaceDashboardCard extends StatelessWidget {
   }
 
   String _formatAmount(dynamic amount) {
-    String valueStr = amount.toString();
+    final valueStr = amount.toString();
     final value = double.tryParse(valueStr) ?? 0.0;
     final parts = value.toStringAsFixed(2).split('.');
     final intPart = parts[0];

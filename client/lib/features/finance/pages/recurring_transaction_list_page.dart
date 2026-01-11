@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
@@ -301,7 +302,7 @@ class _RecurringTransactionListPageState
         DismissDirection.startToEnd: 0.4,
       },
       confirmDismiss: (direction) async {
-        HapticFeedback.selectionClick();
+        unawaited(HapticFeedback.selectionClick());
         if (direction == DismissDirection.endToStart) {
           // 左滑 → 删除
           return await _showDeleteConfirmDialog(transaction);
@@ -511,7 +512,7 @@ class _RecurringTransactionListPageState
     );
 
     if (confirmed) {
-      HapticFeedback.mediumImpact();
+      unawaited(HapticFeedback.mediumImpact());
       final success = await ref
           .read(recurringTransactionProvider.notifier)
           .delete(transaction.id);
@@ -575,10 +576,12 @@ class _RecurringTransactionListPageState
     );
 
     if (confirmed) {
-      HapticFeedback.mediumImpact();
-      ref
-          .read(recurringTransactionProvider.notifier)
-          .toggleActive(transaction.id, newState);
+      unawaited(HapticFeedback.mediumImpact());
+      unawaited(
+        ref
+            .read(recurringTransactionProvider.notifier)
+            .toggleActive(transaction.id, newState),
+      );
 
       if (mounted) {
         TopToast.success(

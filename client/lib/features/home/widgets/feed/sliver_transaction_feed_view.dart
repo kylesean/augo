@@ -124,7 +124,7 @@ class SliverTransactionFeedView extends ConsumerWidget {
     final TransactionFeedState feedState = ref.watch(transactionFeedProvider);
     final List<TransactionModel> transactions = feedState.transactions;
 
-    bool shouldShowSkeletonDueToTypeMismatch =
+    final shouldShowSkeletonDueToTypeMismatch =
         intendedFeedType != globalCurrentFeedType;
 
     // Skeleton state
@@ -136,7 +136,7 @@ class SliverTransactionFeedView extends ConsumerWidget {
         delegate: SliverChildBuilderDelegate(
           (context, index) {
             if (index.isOdd) {
-              return FDivider(axis: Axis.horizontal);
+              return const FDivider(axis: Axis.horizontal);
             }
             return _buildTransactionCardSkeleton(context);
           },

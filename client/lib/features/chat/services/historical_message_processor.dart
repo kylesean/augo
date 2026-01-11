@@ -35,7 +35,7 @@ class HistoricalMessageProcessor {
       final message = rawMessages[i];
 
       // Set default timestamp for messages without one
-      var processedMessage = message.timestamp == null
+      final processedMessage = message.timestamp == null
           ? message.copyWith(timestamp: DateTime.now())
           : message;
 
@@ -60,7 +60,7 @@ class HistoricalMessageProcessor {
         );
       }
 
-      var finalMessage = processedMessage.copyWith(
+      final finalMessage = processedMessage.copyWith(
         streamingStatus: StreamingStatus.completed,
         isTyping: false,
         attachments: normalizedAttachments,
@@ -107,7 +107,7 @@ class HistoricalMessageProcessor {
   }
 
   ChatMessage _mergeAiMessages(ChatMessage first, ChatMessage second) {
-    var mergedFullContent = [...first.fullContent, ...second.fullContent];
+    final mergedFullContent = [...first.fullContent, ...second.fullContent];
 
     // Deduplicate or group adjacent parts if necessary
     // For now, simple concatenation is correct for ordering

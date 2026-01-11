@@ -110,7 +110,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               final contact = args?['contact'] as String?;
               final verificationCode = args?['verificationCode'] as String?;
               if (contact == null || verificationCode == null) {
-                return Scaffold(
+                return const Scaffold(
                   body: Center(
                     child: Text(
                       "Registration flow error, missing required information.",
@@ -283,7 +283,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 path: '/ai',
                 name: 'ai',
                 builder: (context, state) {
-                  return AIChatPage(conversationId: null);
+                  return const AIChatPage(conversationId: null);
                 },
                 routes: [
                   GoRoute(

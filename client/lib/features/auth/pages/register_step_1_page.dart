@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -36,12 +37,14 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
 
   Future<void> _onNextPressed() async {
     if (_formKey.currentState!.validate()) {
-      context.pushNamed(
-        'registerStep2',
-        extra: {
-          'contact': _contactController.text,
-          'verificationCode': _codeController.text,
-        },
+      unawaited(
+        context.pushNamed(
+          'registerStep2',
+          extra: {
+            'contact': _contactController.text,
+            'verificationCode': _codeController.text,
+          },
+        ),
       );
     }
   }

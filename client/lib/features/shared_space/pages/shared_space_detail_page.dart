@@ -190,12 +190,12 @@ class _SharedSpaceDetailPageState extends ConsumerState<SharedSpaceDetailPage> {
             FButton.icon(
               style: FButtonStyle.ghost(),
               onPress: () => _showInviteSheet(space),
-              child: Icon(FIcons.userPlus, size: 20),
+              child: const Icon(FIcons.userPlus, size: 20),
             ),
             FButton.icon(
               style: FButtonStyle.ghost(),
               onPress: () => _navigateToSettings(space),
-              child: Icon(FIcons.settings, size: 20),
+              child: const Icon(FIcons.settings, size: 20),
             ),
             const SizedBox(width: 8),
           ],
@@ -874,12 +874,12 @@ class _InviteCodeSheetState extends ConsumerState<_InviteCodeSheet> {
                       ),
                     );
                   },
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(FIcons.copy, size: 16),
-                      const SizedBox(width: 8),
-                      const Text('Copy Invite Code'),
+                      SizedBox(width: 8),
+                      Text('Copy Invite Code'),
                     ],
                   ),
                 ),

@@ -94,7 +94,7 @@ class MessageRepository {
     final updatedMessages = messages.map((msg) {
       if (msg.id == id) {
         // Handle fullContent updates for streaming text
-        List<MessageContentPart> updatedFullContent = List.from(
+        final updatedFullContent = List<MessageContentPart>.from(
           msg.fullContent,
         );
         if (content != null) {
@@ -399,7 +399,7 @@ class MessageRepository {
     );
 
     List<ToolCallInfo> updatedToolCalls;
-    List<MessageContentPart> updatedFullContent = List.from(
+    final updatedFullContent = List<MessageContentPart>.from(
       message.fullContent,
     );
 

@@ -77,7 +77,7 @@ class DailyTransactionModal extends ConsumerWidget {
                             child: Image.asset(
                               transaction.iconUrl,
                               errorBuilder: (c, e, s) =>
-                                  Icon(Icons.help_outline),
+                                  const Icon(Icons.help_outline),
                             ),
                           ),
                           title: Text(transaction.category),

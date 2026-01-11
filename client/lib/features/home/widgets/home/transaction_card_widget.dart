@@ -58,7 +58,7 @@ class TransactionCardWidget extends ConsumerWidget {
               children: [
                 Text(
                   data.transactionLabel,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
@@ -67,9 +67,9 @@ class TransactionCardWidget extends ConsumerWidget {
                 const SizedBox(height: 4),
                 Text(
                   data.timestamp,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
-                    color: const Color(0xFF6B7280),
+                    color: Color(0xFF6B7280),
                   ),
                 ),
               ],

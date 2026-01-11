@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:augo/app/app.dart';
 import 'package:augo/features/chat/genui/genui_event_registry.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,10 +30,10 @@ void main() async {
     // Try to restore language settings from storage, otherwise use device language
     final savedLocale = prefs.getString('app_locale');
     if (savedLocale != null) {
-      LocaleSettings.setLocaleRaw(savedLocale);
+      unawaited(LocaleSettings.setLocaleRaw(savedLocale));
       _logger.info('Language settings restored: $savedLocale');
     } else {
-      LocaleSettings.useDeviceLocale();
+      unawaited(LocaleSettings.useDeviceLocale());
       _logger.info('Using device language');
     }
 

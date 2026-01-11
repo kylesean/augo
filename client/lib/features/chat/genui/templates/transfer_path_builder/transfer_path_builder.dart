@@ -267,7 +267,7 @@ class _TransferPathBuilderState extends State<TransferPathBuilder> {
               // 账户列表（未确认时）
               if (!_state.isConfirmed && !_state.isReadOnly) ...[
                 const SizedBox(height: 8),
-                FDivider(),
+                const FDivider(),
                 const SizedBox(height: 6),
                 AccountList(
                   accounts: activeAccounts,

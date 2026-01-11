@@ -227,7 +227,7 @@ class UploadProgressWidget extends StatelessWidget {
       case UploadStatus.success:
         return Row(
           children: [
-            Icon(FIcons.check, size: 16, color: Colors.green),
+            const Icon(FIcons.check, size: 16, color: Colors.green),
             const SizedBox(width: 4),
             Text(
               '上传成功',

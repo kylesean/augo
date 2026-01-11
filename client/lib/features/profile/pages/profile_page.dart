@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:forui/forui.dart';
@@ -44,7 +45,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
     return FScaffold(
       resizeToAvoidBottomInset: false,
-      header: FHeader(title: const SizedBox.shrink()),
+      header: const FHeader(title: SizedBox.shrink()),
       child: GestureDetector(
         onTap: () {
           if (_isEditingUsername) {
@@ -551,30 +552,32 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   /// Handles logout
   Future<void> _handleLogout(BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (context) => FDialog(
-        title: Text(t.auth.confirmLogoutTitle),
-        body: Text(t.auth.confirmLogoutContent),
-        actions: [
-          FButton(
-            style: FButtonStyle.destructive(),
-            onPress: () async {
-              Navigator.of(context).pop();
+    unawaited(
+      showDialog(
+        context: context,
+        builder: (context) => FDialog(
+          title: Text(t.auth.confirmLogoutTitle),
+          body: Text(t.auth.confirmLogoutContent),
+          actions: [
+            FButton(
+              style: FButtonStyle.destructive(),
+              onPress: () async {
+                Navigator.of(context).pop();
 
-              // Send toast message first to avoid context failure after redirection
-              ToastService.success(description: Text(t.auth.logoutSuccess));
+                // Send toast message first to avoid context failure after redirection
+                ToastService.success(description: Text(t.auth.logoutSuccess));
 
-              await ref.read(authProvider.notifier).logout();
-            },
-            child: Text(t.auth.logout),
-          ),
-          FButton(
-            style: FButtonStyle.outline(),
-            onPress: () => Navigator.of(context).pop(),
-            child: Text(t.common.cancel),
-          ),
-        ],
+                await ref.read(authProvider.notifier).logout();
+              },
+              child: Text(t.auth.logout),
+            ),
+            FButton(
+              style: FButtonStyle.outline(),
+              onPress: () => Navigator.of(context).pop(),
+              child: Text(t.common.cancel),
+            ),
+          ],
+        ),
       ),
     );
   }

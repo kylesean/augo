@@ -929,7 +929,7 @@ class _CategoryAnalysisSectionState
             fontSize: 9,
           ),
           getTitle: (index, angle) {
-            if (index >= items.length) return RadarChartTitle(text: '');
+            if (index >= items.length) return const RadarChartTitle(text: '');
             final category = TransactionCategory.fromKey(
               items[index].categoryKey,
             );

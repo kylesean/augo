@@ -283,7 +283,7 @@ class _ToolExecutionBlockState extends State<ToolExecutionBlock>
           },
         );
       case ToolExecutionStatus.success:
-        return Icon(FIcons.check, size: 14, color: Colors.green);
+        return const Icon(FIcons.check, size: 14, color: Colors.green);
       case ToolExecutionStatus.error:
         return Icon(
           FIcons.triangleAlert,

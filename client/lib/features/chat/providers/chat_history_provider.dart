@@ -494,7 +494,7 @@ class ChatHistory extends _$ChatHistory {
   }
 
   void _handleStreamError(dynamic error) {
-    String errorMessageText = error is AppException
+    final errorMessageText = error is AppException
         ? error.message
         : "发生未知错误: ${error.toString()}";
     final displayError = "抱歉，AI助手通讯发生错误: $errorMessageText";

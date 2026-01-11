@@ -1,3 +1,4 @@
+import "dart:async";
 // features/home/pages/transaction_detail_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -216,7 +217,7 @@ class TransactionDetailPage extends ConsumerWidget {
                               ),
 
                               const SizedBox(height: 16),
-                              FDivider(axis: Axis.horizontal),
+                              const FDivider(axis: Axis.horizontal),
                               const SizedBox(height: 12),
                               // 详细信息行 - 记账原文（用户原始输入）
                               _buildDetailRow(
@@ -384,7 +385,7 @@ class TransactionDetailPage extends ConsumerWidget {
             ),
           ),
           // 右侧占位，保持标题居中，或者可以放其他操作按钮
-          SizedBox(width: 40),
+          const SizedBox(width: 40),
         ],
       ),
     );
@@ -637,9 +638,13 @@ class TransactionDetailPage extends ConsumerWidget {
 
       if (result['code'] == 0 && context.mounted) {
         // 重新加载交易详情
-        ref.read(transactionDetailProvider(transactionId).notifier).reload();
+        unawaited(
+          ref.read(transactionDetailProvider(transactionId).notifier).reload(),
+        );
         // 刷新账户列表以更新余额
-        ref.read(financialAccountProvider.notifier).loadFinancialAccounts();
+        unawaited(
+          ref.read(financialAccountProvider.notifier).loadFinancialAccounts(),
+        );
         ToastService.success(description: Text(t.transaction.linkSuccess));
       }
     } catch (e) {
@@ -769,7 +774,9 @@ class TransactionDetailPage extends ConsumerWidget {
 
       if (context.mounted) {
         // 重新加载交易详情
-        ref.read(transactionDetailProvider(transactionId).notifier).reload();
+        unawaited(
+          ref.read(transactionDetailProvider(transactionId).notifier).reload(),
+        );
         ToastService.success(description: Text(t.transaction.linkSuccess));
       }
     } catch (e) {

@@ -736,7 +736,7 @@ class _FinancialAccountsPageState extends ConsumerState<FinancialAccountsPage> {
                     FItemGroup(
                       children: [
                         FItem(
-                          prefix: ThemedIcon(icon: FIcons.dollarSign),
+                          prefix: const ThemedIcon(icon: FIcons.dollarSign),
                           title: Text(t.financial.budgetManagement),
                           suffix: const Icon(FIcons.chevronRight),
                           onPress: () {
@@ -753,7 +753,7 @@ class _FinancialAccountsPageState extends ConsumerState<FinancialAccountsPage> {
                           },
                         ),
                         FItem(
-                          prefix: ThemedIcon(icon: FIcons.repeat),
+                          prefix: const ThemedIcon(icon: FIcons.repeat),
                           title: Text(t.financial.recurringTransactions),
                           suffix: const Icon(FIcons.chevronRight),
                           onPress: () {
@@ -770,7 +770,7 @@ class _FinancialAccountsPageState extends ConsumerState<FinancialAccountsPage> {
                           },
                         ),
                         FItem(
-                          prefix: ThemedIcon(icon: FIcons.shield),
+                          prefix: const ThemedIcon(icon: FIcons.shield),
                           title: Text(t.financial.safetyThreshold),
                           suffix: const Icon(FIcons.chevronRight),
                           onPress: () {
@@ -779,7 +779,7 @@ class _FinancialAccountsPageState extends ConsumerState<FinancialAccountsPage> {
                           },
                         ),
                         FItem(
-                          prefix: ThemedIcon(icon: FIcons.calculator),
+                          prefix: const ThemedIcon(icon: FIcons.calculator),
                           title: Text(t.financial.dailyBurnRate),
                           suffix: const Icon(FIcons.chevronRight),
                           onPress: () {

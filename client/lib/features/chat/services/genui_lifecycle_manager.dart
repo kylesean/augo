@@ -168,7 +168,7 @@ class GenUiLifecycleManager {
       messageId: _getCurrentStreamingMessageId(),
     );
 
-    String messageId = _findTargetMessageIdForSurface(event.surfaceId);
+    final messageId = _findTargetMessageIdForSurface(event.surfaceId);
     if (messageId.isEmpty) return;
 
     final surfaceInfo = GenUiSurfaceInfo(
@@ -191,7 +191,7 @@ class GenUiLifecycleManager {
       messageId: _getCurrentStreamingMessageId(),
     );
 
-    String messageId = _findTargetMessageIdForSurface(surfaceId);
+    final messageId = _findTargetMessageIdForSurface(surfaceId);
     if (messageId.isEmpty) return;
 
     // Mark content received (silent mode support)
@@ -238,7 +238,7 @@ class GenUiLifecycleManager {
   }
 
   String _findTargetMessageIdForSurface(String surfaceId) {
-    String messageId = _getCurrentStreamingMessageId();
+    final messageId = _getCurrentStreamingMessageId();
     if (messageId.isNotEmpty) {
       return messageId;
     }

@@ -80,16 +80,16 @@ class HomePage extends ConsumerWidget {
                             ),
                           ),
                         ),
-                        child: Column(
+                        child: const Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             // 日历组件
                             Padding(
-                              padding: const EdgeInsets.only(top: 8, bottom: 4),
-                              child: const MonthlyCalendarView(),
+                              padding: EdgeInsets.only(top: 8, bottom: 4),
+                              child: MonthlyCalendarView(),
                             ),
                             // Tab 按钮栏
-                            const _FixedTabBar(),
+                            _FixedTabBar(),
                             // 移除底部的 padding，因为现在列表紧接在后面
                           ],
                         ),

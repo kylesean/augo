@@ -570,7 +570,7 @@ class _BudgetDetailPageState extends ConsumerState<BudgetDetailPage> {
         widget.budgetId,
         BudgetUpdateRequest(status: newStatus),
       );
-      ref.read(budgetSummaryProvider.notifier).refresh();
+      await ref.read(budgetSummaryProvider.notifier).refresh();
       await _loadBudgetDetail();
       if (mounted) {
         TopToast.success(

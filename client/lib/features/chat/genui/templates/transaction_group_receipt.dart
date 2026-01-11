@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -786,54 +787,56 @@ class _TransactionGroupReceiptState
 
     if (!mounted) return;
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => Container(
-        decoration: BoxDecoration(
-          color: colors.background,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+    unawaited(
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (_) => Container(
+          decoration: BoxDecoration(
+            color: colors.background,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: AccountPickerCard(
+            accounts: printableAccounts,
+            selectedId: currentAccountId,
+            title: t.chat.genui.transactionCard.selectAccount,
+            transactionCurrency: txCurrency, // 传入交易币种
+            onSelect: (id) {
+              Navigator.pop(context, id);
+            },
+            onConfirm: () {},
+          ),
         ),
-        padding: const EdgeInsets.all(20),
-        child: AccountPickerCard(
-          accounts: printableAccounts,
-          selectedId: currentAccountId,
-          title: t.chat.genui.transactionCard.selectAccount,
-          transactionCurrency: txCurrency, // 传入交易币种
-          onSelect: (id) {
-            Navigator.pop(context, id);
-          },
-          onConfirm: () {},
-        ),
-      ),
-    ).then((selectedId) async {
-      if (selectedId != null && selectedId is String) {
-        // 获取选中的账户
-        final selectedAccount = accountState.accounts
-            .where((a) => a.id == selectedId)
-            .firstOrNull;
+      ).then((selectedId) async {
+        if (selectedId != null && selectedId is String) {
+          // 获取选中的账户
+          final selectedAccount = accountState.accounts
+              .where((a) => a.id == selectedId)
+              .firstOrNull;
 
-        if (selectedAccount != null) {
-          final accountCurrency = selectedAccount.currencyCode.toUpperCase();
-          final transactionCurrency = txCurrency.toUpperCase();
+          if (selectedAccount != null) {
+            final accountCurrency = selectedAccount.currencyCode.toUpperCase();
+            final transactionCurrency = txCurrency.toUpperCase();
 
-          // 币种不一致，显示确认弹窗
-          if (accountCurrency != transactionCurrency) {
-            final confirmed = await _showCurrencyMismatchConfirmDialog(
-              txAmount ?? 0,
-              transactionCurrency,
-              accountCurrency,
-              selectedAccount.name,
-            );
+            // 币种不一致，显示确认弹窗
+            if (accountCurrency != transactionCurrency) {
+              final confirmed = await _showCurrencyMismatchConfirmDialog(
+                txAmount ?? 0,
+                transactionCurrency,
+                accountCurrency,
+                selectedAccount.name,
+              );
 
-            if (confirmed != true) return;
+              if (confirmed != true) return;
+            }
           }
-        }
 
-        _updateTransactionAccount(txId, selectedId);
-      }
-    });
+          await _updateTransactionAccount(txId, selectedId);
+        }
+      }),
+    );
   }
 
   /// 显示币种不匹配确认弹窗
@@ -995,7 +998,9 @@ class _TransactionGroupReceiptState
           ),
         );
 
-        ref.read(financialAccountProvider.notifier).loadFinancialAccounts();
+        unawaited(
+          ref.read(financialAccountProvider.notifier).loadFinancialAccounts(),
+        );
       } else {
         throw Exception(result['message'] ?? 'Update failed');
       }
@@ -1060,89 +1065,92 @@ class _TransactionGroupReceiptState
 
     if (!mounted) return;
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => Container(
-        decoration: BoxDecoration(
-          color: colors.background,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              t.chat.genui.transactionGroupReceipt.selectSpace,
-              style: theme.typography.lg.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            ..._cachedSpaces!.map((space) {
-              final spaceId = space['id'];
-              final isSelected = associatedIds.contains(spaceId?.toString());
-              final name = space['name'] as String? ?? 'unnamed';
+    unawaited(
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (_) => Container(
+          decoration: BoxDecoration(
+            color: colors.background,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                t.chat.genui.transactionGroupReceipt.selectSpace,
+                style: theme.typography.lg.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ..._cachedSpaces!.map((space) {
+                final spaceId = space['id'];
+                final isSelected = associatedIds.contains(spaceId?.toString());
+                final name = space['name'] as String? ?? 'unnamed';
 
-              return GestureDetector(
-                onTap: () => Navigator.pop(context, spaceId),
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? context.theme.semantic.sharedSpaceBackground
-                        : colors.muted.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
+                return GestureDetector(
+                  onTap: () => Navigator.pop(context, spaceId),
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
                       color: isSelected
-                          ? context.theme.semantic.sharedSpaceAccent.withValues(
-                              alpha: 0.5,
-                            )
-                          : colors.border.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        FIcons.users,
-                        size: 18,
+                          ? context.theme.semantic.sharedSpaceBackground
+                          : colors.muted.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
                         color: isSelected
                             ? context.theme.semantic.sharedSpaceAccent
-                            : colors.mutedForeground,
+                                  .withValues(alpha: 0.5)
+                            : colors.border.withValues(alpha: 0.3),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          name,
-                          style: theme.typography.sm.copyWith(
-                            fontWeight: isSelected ? FontWeight.bold : null,
-                            color: isSelected
-                                ? context.theme.semantic.sharedSpaceAccent
-                                : null,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          FIcons.users,
+                          size: 18,
+                          color: isSelected
+                              ? context.theme.semantic.sharedSpaceAccent
+                              : colors.mutedForeground,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            name,
+                            style: theme.typography.sm.copyWith(
+                              fontWeight: isSelected ? FontWeight.bold : null,
+                              color: isSelected
+                                  ? context.theme.semantic.sharedSpaceAccent
+                                  : null,
+                            ),
                           ),
                         ),
-                      ),
-                      if (isSelected)
-                        Icon(
-                          Icons.check,
-                          color: context.theme.semantic.sharedSpaceAccent,
-                          size: 18,
-                        ),
-                    ],
+                        if (isSelected)
+                          Icon(
+                            Icons.check,
+                            color: context.theme.semantic.sharedSpaceAccent,
+                            size: 18,
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            }),
-            const SizedBox(height: 16),
-          ],
+                );
+              }),
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
-      ),
-    ).then((selectedId) {
-      if (selectedId != null) {
-        _updateTransactionSpace(txId, selectedId);
-      }
-    });
+      ).then((selectedId) async {
+        if (selectedId != null) {
+          await _updateTransactionSpace(txId, selectedId);
+        }
+      }),
+    );
   }
 
   Future<void> _updateTransactionSpace(

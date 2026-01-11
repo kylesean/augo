@@ -282,8 +282,8 @@ class SystemSpeechService implements SpeechRecognitionService {
     _isInitialized = false;
 
     // Close stream controllers
-    if (!_resultController.isClosed) _resultController.close();
-    if (!_statusController.isClosed) _statusController.close();
-    if (!_errorController.isClosed) _errorController.close();
+    if (!_resultController.isClosed) unawaited(_resultController.close());
+    if (!_statusController.isClosed) unawaited(_statusController.close());
+    if (!_errorController.isClosed) unawaited(_errorController.close());
   }
 }

@@ -97,7 +97,7 @@ class _TransactionFeedViewState extends ConsumerState<TransactionFeedView> {
                         child: Container(
                           height: 15,
                           color: placeholderShapeColor,
-                          margin: EdgeInsets.only(right: 16),
+                          margin: const EdgeInsets.only(right: 16),
                         ),
                       ),
                       Container(
@@ -112,7 +112,7 @@ class _TransactionFeedViewState extends ConsumerState<TransactionFeedView> {
                     height: 18,
                     width: 120,
                     color: placeholderShapeColor,
-                    margin: EdgeInsets.symmetric(vertical: 1),
+                    margin: const EdgeInsets.symmetric(vertical: 1),
                   ),
                   const SizedBox(height: 10),
                   Container(height: 14, color: placeholderShapeColor),
@@ -137,7 +137,7 @@ class _TransactionFeedViewState extends ConsumerState<TransactionFeedView> {
     final TransactionFeedState feedState = ref.watch(transactionFeedProvider);
     final List<TransactionModel> transactions = feedState.transactions;
 
-    bool shouldShowSkeletonDueToTypeMismatch =
+    final shouldShowSkeletonDueToTypeMismatch =
         widget.intendedFeedType != globalCurrentFeedType;
 
     if (shouldShowSkeletonDueToTypeMismatch ||
@@ -147,7 +147,8 @@ class _TransactionFeedViewState extends ConsumerState<TransactionFeedView> {
       return ListView.separated(
         itemCount: 5, // Show a few skeleton items
         itemBuilder: (context, index) => _buildTransactionCardSkeleton(context),
-        separatorBuilder: (context, index) => FDivider(axis: Axis.horizontal),
+        separatorBuilder: (context, index) =>
+            const FDivider(axis: Axis.horizontal),
       );
     }
 

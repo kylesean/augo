@@ -54,7 +54,7 @@ class MediaPickerService {
   /// Select files
   static Future<List<XFile>> pickFiles() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.platform.pickFiles(
         allowMultiple: true,
         type: FileType.any,
       );

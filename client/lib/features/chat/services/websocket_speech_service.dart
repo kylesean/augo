@@ -144,7 +144,7 @@ class WebSocketSpeechService implements SpeechRecognitionService {
   Future<void> _cleanup() async {
     if (_isListening) {
       await _audioRecorder.stopRecording();
-      _audioSubscription?.cancel();
+      await _audioSubscription?.cancel();
       _audioSubscription = null;
       _isListening = false;
     }
@@ -236,7 +236,7 @@ class WebSocketSpeechService implements SpeechRecognitionService {
 
       // Clean up resources
       await _audioRecorder.stopRecording();
-      _audioSubscription?.cancel();
+      await _audioSubscription?.cancel();
       _audioSubscription = null;
     }
   }
@@ -256,7 +256,7 @@ class WebSocketSpeechService implements SpeechRecognitionService {
       await _audioRecorder.stopRecording();
 
       // 2. Cancel audio stream subscription
-      _audioSubscription?.cancel();
+      await _audioSubscription?.cancel();
       _audioSubscription = null;
 
       // Note: ASR server expects pure binary audio data only
@@ -268,7 +268,7 @@ class WebSocketSpeechService implements SpeechRecognitionService {
 
       // 播放结束录音提示音（不等待，避免阻塞）
       _logger.info('Playing stop sound...');
-      SoundFeedbackService.instance.playStopSound();
+      unawaited(SoundFeedbackService.instance.playStopSound());
     } catch (e) {
       _logger.severe('Failed to stop listening: $e');
       _errorController.add('Failed to stop listening: $e');
@@ -425,9 +425,9 @@ class WebSocketSpeechService implements SpeechRecognitionService {
     _audioRecorder.dispose();
 
     // Close stream controllers
-    if (!_resultController.isClosed) _resultController.close();
-    if (!_statusController.isClosed) _statusController.close();
-    if (!_errorController.isClosed) _errorController.close();
+    if (!_resultController.isClosed) unawaited(_resultController.close());
+    if (!_statusController.isClosed) unawaited(_statusController.close());
+    if (!_errorController.isClosed) unawaited(_errorController.close());
   }
 
   /// Get connection status
