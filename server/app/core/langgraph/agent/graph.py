@@ -1,12 +1,13 @@
-"""Graph 构建模块
+"""Graph construction module.
 
-使用 LangGraph 底层 StateGraph API 构建 Agent 图。
+Uses LangGraph StateGraph API to build the Agent graph.
 
-图结构:     START ──► route_entry ──┬──► agent ──► route_after_agent ──┬──► tools ──► agent
-                            │                                    │
-                            └──► direct_execute ──► END          └──► END
+Graph structure:
+    START --> route_entry --+--> agent --> route_after_agent --+--> tools --> agent
+                            |                                  |
+                            +--> direct_execute --> END        +--> END
 
-参考: docs/ROUTE_AFTER_GAENT.md
+Reference: docs/ROUTE_AFTER_AGENT.md
 """
 
 from __future__ import annotations
@@ -24,7 +25,6 @@ from app.core.langgraph.agent.edges import route_after_agent, route_after_tools,
 from app.core.langgraph.agent.nodes import create_agent_node, create_direct_execute_node
 from app.core.langgraph.agent.state import AgentState
 from app.core.logging import logger
-from app.core.skills.loader import SkillLoader
 
 
 def build_agent_graph(
@@ -34,50 +34,45 @@ def build_agent_graph(
     checkpointer: BaseCheckpointSaver | None = None,
     name: str = "AugoAgent",
 ) -> CompiledStateGraph:
-    """构建 Agent 图
+    """Build the Agent graph.
 
-    使用 LangGraph StateGraph API 构建完整的 Agent 图，包含：
-    - agent 节点：调用 LLM
-    - tools 节点：执行工具（使用 ToolNode）
-    - direct_execute 节点：GenUI 直接执行场景
+    Uses LangGraph StateGraph API to construct the complete Agent graph, including:
+    - agent node: Invokes the LLM
+    - tools node: Executes tools (using ToolNode)
+    - direct_execute node: GenUI direct execution scenario
 
     Args:
-        llm: 已绑定工具的 LLM 实例
-        tools: 可用工具列表
-        system_prompt: 系统提示词
-        checkpointer: 可选的 checkpoint 保存器（用于短期记忆）
-        name: 图名称
+        llm: LLM instance with tools already bound
+        tools: List of available tools
+        system_prompt: System prompt (should already contain skills catalog)
+        checkpointer: Optional checkpoint saver (for short-term memory)
+        name: Graph name
 
     Returns:
-        编译后的 StateGraph
+        Compiled StateGraph
     """
-    # 动态加载 Skills 并注入 Prompt
-    loader = SkillLoader()
-    skills_xml = loader.get_catalog_xml()
-    formatted_prompt = system_prompt.replace("{skills_catalog}", skills_xml)
-
-    # 创建 StateGraph
+    # Create StateGraph
     workflow = StateGraph(AgentState)
 
-    # 添加节点
-    workflow.add_node("agent", cast(Any, create_agent_node(llm, tools, formatted_prompt)))
+    # Add nodes
+    workflow.add_node("agent", cast(Any, create_agent_node(llm, tools, system_prompt)))
     workflow.add_node("tools", ToolNode(tools))
     workflow.add_node("direct_execute", cast(Any, create_direct_execute_node(tools)))
 
-    # 添加边
-    # 1. 入口条件边：检查是否需要直接执行
+    # Add edges
+    # 1. Entry conditional edge: Check if direct execution is needed
     workflow.add_conditional_edges(START, route_entry)
 
-    # 2. Agent -> After Agent（直接检查工具调用）
+    # 2. Agent -> After Agent (check tool calls directly)
     workflow.add_conditional_edges("agent", route_after_agent)
 
-    # 3. 工具执行后条件边：写操作直接结束，读操作返回 Agent
+    # 3. Post-tool conditional edge: Write ops end, read ops return to Agent
     workflow.add_conditional_edges("tools", route_after_tools)
 
-    # 5. 直接执行后结束
+    # 4. Direct execute ends immediately
     workflow.add_edge("direct_execute", END)
 
-    # 编译图
+    # Compile graph
     compiled_graph = workflow.compile(
         checkpointer=checkpointer,
         name=name,
@@ -85,7 +80,7 @@ def build_agent_graph(
 
     logger.info(
         "agent_graph_built",
-        node_count=4,  # agent, filter_response, tools, direct_execute
+        node_count=4,
         has_checkpointer=checkpointer is not None,
         name=name,
     )

@@ -8,15 +8,15 @@ import yaml
 
 @dataclass
 class SkillMetadata:
-    """Metadata representing a skill loaded from a script."""
+    """Metadata representing a skill loaded from SKILL.md."""
 
     name: str
     description: str
     location: str
     license: str | None = None
     metadata: dict[str, str] | None = None
-    allowed_tools: list[str] | None = None  # 技能可使用的工具白名单
-    content: str | None = None  # 完整的 SKILL.md 内容（用于激活时注入）
+    allowed_tools: list[str] | None = None  # Tool whitelist for this skill
+    content: str | None = None  # Full SKILL.md content (for activation injection)
 
 
 class SkillLoader:
@@ -109,32 +109,34 @@ class SkillLoader:
             return None
 
     def get_catalog_xml(self) -> str:
-        """Generates XML catalog for system prompt injection.
+        """Generates XML skill entries for system prompt injection.
 
-        This follows the official AgentSkills.io specification:
+        Returns skill entries without the outer <available_skills> wrapper,
+        as the wrapper is defined in the system prompt template itself.
+
+        This follows the AgentSkills.io specification:
         https://agentskills.io/integrate-skills#injecting-into-context
         """
         skills = self.load_skills()
         if not skills:
-            return ""
+            return "    <!-- No skills available -->"
 
-        xml_parts = ["<available_skills>"]
+        xml_parts = []
         for skill in skills:
-            xml_parts.append("  <skill>")
-            xml_parts.append(f"    <name>{skill.name}</name>")
-            xml_parts.append(f"    <description>{skill.description}</description>")
-            xml_parts.append(f"    <location>{skill.location}</location>")
+            xml_parts.append("    <skill>")
+            xml_parts.append(f"      <name>{skill.name}</name>")
+            xml_parts.append(f"      <description>{skill.description}</description>")
+            xml_parts.append(f"      <location>{skill.location}</location>")
             # Optional: inject extra metadata if needed for routing
             if skill.metadata:
                 for k, v in skill.metadata.items():
-                    xml_parts.append(f"    <{k}>{v}</{k}>")
-            xml_parts.append("  </skill>")
-        xml_parts.append("</available_skills>")
+                    xml_parts.append(f"      <{k}>{v}</{k}>")
+            xml_parts.append("    </skill>")
 
         return "\n".join(xml_parts)
 
     def get_skill(self, skill_name: str) -> SkillMetadata | None:
-        """获取指定名称的技能。"""
+        """Get a skill by name."""
         skills = self.load_skills()
         for skill in skills:
             if skill.name == skill_name:
@@ -142,33 +144,34 @@ class SkillLoader:
         return None
 
     def activate_skill_prompt(self, skill_name: str) -> str | None:
-        """生成技能激活的系统提示词片段。
+        """Generate skill activation prompt fragment.
 
-        用于动态注入到对话上下文中，让 AI 切换到该技能模式。
+        Used for dynamic injection into conversation context,
+        switching the AI to the specified skill mode.
 
         Returns:
-            技能的完整内容（Markdown），包裹在 XML 标签中
+            Full skill content (Markdown) wrapped in XML tags.
         """
         skill = self.get_skill(skill_name)
         if not skill or not skill.content:
             return None
 
-        # 构造激活提示词
+        # Construct activation prompt
         activation_prompt = f"""<activated_skill name="{skill.name}">
 {skill.content}
 </activated_skill>
 
-你现在已激活 **{skill.name}** 技能。请严格按照上述技能说明执行任务。
+You have activated the **{skill.name}** skill. Follow the instructions above strictly.
 """
         return activation_prompt
 
     def get_allowed_tools(self, skill_name: str) -> list[str] | None:
-        """获取技能的工具白名单。
+        """Get the tool whitelist for a skill.
 
-        直接返回 SKILL.md 中 allowed-tools 声明的工具名列表。
+        Returns the allowed-tools list declared in SKILL.md.
 
         Returns:
-            工具名称列表，或 None（表示不限制）
+            List of tool names, or None (no restrictions).
         """
         skill = self.get_skill(skill_name)
         if not skill or not skill.allowed_tools:

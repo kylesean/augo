@@ -11,6 +11,7 @@ import os
 from functools import lru_cache
 
 from app.core.config import settings
+from app.core.skills.loader import SkillLoader
 
 
 @lru_cache(maxsize=1)
@@ -25,59 +26,28 @@ def _load_core_prompt_template() -> str:
 
 
 @lru_cache(maxsize=1)
-def get_skills_metadata() -> str:
-    """获取所有可用 Skills 的元数据（XML 格式）。
+def _get_skills_catalog_xml() -> str:
+    """Get skills catalog XML for system prompt injection.
 
-    遵循 agentskills.io 规范，注入 <available_skills> 块。
+    Uses SkillLoader to generate skill entries following AgentSkills.io specification.
+    The output is designed to be inserted into the <available_skills> section
+    defined in the system prompt template.
     """
-    try:
-        from pathlib import Path
-
-        from skillkit import SkillManager
-
-        skills_dir = Path(__file__).parent.parent.parent / "skills"
-        if not skills_dir.exists():
-            return ""
-
-        manager = SkillManager(skill_dir=str(skills_dir))
-        manager.discover()
-
-        skills = manager.list_skills()
-        if not skills:
-            return ""
-
-        xml_parts = ["<available_skills>"]
-        for skill in skills:
-            xml_parts.append("  <skill>")
-            xml_parts.append(f"    <name>{skill.name}</name>")
-            # 移除换行符，防止破坏 XML 结构或混淆 LLM
-            clean_desc = skill.description.replace("\n", " ").strip()
-            xml_parts.append(f"    <description>{clean_desc}</description>")
-            xml_parts.append("  </skill>")
-        xml_parts.append("</available_skills>")
-
-        return "\n".join(xml_parts)
-    except Exception:
-        return ""
+    loader = SkillLoader()
+    return loader.get_catalog_xml()
 
 
 def get_stable_system_prompt() -> str:
     """Get the stable (cacheable) system prompt.
 
     This prompt contains static content and discovery metadata for Skills.
+    The skills catalog is injected into the {skills_catalog} placeholder.
     """
     template = _load_core_prompt_template()
-    base_prompt = template.format(
-        agent_name=settings.PROJECT_NAME + " Agent",
-        skills_catalog="{skills_catalog}",  # Preserve placeholder for dynamic injection in graph.py
-    )
 
-    # 注入 Skills 元数据实现 "Progressive Disclosure"
-    skills_metadata = get_skills_metadata()
-    if skills_metadata:
-        return f"{base_prompt}\n\n{skills_metadata}"
-
-    return base_prompt
+    # Inject skills catalog into the template
+    skills_xml = _get_skills_catalog_xml()
+    return template.replace("{skills_catalog}", skills_xml)
 
 
 # Legacy function for backward compatibility
