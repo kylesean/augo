@@ -39,8 +39,8 @@ class BaseMiddleware(ABC):
     async def before_invoke(
         self,
         messages: list[BaseMessage],
-        config: dict,
-    ) -> tuple[list[BaseMessage], dict]:
+        config: dict[str, Any],
+    ) -> tuple[list[BaseMessage], dict[str, Any]]:
         """Called before agent invocation (optional).
 
         Args:
@@ -54,9 +54,9 @@ class BaseMiddleware(ABC):
 
     async def after_invoke(
         self,
-        result: dict,
-        config: dict,
-    ) -> dict:
+        result: dict[str, Any],
+        config: dict[str, Any],
+    ) -> dict[str, Any]:
         """Called after agent invocation (optional).
 
         Args:
@@ -93,8 +93,8 @@ class BaseMiddleware(ABC):
     async def before_stream(
         self,
         messages: list[BaseMessage],
-        config: dict,
-    ) -> tuple[list[BaseMessage], dict]:
+        config: dict[str, Any],
+    ) -> tuple[list[BaseMessage], dict[str, Any]]:
         """Called before agent streaming (optional).
 
         Default implementation delegates to before_invoke.
@@ -110,7 +110,7 @@ class BaseMiddleware(ABC):
 
     async def after_stream(
         self,
-        config: dict,
+        config: dict[str, Any],
     ) -> None:
         """Called after agent streaming completes (optional).
 

@@ -192,7 +192,7 @@ class SkillConstraintMiddleware(BaseMiddleware):
 
     async def after_invoke(
         self,
-        output: dict[str, Any],
+        result: dict[str, Any],
         config: dict[str, Any],
     ) -> dict[str, Any]:
         """在调用后检测技能激活
@@ -205,7 +205,7 @@ class SkillConstraintMiddleware(BaseMiddleware):
         """
         import re
 
-        messages = output.get("messages", [])
+        messages = result.get("messages", [])
 
         for msg in messages:
             # 检查是否有工具调用
@@ -252,4 +252,4 @@ class SkillConstraintMiddleware(BaseMiddleware):
                                 skill=skill_name,
                             )
 
-        return output
+        return result
