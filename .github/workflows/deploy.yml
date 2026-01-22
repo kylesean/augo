@@ -5,12 +5,9 @@ name: Deploy to Docker Hub
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - 'server/**'
-      - '.github/workflows/deploy.yml'
-  workflow_dispatch:  # Allow manual trigger
+    tags:
+      - "v*" # Trigger only on version tags (e.g., v1.0.0, v0.1.0-alpha)
+  workflow_dispatch: # Allow manual trigger from GitHub UI
 
 env:
   DOCKER_IMAGE_NAME: augo-api
