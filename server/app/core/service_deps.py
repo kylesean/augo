@@ -16,11 +16,10 @@ Usage:
         return await service.get_transaction_feed(...)
 """
 
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated, Any, cast
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.database import get_session
 
 # Type alias for injected database session
@@ -45,7 +44,7 @@ async def get_transaction_service(
     """
     from app.services.transaction_service import TransactionService
 
-    return TransactionService(db)
+    return TransactionService(cast(Any, db))
 
 
 async def get_transaction_query_service(
@@ -61,7 +60,7 @@ async def get_transaction_query_service(
     """
     from app.services.transaction_query_service import TransactionQueryService
 
-    return TransactionQueryService(db)
+    return TransactionQueryService(cast(Any, db))
 
 
 # ============================================================================
@@ -82,7 +81,7 @@ async def get_user_service(
     """
     from app.services.user_service import UserService
 
-    return UserService(db)
+    return UserService(cast(Any, db))
 
 
 async def get_auth_service(
@@ -98,7 +97,7 @@ async def get_auth_service(
     """
     from app.services.auth_service import AuthService
 
-    return AuthService(db)
+    return AuthService(cast(Any, db))
 
 
 # ============================================================================
@@ -119,7 +118,7 @@ async def get_budget_service(
     """
     from app.services.budget_service import BudgetService
 
-    return BudgetService(db)
+    return BudgetService(cast(Any, db))
 
 
 async def get_statistics_service(
@@ -135,7 +134,7 @@ async def get_statistics_service(
     """
     from app.services.statistics_service import StatisticsService
 
-    return StatisticsService(db)
+    return StatisticsService(cast(Any, db))
 
 
 async def get_forecast_service(
@@ -151,7 +150,7 @@ async def get_forecast_service(
     """
     from app.services.forecast_service import ForecastService
 
-    return ForecastService(db)
+    return ForecastService(cast(Any, db))
 
 
 # ============================================================================
@@ -172,7 +171,7 @@ async def get_shared_space_service(
     """
     from app.services.shared_space_service import SharedSpaceService
 
-    return SharedSpaceService(db)
+    return SharedSpaceService(cast(Any, db))
 
 
 # ============================================================================
@@ -193,7 +192,7 @@ async def get_storage_config_service(
     """
     from app.services.storage_config_service import StorageConfigService
 
-    return StorageConfigService(db)
+    return StorageConfigService(cast(Any, db))
 
 
 async def get_upload_service(
@@ -209,7 +208,7 @@ async def get_upload_service(
     """
     from app.services.upload_service import UploadService
 
-    return UploadService(db)
+    return UploadService(cast(Any, db))
 
 
 # ============================================================================
@@ -237,7 +236,7 @@ def get_exchange_rate_service() -> "ExchangeRateService":
 
 # These are imported at the end to avoid circular imports
 # and are only used for type hints
-if False:  # TYPE_CHECKING equivalent that works at runtime
+if TYPE_CHECKING:
     from app.services.auth_service import AuthService
     from app.services.budget_service import BudgetService
     from app.services.exchange_rate_service import ExchangeRateService
