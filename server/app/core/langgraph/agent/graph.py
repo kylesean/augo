@@ -31,9 +31,9 @@ def build_agent_graph(
     llm: BaseChatModel,
     tools: list[BaseTool],
     system_prompt: str,
-    checkpointer: BaseCheckpointSaver | None = None,
+    checkpointer: BaseCheckpointSaver[Any] | None = None,
     name: str = "AugoAgent",
-) -> CompiledStateGraph:
+) -> CompiledStateGraph[Any, Any]:
     """Build the Agent graph.
 
     Uses LangGraph StateGraph API to construct the complete Agent graph, including:
@@ -52,7 +52,7 @@ def build_agent_graph(
         Compiled StateGraph
     """
     # Create StateGraph
-    workflow = StateGraph(AgentState)
+    workflow = StateGraph(cast(Any, AgentState))
 
     # Add nodes
     workflow.add_node("agent", cast(Any, create_agent_node(llm, tools, system_prompt)))

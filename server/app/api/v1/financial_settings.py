@@ -44,7 +44,7 @@ async def get_financial_settings(
             burnRateMode=settings.burn_rate_mode,
             primaryCurrency=settings.primary_currency,
             monthStartDay=settings.month_start_day,
-            updatedAt=cast(datetime, settings.updated_at).isoformat() if settings.updated_at else None,
+            updatedAt=settings.updated_at.isoformat() if settings.updated_at else None,
         ),
         message="Financial settings retrieved successfully",
     )
@@ -85,7 +85,7 @@ async def update_financial_settings(
             burnRateMode=settings.burn_rate_mode,
             primaryCurrency=settings.primary_currency,
             monthStartDay=settings.month_start_day,
-            updatedAt=cast(datetime, settings.updated_at).isoformat() if settings.updated_at else None,
+            updatedAt=settings.updated_at.isoformat() if settings.updated_at else None,
         ),
         message="Financial settings updated successfully",
     )

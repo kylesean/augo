@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta, timezone
 from decimal import Decimal
 from uuid import uuid4
 
@@ -67,7 +67,7 @@ async def test_calculate_spent_amount(db_session):
     await db_session.commit()
 
     # 2. Create Transactions (2 expenses in FOOD, 1 in TRANSPORT)
-    today = datetime.now(timezone.utc)
+    today = datetime.now(UTC)
 
     t1 = Transaction(
         id=uuid4(),
@@ -161,7 +161,7 @@ async def test_update_period_status(db_session):
         amount=Decimal("150.0"),
         amount_original=Decimal("150.0"),
         currency="CNY",
-        transaction_at=datetime.now(timezone.utc),
+        transaction_at=datetime.now(UTC),
         category_key="TEST",
         status="CLEARED",
         raw_input="big expense",

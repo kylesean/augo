@@ -2,6 +2,7 @@
 
 import time
 from collections.abc import Callable
+from typing import Any
 
 from fastapi import Request
 from jose import (
@@ -25,7 +26,7 @@ from app.core.metrics import (
 class MetricsMiddleware(BaseHTTPMiddleware):
     """Middleware for tracking HTTP request metrics."""
 
-    async def dispatch(self, request: Request, call_next: Callable) -> Response:
+    async def dispatch(self, request: Request, call_next: Callable[..., Any]) -> Response:
         """Track metrics for each request.
 
         Args:
@@ -64,7 +65,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     - Information leakage
     """
 
-    async def dispatch(self, request: Request, call_next: Callable) -> Response:
+    async def dispatch(self, request: Request, call_next: Callable[..., Any]) -> Response:
         """Add security headers to each response.
 
         Args:
@@ -117,7 +118,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 class LoggingContextMiddleware(BaseHTTPMiddleware):
     """Middleware for adding request_id, user_uuid and session_id to logging context."""
 
-    async def dispatch(self, request: Request, call_next: Callable) -> Response:
+    async def dispatch(self, request: Request, call_next: Callable[..., Any]) -> Response:
         """Extract user_uuid and session_id from authenticated requests and add to logging context.
 
         Args:

@@ -6,6 +6,7 @@ All adapters must implement async methods for file operations.
 
 from abc import ABC, abstractmethod
 from collections.abc import AsyncGenerator
+from typing import Any
 
 from app.models.storage_config import StorageConfig
 
@@ -133,7 +134,7 @@ class StorageAdapter(ABC):
         """
         pass
 
-    async def get_file_info(self, object_key: str) -> dict | None:
+    async def get_file_info(self, object_key: str) -> dict[str, Any] | None:
         """Get file metadata (size, modified time, etc.).
 
         Args:

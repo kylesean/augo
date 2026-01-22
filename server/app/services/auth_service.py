@@ -12,7 +12,7 @@ from __future__ import annotations
 import secrets
 import time
 import uuid
-from typing import Any
+from typing import Any, cast as type_cast
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
@@ -190,7 +190,7 @@ class AuthService:
         from app.services.user_service import UserService
 
         try:
-            user_service = UserService(self.db)
+            user_service = UserService(type_cast(Any, self.db))
             await user_service.create_default_financial_settings(user_uuid)
             logger.info("default_financial_settings_created", user_uuid=str(user_uuid))
         except Exception as e:
@@ -220,9 +220,9 @@ class AuthService:
         # Find user by account
         query = select(User)
         if account_type == "email":
-            query = query.where(User.email == account)
+            query = query.where(type_cast(Any, User.email == account))
         else:
-            query = query.where(User.mobile == account)
+            query = query.where(type_cast(Any, User.mobile == account))
 
         result = await self.db.execute(query)
         user = result.scalar_one_or_none()
@@ -273,9 +273,9 @@ class AuthService:
         """
         query = select(User)
         if account_type == "email":
-            query = query.where(User.email == account)
+            query = query.where(type_cast(Any, User.email == account))
         else:
-            query = query.where(User.mobile == account)
+            query = query.where(type_cast(Any, User.mobile == account))
 
         result = await self.db.execute(query)
         user = result.scalar_one_or_none()
@@ -410,9 +410,7 @@ class AuthService:
         Returns:
             uuid.UUID: UUID v7 object
         """
-        from typing import cast
-
-        return cast(uuid.UUID, uuid7())
+        return type_cast(uuid.UUID, uuid7())
 
     def _generate_random_username(self) -> str:
         """Generate a random username.

@@ -8,7 +8,7 @@ This module provides reusable dependency functions for:
 """
 
 from collections.abc import AsyncGenerator
-from typing import Any
+from typing import Annotated, Any, cast
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -36,7 +36,7 @@ async def get_redis_client() -> AsyncGenerator[Any]:
 
         from app.core.config import settings
 
-        redis_client = await redis_async.from_url(
+        redis_client = await cast(Any, redis_async).from_url(
             settings.redis_url,
             encoding="utf-8",
             decode_responses=False,
@@ -56,7 +56,7 @@ async def get_redis_client() -> AsyncGenerator[Any]:
 
 
 async def get_current_user_uuid(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
 ) -> str:
     """Extract and verify user ID from JWT token.
 
@@ -93,8 +93,8 @@ async def get_current_user_uuid(
 
 
 async def get_current_user(
-    user_uuid: str = Depends(get_current_user_uuid),
-    db: AsyncSession = Depends(get_session),
+    user_uuid: Annotated[str, Depends(get_current_user_uuid)],
+    db: Annotated[AsyncSession, Depends(get_session)],
 ) -> User:
     """Get the current authenticated user from database.
 
@@ -137,7 +137,7 @@ async def get_current_user(
 
 
 async def require_auth(
-    user: User = Depends(get_current_user),
+    user: Annotated[User, Depends(get_current_user)],
 ) -> User:
     """Require authentication for an endpoint.
 
@@ -162,8 +162,8 @@ class OptionalAuth:
 
     async def __call__(
         self,
-        credentials: HTTPAuthorizationCredentials | None = Depends(HTTPBearer(auto_error=False)),
-        db: AsyncSession = Depends(get_session),
+        credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(HTTPBearer(auto_error=False))],
+        db: Annotated[AsyncSession, Depends(get_session)],
     ) -> User | None:
         """Get current user if authenticated, None otherwise.
 
@@ -204,8 +204,8 @@ optional_auth = OptionalAuth()
 
 
 async def get_user_session_data(
-    user: User = Depends(get_current_user),
-    redis_client: Any = Depends(get_redis_client),
+    user: Annotated[User, Depends(get_current_user)],
+    redis_client: Annotated[Any, Depends(get_redis_client)],
 ) -> dict[str, Any]:
     """Get user session data from Redis.
 
@@ -238,8 +238,8 @@ async def get_user_session_data(
 
 async def save_user_session_data(
     session_data: dict[str, Any],
-    user: User = Depends(get_current_user),
-    redis_client: Any = Depends(get_redis_client),
+    user: Annotated[User, Depends(get_current_user)],
+    redis_client: Annotated[Any, Depends(get_redis_client)],
 ) -> bool:
     """Save user session data to Redis.
 

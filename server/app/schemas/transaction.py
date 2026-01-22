@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from decimal import Decimal
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -317,7 +317,7 @@ class CashFlowForecastRequest(BaseModel):
 
     forecast_days: int = Field(default=60, ge=1, le=365)
     granularity: str = Field(default="daily")
-    scenarios: list[dict] | None = None
+    scenarios: list[dict[str, Any]] | None = None
 
     @field_validator("granularity")
     @classmethod
@@ -455,7 +455,7 @@ class ForecastDayBreakdown(BaseModel):
 
     date: str
     closingBalance: str
-    events: list[dict]
+    events: list[dict[str, Any]]
 
 
 class ForecastWarning(BaseModel):
@@ -486,4 +486,4 @@ class PaginatedTransactionResponse(BaseModel):
     """分页交易响应"""
 
     data: list[TransactionResponse]
-    meta: dict
+    meta: dict[str, Any]

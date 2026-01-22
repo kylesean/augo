@@ -30,7 +30,7 @@ from app.core.logging import logger
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent.parent
 
 
-class LocalFilesystemBackend(FilesystemBackend, SandboxBackendProtocol):
+class LocalFilesystemBackend(FilesystemBackend, SandboxBackendProtocol):  # type: ignore[misc]
     """Local filesystem backend supporting command execution.
 
     Inherits from FilesystemBackend for file operations and implements

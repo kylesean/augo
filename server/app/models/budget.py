@@ -1,23 +1,23 @@
 """Budget models for financial budget management.
 
 Includes Budget, BudgetPeriod, and BudgetSettings models.
+This model has been migrated to SQLAlchemy 2.0 with Mapped[...] annotations.
 """
 
-from datetime import date, time
+from __future__ import annotations
+
+from datetime import date, datetime, time
 from decimal import Decimal
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
-from uuid import UUID, uuid4
+from uuid import UUID, uuid4 as uuid4_factory
 
 import sqlalchemy as sa
-from sqlalchemy import CheckConstraint, Numeric
-from sqlalchemy.dialects.postgresql import (
-    UUID as PGUUID,
-)
-from sqlalchemy.types import Date, Time
-from sqlmodel import Column, Field, Relationship
+from sqlalchemy import Boolean, CheckConstraint, ForeignKey, Integer, String
+from sqlalchemy.dialects.postgresql import UUID as PGUUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
+from app.models.base import Base, col
 
 if TYPE_CHECKING:
     from app.models.user import User
@@ -87,7 +87,7 @@ class OverspendBehavior(str, Enum):
 # ============================================================================
 
 
-class Budget(BaseModel, table=True):
+class Budget(Base):
     """Budget model for managing spending limits.
 
     Supports both total budgets and category-specific budgets.
@@ -126,61 +126,43 @@ class Budget(BaseModel, table=True):
         CheckConstraint("amount >= 0", name="chk_budgets_amount_positive"),
     )
 
-    id: UUID = Field(default_factory=uuid4, sa_column=Column(PGUUID(as_uuid=True), primary_key=True))
-    owner_uuid: UUID = Field(
-        sa_column=Column(
-            PGUUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False, index=True
-        )
+    id: Mapped[UUID] = col.uuid_pk(uuid4_factory)
+    owner_uuid: Mapped[UUID] = col.uuid_fk("users", ondelete="CASCADE", index=True, column="uuid")
+    shared_space_id: Mapped[UUID | None] = col.uuid_column(index=True, nullable=True)
+
+    name: Mapped[str] = mapped_column(String(100))
+    type: Mapped[str] = mapped_column(String(20), default="EXPENSE_LIMIT")
+    scope: Mapped[str] = mapped_column(String(20))
+    category_key: Mapped[str | None] = mapped_column(String(25), nullable=True)
+
+    amount: Mapped[Decimal] = col.numeric(precision=20, scale=8)
+    currency_code: Mapped[str] = mapped_column(String(3), default="CNY")
+
+    period_type: Mapped[str] = mapped_column(String(20), default="MONTHLY")
+    period_anchor_day: Mapped[int] = mapped_column(Integer, default=1)
+
+    rollover_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    rollover_balance: Mapped[Decimal] = col.numeric(precision=20, scale=8, default=Decimal("0"))
+
+    source: Mapped[str] = mapped_column(String(20), default="USER_DEFINED")
+    ai_confidence: Mapped[Decimal | None] = col.numeric(precision=5, scale=4, nullable=True)
+    status: Mapped[str] = mapped_column(String(20), default="ACTIVE")
+
+    target_date: Mapped[date | None] = col.date_column(nullable=True)
+    linked_account_id: Mapped[UUID | None] = col.uuid_column(nullable=True)
+    current_progress: Mapped[Decimal | None] = col.numeric(precision=20, scale=8, nullable=True)
+    created_at: Mapped[datetime] = col.timestamptz()
+    updated_at: Mapped[datetime | None] = col.timestamptz(nullable=True)
+
+    owner: Mapped[User | None] = relationship(
+        "User",
+        foreign_keys="[Budget.owner_uuid]",
+        primaryjoin="Budget.owner_uuid == User.uuid",
     )
-    shared_space_id: Optional[UUID] = Field(
-        default=None,
-        sa_column=Column(
-            PGUUID(as_uuid=True), sa.ForeignKey("shared_spaces.id", ondelete="SET NULL"), nullable=True, index=True
-        ),
-    )
-
-    # Basic info
-    name: str = Field(max_length=100)
-    type: str = Field(default="EXPENSE_LIMIT", max_length=20)
-    scope: str = Field(max_length=20)
-    category_key: Optional[str] = Field(default=None, max_length=25)
-
-    # Amount settings
-    amount: Decimal = Field(sa_column=Column(Numeric(20, 8), nullable=False))
-    currency_code: str = Field(default="CNY", max_length=3)
-
-    # Period settings
-    period_type: str = Field(default="MONTHLY", max_length=20)
-    period_anchor_day: int = Field(default=1)
-
-    # Rollover settings
-    rollover_enabled: bool = Field(default=True)
-    rollover_balance: Decimal = Field(default=Decimal("0"), sa_column=Column(Numeric(20, 8), default=0))
-
-    # Source and status
-    source: str = Field(default="USER_DEFINED", max_length=20)
-    ai_confidence: Optional[Decimal] = Field(default=None, sa_column=Column(Numeric(5, 4), nullable=True))
-    status: str = Field(default="ACTIVE", max_length=20)
-
-    # Reserved fields for savings goals
-    target_date: Optional[date] = Field(default=None, sa_column=Column(Date, nullable=True))
-    linked_account_id: Optional[UUID] = Field(
-        default=None,
-        sa_column=Column(
-            PGUUID(as_uuid=True), sa.ForeignKey("financial_accounts.id", ondelete="SET NULL"), nullable=True
-        ),
-    )
-    current_progress: Optional[Decimal] = Field(default=None, sa_column=Column(Numeric(20, 8), nullable=True))
-
-    # Relationships
-    owner: Optional["User"] = Relationship(
-        sa_relationship_kwargs={
-            "foreign_keys": "[Budget.owner_uuid]",
-            "primaryjoin": "Budget.owner_uuid == User.uuid",
-        }
-    )
-    periods: list["BudgetPeriod"] = Relationship(
-        back_populates="budget", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    periods: Mapped[list[BudgetPeriod]] = relationship(
+        "BudgetPeriod",
+        back_populates="budget",
+        cascade="all, delete-orphan",
     )
 
     @property
@@ -214,7 +196,7 @@ class Budget(BaseModel, table=True):
 # ============================================================================
 
 
-class BudgetPeriod(BaseModel, table=True):
+class BudgetPeriod(Base):
     """Budget period tracking model.
 
     Tracks spending progress for each budget period (week/month/year).
@@ -240,32 +222,23 @@ class BudgetPeriod(BaseModel, table=True):
         CheckConstraint("spent_amount >= 0", name="chk_budget_periods_spent_positive"),
     )
 
-    id: UUID = Field(default_factory=uuid4, sa_column=Column(PGUUID(as_uuid=True), primary_key=True))
-    budget_id: UUID = Field(
-        sa_column=Column(
-            PGUUID(as_uuid=True), sa.ForeignKey("budgets.id", ondelete="CASCADE"), nullable=False, index=True
-        )
-    )
+    id: Mapped[UUID] = col.uuid_pk(uuid4_factory)
+    budget_id: Mapped[UUID] = col.uuid_fk("budgets", ondelete="CASCADE", index=True)
 
-    # Period range
-    period_start: date = Field(sa_column=Column(Date, nullable=False))
-    period_end: date = Field(sa_column=Column(Date, nullable=False))
+    period_start: Mapped[date] = col.date_column()
+    period_end: Mapped[date] = col.date_column()
 
-    # Amount tracking
-    spent_amount: Decimal = Field(default=Decimal("0"), sa_column=Column(Numeric(20, 8), default=0))
-    rollover_in: Decimal = Field(default=Decimal("0"), sa_column=Column(Numeric(20, 8), default=0))
-    rollover_out: Decimal = Field(default=Decimal("0"), sa_column=Column(Numeric(20, 8), default=0))
-    adjusted_target: Decimal = Field(sa_column=Column(Numeric(20, 8), nullable=False))
+    spent_amount: Mapped[Decimal] = col.numeric(precision=20, scale=8, default=Decimal("0"))
+    rollover_in: Mapped[Decimal] = col.numeric(precision=20, scale=8, default=Decimal("0"))
+    rollover_out: Mapped[Decimal] = col.numeric(precision=20, scale=8, default=Decimal("0"))
+    adjusted_target: Mapped[Decimal] = col.numeric(precision=20, scale=8)
 
-    # Status and forecast
-    status: str = Field(default="ON_TRACK", max_length=20)
-    ai_forecast: Optional[Decimal] = Field(default=None, sa_column=Column(Numeric(20, 8), nullable=True))
+    status: Mapped[str] = mapped_column(String(20), default="ON_TRACK")
+    ai_forecast: Mapped[Decimal | None] = col.numeric(precision=20, scale=8, nullable=True)
 
-    # Notes
-    notes: Optional[str] = Field(default=None)
+    notes: Mapped[str | None] = mapped_column(String, nullable=True)
 
-    # Relationships
-    budget: Optional[Budget] = Relationship(back_populates="periods")
+    budget: Mapped[Budget | None] = relationship("Budget", back_populates="periods")
 
     @property
     def spent_amount_float(self) -> float:
@@ -305,7 +278,7 @@ class BudgetPeriod(BaseModel, table=True):
 # ============================================================================
 
 
-class BudgetSettings(BaseModel, table=True):
+class BudgetSettings(Base):
     """User budget preferences and notification settings.
 
     One-to-one relationship with User (user_uuid is primary key).
@@ -337,37 +310,31 @@ class BudgetSettings(BaseModel, table=True):
         CheckConstraint("anomaly_threshold >= 0", name="chk_budget_settings_anomaly"),
     )
 
-    # Primary key = user UUID (one-to-one)
-    user_uuid: UUID = Field(
-        sa_column=Column(PGUUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), primary_key=True)
+    user_uuid: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True),
+        sa.ForeignKey("users.uuid", ondelete="CASCADE"),
+        primary_key=True,
     )
 
-    # Threshold settings
-    warning_threshold: int = Field(default=70)
-    alert_threshold: int = Field(default=90)
+    warning_threshold: Mapped[int] = mapped_column(Integer, default=70)
+    alert_threshold: Mapped[int] = mapped_column(Integer, default=90)
 
-    # Overspend behavior
-    overspend_behavior: str = Field(default="WARN", max_length=20)
+    overspend_behavior: Mapped[str] = mapped_column(String(20), default="WARN")
 
-    # Summary settings
-    weekly_summary_enabled: bool = Field(default=True)
-    weekly_summary_day: str = Field(default="sunday", max_length=10)
-    monthly_summary_enabled: bool = Field(default=True)
+    weekly_summary_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    weekly_summary_day: Mapped[str] = mapped_column(String(10), default="sunday")
+    monthly_summary_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    # Anomaly detection
-    anomaly_detection_enabled: bool = Field(default=True)
-    anomaly_threshold: Decimal = Field(default=Decimal("500"), sa_column=Column(Numeric(20, 8), default=500))
+    anomaly_detection_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    anomaly_threshold: Mapped[Decimal] = col.numeric(precision=20, scale=8, default=Decimal("500"))
 
-    # Quiet hours
-    quiet_hours_start: Optional[time] = Field(default=None, sa_column=Column(Time, nullable=True))
-    quiet_hours_end: Optional[time] = Field(default=None, sa_column=Column(Time, nullable=True))
+    quiet_hours_start: Mapped[time | None] = col.time_column()
+    quiet_hours_end: Mapped[time | None] = col.time_column()
 
-    # Relationship
-    user: Optional["User"] = Relationship(
-        sa_relationship_kwargs={
-            "foreign_keys": "[BudgetSettings.user_uuid]",
-            "primaryjoin": "BudgetSettings.user_uuid == User.uuid",
-        }
+    user: Mapped[User | None] = relationship(
+        "User",
+        foreign_keys="[BudgetSettings.user_uuid]",
+        primaryjoin="BudgetSettings.user_uuid == User.uuid",
     )
 
     @property

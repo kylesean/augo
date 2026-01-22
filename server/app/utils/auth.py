@@ -127,7 +127,7 @@ def refresh_token(old_token: str) -> Token | None:
     return new_token
 
 
-def decode_token_payload(token: str) -> dict | None:
+def decode_token_payload(token: str) -> dict[str, Any] | None:
     """Decode a JWT token and return its payload without verification.
 
     This is useful for extracting information from expired tokens or for debugging.

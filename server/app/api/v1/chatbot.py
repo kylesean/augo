@@ -9,6 +9,7 @@ Authorization: Session ownership is verified via get_authorized_session.
 
 import json
 from collections.abc import AsyncGenerator
+from typing import Any
 from uuid import UUID, uuid4
 
 from fastapi import (
@@ -47,7 +48,7 @@ agent = LangGraphAgent()
 async def _update_memory_background(
     agent: LangGraphAgent,
     user_uuid: UUID,
-    messages: list[dict],
+    messages: list[dict[str, Any]],
     session_id: UUID,
 ) -> None:
     """Update long-term memory in background (fire-and-forget).
@@ -327,7 +328,7 @@ async def chat_stream(
 async def update_session_state(
     request: Request,
     session_id: UUID,
-    updates: dict,
+    updates: dict[str, Any],
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:

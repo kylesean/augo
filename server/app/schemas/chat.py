@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 from typing import (
+    Any,
     Literal,
-    Sequence,
 )
 from uuid import UUID
 
@@ -142,7 +143,7 @@ class StreamResponse(BaseModel):
     content: str = Field(default="", description="The content of the current chunk")
     done: bool = Field(default=False, description="Whether the stream is complete")
     session_id: UUID | None = Field(default=None, description="Session ID for new sessions")
-    tool_call: dict | None = Field(default=None, description="Tool call information (name, args, status)")
+    tool_call: dict[str, Any] | None = Field(default=None, description="Tool call information (name, args, status)")
     message_id: str | None = Field(default=None, description="Message ID (only when done=True)")
 
 
@@ -154,7 +155,7 @@ class ToolCallInfo(BaseModel):
 
     id: str = Field(..., description="Tool call ID")
     name: str = Field(..., description="Tool name")
-    args: dict = Field(default_factory=dict, description="Tool arguments")
+    args: dict[str, Any] = Field(default_factory=dict, description="Tool arguments")
 
 
 class UIComponentInfo(BaseModel):
@@ -162,7 +163,7 @@ class UIComponentInfo(BaseModel):
 
     surfaceId: str = Field(..., description="GenUI surface ID")
     componentType: str = Field(..., description="Component type name")
-    data: dict = Field(default_factory=dict, description="Component data")
+    data: dict[str, Any] = Field(default_factory=dict, description="Component data")
 
 
 class AttachmentInfo(BaseModel):

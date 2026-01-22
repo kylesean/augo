@@ -280,10 +280,12 @@ def cache_key(*args: Any, **kwargs: Any) -> str:
     # Filter out non-serializable arguments
     serializable_args = []
     for arg in args:
-        if isinstance(arg, (str, int, float, bool, type(None))):
+        if isinstance(arg, str | int | float | bool | type(None)):
             serializable_args.append(str(arg))
 
-    serializable_kwargs = {k: str(v) for k, v in kwargs.items() if isinstance(v, (str, int, float, bool, type(None)))}
+    serializable_kwargs = {
+        k: str(v) for k, v in kwargs.items() if isinstance(v, str | int | float | bool | type(None))
+    }
 
     key_parts = serializable_args + [f"{k}={v}" for k, v in sorted(serializable_kwargs.items())]
     return ":".join(key_parts)
@@ -293,7 +295,7 @@ def cached(
     ttl: int | None = 300,
     key_prefix: str | None = None,
     key_builder: Callable[..., str] | None = None,
-) -> Callable[[Callable], Callable]:
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Decorator for caching function results.
 
     Args:
@@ -313,7 +315,7 @@ def cached(
         ```
     """
 
-    def decorator(func: Callable) -> Callable:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         @functools.wraps(func)
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
             # Build cache key
@@ -345,7 +347,7 @@ def cached(
     return decorator
 
 
-def cache_invalidate(key_pattern: str) -> Callable[[Callable], Callable]:
+def cache_invalidate(key_pattern: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Decorator for invalidating cache after function execution.
 
     Args:
@@ -360,7 +362,7 @@ def cache_invalidate(key_pattern: str) -> Callable[[Callable], Callable]:
         ```
     """
 
-    def decorator(func: Callable) -> Callable:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         @functools.wraps(func)
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
             result = await func(*args, **kwargs)

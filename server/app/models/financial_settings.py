@@ -1,17 +1,22 @@
-"""Financial settings model for storing user's financial preferences."""
+"""Financial settings model for storing user's financial preferences.
 
+This model has been migrated to SQLAlchemy 2.0 with Mapped[...] annotations.
+"""
+
+from __future__ import annotations
+
+from datetime import datetime
 from decimal import Decimal
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
 from uuid import UUID
 
 import sqlalchemy as sa
-from sqlalchemy import Numeric
+from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
-from sqlmodel import Column, Field, Relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
-from app.utils.currency_utils import BASE_CURRENCY
+from app.models.base import Base, col
 
 if TYPE_CHECKING:
     from app.models.user import User
@@ -24,7 +29,7 @@ class BurnRateMode(str, Enum):
     AI_AUTO = "AI_AUTO"
 
 
-class FinancialSettings(BaseModel, table=True):
+class FinancialSettings(Base):
     """Financial settings model for storing user's financial preferences.
 
     This model stores user-specific financial configuration such as
@@ -43,26 +48,22 @@ class FinancialSettings(BaseModel, table=True):
 
     __tablename__ = "financial_settings"
 
-    user_uuid: UUID = Field(
-        sa_column=Column(
-            PGUUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), primary_key=True, nullable=False
-        )
+    user_uuid: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True),
+        sa.ForeignKey("users.uuid", ondelete="CASCADE"),
+        primary_key=True,
     )
-    safety_threshold: Decimal = Field(
-        default=Decimal("1000.00"), sa_column=Column(Numeric(20, 8), nullable=False, default=1000.00)
-    )
-    daily_burn_rate: Decimal = Field(default=Decimal("100.00"), sa_column=Column(Numeric(20, 8), default=100.00))
-    burn_rate_mode: str = Field(default="AI_AUTO", max_length=20)
-    primary_currency: str = Field(default=BASE_CURRENCY, max_length=3)
-    month_start_day: int = Field(default=1)
-    # updated_at is inherited from BaseModel (timezone-aware)
+    safety_threshold: Mapped[Decimal] = col.numeric(precision=20, scale=8, default=Decimal("1000.00"))
+    daily_burn_rate: Mapped[Decimal] = col.numeric(precision=20, scale=8, default=Decimal("100.00"))
+    burn_rate_mode: Mapped[str] = mapped_column(String(20), default="AI_AUTO")
+    primary_currency: Mapped[str] = mapped_column(String(3), default="CNY")
+    month_start_day: Mapped[int] = mapped_column(Integer, default=1)
+    updated_at: Mapped[datetime | None] = col.timestamptz(nullable=True)
 
-    # Relationship
-    user: Optional["User"] = Relationship(
-        sa_relationship_kwargs={
-            "foreign_keys": "[FinancialSettings.user_uuid]",
-            "primaryjoin": "FinancialSettings.user_uuid == User.uuid",
-        }
+    user: Mapped[User | None] = relationship(
+        "User",
+        foreign_keys="[FinancialSettings.user_uuid]",
+        primaryjoin="FinancialSettings.user_uuid == User.uuid",
     )
 
     @property

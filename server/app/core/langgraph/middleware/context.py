@@ -5,6 +5,7 @@ into the system prompt before agent invocation.
 """
 
 from datetime import datetime
+from typing import Any
 
 from langchain_core.messages import BaseMessage, HumanMessage
 
@@ -95,8 +96,8 @@ class DynamicContextMiddleware(BaseMiddleware):
     async def before_invoke(
         self,
         messages: list[BaseMessage],
-        config: dict,
-    ) -> tuple[list[BaseMessage], dict]:
+        config: dict[str, Any],
+    ) -> tuple[list[BaseMessage], dict[str, Any]]:
         """Inject dynamic context before agent invocation.
 
         Args:

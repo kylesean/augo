@@ -1,6 +1,6 @@
 """Tests for MemoryService filters and cleanup functionality."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta, timezone
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
@@ -141,7 +141,7 @@ class TestMemoryServiceCleanup:
         service = MemoryService()
         service._memory = mock_memory
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         mock_memories = [{"id": f"mem_{i}", "created_at": (now - timedelta(days=i)).isoformat()} for i in range(5)]
 
         mock_memory.get_all.return_value = {"results": mock_memories}
@@ -167,7 +167,7 @@ class TestMemoryServiceCleanup:
         service = MemoryService()
         service._memory = mock_memory
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         mock_memories = [
             {"id": "mem_new_1", "created_at": (now - timedelta(days=10)).isoformat()},
             {"id": "mem_new_2", "created_at": (now - timedelta(days=20)).isoformat()},

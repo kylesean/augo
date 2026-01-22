@@ -1,29 +1,28 @@
-"""Transaction models for financial management."""
+"""Transaction models for financial management.
+
+This model has been migrated to SQLAlchemy 2.0 with Mapped[...] annotations.
+"""
+
+from __future__ import annotations
 
 from datetime import date, datetime
 from decimal import Decimal
-from typing import TYPE_CHECKING, Optional
-from uuid import UUID, uuid4
+from typing import TYPE_CHECKING, Any, Optional
+from uuid import UUID, uuid4 as uuid4_factory
 
-import sqlalchemy as sa
 from pydantic import field_validator
-from sqlalchemy import Numeric
-from sqlalchemy.dialects.postgresql import (
-    JSONB,
-    TIMESTAMP,
-    UUID as PGUUID,
-)
-from sqlalchemy.types import DateTime
-from sqlmodel import Column, Field, Relationship
+from sqlalchemy import Boolean, Integer, String
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
+from app.models.base import Base, col
 
 if TYPE_CHECKING:
     from app.models.financial_account import FinancialAccount
     from app.models.user import User
 
 
-class Transaction(BaseModel, table=True):
+class Transaction(Base):
     """Transaction model for storing financial transactions.
 
     Attributes:
@@ -55,335 +54,174 @@ class Transaction(BaseModel, table=True):
 
     __tablename__ = "transactions"
 
-    id: Optional[UUID] = Field(default=None, sa_column=Column(PGUUID(as_uuid=True), primary_key=True))
-    user_uuid: UUID = Field(sa_column=Column(PGUUID(as_uuid=True), nullable=False, index=True))
-    type: str = Field(max_length=20)  # EXPENSE, INCOME, TRANSFER
-    source_account_id: Optional[UUID] = Field(
-        default=None,
-        sa_column=Column(
-            PGUUID(as_uuid=True),
-            sa.ForeignKey("financial_accounts.id", ondelete="SET NULL"),
-            nullable=True,
-            index=True,
-        ),
+    id: Mapped[UUID | None] = mapped_column(primary_key=True)
+    user_uuid: Mapped[UUID] = col.uuid_column(index=True)
+    type: Mapped[str] = mapped_column(String(20))
+    source_account_id: Mapped[UUID | None] = col.uuid_column(index=True, nullable=True)
+    target_account_id: Mapped[UUID | None] = col.uuid_column(index=True, nullable=True)
+    amount_original: Mapped[Decimal] = col.numeric(precision=20, scale=8)
+    amount: Mapped[Decimal] = col.numeric(precision=20, scale=8)
+    currency: Mapped[str] = mapped_column(String(3), default="CNY")
+    exchange_rate: Mapped[Decimal | None] = col.numeric(precision=20, scale=8, nullable=True)
+    transaction_at: Mapped[datetime] = col.datetime_tz()
+    transaction_timezone: Mapped[str] = mapped_column(String(50), default="UTC")
+    tags: Mapped[list[str] | None] = mapped_column(JSONB, nullable=True)
+    location: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    latitude: Mapped[Decimal | None] = col.numeric(precision=9, scale=6, nullable=True)
+    longitude: Mapped[Decimal | None] = col.numeric(precision=9, scale=6, nullable=True)
+    source: Mapped[str] = mapped_column(String(20), default="MANUAL")
+    status: Mapped[str] = mapped_column(String(20), default="CLEARED")
+    description: Mapped[str | None] = mapped_column(String, nullable=True)
+    raw_input: Mapped[str] = mapped_column(String, default="")
+    category_key: Mapped[str] = mapped_column(String(25), default="")
+    subject: Mapped[str] = mapped_column(String(20), default="SELF")
+    intent: Mapped[str] = mapped_column(String(20), default="SURVIVAL")
+    source_thread_id: Mapped[UUID | None] = col.uuid_column(index=True, nullable=True)
+    created_at: Mapped[datetime] = col.timestamptz()
+    updated_at: Mapped[datetime | None] = col.timestamptz(nullable=True)
+
+    comments: Mapped[list[TransactionComment]] = relationship(
+        "TransactionComment",
+        back_populates="transaction",
+        cascade="all, delete-orphan",
     )
-    target_account_id: Optional[UUID] = Field(
-        default=None,
-        sa_column=Column(
-            PGUUID(as_uuid=True),
-            sa.ForeignKey("financial_accounts.id", ondelete="SET NULL"),
-            nullable=True,
-            index=True,
-        ),
-    )
-    amount_original: Decimal = Field(sa_column=Column(Numeric(20, 8)))
-    amount: Decimal = Field(sa_column=Column(Numeric(20, 8)))
-    currency: str = Field(max_length=3, default="CNY")
-    exchange_rate: Optional[Decimal] = Field(default=None, sa_column=Column(Numeric(20, 8)))
-    transaction_at: datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False, index=True))
-    transaction_timezone: str = Field(max_length=50, default="UTC")
-    tags: Optional[list[str]] = Field(default=None, sa_column=Column(JSONB))
-    location: Optional[str] = Field(default=None, max_length=255)
-    latitude: Optional[Decimal] = Field(default=None, sa_column=Column(Numeric(9, 6)))
-    longitude: Optional[Decimal] = Field(default=None, sa_column=Column(Numeric(9, 6)))
-    source: str = Field(max_length=20, default="MANUAL")
-    status: str = Field(max_length=20, default="CLEARED")
-    description: Optional[str] = Field(default=None)
-    raw_input: str = Field(default="")  # NOT NULL in DDL
-    category_key: str = Field(max_length=25, default="")
-    subject: str = Field(max_length=20, default="SELF")  # Transaction beneficiary
-    intent: str = Field(max_length=20, default="SURVIVAL")  # Transaction motivation
-    source_thread_id: Optional[UUID] = Field(
-        default=None,
-        sa_column=Column(PGUUID(as_uuid=True), nullable=True, index=True),
-        description="Source AI chat session ID for message anchor navigation",
+    shares: Mapped[list[TransactionShare]] = relationship(
+        "TransactionShare",
+        back_populates="transaction",
+        cascade="all, delete-orphan",
     )
 
-    # Relationships
-    comments: list["TransactionComment"] = Relationship(
-        back_populates="transaction", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
-    )
-    shares: list["TransactionShare"] = Relationship(
-        back_populates="transaction", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    source_account: Mapped[FinancialAccount | None] = relationship(
+        "FinancialAccount",
+        foreign_keys="[Transaction.source_account_id]",
+        primaryjoin="Transaction.source_account_id == FinancialAccount.id",
     )
 
-    source_account: Optional["FinancialAccount"] = Relationship(
-        sa_relationship_kwargs={
-            "foreign_keys": "[Transaction.source_account_id]",
-        }
-    )
-
-    target_account: Optional["FinancialAccount"] = Relationship(
-        sa_relationship_kwargs={
-            "foreign_keys": "[Transaction.target_account_id]",
-        }
+    target_account: Mapped[FinancialAccount | None] = relationship(
+        "FinancialAccount",
+        foreign_keys="[Transaction.target_account_id]",
+        primaryjoin="Transaction.target_account_id == FinancialAccount.id",
     )
 
     @property
     def amount_float(self) -> float:
-        """Get amount as float.
-
-        Returns:
-            float: Amount value
-        """
+        """Get amount as float."""
         return float(self.amount)
 
     @property
     def amount_original_float(self) -> float:
-        """Get original amount as float.
-
-        Returns:
-            float: Original amount value
-        """
+        """Get original amount as float."""
         return float(self.amount_original)
 
     @property
     def absolute_amount(self) -> float:
-        """Get absolute value of amount.
-
-        Returns:
-            float: Absolute amount value
-        """
+        """Get absolute value of amount."""
         return abs(float(self.amount))
 
     @property
     def is_income(self) -> bool:
-        """Check if transaction is income.
-
-        Returns:
-            bool: True if type is 'income'
-        """
+        """Check if transaction is income."""
         return self.type == "INCOME"
 
     @property
     def is_expense(self) -> bool:
-        """Check if transaction is expense.
-
-        Returns:
-            bool: True if type is 'expense'
-        """
+        """Check if transaction is expense."""
         return self.type == "EXPENSE"
 
     @property
     def is_transfer(self) -> bool:
-        """Check if transaction is transfer.
-
-        Returns:
-            bool: True if type is 'transfer'
-        """
+        """Check if transaction is transfer."""
         return self.type == "TRANSFER"
 
 
-class TransactionComment(BaseModel, table=True):
-    """Transaction comment model for storing comments on transactions.
-
-    Attributes:
-        id: The primary key
-        transaction_id: Foreign key to transactions table
-        user_uuid: Foreign key to users table (commenter, references users.uuid)
-        parent_comment_id: Foreign key to parent comment (for nested comments)
-        comment_text: The comment text
-        mentioned_user_ids: Array of mentioned user IDs
-        created_at: When the comment was created
-        updated_at: When the comment was last updated
-        transaction: Relationship to transaction
-        user: Relationship to user (commenter)
-    """
+class TransactionComment(Base):
+    """Transaction comment model for storing comments on transactions."""
 
     __tablename__ = "transaction_comments"
 
-    id: Optional[int] = Field(default=None, primary_key=True, sa_column_kwargs={"autoincrement": True})
-    transaction_id: UUID = Field(
-        sa_column=Column(
-            PGUUID(as_uuid=True), sa.ForeignKey("transactions.id", ondelete="CASCADE"), nullable=False, index=True
-        )
-    )
-    user_uuid: UUID = Field(
-        sa_column=Column(
-            PGUUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False, index=True
-        )
-    )
-    parent_comment_id: Optional[int] = Field(default=None, foreign_key="transaction_comments.id")
-    comment_text: str
-    mentioned_user_ids: Optional[list[int]] = Field(default=None, sa_column=Column(JSONB))
+    id: Mapped[int | None] = mapped_column(primary_key=True, autoincrement=True)
+    transaction_id: Mapped[UUID] = col.uuid_fk("transactions", ondelete="CASCADE", index=True)
+    user_uuid: Mapped[UUID] = col.uuid_fk("users", ondelete="CASCADE", index=True, column="uuid")
+    parent_comment_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    comment_text: Mapped[str] = mapped_column(String)
+    mentioned_user_ids: Mapped[list[int] | None] = mapped_column(JSONB, nullable=True)
+    created_at: Mapped[datetime] = col.timestamptz()
+    updated_at: Mapped[datetime | None] = col.timestamptz(nullable=True)
 
-    # Relationships
-    transaction: Optional[Transaction] = Relationship(back_populates="comments")
-    user: Optional["User"] = Relationship(
-        sa_relationship_kwargs={
-            "foreign_keys": "[TransactionComment.user_uuid]",
-            "primaryjoin": "TransactionComment.user_uuid == User.uuid",
-        }
+    transaction: Mapped[Transaction | None] = relationship("Transaction", back_populates="comments")
+    user: Mapped[User | None] = relationship(
+        "User",
+        foreign_keys="[TransactionComment.user_uuid]",
+        primaryjoin="TransactionComment.user_uuid == User.uuid",
     )
 
     @field_validator("comment_text")
     @classmethod
     def validate_comment_text(cls, v: str) -> str:
-        """Validate comment text is not empty.
-
-        Args:
-            v: Comment text to validate
-
-        Returns:
-            str: Validated comment text
-
-        Raises:
-            ValueError: If comment is empty
-        """
+        """Validate comment text is not empty."""
         if not v or not v.strip():
             raise ValueError("Comment text cannot be empty")
         return v.strip()
 
 
-class RecurringTransaction(BaseModel, table=True):
-    """Recurring transaction model for scheduled transactions (RRULE rules).
-
-    Attributes:
-        id: The primary key (UUID)
-        user_uuid: Foreign key to users.uuid
-        type: Transaction type (EXPENSE, INCOME, TRANSFER)
-        source_account_id: Source/expense account UUID
-        target_account_id: Target/income account UUID
-        amount_type: Amount type (FIXED for fixed amounts, ESTIMATE for references)
-        requires_confirmation: If true, requires confirmation before generating transaction
-        amount: Transaction amount (Decimal, high precision)
-        currency: Currency code (CNY, USD, JPY, etc.)
-        category_key: Category key string
-        tags: Fine-grained tags (JSONB array)
-        recurrence_rule: RRULE format recurrence rule (iCalendar standard)
-        timezone: Timezone for the rule (important for cross-timezone handling)
-        start_date: Start date for recurrence
-        end_date: End date for recurrence (optional, NULL means infinite)
-        exception_dates: List of exception dates (JSON array)
-        last_generated_at: Last time a Transaction was generated
-        next_execution_at: Next scheduled execution time
-        description: Transaction description
-        is_active: Whether the recurring transaction is active
-        created_at: When the record was created
-        updated_at: When the record was last updated
-    """
+class RecurringTransaction(Base):
+    """Recurring transaction model for scheduled transactions (RRULE rules)."""
 
     __tablename__ = "recurring_transactions"
 
-    id: Optional[UUID] = Field(default_factory=uuid4, sa_column=Column(PGUUID(as_uuid=True), primary_key=True))
-    user_uuid: UUID = Field(
-        sa_column=Column(
-            PGUUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False, index=True
-        )
-    )
+    id: Mapped[UUID] = col.uuid_pk(uuid4_factory)
+    user_uuid: Mapped[UUID] = col.uuid_fk("users", ondelete="CASCADE", index=True, column="uuid")
 
-    # Transaction type: EXPENSE, INCOME, TRANSFER
-    type: str = Field(max_length=20)
+    type: Mapped[str] = mapped_column(String(20))
 
-    # Account references
-    source_account_id: Optional[UUID] = Field(default=None, sa_column=Column(PGUUID(as_uuid=True), nullable=True))
-    target_account_id: Optional[UUID] = Field(default=None, sa_column=Column(PGUUID(as_uuid=True), nullable=True))
+    source_account_id: Mapped[UUID | None] = col.uuid_column(nullable=True)
+    target_account_id: Mapped[UUID | None] = col.uuid_column(nullable=True)
 
-    # Amount settings
-    amount_type: str = Field(max_length=20, default="FIXED")  # FIXED or ESTIMATE
-    requires_confirmation: bool = Field(default=False)
-    amount: Decimal = Field(sa_column=Column(Numeric(28, 8), nullable=False))
-    currency: str = Field(max_length=3, default="CNY")
+    amount_type: Mapped[str] = mapped_column(String(20), default="FIXED")
+    requires_confirmation: Mapped[bool] = mapped_column(Boolean, default=False)
+    amount: Mapped[Decimal] = col.numeric(precision=28, scale=8)
+    currency: Mapped[str] = mapped_column(String(3), default="CNY")
 
-    # Classification
-    category_key: str = Field(max_length=50, default="OTHERS")
-    tags: Optional[list[str]] = Field(default=None, sa_column=Column(JSONB))
+    category_key: Mapped[str] = mapped_column(String(50), default="OTHERS")
+    tags: Mapped[list[str] | None] = mapped_column(JSONB, nullable=True)
 
-    # Rule engine
-    recurrence_rule: str = Field(max_length=255)  # RRULE format (iCalendar)
-    timezone: str = Field(max_length=50, default="Asia/Shanghai")
-    start_date: date
-    end_date: Optional[date] = Field(default=None)
+    recurrence_rule: Mapped[str] = mapped_column(String(255))
+    timezone: Mapped[str] = mapped_column(String(50), default="Asia/Shanghai")
+    start_date: Mapped[date] = col.date_column()
+    end_date: Mapped[date | None] = col.date_column(nullable=True)
 
-    # Execution control
-    exception_dates: Optional[list[str]] = Field(default=None, sa_column=Column(JSONB, default=[]))
-    last_generated_at: Optional[datetime] = Field(
-        default=None, sa_column=Column(TIMESTAMP(timezone=True), nullable=True)
-    )
-    next_execution_at: Optional[datetime] = Field(
-        default=None, sa_column=Column(TIMESTAMP(timezone=True), nullable=True)
-    )
+    exception_dates: Mapped[list[str] | None] = mapped_column(JSONB, nullable=True)
+    last_generated_at: Mapped[datetime | None] = col.datetime_tz(nullable=True)
+    next_execution_at: Mapped[datetime | None] = col.datetime_tz(nullable=True)
 
-    # Metadata
-    description: Optional[str] = Field(default=None)
-    is_active: bool = Field(default=True)
+    description: Mapped[str | None] = mapped_column(String, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = col.timestamptz()
+    updated_at: Mapped[datetime | None] = col.timestamptz(nullable=True)
 
     @field_validator("recurrence_rule")
     @classmethod
     def validate_recurrence_rule(cls, v: str) -> str:
-        """Validate RRULE format using dateutil.
-
-        Args:
-            v: RRULE string to validate
-
-        Returns:
-            str: Validated RRULE string
-
-        Raises:
-            ValueError: If RRULE format is invalid
-        """
+        """Validate RRULE format using dateutil."""
         if not v or not v.strip():
             raise ValueError("Recurrence rule cannot be empty")
 
         rule = v.strip().upper()
 
-        # Basic validation - should start with FREQ=
         if not rule.startswith("FREQ="):
             raise ValueError("Invalid RRULE format: must start with FREQ=")
 
-        # Validate FREQ value
         valid_freqs = {"DAILY", "WEEKLY", "MONTHLY", "YEARLY"}
         freq_part = rule.split(";")[0].replace("FREQ=", "")
         if freq_part not in valid_freqs:
             raise ValueError(f"Invalid frequency: {freq_part}. Must be one of {valid_freqs}")
-
-        # Parse and validate each part
-        parts = rule.split(";")
-        for part in parts:
-            if "=" not in part:
-                raise ValueError(f"Invalid RRULE part: {part}")
-            key, value = part.split("=", 1)
-            if key == "INTERVAL":
-                try:
-                    interval = int(value)
-                except ValueError:
-                    raise ValueError(f"Invalid INTERVAL value: {value}")
-
-                if interval < 1:
-                    raise ValueError("INTERVAL must be >= 1")
-            elif key == "BYDAY":
-                valid_days = {"MO", "TU", "WE", "TH", "FR", "SA", "SU"}
-                days = value.split(",")
-                for day in days:
-                    # Handle ordinal weekdays like 1MO, -1FR
-                    clean_day = day.lstrip("-0123456789")
-                    if clean_day not in valid_days:
-                        raise ValueError(f"Invalid day: {day}")
-            elif key == "BYMONTHDAY":
-                try:
-                    day_num = int(value)
-                except ValueError:
-                    raise ValueError(f"Invalid BYMONTHDAY value: {value}")
-
-                if day_num < 1 or day_num > 31:
-                    raise ValueError("BYMONTHDAY must be 1-31")
 
         return rule
 
     @field_validator("type")
     @classmethod
     def validate_type(cls, v: str) -> str:
-        """Validate transaction type.
-
-        Args:
-            v: Type string to validate
-
-        Returns:
-            str: Validated type string
-
-        Raises:
-            ValueError: If type is invalid
-        """
+        """Validate transaction type."""
         valid_types = {"EXPENSE", "INCOME", "TRANSFER"}
         if v.upper() not in valid_types:
             raise ValueError(f"Type must be one of: {', '.join(valid_types)}")
@@ -392,17 +230,7 @@ class RecurringTransaction(BaseModel, table=True):
     @field_validator("amount_type")
     @classmethod
     def validate_amount_type(cls, v: str) -> str:
-        """Validate amount type.
-
-        Args:
-            v: Amount type string to validate
-
-        Returns:
-            str: Validated amount type string
-
-        Raises:
-            ValueError: If amount type is invalid
-        """
+        """Validate amount type."""
         valid_types = {"FIXED", "ESTIMATE"}
         if v.upper() not in valid_types:
             raise ValueError(f"Amount type must be one of: {', '.join(valid_types)}")
@@ -410,59 +238,31 @@ class RecurringTransaction(BaseModel, table=True):
 
     @property
     def amount_float(self) -> float:
-        """Get amount as float.
-
-        Returns:
-            float: Amount value
-        """
+        """Get amount as float."""
         return float(self.amount)
 
 
-class TransactionShare(BaseModel, table=True):
-    """Transaction share model for sharing transactions between users.
-
-    Attributes:
-        id: The primary key (UUID)
-        transaction_id: Foreign key to transactions table (UUID)
-        sharer_user_uuid: Foreign key to users.uuid (user who shares)
-        shared_with_user_uuid: Foreign key to users.uuid (user shared with)
-        can_view: Whether the shared user can view the transaction
-        shared_at: When the share was created
-        expires_at: When the share expires
-        created_at: Record creation timestamp
-        updated_at: Record update timestamp
-        transaction: Relationship to transaction
-        sharer: Relationship to sharer user
-        shared_with: Relationship to user shared with
-    """
+class TransactionShare(Base):
+    """Transaction share model for sharing transactions between users."""
 
     __tablename__ = "transaction_shares"
 
-    id: Optional[UUID] = Field(default=None, sa_column=Column(PGUUID(as_uuid=True), primary_key=True))
-    transaction_id: UUID = Field(
-        sa_column=Column(PGUUID(as_uuid=True), sa.ForeignKey("transactions.id", ondelete="CASCADE"), nullable=False)
-    )
-    sharer_user_uuid: UUID = Field(
-        sa_column=Column(PGUUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False)
-    )
-    shared_with_user_uuid: UUID = Field(
-        sa_column=Column(PGUUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False)
-    )
-    can_view: bool = Field(default=True)
-    shared_at: datetime = Field(sa_column=Column(TIMESTAMP(timezone=True), nullable=False))
-    expires_at: datetime = Field(sa_column=Column(TIMESTAMP(timezone=True), nullable=False))
+    id: Mapped[UUID | None] = mapped_column(primary_key=True)
+    transaction_id: Mapped[UUID] = col.uuid_fk("transactions", ondelete="CASCADE")
+    sharer_user_uuid: Mapped[UUID] = col.uuid_fk("users", ondelete="CASCADE", column="uuid")
+    shared_with_user_uuid: Mapped[UUID] = col.uuid_fk("users", ondelete="CASCADE", column="uuid")
+    can_view: Mapped[bool] = mapped_column(Boolean, default=True)
+    shared_at: Mapped[datetime] = col.datetime_tz()
+    expires_at: Mapped[datetime] = col.datetime_tz()
 
-    # Relationships
-    transaction: Optional[Transaction] = Relationship(back_populates="shares")
-    sharer: Optional["User"] = Relationship(
-        sa_relationship_kwargs={
-            "foreign_keys": "[TransactionShare.sharer_user_uuid]",
-            "primaryjoin": "TransactionShare.sharer_user_uuid == User.uuid",
-        }
+    transaction: Mapped[Transaction | None] = relationship("Transaction", back_populates="shares")
+    sharer: Mapped[User | None] = relationship(
+        "User",
+        foreign_keys="[TransactionShare.sharer_user_uuid]",
+        primaryjoin="TransactionShare.sharer_user_uuid == User.uuid",
     )
-    shared_with: Optional["User"] = Relationship(
-        sa_relationship_kwargs={
-            "foreign_keys": "[TransactionShare.shared_with_user_uuid]",
-            "primaryjoin": "TransactionShare.shared_with_user_uuid == User.uuid",
-        }
+    shared_with: Mapped[User | None] = relationship(
+        "User",
+        foreign_keys="[TransactionShare.shared_with_user_uuid]",
+        primaryjoin="TransactionShare.shared_with_user_uuid == User.uuid",
     )

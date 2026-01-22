@@ -10,7 +10,7 @@ Provides REST API for managing user storage configurations:
 from __future__ import annotations
 
 from datetime import datetime
-from typing import cast
+from typing import Any, cast
 
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
@@ -37,7 +37,7 @@ class StorageConfigCreate(BaseModel):
     provider_type: str = Field(..., description="Provider type: local_uploads, s3_compatible, webdav")
     name: str = Field(..., max_length=100, description="Display name")
     base_path: str = Field(..., max_length=255, description="Root path or bucket name")
-    credentials: dict | None = Field(
+    credentials: dict[str, Any] | None = Field(
         default=None, description="Connection credentials (endpoint, access_key, secret_key, etc.)"
     )
     is_readonly: bool = Field(default=True, description="Whether to prevent write operations")
@@ -48,7 +48,7 @@ class StorageConfigUpdate(BaseModel):
 
     name: str | None = Field(None, max_length=100)
     base_path: str | None = Field(None, max_length=255)
-    credentials: dict | None = None
+    credentials: dict[str, Any] | None = None
     is_readonly: bool | None = None
 
 
@@ -59,7 +59,7 @@ class StorageConfigResponse(BaseModel):
     provider_type: str
     name: str
     base_path: str
-    credentials: dict  # Masked credentials
+    credentials: dict[str, Any]  # Masked credentials
     is_readonly: bool
     created_at: str
     updated_at: str
@@ -108,8 +108,8 @@ async def create_storage_config(
             "basePath": config.base_path,
             "credentials": service.mask_credentials(config),
             "isReadonly": config.is_readonly,
-            "createdAt": cast(datetime, config.created_at).isoformat().replace("+00:00", "Z"),
-            "updatedAt": cast(datetime, config.updated_at).isoformat().replace("+00:00", "Z"),
+            "createdAt": config.created_at.isoformat().replace("+00:00", "Z"),
+            "updatedAt": config.updated_at.isoformat().replace("+00:00", "Z") if config.updated_at else None,
         },
         message="存储配置创建成功",
     )
@@ -143,8 +143,8 @@ async def list_storage_configs(
                 "basePath": c.base_path,
                 "credentials": service.mask_credentials(c),
                 "isReadonly": c.is_readonly,
-                "createdAt": cast(datetime, c.created_at).isoformat().replace("+00:00", "Z"),
-                "updatedAt": cast(datetime, c.updated_at).isoformat().replace("+00:00", "Z"),
+                "createdAt": c.created_at.isoformat().replace("+00:00", "Z"),
+                "updatedAt": c.updated_at.isoformat().replace("+00:00", "Z") if c.updated_at else None,
             }
             for c in configs
         ]
@@ -181,8 +181,8 @@ async def get_storage_config(
             "basePath": config.base_path,
             "credentials": service.mask_credentials(config),
             "isReadonly": config.is_readonly,
-            "createdAt": cast(datetime, config.created_at).isoformat().replace("+00:00", "Z"),
-            "updatedAt": cast(datetime, config.updated_at).isoformat().replace("+00:00", "Z"),
+            "createdAt": config.created_at.isoformat().replace("+00:00", "Z"),
+            "updatedAt": config.updated_at.isoformat().replace("+00:00", "Z") if config.updated_at else None,
         }
     )
 
@@ -226,8 +226,8 @@ async def update_storage_config(
             "basePath": config.base_path,
             "credentials": service.mask_credentials(config),
             "isReadonly": config.is_readonly,
-            "createdAt": cast(datetime, config.created_at).isoformat().replace("+00:00", "Z"),
-            "updatedAt": cast(datetime, config.updated_at).isoformat().replace("+00:00", "Z"),
+            "createdAt": config.created_at.isoformat().replace("+00:00", "Z"),
+            "updatedAt": config.updated_at.isoformat().replace("+00:00", "Z") if config.updated_at else None,
         },
         message="存储配置更新成功",
     )

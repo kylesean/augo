@@ -155,7 +155,7 @@ class MessageIndexService:
                 stmt = delete(SearchableMessage).where(SearchableMessage.thread_id == thread_id)
                 result = await db.execute(stmt)
                 await db.commit()
-                deleted_count = getattr(result, "rowcount", 0) or 0  # type: ignore
+                deleted_count = getattr(result, "rowcount", 0) or 0
 
             logger.info(
                 "thread_messages_deleted",

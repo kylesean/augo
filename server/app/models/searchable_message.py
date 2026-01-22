@@ -2,18 +2,26 @@
 
 This table implements the "dual-write" pattern for efficient message content search.
 Messages are synced here from LangGraph checkpoints for fast PostgreSQL full-text search.
+
+This model has been migrated to SQLAlchemy 2.0 with Mapped[...] annotations.
 """
 
-import uuid as uuid_lib
+from __future__ import annotations
 
-from sqlalchemy import Column, Text
-from sqlalchemy.dialects.postgresql import UUID as PG_UUID
-from sqlmodel import Field
+from datetime import UTC, datetime
+from typing import TYPE_CHECKING
+from uuid import UUID, uuid4 as uuid4_factory
 
-from app.models.base import BaseModel
+from sqlalchemy import String, Text
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.models.base import Base, col
+
+if TYPE_CHECKING:
+    pass
 
 
-class SearchableMessage(BaseModel, table=True):
+class SearchableMessage(Base):
     """Searchable message for full-text search.
 
     This is a "flat" table optimized for search, separate from LangGraph's
@@ -31,32 +39,10 @@ class SearchableMessage(BaseModel, table=True):
 
     __tablename__ = "searchable_messages"
 
-    id: uuid_lib.UUID = Field(
-        default_factory=uuid_lib.uuid4,
-        sa_column=Column(PG_UUID(as_uuid=True), primary_key=True),
-        description="UUID primary key",
-    )
-    thread_id: uuid_lib.UUID = Field(
-        sa_column=Column(PG_UUID(as_uuid=True), index=True),
-        description="LangGraph thread_id / session_id",
-    )
-    user_uuid: uuid_lib.UUID = Field(
-        sa_column=Column(PG_UUID(as_uuid=True), index=True),
-        description="User UUID for access control",
-    )
-    role: str = Field(max_length=20, description="'user' or 'assistant'")
-    content: str = Field(
-        sa_column=Column(Text, nullable=False),
-        description="Message text content",
-    )
-
-    # Note: For PostgreSQL full-text search with Chinese support,
-    # you can add a GENERATED column with tsvector in a migration:
-    #
-    # ALTER TABLE searchable_messages
-    # ADD COLUMN search_vector tsvector
-    # GENERATED ALWAYS AS (to_tsvector('simple', content)) STORED;
-    #
-    # CREATE INDEX idx_searchable_messages_search ON searchable_messages USING GIN(search_vector);
-    #
-    # For now, we use jieba tokenization in Python + ILIKE for Chinese support.
+    id: Mapped[UUID] = col.uuid_pk(uuid4_factory)
+    thread_id: Mapped[UUID] = col.uuid_column(index=True)
+    user_uuid: Mapped[UUID] = col.uuid_column(index=True)
+    role: Mapped[str] = mapped_column(String(20))
+    content: Mapped[str] = col.text_column()
+    created_at: Mapped[datetime] = col.timestamptz()
+    updated_at: Mapped[datetime | None] = col.timestamptz(nullable=True)

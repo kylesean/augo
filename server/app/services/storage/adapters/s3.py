@@ -43,7 +43,7 @@ class S3Adapter(StorageAdapter):
         super().__init__(config)
         self._session: Any = None
         self._client: Any = None
-        self._credentials: dict = {}
+        self._credentials: dict[str, Any] = {}
 
     async def initialize(self) -> None:
         """Initialize S3 client with credentials.
@@ -81,7 +81,7 @@ class S3Adapter(StorageAdapter):
 
         return cast(
             Any,
-            self._session.create_client(  # type: ignore
+            self._session.create_client(
                 "s3",
                 endpoint_url=self._credentials.get("endpoint_url"),
                 aws_access_key_id=self._credentials.get("access_key"),
@@ -286,7 +286,7 @@ class S3Adapter(StorageAdapter):
         except Exception:
             return False
 
-    async def get_object_info(self, object_key: str) -> dict | None:
+    async def get_object_info(self, object_key: str) -> dict[str, Any] | None:
         """Get object metadata from S3.
 
         Args:

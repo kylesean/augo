@@ -114,7 +114,7 @@ class RecordTransactionsInput(BaseModel):
 
 @tool("record_transactions", args_schema=RecordTransactionsInput)
 async def record_transactions(
-    transactions: list[dict],
+    transactions: list[dict[str, Any]],
     transaction_at: str | None = None,
     source_account_id: str | None = None,
     target_account_id: str | None = None,

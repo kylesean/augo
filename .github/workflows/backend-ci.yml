@@ -78,13 +78,9 @@ jobs:
       - name: Install dependencies
         run: uv sync --group dev
 
-      - name: Run Mypy
-        run: uv run mypy app/ --no-error-summary
+      - name: Run Mypy (Type Checking)
+        run: uv run mypy app/ --explicit-package-bases --show-error-codes
         continue-on-error: true  # Allow type errors for now, report only
-
-      - name: Run Pyright (fast check)
-        run: uv run pyright app/
-        continue-on-error: true
 
   # ============================================================================
   # Security Scanning

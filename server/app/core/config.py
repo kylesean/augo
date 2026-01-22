@@ -10,6 +10,7 @@ from __future__ import annotations
 import os
 from enum import Enum
 from pathlib import Path
+from typing import Any
 
 from dotenv import load_dotenv
 from pydantic import Field, field_validator
@@ -199,7 +200,7 @@ class Settings(BaseSettings):
     RATE_LIMIT_REGISTER: str = "10 per hour"
 
     @property
-    def RATE_LIMIT_ENDPOINTS(self) -> dict:
+    def RATE_LIMIT_ENDPOINTS(self) -> dict[str, list[str]]:
         """Get rate limit configuration for endpoints."""
         return {
             "root": [self.RATE_LIMIT_DEFAULT],
@@ -279,7 +280,7 @@ class Settings(BaseSettings):
             return f"redis://:{self.REDIS_PASSWORD}@{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
 
-    def model_post_init(self, __context: dict | None) -> None:
+    def model_post_init(self, __context: dict[str, Any] | None) -> None:
         """Apply environment-specific settings after initialization."""
         # Handle aliases for LLM settings if not established by Pydantic
         # This provides a fallback if the user uses legacy naming like OPENAI_API_BASE

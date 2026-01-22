@@ -20,6 +20,7 @@ from typing import TYPE_CHECKING, Annotated, Any, cast
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.database import get_session
 
 # Type alias for injected database session

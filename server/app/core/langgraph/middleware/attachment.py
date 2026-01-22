@@ -65,8 +65,8 @@ class AttachmentMiddleware(BaseMiddleware):
     async def before_invoke(
         self,
         messages: list[BaseMessage],
-        config: dict,
-    ) -> tuple[list[BaseMessage], dict]:
+        config: dict[str, Any],
+    ) -> tuple[list[BaseMessage], dict[str, Any]]:
         """Process attachments before agent invocation.
 
         Args:
@@ -158,8 +158,8 @@ class AttachmentMiddleware(BaseMiddleware):
 
             # Query by user_uuid (string)
             stmt = select(Attachment).where(
-                Attachment.id.in_(uuids),
-                Attachment.user_uuid == user_uuid,
+                cast(Any, Attachment.id).in_(uuids),
+                cast(Any, Attachment.user_uuid == user_uuid),
             )
             result = await session.execute(stmt)
             attachments = list(result.scalars().all())
@@ -306,9 +306,9 @@ class AttachmentMiddleware(BaseMiddleware):
 
     async def _register_documents(
         self,
-        config: dict,
+        config: dict[str, Any],
         documents: list[Attachment],
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Register documents in config for RAG tool access.
 
         Phase 2: Simple text extraction

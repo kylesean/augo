@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from decimal import Decimal
 from uuid import UUID, uuid4
 
@@ -73,7 +73,7 @@ async def test_get_transaction_feed_pagination(db_session):
             amount=Decimal(10.0 + i),
             amount_original=Decimal(10.0 + i),
             currency="CNY",
-            transaction_at=datetime.now(timezone.utc),
+            transaction_at=datetime.now(UTC),
             status="CLEARED",
         )
         db_session.add(tx)
@@ -113,7 +113,7 @@ async def test_delete_transaction(db_session):
         amount=Decimal("50.0"),
         amount_original=Decimal("50.0"),
         currency="CNY",
-        transaction_at=datetime.now(timezone.utc),
+        transaction_at=datetime.now(UTC),
         status="CLEARED",
     )
     db_session.add(tx)

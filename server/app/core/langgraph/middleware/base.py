@@ -70,8 +70,8 @@ class BaseMiddleware(ABC):
 
     async def wrap_model_call(
         self,
-        request: dict,
-        handler: Callable,
+        request: dict[str, Any],
+        handler: Callable[[dict[str, Any]], Any],
     ) -> Any:
         """Wrap the entire model call for full control (optional).
 
@@ -164,9 +164,9 @@ class MiddlewareAgent:
 
     async def ainvoke(
         self,
-        input_data: dict,
-        config: dict | None = None,
-    ) -> dict:
+        input_data: dict[str, Any],
+        config: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """Invoke agent with middleware processing.
 
         Follows LangChain 1.0 execution order:
@@ -241,12 +241,12 @@ class MiddlewareAgent:
                 if not should_continue:
                     raise
 
-        return cast(dict, result)
+        return cast(dict[str, Any], result)
 
     async def astream(
         self,
-        input_data: dict,
-        config: dict | None = None,
+        input_data: dict[str, Any] | Command[Any],
+        config: dict[str, Any] | None = None,
         stream_mode: str = "values",
     ) -> AsyncGenerator[Any]:
         """Stream agent execution with middleware processing.
@@ -347,7 +347,7 @@ class MiddlewareAgent:
                 if not should_continue:
                     raise
 
-    async def aget_state(self, config: dict) -> Any:
+    async def aget_state(self, config: dict[str, Any]) -> Any:
         """Get agent state (delegates to underlying agent).
 
         Args:
@@ -358,7 +358,7 @@ class MiddlewareAgent:
         """
         return await self.agent.aget_state(config)
 
-    async def aupdate_state(self, config: dict, values: dict, as_node: str | None = None) -> Any:
+    async def aupdate_state(self, config: dict[str, Any], values: dict[str, Any], as_node: str | None = None) -> Any:
         """Update agent state (delegates to underlying agent).
 
         Args:

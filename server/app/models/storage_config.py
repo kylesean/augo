@@ -4,21 +4,21 @@ This module defines the StorageConfig model for managing various storage sources
 - Local filesystem (server uploads)
 - S3-compatible storage (MinIO, AWS S3)
 - WebDAV protocols (NAS, cloud drives)
+
+This model has been migrated to SQLAlchemy 2.0 with Mapped[...] annotations.
 """
 
-import uuid
+from __future__ import annotations
+
+from datetime import datetime
 from enum import Enum
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
+from uuid import UUID
 
-import sqlalchemy as sa
-from sqlalchemy import Column
-from sqlalchemy.dialects.postgresql import (
-    JSONB,
-    UUID as PG_UUID,
-)
-from sqlmodel import Field, Relationship
+from sqlalchemy import Boolean, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
+from app.models.base import Base, col
 
 if TYPE_CHECKING:
     from app.models.attachment import Attachment
@@ -38,7 +38,7 @@ class ProviderType(str, Enum):
     WEBDAV = "webdav"
 
 
-class StorageConfig(BaseModel, table=True):
+class StorageConfig(Base):
     """Storage adapter configuration model.
 
     Stores user-configured storage sources (local disk, NAS S3, WebDAV).
@@ -59,32 +59,21 @@ class StorageConfig(BaseModel, table=True):
 
     __tablename__ = "storage_configs"
 
-    id: Optional[int] = Field(default=None, primary_key=True, sa_column_kwargs={"autoincrement": True})
-    user_uuid: uuid.UUID = Field(
-        sa_column=Column(
-            PG_UUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False, index=True
-        )
+    id: Mapped[int | None] = mapped_column(primary_key=True, autoincrement=True)
+    user_uuid: Mapped[UUID] = col.uuid_fk("users", ondelete="CASCADE", column="uuid")
+
+    provider_type: Mapped[str] = mapped_column(String(50))
+    name: Mapped[str] = mapped_column(String(100))
+    base_path: Mapped[str] = mapped_column(String(255))
+    credentials: Mapped[dict[str, Any]] = col.jsonb_column()
+    is_readonly: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = col.timestamptz()
+    updated_at: Mapped[datetime | None] = col.timestamptz(nullable=True)
+
+    attachments: Mapped[list[Attachment]] = relationship(
+        "Attachment",
+        back_populates="storage_config",
     )
-
-    # Provider type: 'local_uploads', 's3_compatible', 'webdav'
-    provider_type: str = Field(max_length=50)
-
-    # User-friendly display name
-    name: str = Field(max_length=100)
-
-    # Root path or bucket name
-    # S3: bucket name; Local: absolute path (e.g., /var/www/uploads)
-    base_path: str = Field(max_length=255)
-
-    # Encrypted credentials (Endpoint, AccessKey, SecretKey, WebDAV Password, etc.)
-    # Encrypted at application layer before storing
-    credentials: Optional[dict] = Field(default_factory=dict, sa_column=Column(JSONB, default={}))
-
-    # Read-only flag: user NAS should default to True to prevent Agent from deleting files
-    is_readonly: bool = Field(default=True)
-
-    # Relationship to attachments using this storage config
-    attachments: list["Attachment"] = Relationship(back_populates="storage_config")
 
     @property
     def is_local(self) -> bool:

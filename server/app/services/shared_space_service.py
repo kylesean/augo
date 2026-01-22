@@ -84,22 +84,24 @@ class SharedSpaceService:
         offset = (page - 1) * limit
 
         # Base query for filtering
-        base_filter = and_(
-            SpaceMember.user_uuid == user_uuid, SpaceMember.status == "ACCEPTED", SharedSpace.status == "active"
+        base_filter: Any = and_(
+            cast(Any, SpaceMember.user_uuid == user_uuid),
+            cast(Any, SpaceMember.status == "ACCEPTED"),
+            cast(Any, SharedSpace.status == "active"),
         )
 
         # Count total
-        count_query = select(func.count(SharedSpace.id)).join(SpaceMember).where(base_filter)
+        count_query = select(func.count(cast(Any, SharedSpace.id))).join(SpaceMember).where(base_filter)
         count_result = await self.db.execute(count_query)
         total = count_result.scalar() or 0
 
         # Query spaces
         query = (
-            select(SharedSpace, SpaceMember.role)
-            .join(SpaceMember, SharedSpace.id == SpaceMember.space_id)
+            select(SharedSpace, cast(Any, SpaceMember.role))
+            .join(SpaceMember, cast(Any, SharedSpace.id == SpaceMember.space_id))
             .where(base_filter)
             .options(selectinload(SharedSpace.creator))
-            .order_by(SharedSpace.created_at.desc())
+            .order_by(desc(SharedSpace.created_at))
             .offset(offset)
             .limit(limit)
         )
@@ -142,7 +144,14 @@ class SharedSpaceService:
 
         query = (
             select(SharedSpace)
-            .where(SharedSpace.id == space_id)
+            .join(SpaceMember, cast(Any, SharedSpace.id == SpaceMember.space_id))
+            .where(
+                and_(
+                    cast(Any, SpaceMember.user_uuid == user_uuid),
+                    cast(Any, SharedSpace.id == space_id),
+                    cast(Any, SpaceMember.status == "ACCEPTED"),
+                )
+            )
             .options(
                 selectinload(SharedSpace.members).selectinload(SpaceMember.user),
             )
@@ -154,7 +163,7 @@ class SharedSpaceService:
             raise NotFoundError("shared space not found")
 
         # Load creator separately to ensure it's loaded
-        creator_query = select(User).where(User.uuid == space.creator_uuid)
+        creator_query = select(User).where(cast(Any, User.uuid == space.creator_uuid))
         creator_result = await self.db.execute(creator_query)
         creator = creator_result.scalar_one_or_none()
 
@@ -197,7 +206,7 @@ class SharedSpaceService:
         """
         await self._verify_admin(space_id, user_uuid)
 
-        query = select(SharedSpace).where(SharedSpace.id == space_id)
+        query = select(SharedSpace).where(cast(Any, SharedSpace.id == space_id))
         result = await self.db.execute(query)
         space = result.scalar_one_or_none()
 
@@ -233,7 +242,7 @@ class SharedSpaceService:
         """
         await self._verify_owner(space_id, user_uuid)
 
-        query = select(SharedSpace).where(SharedSpace.id == space_id)
+        query = select(SharedSpace).where(cast(Any, SharedSpace.id == space_id))
         result = await self.db.execute(query)
         space = result.scalar_one_or_none()
 
@@ -268,7 +277,7 @@ class SharedSpaceService:
         await self._verify_admin(space_id, user_uuid)
 
         # Get space
-        query = select(SharedSpace).where(SharedSpace.id == space_id)
+        query = select(SharedSpace).where(cast(Any, SharedSpace.id == space_id))
         result = await self.db.execute(query)
         space = result.scalar_one_or_none()
 
@@ -307,7 +316,7 @@ class SharedSpaceService:
             BusinessError: Code expired or already a member
         """
         # Find space by invite code
-        query = select(SharedSpace).where(SharedSpace.invite_code == code)
+        query = select(SharedSpace).where(cast(Any, SharedSpace.invite_code == code))
         result = await self.db.execute(query)
         space = result.scalar_one_or_none()
 
@@ -320,7 +329,7 @@ class SharedSpaceService:
 
         # Check if already a member
         member_query = select(SpaceMember).where(
-            and_(SpaceMember.space_id == space.id, SpaceMember.user_uuid == user_uuid)
+            cast(Any, and_(cast(Any, SpaceMember.space_id == space.id), cast(Any, SpaceMember.user_uuid == user_uuid)))
         )
         member_result = await self.db.execute(member_query)
         existing_member = member_result.scalar_one_or_none()
@@ -366,7 +375,9 @@ class SharedSpaceService:
             BusinessError: Owner cannot leave
         """
         # Check if user is owner
-        query = select(SpaceMember).where(and_(SpaceMember.space_id == space_id, SpaceMember.user_uuid == user_uuid))
+        query = select(SpaceMember).where(
+            cast(Any, and_(cast(Any, SpaceMember.space_id == space_id), cast(Any, SpaceMember.user_uuid == user_uuid)))
+        )
         result = await self.db.execute(query)
         member = result.scalar_one_or_none()
 
@@ -408,7 +419,12 @@ class SharedSpaceService:
 
         # Find target member
         query = select(SpaceMember).where(
-            and_(SpaceMember.space_id == space_id, SpaceMember.user_uuid == target_user_uuid)
+            cast(
+                Any,
+                and_(
+                    cast(Any, SpaceMember.space_id == space_id), cast(Any, SpaceMember.user_uuid == target_user_uuid)
+                ),
+            )
         )
         result = await self.db.execute(query)
         member = result.scalar_one_or_none()
@@ -449,7 +465,7 @@ class SharedSpaceService:
         await self._verify_membership(space_id, user_uuid)
 
         # Verify transaction exists and belongs to user
-        tx_query = select(Transaction).where(Transaction.id == transaction_id)
+        tx_query = select(Transaction).where(cast(Any, Transaction.id == transaction_id))
         tx_result = await self.db.execute(tx_query)
         transaction = tx_result.scalar_one_or_none()
 
@@ -461,7 +477,13 @@ class SharedSpaceService:
 
         # Check if already in space
         existing_query = select(SpaceTransaction).where(
-            and_(SpaceTransaction.space_id == space_id, SpaceTransaction.transaction_id == transaction_id)
+            cast(
+                Any,
+                and_(
+                    cast(Any, SpaceTransaction.space_id == space_id),
+                    cast(Any, SpaceTransaction.transaction_id == transaction_id),
+                ),
+            )
         )
         existing_result = await self.db.execute(existing_query)
         if existing_result.scalar_one_or_none():
@@ -566,12 +588,12 @@ class SharedSpaceService:
 
         query = (
             select(SpaceTransaction)
-            .where(SpaceTransaction.space_id == space_id)
+            .where(cast(Any, SpaceTransaction.space_id == space_id))
             .options(
                 selectinload(SpaceTransaction.transaction),
                 selectinload(SpaceTransaction.added_by),
             )
-            .order_by(SpaceTransaction.created_at.desc())
+            .order_by(desc(cast(Any, SpaceTransaction.created_at)))
             .offset(offset)
             .limit(limit)
         )
@@ -602,7 +624,7 @@ class SharedSpaceService:
         # Get all transactions in space
         query = (
             select(SpaceTransaction)
-            .where(SpaceTransaction.space_id == space_id)
+            .where(cast(Any, SpaceTransaction.space_id == space_id))
             .options(
                 selectinload(SpaceTransaction.transaction),
                 selectinload(SpaceTransaction.added_by),
@@ -614,7 +636,12 @@ class SharedSpaceService:
         # Get all members
         members_query = (
             select(SpaceMember)
-            .where(and_(SpaceMember.space_id == space_id, SpaceMember.status == "ACCEPTED"))
+            .where(
+                cast(
+                    Any,
+                    and_(cast(Any, SpaceMember.space_id == space_id), cast(Any, SpaceMember.status == "ACCEPTED")),
+                )
+            )
             .options(selectinload(SpaceMember.user))
         )
         members_result = await self.db.execute(members_query)
@@ -697,9 +724,12 @@ class SharedSpaceService:
 
     async def _verify_membership(self, space_id: UUID, user_uuid: UUID) -> SpaceMember:
         """Verify user is a member of the space."""
+        # Query members
         query = select(SpaceMember).where(
             and_(
-                SpaceMember.space_id == space_id, SpaceMember.user_uuid == user_uuid, SpaceMember.status == "ACCEPTED"
+                cast(Any, SpaceMember.space_id == space_id),
+                cast(Any, SpaceMember.user_uuid == user_uuid),
+                cast(Any, SpaceMember.status == "ACCEPTED"),
             )
         )
         result = await self.db.execute(query)
@@ -726,24 +756,34 @@ class SharedSpaceService:
     async def _get_space_financial_stats(self, space_id: UUID) -> dict[str, Any]:
         """Retrieve aggregated financial statistics data across spatial dimensions."""
         # 1. Total count (including all types)
-        count_query = select(func.count()).where(SpaceTransaction.space_id == space_id)
+        count_query = select(func.count()).where(cast(Any, SpaceTransaction.space_id == space_id))
         count_result = await self.db.execute(count_query)
         tx_count = count_result.scalar() or 0
 
         # 2. Total expense (only EXPENSE type)
         expense_query = (
             select(func.sum(Transaction.amount))
-            .join(SpaceTransaction, Transaction.id == SpaceTransaction.transaction_id)
-            .where(and_(SpaceTransaction.space_id == space_id, Transaction.type == "EXPENSE"))
+            .join(SpaceTransaction, cast(Any, Transaction.id == SpaceTransaction.transaction_id))
+            .where(
+                cast(
+                    Any,
+                    and_(cast(Any, SpaceTransaction.space_id == space_id), cast(Any, Transaction.type == "EXPENSE")),
+                )
+            )
         )
         expense_result = await self.db.execute(expense_query)
         total_expense = expense_result.scalar() or Decimal("0")
 
         # 3. Total contributions by each member (only EXPENSE type)
         contribution_query = (
-            select(SpaceTransaction.added_by_user_uuid, func.sum(Transaction.amount))
-            .join(Transaction, Transaction.id == SpaceTransaction.transaction_id)
-            .where(and_(SpaceTransaction.space_id == space_id, Transaction.type == "EXPENSE"))
+            select(cast(Any, SpaceTransaction.added_by_user_uuid), cast(Any, func.sum(Transaction.amount)))
+            .join(Transaction, cast(Any, Transaction.id == SpaceTransaction.transaction_id))
+            .where(
+                cast(
+                    Any,
+                    and_(cast(Any, SpaceTransaction.space_id == space_id), cast(Any, Transaction.type == "EXPENSE")),
+                )
+            )
             .group_by(SpaceTransaction.added_by_user_uuid)
         )
         contribution_result = await self.db.execute(contribution_query)
@@ -771,8 +811,8 @@ class SharedSpaceService:
                 "username": space.creator.username if space.creator else "Unknown",
                 "avatarUrl": getattr(space.creator, "avatar_url", None) if space.creator else None,
             },
-            "createdAt": cast(datetime, space.created_at).isoformat() if space.created_at else None,
-            "updatedAt": cast(datetime, space.updated_at).isoformat() if space.updated_at else None,
+            "createdAt": space.created_at.isoformat() if space.created_at else None,
+            "updatedAt": space.updated_at.isoformat() if space.updated_at else None,
             "transactionCount": tx_count,
             "totalExpense": f"{total_expense:.2f}",
         }
@@ -786,7 +826,7 @@ class SharedSpaceService:
                     "avatarUrl": getattr(m.user, "avatar_url", None) if m.user else None,
                     "role": m.role,
                     "status": m.status,
-                    "createdAt": cast(datetime, m.created_at).isoformat() if m.created_at else None,
+                    "createdAt": m.created_at.isoformat() if m.created_at else None,
                     "contributionAmount": f"{contributions.get(m.user_uuid, Decimal('0')):.2f}",
                 }
                 for m in space.members
@@ -825,8 +865,8 @@ class SharedSpaceService:
                 "username": creator.username if creator else "Unknown",
                 "avatarUrl": getattr(creator, "avatar_url", None) if creator else None,
             },
-            "createdAt": cast(datetime, space.created_at).isoformat() if space.created_at else None,
-            "updatedAt": cast(datetime, space.updated_at).isoformat() if space.updated_at else None,
+            "createdAt": space.created_at.isoformat() if space.created_at else None,
+            "updatedAt": space.updated_at.isoformat() if space.updated_at else None,
             "transactionCount": tx_count,
             "totalExpense": f"{total_expense:.2f}",
         }
@@ -840,7 +880,7 @@ class SharedSpaceService:
                     "avatarUrl": getattr(m.user, "avatar_url", None) if m.user else None,
                     "role": m.role,
                     "status": m.status,
-                    "createdAt": cast(datetime, m.created_at).isoformat() if m.created_at else None,
+                    "createdAt": m.created_at.isoformat() if m.created_at else None,
                     "contributionAmount": f"{contributions.get(m.user_uuid, Decimal('0')):.2f}",
                 }
                 for m in space.members
@@ -877,8 +917,8 @@ class SharedSpaceService:
             "currency": currency,
             "description": tx.description if tx else None,
             "categoryKey": tx.category_key if tx else "",
-            "transactionAt": cast(datetime, tx.transaction_at).isoformat() if tx and tx.transaction_at else None,
+            "transactionAt": tx.transaction_at.isoformat() if tx and tx.transaction_at else None,
             "addedByUsername": st.added_by.username if st.added_by else "Unknown",
-            "addedAt": cast(datetime, st.created_at).isoformat() if st.created_at else None,
+            "addedAt": st.created_at.isoformat() if st.created_at else None,
             "display": display.model_dump(),  # 添加统一的金额显示格式
         }

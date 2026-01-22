@@ -26,7 +26,7 @@ _skill_loader = SkillLoader()
 def load_skill(
     skill_name: str,
     tool_call_id: Annotated[str, InjectedToolCallId],
-) -> Command:
+) -> Command[str]:
     """Load specialized skill content into the conversation context.
 
     Use this tool when you need detailed instructions, schemas, or workflows

@@ -314,7 +314,7 @@ class SessionRepository:
 
         result = await self.db.execute(
             select(ChatSession)
-            .where(ChatSession.user_uuid == user_uuid)
+            .where(cast(Any, ChatSession.user_uuid == user_uuid))
             .order_by(cast(Any, ChatSession.created_at).desc())
         )
         return list(result.scalars().all())
@@ -335,7 +335,7 @@ class SessionRepository:
         """
         from app.models.session import Session as ChatSession
 
-        result = await self.db.execute(select(ChatSession).where(ChatSession.id == session_id))
+        result = await self.db.execute(select(ChatSession).where(cast(Any, ChatSession.id == session_id)))
         chat_session = result.scalar_one_or_none()
 
         if chat_session:
@@ -365,7 +365,7 @@ class SessionRepository:
         """
         from app.models.session import Session as ChatSession
 
-        result = await self.db.execute(delete(ChatSession).where(ChatSession.id == session_id))
+        result = await self.db.execute(delete(ChatSession).where(cast(Any, ChatSession.id == session_id)))
         await self.db.commit()
 
         deleted = bool(getattr(result, "rowcount", 0) > 0)

@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from enum import Enum
 from functools import wraps
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import Depends, HTTPException, status
 
@@ -169,7 +169,7 @@ class PermissionChecker:
         """
         self.required_permission = required_permission
 
-    async def __call__(self, user: User = Depends(get_current_user)) -> User:
+    async def __call__(self, user: Annotated[User, Depends(get_current_user)]) -> User:
         """Check if user has required permission.
 
         Args:
@@ -211,7 +211,7 @@ class RoleChecker:
         """
         self.required_role = required_role
 
-    async def __call__(self, user: User = Depends(get_current_user)) -> User:
+    async def __call__(self, user: Annotated[User, Depends(get_current_user)]) -> User:
         """Check if user has required role.
 
         Args:
@@ -249,7 +249,7 @@ async def check_resource_ownership(resource_user_uuid: str, current_user: User, 
         bool: True if user owns the resource or is admin
     """
     # Check if user owns the resource
-    if resource_user_uuid == current_user.id:
+    if resource_user_uuid == str(current_user.uuid):
         return True
 
     # Check if user is admin (if allowed)
@@ -262,7 +262,7 @@ async def check_resource_ownership(resource_user_uuid: str, current_user: User, 
 
 
 async def require_resource_ownership(
-    resource_user_uuid: str, current_user: User = Depends(get_current_user), allow_admin: bool = True
+    resource_user_uuid: str, current_user: Annotated[User, Depends(get_current_user)], allow_admin: bool = True
 ) -> User:
     """Dependency to require resource ownership.
 
@@ -289,7 +289,7 @@ async def require_resource_ownership(
 # Convenience functions for common permission checks
 
 
-async def require_admin(user: User = Depends(get_current_user)) -> User:
+async def require_admin(user: Annotated[User, Depends(get_current_user)]) -> User:
     """Require admin role for an endpoint.
 
     Args:
@@ -305,7 +305,7 @@ async def require_admin(user: User = Depends(get_current_user)) -> User:
     return await checker(user)
 
 
-async def require_write_permission(user: User = Depends(get_current_user)) -> User:
+async def require_write_permission(user: Annotated[User, Depends(get_current_user)]) -> User:
     """Require write permission for an endpoint.
 
     Args:
@@ -321,7 +321,7 @@ async def require_write_permission(user: User = Depends(get_current_user)) -> Us
     return await checker(user)
 
 
-async def require_delete_permission(user: User = Depends(get_current_user)) -> User:
+async def require_delete_permission(user: Annotated[User, Depends(get_current_user)]) -> User:
     """Require delete permission for an endpoint.
 
     Args:

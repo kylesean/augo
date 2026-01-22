@@ -30,7 +30,10 @@ class TransactionCRUDService:
     async def get_financial_account(self, account_id: UUID, user_uuid: UUID) -> FinancialAccount | None:
         """Get and validate financial account."""
         query = select(FinancialAccount).where(
-            and_(FinancialAccount.id == account_id, FinancialAccount.user_uuid == user_uuid)
+            cast(
+                Any,
+                and_(cast(Any, FinancialAccount.id == account_id), cast(Any, FinancialAccount.user_uuid == user_uuid)),
+            )
         )
         result = await self.db.execute(query)
         return result.scalar_one_or_none()
@@ -49,7 +52,7 @@ class TransactionCRUDService:
         subject: str = "SELF",
         intent: str = "SURVIVAL",
         tags: list[str] | None = None,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Create a single transaction record
 
         Follow the principle of "record first, then link" and defaults to not linking balance.
@@ -136,27 +139,27 @@ class TransactionCRUDService:
             if linked_acc:
                 result["linked_account"] = {
                     "id": str(linked_acc.id),
-                    "name": linked_acc.name,
-                    "type": linked_acc.type,
+                    "name": cast(Any, linked_acc.name),
+                    "type": cast(Any, linked_acc.type),
                 }
         else:
             if source_acc and target_acc:
                 result["transfer_info"] = {
                     "source_account": {
                         "id": str(source_acc.id),
-                        "name": source_acc.name,
-                        "type": source_acc.type,
+                        "name": cast(Any, source_acc.name),
+                        "type": cast(Any, source_acc.type),
                     },
                     "target_account": {
                         "id": str(target_acc.id),
-                        "name": target_acc.name,
-                        "type": target_acc.type,
+                        "name": cast(Any, target_acc.name),
+                        "type": cast(Any, target_acc.type),
                     },
                 }
 
         return result
 
-    async def get_transaction_detail(self, transaction_id: UUID, user_uuid: UUID) -> dict | None:
+    async def get_transaction_detail(self, transaction_id: UUID, user_uuid: UUID) -> dict[str, Any] | None:
         """Get transaction details (including comments)
 
         Args:
@@ -170,8 +173,13 @@ class TransactionCRUDService:
 
         query = (
             select(Transaction)
-            .options(selectinload(Transaction.comments))
-            .where(and_(Transaction.id == transaction_id, Transaction.user_uuid == user_uuid))
+            .options(selectinload(cast(Any, Transaction.comments)))
+            .where(
+                cast(
+                    Any,
+                    and_(cast(Any, Transaction.id == transaction_id), cast(Any, Transaction.user_uuid == user_uuid)),
+                )
+            )
         )
         result = await self.db.execute(query)
         transaction = result.scalar_one_or_none()
@@ -186,8 +194,8 @@ class TransactionCRUDService:
         # Get associated shared spaces
         spaces_query = (
             select(SharedSpace)
-            .join(SpaceTransaction, SpaceTransaction.space_id == SharedSpace.id)
-            .where(SpaceTransaction.transaction_id == transaction_id)
+            .join(SpaceTransaction, cast(Any, SpaceTransaction.space_id == SharedSpace.id))
+            .where(cast(Any, SpaceTransaction.transaction_id == transaction_id))
         )
         spaces_result = await self.db.execute(spaces_query)
         associated_spaces = spaces_result.scalars().all()
@@ -197,7 +205,7 @@ class TransactionCRUDService:
         comments_data = []
         for comment in transaction.comments:
             # Query comment author information
-            user_query = select(User).where(User.uuid == comment.user_uuid)
+            user_query = select(User).where(cast(Any, User.uuid == comment.user_uuid))
             user_result = await self.db.execute(user_query)
             user = user_result.scalar_one_or_none()
 
@@ -211,8 +219,8 @@ class TransactionCRUDService:
                     "parentCommentId": comment.parent_comment_id,
                     "commentText": comment.comment_text,
                     "mentionedUserIds": comment.mentioned_user_ids or [],
-                    "createdAt": cast(datetime, comment.created_at).isoformat() if comment.created_at else None,
-                    "updatedAt": cast(datetime, comment.updated_at).isoformat() if comment.updated_at else None,
+                    "createdAt": comment.created_at.isoformat() if comment.created_at else None,
+                    "updatedAt": comment.updated_at.isoformat() if comment.updated_at else None,
                 }
             )
 
@@ -231,9 +239,7 @@ class TransactionCRUDService:
             "categoryKey": transaction.category_key,
             "rawInput": transaction.raw_input,
             "description": transaction.description,
-            "transactionAt": cast(datetime, transaction.transaction_at).isoformat()
-            if transaction.transaction_at
-            else None,
+            "transactionAt": transaction.transaction_at.isoformat() if transaction.transaction_at else None,
             "transactionTimezone": transaction.transaction_timezone,
             "sourceAccountId": transaction.source_account_id,
             "targetAccountId": transaction.target_account_id,
@@ -243,8 +249,8 @@ class TransactionCRUDService:
             "longitude": str(transaction.longitude) if transaction.longitude else None,
             "source": transaction.source,
             "status": transaction.status,
-            "createdAt": cast(datetime, transaction.created_at).isoformat() if transaction.created_at else None,
-            "updatedAt": cast(datetime, transaction.updated_at).isoformat() if transaction.updated_at else None,
+            "createdAt": transaction.created_at.isoformat() if transaction.created_at else None,
+            "updatedAt": transaction.updated_at.isoformat() if transaction.updated_at else None,
             "comments": comments_data,
             "commentCount": len(comments_data),
             "spaces": spaces_data,
@@ -273,7 +279,7 @@ class TransactionCRUDService:
             BusinessError: Permission denied
         """
         # Query transaction record
-        query = select(Transaction).where(Transaction.id == transaction_id)
+        query = select(Transaction).where(cast(Any, Transaction.id == transaction_id))
         result = await self.db.execute(query)
         transaction = result.scalar_one_or_none()
 
@@ -299,9 +305,9 @@ class TransactionCRUDService:
     async def create_batch_transactions(
         self,
         user_uuid: UUID,
-        data: dict,
+        data: dict[str, Any],
         source_thread_id: UUID | None = None,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Batch create transactions
 
         Base currency scheme:
@@ -404,7 +410,7 @@ class TransactionCRUDService:
         user_uuid: UUID,
         transaction_ids: list[UUID],
         account_id: UUID | None,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Batch update transaction account"""
         results = []
         for tx_id in transaction_ids:
@@ -423,7 +429,7 @@ class TransactionCRUDService:
         transaction_id: UUID,
         user_uuid: UUID,
         account_id: UUID | None,
-    ) -> dict | None:
+    ) -> dict[str, Any] | None:
         """Update transaction account
 
         Support cross-currency account association:
@@ -444,7 +450,7 @@ class TransactionCRUDService:
         """
         from app.services.exchange_rate_service import ExchangeRateService
 
-        query = select(Transaction).where(Transaction.id == transaction_id)
+        query = select(Transaction).where(cast(Any, Transaction.id == transaction_id))
         result = await self.db.execute(query)
         transaction = result.scalar_one_or_none()
 
@@ -487,9 +493,12 @@ class TransactionCRUDService:
         # Rollback old account balance
         if old_account_id:
             old_account_query = select(FinancialAccount).where(
-                and_(
-                    FinancialAccount.id == old_account_id,
-                    FinancialAccount.user_uuid == user_uuid,
+                cast(
+                    Any,
+                    and_(
+                        cast(Any, FinancialAccount.id == old_account_id),
+                        cast(Any, FinancialAccount.user_uuid == user_uuid),
+                    ),
                 )
             )
             old_account_result = await self.db.execute(old_account_query)
@@ -537,9 +546,12 @@ class TransactionCRUDService:
         # 2. Update new account balance
         if new_account_id:
             new_account_query = select(FinancialAccount).where(
-                and_(
-                    FinancialAccount.id == new_account_id,
-                    FinancialAccount.user_uuid == user_uuid,
+                cast(
+                    Any,
+                    and_(
+                        cast(Any, FinancialAccount.id == new_account_id),
+                        cast(Any, FinancialAccount.user_uuid == user_uuid),
+                    ),
                 )
             )
             new_account_result = await self.db.execute(new_account_query)
@@ -606,7 +618,7 @@ class TransactionCRUDService:
 
     # ===== Comment Operations =====
 
-    async def get_comments_for_transaction(self, transaction_id: UUID, user_uuid: UUID) -> list[dict]:
+    async def get_comments_for_transaction(self, transaction_id: UUID, user_uuid: UUID) -> list[dict[str, Any]]:
         """Get transaction comments list
 
         Args:
@@ -618,7 +630,7 @@ class TransactionCRUDService:
         """
         # First verify if the transaction exists and belongs to the user
         tx_query = select(Transaction).where(
-            and_(Transaction.id == transaction_id, Transaction.user_uuid == user_uuid)
+            cast(Any, and_(cast(Any, Transaction.id == transaction_id), cast(Any, Transaction.user_uuid == user_uuid)))
         )
         tx_result = await self.db.execute(tx_query)
         transaction = tx_result.scalar_one_or_none()
@@ -630,12 +642,12 @@ class TransactionCRUDService:
         query = (
             select(
                 TransactionComment,
-                User.username.label("user_name"),  # type: ignore
-                User.avatar_url.label("user_avatar_url"),  # type: ignore
+                User.username.label("user_name"),
+                User.avatar_url.label("user_avatar_url"),
             )
-            .join(User, TransactionComment.user_uuid == User.uuid)
-            .where(TransactionComment.transaction_id == transaction_id)
-            .order_by(TransactionComment.created_at.asc())
+            .join(User, cast(Any, TransactionComment.user_uuid == User.uuid))
+            .where(cast(Any, TransactionComment.transaction_id == transaction_id))
+            .order_by(cast(Any, TransactionComment.created_at).asc())
         )
 
         result = await self.db.execute(query)
@@ -653,9 +665,9 @@ class TransactionCRUDService:
 
             if comment.parent_comment_id:
                 parent_query = (
-                    select(TransactionComment, User.username)
-                    .join(User, TransactionComment.user_uuid == User.uuid)
-                    .where(TransactionComment.id == comment.parent_comment_id)
+                    select(TransactionComment, cast(Any, User.username))
+                    .join(User, cast(Any, TransactionComment.user_uuid == User.uuid))
+                    .where(cast(Any, TransactionComment.id == comment.parent_comment_id))
                 )
                 parent_result = await self.db.execute(parent_query)
                 parent_data = parent_result.first()
@@ -689,7 +701,7 @@ class TransactionCRUDService:
         user_uuid: UUID,
         comment_text: str,
         parent_comment_id: int | None = None,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Add transaction comment
 
         Args:
@@ -711,7 +723,7 @@ class TransactionCRUDService:
             raise BusinessError("Comment content cannot be empty", "TRANSACTION_COMMENT_NULL")
 
         # Validate transaction exists
-        tx_query = select(Transaction).where(Transaction.id == transaction_id)
+        tx_query = select(Transaction).where(cast(Any, Transaction.id == transaction_id))
         tx_result = await self.db.execute(tx_query)
         transaction = tx_result.scalar_one_or_none()
 
@@ -727,8 +739,8 @@ class TransactionCRUDService:
         if parent_comment_id is not None:
             parent_comment_query = select(TransactionComment).where(
                 and_(
-                    TransactionComment.id == parent_comment_id,
-                    TransactionComment.transaction_id == transaction_id,
+                    cast(Any, TransactionComment.id == parent_comment_id),
+                    cast(Any, TransactionComment.transaction_id == transaction_id),
                 )
             )
             parent_comment_result = await self.db.execute(parent_comment_query)
@@ -765,11 +777,11 @@ class TransactionCRUDService:
         query = (
             select(
                 TransactionComment,
-                User.username.label("user_name"),  # type: ignore
-                User.avatar_url.label("user_avatar_url"),  # type: ignore
+                User.username.label("user_name"),
+                User.avatar_url.label("user_avatar_url"),
             )
-            .join(User, TransactionComment.user_uuid == User.uuid)
-            .where(TransactionComment.id == new_comment.id)
+            .join(User, cast(Any, TransactionComment.user_uuid == User.uuid))
+            .where(cast(Any, TransactionComment.id == new_comment.id))
         )
 
         result = await self.db.execute(query)
@@ -786,9 +798,9 @@ class TransactionCRUDService:
 
         if parent_comment_id:
             reply_context_query: Select[Any] = (
-                select(TransactionComment, User.username)
-                .join(User, TransactionComment.user_uuid == User.uuid)
-                .where(TransactionComment.id == parent_comment_id)
+                select(TransactionComment, cast(Any, User.username))
+                .join(User, cast(Any, TransactionComment.user_uuid == User.uuid))
+                .where(cast(Any, TransactionComment.id == parent_comment_id))
             )
             reply_context_result = await self.db.execute(reply_context_query)
             reply_context_data = reply_context_result.first()
@@ -823,7 +835,7 @@ class TransactionCRUDService:
             Whether the comment was deleted successfully
         """
         # Query comment
-        query = select(TransactionComment).where(TransactionComment.id == comment_id)
+        query = select(TransactionComment).where(cast(Any, TransactionComment.id == comment_id))
         result = await self.db.execute(query)
         comment = result.scalar_one_or_none()
 

@@ -55,7 +55,7 @@ from app.services.transaction_query_service import (  # noqa: E402
 )
 
 
-def analyze_spending(transactions: list[dict[str, Any]], days: int = 90) -> dict:
+def analyze_spending(transactions: list[dict[str, Any]], days: int = 90) -> dict[str, Any]:
     """Analyze spending patterns from transaction records.
 
     Returns structured data only - no localized text.

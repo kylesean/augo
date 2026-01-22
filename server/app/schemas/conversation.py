@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 
@@ -49,7 +51,7 @@ class ToolComponent(BaseModel):
 
     name: str
     type: str
-    props: dict
+    props: dict[str, Any]
     transactionId: int | None = None
 
 

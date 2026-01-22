@@ -151,8 +151,8 @@ Use the `load_skill` tool when you need detailed instructions for a specific tas
     def filter_tools_for_skill(
         self,
         skill_name: str,
-        all_tools: list,
-    ) -> list:
+        all_tools: list[Any],
+    ) -> list[Any]:
         """Filter tools based on skill's allowed-tools constraint.
 
         Args:

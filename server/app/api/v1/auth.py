@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import Any, cast
+from typing import Annotated, Any, cast
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request, status
@@ -54,8 +54,8 @@ class SessionItem(BaseModel):
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: AsyncSession = Depends(get_session),
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    db: Annotated[AsyncSession, Depends(get_session)],
 ) -> User:
     """Get the current user from JWT token.
 
@@ -102,8 +102,8 @@ async def get_current_user(
 
 async def get_authorized_session(
     session_id: UUID,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_session)],
 ) -> Session:
     """Get session with ownership verification.
 
@@ -154,7 +154,7 @@ async def get_authorized_session(
 @router.post("/send-code")
 async def send_code(
     data: SendCodeRequest,
-    db: AsyncSession = Depends(get_session),
+    db: Annotated[AsyncSession, Depends(get_session)],
 ) -> JSONResponse:
     """Send verification code to email or mobile.
 
@@ -191,7 +191,7 @@ async def send_code(
 async def register(
     request: Request,
     data: RegisterRequest,
-    db: AsyncSession = Depends(get_session),
+    db: Annotated[AsyncSession, Depends(get_session)],
 ) -> JSONResponse:
     """Register a new user.
 
@@ -238,9 +238,9 @@ async def register(
             mobile=user.mobile,
             username=user.username or user.email or user.mobile or f"user_{str(user.uuid)[:8]}",
             avatarUrl=user.avatar_url,
-            createdAt=cast(datetime, user.created_at).isoformat(),
-            updatedAt=cast(datetime, user.updated_at).isoformat(),
-            clientLastLoginAt=cast(datetime, user.last_login_at).isoformat() if user.last_login_at else None,
+            createdAt=user.created_at.isoformat(),
+            updatedAt=user.updated_at.isoformat() if user.updated_at else None,
+            clientLastLoginAt=user.last_login_at.isoformat() if user.last_login_at else None,
         )
 
         logger.info(
@@ -278,7 +278,7 @@ async def register(
 async def login(
     request: Request,
     data: LoginRequest,
-    db: AsyncSession = Depends(get_session),
+    db: Annotated[AsyncSession, Depends(get_session)],
 ) -> JSONResponse:
     """User login.
 
@@ -317,9 +317,9 @@ async def login(
             mobile=user.mobile,
             username=user.username or user.email or user.mobile or f"user_{str(user.uuid)[:8]}",
             avatarUrl=user.avatar_url,
-            createdAt=cast(datetime, user.created_at).isoformat(),
-            updatedAt=cast(datetime, user.updated_at).isoformat(),
-            clientLastLoginAt=cast(datetime, user.last_login_at).isoformat() if user.last_login_at else None,
+            createdAt=user.created_at.isoformat(),
+            updatedAt=user.updated_at.isoformat() if user.updated_at else None,
+            clientLastLoginAt=user.last_login_at.isoformat() if user.last_login_at else None,
         )
 
         logger.info(
@@ -359,7 +359,7 @@ async def login(
 
 
 @router.post("/session")
-async def create_session(user: User = Depends(get_current_user)) -> JSONResponse:
+async def create_session(user: Annotated[User, Depends(get_current_user)]) -> JSONResponse:
     """Create a new chat session for the authenticated user.
 
     Args:
@@ -401,9 +401,9 @@ async def create_session(user: User = Depends(get_current_user)) -> JSONResponse
 @router.patch("/session/{session_id}/name", response_model=SessionResponse)
 async def update_session_name(
     session_id: UUID,
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_session)],
     name: str = Form(...),
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
     """Update a session's name.
 
@@ -449,7 +449,7 @@ async def update_session_name(
 @router.delete("/session/{session_id}")
 async def delete_session(
     session_id: UUID,
-    current_user: User = Depends(get_current_user),
+    current_user: Annotated[User, Depends(get_current_user)],
 ) -> JSONResponse:
     """Delete a session for the authenticated user.
 
@@ -520,9 +520,9 @@ async def delete_session(
 
 @router.get("/sessions")
 async def get_user_sessions(
-    user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
-    params: Params = Depends(),
+    user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_session)],
+    params: Annotated[Params, Depends()],
 ) -> JSONResponse:
     """Get paginated session list for the authenticated user.
 
@@ -543,7 +543,7 @@ async def get_user_sessions(
 
     try:
         # Build query for user's sessions, ordered by most recent first
-        query = select(Session).where(Session.user_uuid == user.uuid).order_by(cast(Any, Session.created_at).desc())
+        query = select(Session).where(Session.user_uuid == user.uuid).order_by(desc(Session.created_at))
 
         # Use fastapi-pagination to paginate the query
         page_result = await apaginate(
@@ -556,14 +556,10 @@ async def get_user_sessions(
                     "name": session.name or "",
                     # Use standard ISO 8601 format: replace +00:00 with Z for UTC
                     "created_at": (
-                        cast(datetime, session.created_at).isoformat().replace("+00:00", "Z")
-                        if session.created_at
-                        else ""
+                        session.created_at.isoformat().replace("+00:00", "Z") if session.created_at else ""
                     ),
                     "updated_at": (
-                        cast(datetime, session.updated_at).isoformat().replace("+00:00", "Z")
-                        if session.updated_at
-                        else ""
+                        session.updated_at.isoformat().replace("+00:00", "Z") if session.updated_at else ""
                     ),
                 }
                 for session in items

@@ -426,7 +426,7 @@ class LLMService:
         """
         return self._llm
 
-    def bind_tools(self, tools: list) -> LLMService:
+    def bind_tools(self, tools: list[Any]) -> LLMService:
         """Bind tools to the current LLM.
 
         Args:

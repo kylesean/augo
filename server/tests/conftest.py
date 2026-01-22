@@ -1,4 +1,4 @@
-from typing import AsyncGenerator, Generator
+from collections.abc import AsyncGenerator, Generator
 from unittest.mock import MagicMock
 from uuid import uuid4
 
@@ -15,7 +15,6 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.pool import StaticPool
-from sqlmodel import SQLModel
 
 from app.core.database import get_session
 from app.core.dependencies import get_current_user
@@ -48,12 +47,13 @@ def compile_inet(element, compiler, **kw):
 
 # Import all models to ensure they are registered in metadata
 from app.models import *  # noqa: F401, F403, E402
+from app.models.base import Base  # noqa: F401, E402
 
 # --- Fixtures ---
 
 
 @pytest_asyncio.fixture(scope="function")
-async def async_db_engine() -> AsyncGenerator[AsyncEngine, None]:
+async def async_db_engine() -> AsyncGenerator[AsyncEngine]:
     """Create a reusable SQLite engine for tests.
     Use StaticPool to share data in memory across the session.
     """
@@ -65,7 +65,7 @@ async def async_db_engine() -> AsyncGenerator[AsyncEngine, None]:
 
     # Initialize DB schema
     async with engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.create_all)
+        await conn.run_sync(Base.metadata.create_all)
 
     yield engine
 
@@ -84,7 +84,7 @@ async def setup_db_manager(async_db_engine: AsyncEngine) -> None:
 
 
 @pytest_asyncio.fixture(scope="function")
-async def db_session(async_db_engine: AsyncEngine) -> AsyncGenerator[AsyncSession, None]:
+async def db_session(async_db_engine: AsyncEngine) -> AsyncGenerator[AsyncSession]:
     """Yields an async session.
     Rolls back transaction after each test to ensure isolation.
     """
@@ -105,7 +105,7 @@ async def db_session(async_db_engine: AsyncEngine) -> AsyncGenerator[AsyncSessio
 
 
 @pytest.fixture(scope="function")
-def client() -> Generator[TestClient, None, None]:
+def client() -> Generator[TestClient]:
     with TestClient(app) as c:
         yield c
 
@@ -156,9 +156,7 @@ async def test_user(db_session: AsyncSession) -> User:
 
 
 @pytest.fixture(scope="function")
-def client_with_auth(
-    client: TestClient, db_session: AsyncSession, test_user: User
-) -> Generator[TestClient, None, None]:
+def client_with_auth(client: TestClient, db_session: AsyncSession, test_user: User) -> Generator[TestClient]:
     """Returns a TestClient with authorized user and test database session.
     Overrides FastAPI dependencies.
     """

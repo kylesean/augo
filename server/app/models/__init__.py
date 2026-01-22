@@ -1,7 +1,9 @@
-"""Models package."""
+"""Models package.
+
+This package has been migrated to SQLAlchemy 2.0 with Mapped[...] annotations.
+"""
 
 from app.models.attachment import Attachment
-from app.models.base import BaseModel
 from app.models.budget import Budget, BudgetPeriod, BudgetSettings
 from app.models.financial_account import FinancialAccount
 from app.models.financial_settings import BurnRateMode, FinancialSettings
@@ -17,10 +19,10 @@ from app.models.transaction import (
     TransactionComment,
     TransactionShare,
 )
-from app.models.user import User, UserSettings
+from app.models.user import User
+from app.models.user_settings import UserSettings
 
 __all__ = [
-    "BaseModel",
     "User",
     "UserSettings",
     "Session",

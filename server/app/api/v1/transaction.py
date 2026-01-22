@@ -1,6 +1,6 @@
 """Transaction management API endpoints."""
 
-from typing import Annotated, Any
+from typing import Annotated, Any, cast
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -162,12 +162,12 @@ def _transaction_to_dict(tx: Any, display_currency: str = "CNY", exchange_rate: 
 
 @router.get("")
 async def get_transactions(
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_session)],
     page: int = 1,
     size: int = 20,
     date: str | None = None,  # YYYY-MM-DD format
     transaction_type: str | None = None,  # EXPENSE, INCOME, TRANSFER
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
     """Retrieve Transaction List (Feed Stream)
        Supports filtering by date and transaction type, returns a list of transactions with display calculated fields.
@@ -231,7 +231,9 @@ async def get_transactions(
 
 @router.get("/search")
 async def search_transactions(
-    params: Params = Depends(),
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_session)],
+    params: Annotated[Params, Depends()],
     keyword: str | None = None,
     min_amount: str | None = None,
     max_amount: str | None = None,
@@ -240,8 +242,6 @@ async def search_transactions(
     start_date: str | None = None,
     end_date: str | None = None,
     transaction_type: str | None = None,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
     """搜索交易记录
 
@@ -274,12 +274,18 @@ async def search_transactions(
 
     try:
         # 构建基础查询
-        conditions = [Transaction.user_uuid == current_user.uuid]
+        conditions: list[Any] = []
+        conditions.append(Transaction.user_uuid == current_user.uuid)
 
         # 添加过滤条件
         if keyword:
+            # SQLModel field types are interpreted as actual types (str) rather than column elements
+            # when accessing them directly. We use type: ignore for ilike/in_ etc.
             conditions.append(
-                or_(Transaction.description.ilike(f"%{keyword}%"), Transaction.location.ilike(f"%{keyword}%"))
+                or_(
+                    cast(Any, Transaction.description).ilike(f"%{keyword}%"),
+                    cast(Any, Transaction.location).ilike(f"%{keyword}%"),
+                )
             )
 
         if min_amount is not None:
@@ -298,13 +304,13 @@ async def search_transactions(
 
         if category_keys:
             keys = [k.strip() for k in category_keys.split(",")]
-            conditions.append(Transaction.category_key.in_(keys))  # type: ignore
+            conditions.append(cast(Any, Transaction.category_key).in_(keys))
 
         if tags:
             tag_list = [t.strip() for t in tags.split(",")]
             # PostgreSQL JSONB contains check
             for tag in tag_list:
-                conditions.append(Transaction.tags.contains([tag]))
+                conditions.append(cast(Any, Transaction.tags).contains([tag]))
 
         if start_date:
             try:
@@ -324,7 +330,7 @@ async def search_transactions(
             conditions.append(Transaction.type == transaction_type.upper())
 
         # 构建查询
-        query = select(Transaction).where(and_(*conditions)).order_by(Transaction.transaction_at.desc())
+        query = select(Transaction).where(and_(True, *conditions)).order_by(desc(Transaction.transaction_at))
 
         # 获取汇率和用户偏好币种
         display_currency = await get_user_display_currency(db, current_user.uuid)
@@ -413,8 +419,8 @@ async def delete_transaction(
 async def update_transaction_account(
     transaction_id: UUID,
     request: UpdateAccountRequest,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_session)],
 ) -> JSONResponse:
     """更新交易的关联账户
 
@@ -497,8 +503,8 @@ async def update_batch_transactions_account(
 @router.get("/{transaction_id:uuid}/comments")
 async def get_transaction_comments(
     transaction_id: UUID,  # UUID from path
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_session)],
 ) -> JSONResponse:
     """获取交易评论列表"""
     service = TransactionService(db)
@@ -513,8 +519,8 @@ async def get_transaction_comments(
 async def add_transaction_comment(
     transaction_id: UUID,  # UUID from path
     request: CommentCreateRequest,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_session)],
 ) -> JSONResponse:
     """添加交易评论"""
     service = TransactionService(db)
@@ -533,8 +539,8 @@ async def add_transaction_comment(
 @router.delete("/comments/{comment_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_transaction_comment(
     comment_id: int,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_session)],
 ) -> JSONResponse:
     """删除交易评论"""
     service = TransactionService(db)
@@ -554,10 +560,10 @@ async def delete_transaction_comment(
 
 @router.get("/recurring")
 async def list_recurring_transactions(
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_session)],
     type: str | None = None,  # EXPENSE, INCOME, TRANSFER
     is_active: bool | None = None,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
     """获取周期性交易列表
 
@@ -585,8 +591,8 @@ async def list_recurring_transactions(
 @router.post("/recurring")
 async def create_recurring_transaction(
     request: RecurringTransactionCreateRequest,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_session)],
 ) -> JSONResponse:
     """创建周期性交易"""
     service = TransactionService(db)
@@ -600,8 +606,8 @@ async def create_recurring_transaction(
 @router.get("/recurring/{recurring_id:uuid}")
 async def get_recurring_transaction(
     recurring_id: UUID,  # UUID from path
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_session)],
 ) -> JSONResponse:
     """获取周期性交易详情"""
     service = TransactionService(db)
@@ -623,8 +629,8 @@ async def get_recurring_transaction(
 async def update_recurring_transaction(
     recurring_id: UUID,  # UUID from path
     request: RecurringTransactionUpdateRequest,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_session)],
 ) -> JSONResponse:
     """更新周期性交易"""
     service = TransactionService(db)
@@ -647,8 +653,8 @@ async def update_recurring_transaction(
 @router.delete("/recurring/{recurring_id:uuid}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_recurring_transaction(
     recurring_id: UUID,  # UUID from path
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_session)],
 ) -> JSONResponse:
     """删除周期性交易"""
     service = TransactionService(db)
@@ -669,8 +675,8 @@ async def delete_recurring_transaction(
 @router.post("/forecast")
 async def forecast_cash_flow(
     request: CashFlowForecastRequest,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_session),
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_session)],
 ) -> JSONResponse:
     """现金流预测"""
     service = TransactionService(db)

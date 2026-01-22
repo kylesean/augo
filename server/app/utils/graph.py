@@ -16,7 +16,7 @@ from app.core.logging import logger
 from app.schemas import Message
 
 
-def dump_messages(messages: list[Message | dict]) -> list[dict]:
+def dump_messages(messages: list[Message | dict[str, Any]]) -> list[dict[str, Any]]:
     """Dump messages to a list of dictionaries.
 
     Args:
@@ -83,10 +83,10 @@ def process_llm_response(response: BaseMessage) -> BaseMessage:
 
 
 def prepare_messages(
-    messages: list[Message | dict],
+    messages: list[Message | dict[str, Any]],
     llm: BaseChatModel,
     system_prompt: str,
-) -> list[dict]:
+) -> list[dict[str, Any]]:
     """Prepare messages for LLM invocation with token trimming.
 
     This function:

@@ -3,6 +3,7 @@
 Provides session title search with Chinese tokenization support using jieba.
 """
 
+from typing import Any, cast as type_cast
 from uuid import UUID
 
 import jieba
@@ -156,19 +157,19 @@ class SearchService:
         try:
             async with get_session_context() as db:
                 # Build query with OR conditions for each token
-                base_query = select(Session).where(Session.user_uuid == user_uuid)
+                base_query = select(Session).where(type_cast(Any, Session.user_uuid == user_uuid))
 
                 conditions = []
                 for token in tokens:
                     # Escape special characters for LIKE
                     escaped_token = token.replace("%", r"\%").replace("_", r"\_")
-                    conditions.append(Session.name.ilike(f"%{escaped_token}%"))  # type: ignore
+                    conditions.append(type_cast(Any, Session.name).ilike(f"%{escaped_token}%"))
 
                 if conditions:
                     base_query = base_query.where(or_(*conditions))
 
                 # Order by updated_at descending and limit
-                base_query = base_query.order_by(desc(Session.updated_at)).limit(limit)
+                base_query = base_query.order_by(desc(type_cast(Any, Session.updated_at))).limit(limit)
 
                 result = await db.execute(base_query)
                 results = result.scalars().all()
@@ -243,18 +244,18 @@ class SearchService:
 
         try:
             async with get_session_context() as db:
-                base_query = select(SearchableMessage).where(SearchableMessage.user_uuid == user_uuid)
+                base_query = select(SearchableMessage).where(type_cast(Any, SearchableMessage.user_uuid == user_uuid))
 
                 conditions = []
                 for token in tokens:
                     escaped_token = token.replace("%", r"\%").replace("_", r"\_")
-                    conditions.append(SearchableMessage.content.ilike(f"%{escaped_token}%"))  # type: ignore
+                    conditions.append(type_cast(Any, SearchableMessage.content).ilike(f"%{escaped_token}%"))
 
                 if conditions:
                     base_query = base_query.where(or_(*conditions))
 
                 # Order by created_at descending and limit
-                base_query = base_query.order_by(desc(SearchableMessage.created_at)).limit(limit)
+                base_query = base_query.order_by(desc(type_cast(Any, SearchableMessage.created_at))).limit(limit)
 
                 result = await db.execute(base_query)
                 results = result.scalars().all()
@@ -341,7 +342,7 @@ class SearchService:
                 # Try to get session title
                 try:
                     async with get_session_context() as db:
-                        stmt = select(Session).where(Session.id == msg_result.id)
+                        stmt = select(Session).where(type_cast(Any, Session.id == msg_result.id))
                         result = await db.execute(stmt)
                         session_obj = result.scalar_one_or_none()
                         if session_obj:

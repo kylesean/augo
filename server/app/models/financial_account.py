@@ -1,16 +1,20 @@
-"""Financial account model for storing user's financial accounts."""
+"""Financial account model for storing user's financial accounts.
 
+This model has been migrated to SQLAlchemy 2.0 with Mapped[...] annotations.
+"""
+
+from __future__ import annotations
+
+from datetime import datetime
 from decimal import Decimal
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
-from uuid import UUID, uuid4
+from uuid import UUID, uuid4 as uuid4_factory
 
-import sqlalchemy as sa
-from sqlalchemy import CheckConstraint, Numeric
-from sqlalchemy.dialects.postgresql import UUID as PGUUID
-from sqlmodel import Column, Field, Relationship
+from sqlalchemy import Boolean, CheckConstraint, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
+from app.models.base import Base, col
 
 if TYPE_CHECKING:
     from app.models.user import User
@@ -44,7 +48,7 @@ class AccountStatus(str, Enum):
     CLOSED = "CLOSED"
 
 
-class FinancialAccount(BaseModel, table=True):
+class FinancialAccount(Base):
     """Financial account model for storing user's financial accounts.
 
     This model represents various financial accounts like bank accounts,
@@ -73,77 +77,50 @@ class FinancialAccount(BaseModel, table=True):
         CheckConstraint("status IN ('ACTIVE', 'INACTIVE', 'CLOSED')", name="check_status"),
     )
 
-    id: UUID = Field(default_factory=uuid4, sa_column=Column(PGUUID(as_uuid=True), primary_key=True))
-    user_uuid: UUID = Field(
-        sa_column=Column(
-            PGUUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False, index=True
-        )
-    )
-    name: str = Field(max_length=100)
-    nature: str = Field(max_length=20)  # 'ASSET' or 'LIABILITY'
-    type: Optional[str] = Field(default=None, max_length=50)
-    currency_code: str = Field(default="CNY", max_length=3)
-    initial_balance: Decimal = Field(default=Decimal("0"), sa_column=Column(Numeric(20, 8), default=0))
-    current_balance: Decimal = Field(default=Decimal("0"), sa_column=Column(Numeric(20, 8), default=0))
-    include_in_net_worth: bool = Field(default=True)
-    include_in_cash_flow: bool = Field(default=False)
-    status: str = Field(default="ACTIVE", max_length=20)
+    id: Mapped[UUID] = col.uuid_pk(uuid4_factory)
+    user_uuid: Mapped[UUID] = col.uuid_fk("users", ondelete="CASCADE", index=True, column="uuid")
+    name: Mapped[str] = mapped_column(String(100))
+    nature: Mapped[str] = mapped_column(String(20))
+    type: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    currency_code: Mapped[str] = mapped_column(String(3), default="CNY")
+    initial_balance: Mapped[Decimal] = col.numeric(precision=20, scale=8, default=Decimal("0"))
+    current_balance: Mapped[Decimal] = col.numeric(precision=20, scale=8, default=Decimal("0"))
+    include_in_net_worth: Mapped[bool] = mapped_column(Boolean, default=True)
+    include_in_cash_flow: Mapped[bool] = mapped_column(Boolean, default=False)
+    status: Mapped[str] = mapped_column(String(20), default="ACTIVE")
+    created_at: Mapped[datetime] = col.timestamptz()
+    updated_at: Mapped[datetime | None] = col.timestamptz(nullable=True)
 
-    # Relationships
-    user: Optional["User"] = Relationship(
-        sa_relationship_kwargs={
-            "foreign_keys": "[FinancialAccount.user_uuid]",
-            "primaryjoin": "FinancialAccount.user_uuid == User.uuid",
-            "overlaps": "financial_accounts",
-        }
+    user: Mapped[User | None] = relationship(
+        "User",
+        back_populates="financial_accounts",
+        foreign_keys="[FinancialAccount.user_uuid]",
+        primaryjoin="FinancialAccount.user_uuid == User.uuid",
     )
 
     @property
     def balance_float(self) -> float:
-        """Get initial balance as float.
-
-        Returns:
-            float: Balance value
-        """
+        """Get initial balance as float."""
         return float(self.initial_balance)
 
     @property
     def is_asset(self) -> bool:
-        """Check if account is an asset.
-
-        Returns:
-            bool: True if nature is 'ASSET'
-        """
+        """Check if account is an asset."""
         return self.nature == AccountNature.ASSET.value
 
     @property
     def is_liability(self) -> bool:
-        """Check if account is a liability.
-
-        Returns:
-            bool: True if nature is 'LIABILITY'
-        """
+        """Check if account is a liability."""
         return self.nature == AccountNature.LIABILITY.value
 
     @property
     def is_active(self) -> bool:
-        """Check if account is active.
-
-        Returns:
-            bool: True if status is 'ACTIVE'
-        """
+        """Check if account is active."""
         return self.status == AccountStatus.ACTIVE.value
 
     @property
     def net_worth_contribution(self) -> Decimal:
-        """Calculate this account's contribution to net worth.
-
-        Assets contribute positively, liabilities contribute negatively.
-        Inactive/closed accounts or accounts excluded from net worth return 0.
-
-        Returns:
-            Decimal: Net worth contribution
-        """
+        """Calculate this account's contribution to net worth."""
         if not self.include_in_net_worth or not self.is_active:
             return Decimal("0")
         if self.is_liability:

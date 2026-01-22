@@ -11,8 +11,8 @@
 
 from __future__ import annotations
 
-from collections.abc import AsyncGenerator
-from typing import Any, Sequence, cast
+from collections.abc import AsyncGenerator, Sequence
+from typing import Any, cast
 from urllib.parse import quote_plus
 from uuid import UUID
 
@@ -62,7 +62,7 @@ class SimpleLangChainAgent:
         self._agent: MiddlewareAgent | None = None
         self._conn_pool: AsyncConnectionPool[AsyncConnection[dict[str, Any]]] | None = None
         self._memory_service: MemoryService | None = None
-        self._middlewares: list | None = None
+        self._middlewares: list[Any] | None = None
         self._stream_processor = StreamProcessor()
 
         logger.info(
@@ -109,7 +109,7 @@ class SimpleLangChainAgent:
         # are managed by scripts/bootstrap.py.
         return checkpointer
 
-    async def _initialize_middlewares(self) -> list:
+    async def _initialize_middlewares(self) -> list[Any]:
         """初始化 middleware 栈"""
         if self._middlewares is None:
             from app.core.database import get_session_context
@@ -233,7 +233,7 @@ class SimpleLangChainAgent:
             ]
 
         # 构建 input_data
-        input_data = {"messages": lc_messages}
+        input_data: dict[str, Any] = {"messages": lc_messages}
 
         # GenUI 原子模式：处理 client_state
         if client_state:
@@ -425,7 +425,7 @@ class SimpleLangChainAgent:
         if state.values and "messages" in state.values:
             result = []
             for msg in state.values["messages"]:
-                if not isinstance(msg, (AIMessage, HumanMessage)):
+                if not isinstance(msg, AIMessage | HumanMessage):
                     continue
                 if not msg.content:
                     continue
@@ -476,7 +476,7 @@ class SimpleLangChainAgent:
 
         # 第一步：预处理 - 收集 ToolMessage 的 UI 组件映射
         # (tool_call_id -> ui_component_data)
-        tool_call_ui_map: dict[str, dict] = {}
+        tool_call_ui_map: dict[str, dict[str, Any]] = {}
 
         # 引入 ComponentDetector
         # 引入 Enrichment Layer
@@ -616,7 +616,7 @@ class SimpleLangChainAgent:
 
         # 第二步：构建并优化消息列表
         # 策略：收集所有消息 -> 分组 -> 智能合并 Assistant 文本
-        raw_result = []
+        raw_result: list[dict[str, Any]] = []
         for msg in messages:
             msg_id = getattr(msg, "id", None) or str(uuid.uuid4())
 
@@ -632,7 +632,7 @@ class SimpleLangChainAgent:
 
                 # Debug: 记录 HumanMessage 的原始内容结构
                 content_type = type(msg.content).__name__
-                content_length = len(msg.content) if isinstance(msg.content, (str, list)) else 0
+                content_length = len(msg.content) if isinstance(msg.content, str | list) else 0
                 logger.debug(
                     "human_message_content_debug",
                     msg_id=msg_id,
@@ -783,7 +783,7 @@ class SimpleLangChainAgent:
         await self.delete_session_history(session_id)
         logger.info("chat_history_cleared", session_id=session_id)
 
-    async def cancel_last_turn(self, session_id: UUID) -> dict:
+    async def cancel_last_turn(self, session_id: UUID) -> dict[str, Any]:
         """取消最后一轮对话
 
         使用 RemoveMessage 清理 checkpoint 状态。
@@ -928,10 +928,10 @@ class SimpleLangChainAgent:
     async def _update_long_term_memory(
         self,
         user_uuid: UUID | None,
-        messages: list[dict],
+        messages: list[dict[str, Any]],
         session_id: UUID | None = None,
         category: str = "conversation",
-        additional_metadata: dict | None = None,
+        additional_metadata: dict[str, Any] | None = None,
     ) -> None:
         """Update long-term memory (background task).
 

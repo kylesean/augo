@@ -57,7 +57,7 @@ class BackgroundTaskManager:
         asyncio.create_task(_wrapped_task())
 
     @staticmethod
-    def background_task(func: Callable) -> Callable:
+    def background_task(func: Callable[..., Any]) -> Callable[..., Any]:
         """装饰器：将函数标记为后台任务
 
         使用方式:

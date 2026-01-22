@@ -149,9 +149,9 @@ class CursorPaginatedResponse[T](BaseModel):
 
 async def paginate(
     session: AsyncSession,
-    query: Select,
+    query: Select[Any],
     params: PaginationParams,
-) -> PaginatedResponse:
+) -> PaginatedResponse[Any]:
     """Execute paginated query and return standardized response.
 
     Args:
@@ -204,10 +204,10 @@ async def paginate(
 
 async def paginate_cursor(
     session: AsyncSession,
-    query: Select,
+    query: Select[Any],
     params: CursorPaginationParams,
     cursor_field: str = "id",
-) -> CursorPaginatedResponse:
+) -> CursorPaginatedResponse[Any]:
     """Execute cursor-based paginated query.
 
     Args:
@@ -289,7 +289,7 @@ async def paginate_cursor(
 
 async def stream_query_results(
     session: AsyncSession,
-    query: Select,
+    query: Select[Any],
     batch_size: int = 100,
 ) -> AsyncGenerator[Any]:
     """Stream query results in batches to avoid loading all data into memory.
@@ -342,7 +342,7 @@ async def stream_query_results(
 
 async def stream_query_batches(
     session: AsyncSession,
-    query: Select,
+    query: Select[Any],
     batch_size: int = 100,
 ) -> AsyncGenerator[list[Any]]:
     """Stream query results as batches.

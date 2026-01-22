@@ -25,7 +25,7 @@ class QueryOptimizer:
     """Utilities for optimizing database queries."""
 
     @staticmethod
-    def with_relationships(query: Select, *relationships: str) -> Select:
+    def with_relationships(query: Select[Any], *relationships: str) -> Select[Any]:
         """Add eager loading for specified relationships.
 
         This uses selectinload which is efficient for one-to-many relationships.
@@ -55,7 +55,7 @@ class QueryOptimizer:
         return query
 
     @staticmethod
-    def with_joined_relationships(query: Select, *relationships: str) -> Select:
+    def with_joined_relationships(query: Select[Any], *relationships: str) -> Select[Any]:
         """Add eager loading using joins for specified relationships.
 
         This uses joinedload which is efficient for many-to-one relationships.
@@ -213,11 +213,11 @@ class PaginationHelper:
 
     @staticmethod
     def paginate_query(
-        query: Select,
+        query: Select[Any],
         page: int = 1,
         per_page: int = 10,
         max_per_page: int = 100,
-    ) -> Select:
+    ) -> Select[Any]:
         """Add pagination to a query.
 
         Args:
@@ -251,11 +251,11 @@ class PaginationHelper:
     @staticmethod
     async def get_paginated_result(
         session: AsyncSession,
-        query: Select,
+        query: Select[Any],
         page: int = 1,
         per_page: int = 10,
         max_per_page: int = 100,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Execute a paginated query and return results with metadata.
 
         Args:
@@ -335,7 +335,7 @@ async def get_user_conversations_optimized(
     user_uuid: int,
     page: int = 1,
     per_page: int = 10,
-) -> dict:
+) -> dict[str, Any]:
     """Get user's conversations with optimized query.
 
     This is an example of how to use the optimization utilities.
@@ -391,7 +391,7 @@ async def get_transactions_with_comments_optimized(
     user_uuid: str,
     page: int = 1,
     per_page: int = 20,
-) -> dict:
+) -> dict[str, Any]:
     """Get user's transactions with comments in optimized way.
 
     Args:

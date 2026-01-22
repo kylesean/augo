@@ -65,7 +65,7 @@ class EventGenerator:
 
     async def process_message_chunk(
         self,
-        chunk: tuple,
+        chunk: tuple[Any, ...],
         session_id: UUID,
     ) -> AsyncGenerator[GenUIEvent]:
         """处理 messages 模式的流块
@@ -132,7 +132,7 @@ class EventGenerator:
 
     async def _process_tool_call_chunks(
         self,
-        tool_call_chunks: list[dict],
+        tool_call_chunks: list[dict[str, Any]],
         session_id: UUID,
     ) -> AsyncGenerator[GenUIEvent]:
         """处理工具调用块

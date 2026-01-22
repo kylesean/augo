@@ -1,160 +1,103 @@
-"""Shared space models for collaborative financial management."""
+"""Shared space models for collaborative financial management.
+
+This model has been migrated to SQLAlchemy 2.0 with Mapped[...] annotations.
+"""
+
+from __future__ import annotations
 
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 from uuid import UUID
 
 import sqlalchemy as sa
-from sqlalchemy.dialects.postgresql import (
-    TIMESTAMP,
-    UUID as PGUUID,
-)
-from sqlmodel import Column, Field, Relationship
+from sqlalchemy import String
+from sqlalchemy.dialects.postgresql import UUID as PGUUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
+from app.models.base import Base, col
 
 if TYPE_CHECKING:
     from app.models.transaction import Transaction
     from app.models.user import User
 
 
-class SharedSpace(BaseModel, table=True):
-    """Shared space model for collaborative financial tracking.
-
-    Attributes:
-        id: The primary key (UUID)
-        name: Space name
-        creator_uuid: Foreign key to users.uuid (creator)
-        status: Space status (active, archived)
-        description: Space description
-        created_at: When the space was created
-        updated_at: When the space was last updated
-        creator: Relationship to creator user
-        members: Relationship to space members
-        space_transactions: Relationship to space transactions
-        invite_code: Current invitation code
-        invite_code_expires_at: Invitation code expiration time
-    """
+class SharedSpace(Base):
+    """Shared space model for collaborative financial tracking."""
 
     __tablename__ = "shared_spaces"
 
-    id: Optional[UUID] = Field(
-        default=None,
-        sa_column=Column(PGUUID(as_uuid=True), primary_key=True, server_default=sa.text("gen_random_uuid()")),
-    )
-    name: str = Field(max_length=50)
-    creator_uuid: UUID = Field(
-        sa_column=Column(PGUUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False)
-    )
-    status: str = Field(max_length=50, default="ACTIVE")
-    description: Optional[str] = Field(default=None)
-    invite_code: Optional[str] = Field(default=None, max_length=20)
-    invite_code_expires_at: Optional[datetime] = Field(
-        default=None, sa_column=Column(TIMESTAMP(timezone=True), nullable=True)
-    )
+    id: Mapped[UUID | None] = mapped_column(primary_key=True, default=None)
+    name: Mapped[str] = mapped_column(String(50))
+    creator_uuid: Mapped[UUID] = col.uuid_fk("users", ondelete="CASCADE", column="uuid")
+    status: Mapped[str] = mapped_column(String(50), default="ACTIVE")
+    description: Mapped[str | None] = mapped_column(String, nullable=True)
+    invite_code: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    invite_code_expires_at: Mapped[datetime | None] = col.datetime_tz(nullable=True)
+    created_at: Mapped[datetime] = col.timestamptz()
+    updated_at: Mapped[datetime | None] = col.timestamptz(nullable=True)
 
-    # Relationships
-    creator: Optional["User"] = Relationship(
-        sa_relationship_kwargs={
-            "foreign_keys": "[SharedSpace.creator_uuid]",
-            "primaryjoin": "SharedSpace.creator_uuid == User.uuid",
-        }
+    creator: Mapped[User | None] = relationship(
+        "User",
+        foreign_keys="[SharedSpace.creator_uuid]",
+        primaryjoin="SharedSpace.creator_uuid == User.uuid",
     )
-    members: list["SpaceMember"] = Relationship(
-        back_populates="space", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    members: Mapped[list[SpaceMember]] = relationship(
+        "SpaceMember",
+        back_populates="space",
+        cascade="all, delete-orphan",
     )
-    space_transactions: list["SpaceTransaction"] = Relationship(
-        back_populates="space", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    space_transactions: Mapped[list[SpaceTransaction]] = relationship(
+        "SpaceTransaction",
+        back_populates="space",
+        cascade="all, delete-orphan",
     )
 
 
-class SpaceMember(BaseModel, table=True):
-    """Space member model for tracking members in shared spaces.
-
-    Attributes:
-        space_id: Foreign key to shared_spaces table (UUID)
-        user_uuid: Foreign key to users.uuid
-        role: Member role (owner, member)
-        status: Member status (pending, accepted)
-        created_at: When the record was created
-        updated_at: When the record was last updated
-        space: Relationship to shared space
-        user: Relationship to user
-    """
+class SpaceMember(Base):
+    """Space member model for tracking members in shared spaces."""
 
     __tablename__ = "space_members"
 
-    space_id: UUID = Field(
-        sa_column=Column(
-            PGUUID(as_uuid=True),
-            sa.ForeignKey("shared_spaces.id", ondelete="CASCADE"),
-            primary_key=True,
-            nullable=False,
-        )
+    space_id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True),
+        sa.ForeignKey("shared_spaces.id", ondelete="CASCADE"),
+        primary_key=True,
     )
-    user_uuid: UUID = Field(
-        sa_column=Column(
-            PGUUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), primary_key=True, nullable=False
-        )
+    user_uuid: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True),
+        sa.ForeignKey("users.uuid", ondelete="CASCADE"),
+        primary_key=True,
     )
-    role: str = Field(max_length=50, default="MEMBER")
-    status: str = Field(max_length=50, default="ACCEPTED")
+    role: Mapped[str] = mapped_column(String(50), default="MEMBER")
+    status: Mapped[str] = mapped_column(String(50), default="ACCEPTED")
+    created_at: Mapped[datetime] = col.timestamptz()
 
-    # Relationships
-    space: Optional[SharedSpace] = Relationship(back_populates="members")
-    user: Optional["User"] = Relationship(
-        sa_relationship_kwargs={
-            "foreign_keys": "[SpaceMember.user_uuid]",
-            "primaryjoin": "SpaceMember.user_uuid == User.uuid",
-        }
+    space: Mapped[SharedSpace | None] = relationship("SharedSpace", back_populates="members")
+    user: Mapped[User | None] = relationship(
+        "User",
+        foreign_keys="[SpaceMember.user_uuid]",
+        primaryjoin="SpaceMember.user_uuid == User.uuid",
     )
 
 
-class SpaceTransaction(BaseModel, table=True):
-    """Space transaction model for associating transactions with shared spaces.
-
-    This is a many-to-many relationship table that allows:
-    - One transaction to be shared across multiple spaces
-    - Tracking who added the transaction to the space
-    - Maintaining transaction ownership while sharing
-
-    Attributes:
-        id: The primary key (UUID)
-        space_id: Foreign key to shared_spaces table
-        transaction_id: Foreign key to transactions table
-        added_by_user_uuid: Foreign key to users.uuid (who added this)
-        added_at: When the transaction was added to the space
-        created_at: When the record was created
-        updated_at: When the record was last updated
-        space: Relationship to shared space
-        transaction: Relationship to transaction
-        added_by: Relationship to user who added
-    """
+class SpaceTransaction(Base):
+    """Space transaction model for associating transactions with shared spaces."""
 
     __tablename__ = "space_transactions"
 
-    id: Optional[UUID] = Field(
-        default=None,
-        sa_column=Column(PGUUID(as_uuid=True), primary_key=True, server_default=sa.text("gen_random_uuid()")),
-    )
-    space_id: UUID = Field(
-        sa_column=Column(PGUUID(as_uuid=True), sa.ForeignKey("shared_spaces.id", ondelete="NO ACTION"), nullable=False)
-    )
-    transaction_id: UUID = Field(
-        sa_column=Column(PGUUID(as_uuid=True), sa.ForeignKey("transactions.id", ondelete="CASCADE"), nullable=False)
-    )
-    added_by_user_uuid: UUID = Field(
-        sa_column=Column(PGUUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False)
-    )
+    id: Mapped[UUID | None] = mapped_column(primary_key=True, default=None)
+    space_id: Mapped[UUID] = col.uuid_fk("shared_spaces", ondelete="NO ACTION")
+    transaction_id: Mapped[UUID] = col.uuid_fk("transactions", ondelete="CASCADE")
+    added_by_user_uuid: Mapped[UUID] = col.uuid_fk("users", ondelete="CASCADE", column="uuid")
+    created_at: Mapped[datetime] = col.timestamptz()
 
-    # Relationships
-    space: Optional[SharedSpace] = Relationship(back_populates="space_transactions")
-    transaction: Optional["Transaction"] = Relationship(
-        sa_relationship_kwargs={"foreign_keys": "[SpaceTransaction.transaction_id]"}
+    space: Mapped[SharedSpace | None] = relationship("SharedSpace", back_populates="space_transactions")
+    transaction: Mapped[Transaction | None] = relationship(
+        "Transaction",
+        foreign_keys="[SpaceTransaction.transaction_id]",
     )
-    added_by: Optional["User"] = Relationship(
-        sa_relationship_kwargs={
-            "foreign_keys": "[SpaceTransaction.added_by_user_uuid]",
-            "primaryjoin": "SpaceTransaction.added_by_user_uuid == User.uuid",
-        }
+    added_by: Mapped[User | None] = relationship(
+        "User",
+        foreign_keys="[SpaceTransaction.added_by_user_uuid]",
+        primaryjoin="SpaceTransaction.added_by_user_uuid == User.uuid",
     )

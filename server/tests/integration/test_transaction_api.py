@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from decimal import Decimal
 from uuid import uuid4
 
@@ -23,7 +23,7 @@ async def test_get_transactions_api(client_with_auth, db_session, test_user):
         amount=Decimal("50.0"),
         amount_original=Decimal("50.0"),
         currency="USD",
-        transaction_at=datetime.now(timezone.utc),
+        transaction_at=datetime.now(UTC),
         status="CLEARED",
         category_key="FOOD",
         description="Lunch",
@@ -107,7 +107,7 @@ async def test_delete_transaction_api(client_with_auth, db_session, test_user):
         amount=Decimal("10.0"),
         amount_original=Decimal("10.0"),
         currency="USD",
-        transaction_at=datetime.now(timezone.utc),
+        transaction_at=datetime.now(UTC),
         status="CLEARED",
     )
     db_session.add(tx)

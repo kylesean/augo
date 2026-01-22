@@ -37,7 +37,7 @@ class ClientStateMutation(BaseModel):
 
     model_config = {"extra": "ignore"}
 
-    def to_state_dict(self) -> dict:
+    def to_state_dict(self) -> dict[str, Any]:
         """转换为可合并到 AgentState 的字典
 
         只包含非 None 的字段，避免覆盖已有状态。

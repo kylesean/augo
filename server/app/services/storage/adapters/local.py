@@ -9,6 +9,7 @@ import uuid
 from collections.abc import AsyncGenerator
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 import aiofiles
 import aiofiles.os
@@ -275,7 +276,7 @@ class LocalAdapter(StorageAdapter):
         except StorageError:
             return False
 
-    async def get_file_info(self, object_key: str) -> dict | None:
+    async def get_file_info(self, object_key: str) -> dict[str, Any] | None:
         """Get file metadata from local filesystem.
 
         Args:

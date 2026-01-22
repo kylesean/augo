@@ -7,8 +7,9 @@ scheduler service.
 
 from datetime import date, datetime
 from decimal import Decimal
+from typing import Any, cast as type_cast
 
-from sqlalchemy import and_, select
+from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_session_context
@@ -33,11 +34,14 @@ async def process_due_transactions() -> None:
 
             # Find all active recurring transactions due today
             query = select(RecurringTransaction).where(
-                and_(
-                    RecurringTransaction.is_active == True,  # noqa: E712
-                    RecurringTransaction.next_execution_at != None,  # noqa: E711
-                    RecurringTransaction.next_execution_at >= today_start,  # type: ignore
-                    RecurringTransaction.next_execution_at <= today_end,  # type: ignore
+                type_cast(
+                    Any,
+                    and_(
+                        type_cast(Any, RecurringTransaction.is_active) == True,  # noqa: E712
+                        type_cast(Any, RecurringTransaction.next_execution_at) != None,  # noqa: E711
+                        type_cast(Any, RecurringTransaction.next_execution_at) >= today_start,
+                        type_cast(Any, RecurringTransaction.next_execution_at) <= today_end,
+                    ),
                 )
             )
 
@@ -88,7 +92,7 @@ async def update_next_execution_dates() -> None:
     async with get_session_context() as db:
         try:
             query = select(RecurringTransaction).where(
-                RecurringTransaction.is_active == True  # noqa: E712
+                type_cast(Any, RecurringTransaction.is_active == True)  # noqa: E712
             )
 
             result = await db.execute(query)

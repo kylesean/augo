@@ -15,7 +15,7 @@ import uuid
 from collections.abc import AsyncGenerator
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from uuid import UUID
 
 import aiofiles
@@ -119,7 +119,7 @@ class UploadService:
         user_uuid: UUID,
         compress: bool = True,
         thread_id: UUID | None = None,
-    ) -> tuple[list[dict], list[dict]]:
+    ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
         """批量上传文件。
 
         最佳实践：
@@ -251,8 +251,8 @@ class UploadService:
         target_provider = settings.STORAGE_PROVIDER
 
         stmt = select(StorageConfig).where(
-            StorageConfig.user_uuid == user_uuid,
-            StorageConfig.provider_type == target_provider,
+            cast(Any, StorageConfig.user_uuid == user_uuid),
+            cast(Any, StorageConfig.provider_type == target_provider),
         )
         result = await self.db.execute(stmt)
         config = result.scalar_one_or_none()
@@ -303,7 +303,7 @@ class UploadService:
         file: UploadFile,
         user_uuid: UUID,
         compress: bool,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """处理并保存单个文件（支持本地存储和 S3 适配器）。
 
         Returns:
@@ -387,8 +387,8 @@ class UploadService:
             user_uuid: 用户 UUID
         """
         stmt = select(Attachment).where(
-            Attachment.id == attachment_id,
-            Attachment.user_uuid == user_uuid,
+            cast(Any, Attachment.id == attachment_id),
+            cast(Any, Attachment.user_uuid == user_uuid),
         )
         result = await self.db.execute(stmt)
         attachment = result.scalar_one_or_none()
@@ -491,13 +491,13 @@ class UploadService:
                 else:
                     new_height = self.IMAGE_MAX_HEIGHT
                     new_width = int(new_height * ratio)
-                image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+                image = cast(Any, image).resize((new_width, new_height), Image.Resampling.LANCZOS)
 
             # RGBA -> RGB
             if image.mode == "RGBA" and extension.lower() in ("jpg", "jpeg"):
                 background = Image.new("RGB", image.size, (255, 255, 255))
                 background.paste(image, mask=image.split()[3])
-                image = background
+                image = cast(Any, background)
 
             # 保存
             buffer = io.BytesIO()

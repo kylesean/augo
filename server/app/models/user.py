@@ -1,29 +1,27 @@
-"""This file contains the user model for the application."""
+"""User model for the application.
 
-import uuid as uuid_lib
+This model has been migrated to SQLAlchemy 2.0 with Mapped[...] annotations.
+"""
+
+from __future__ import annotations
+
 from datetime import datetime
-from typing import (
-    TYPE_CHECKING,
-    Optional,
-)
+from typing import TYPE_CHECKING, Optional
+from uuid import UUID
 
 import bcrypt
-from psycopg.types.net import ip_address
 from pydantic import field_validator, model_validator
-from sqlalchemy import Column, DateTime
-from sqlalchemy.dialects import postgresql
-from sqlmodel import (
-    Field,
-    Relationship,
-)
+from sqlalchemy import Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
+from app.models.base import Base, col
 
 if TYPE_CHECKING:
     from app.models.financial_account import FinancialAccount
+    from app.models.user_settings import UserSettings
 
 
-class User(BaseModel, table=True):
+class User(Base):
     """User model for storing user accounts.
 
     Attributes:
@@ -46,48 +44,39 @@ class User(BaseModel, table=True):
 
     __tablename__ = "users"
 
-    id: Optional[int] = Field(default=None, primary_key=True, sa_column_kwargs={"autoincrement": True})
-    uuid: uuid_lib.UUID = Field(unique=True, index=True)
-    username: str = Field(max_length=50)
-    email: Optional[str] = Field(default=None, unique=True, index=True, max_length=100)
-    mobile: Optional[str] = Field(default=None, unique=True, index=True, max_length=20)
-    password: str = Field(max_length=255)
-    avatar_url: Optional[str] = Field(default=None, max_length=500)
-    timezone: str = Field(default="Asia/Shanghai", max_length=100)
-    registration_type: str = Field(max_length=20)  # 'email' or 'mobile'
-    last_login_ip: Optional[str] = Field(default=None, sa_column=Column(postgresql.INET, nullable=True))
-    last_login_at: Optional[datetime] = Field(default=None, sa_column=Column(DateTime(timezone=True), nullable=True))
-    # Relationships
-    settings: Optional["UserSettings"] = Relationship(
-        sa_relationship_kwargs={
-            "foreign_keys": "[UserSettings.user_uuid]",
-            "primaryjoin": "User.uuid == UserSettings.user_uuid",
-            "uselist": False,
-            "overlaps": "user",
-        }
+    id: Mapped[int | None] = mapped_column(primary_key=True, autoincrement=True)
+    uuid: Mapped[UUID] = mapped_column(unique=True, index=True)
+    username: Mapped[str] = mapped_column(String(50))
+    email: Mapped[str | None] = mapped_column(String(100), unique=True, index=True, nullable=True)
+    mobile: Mapped[str | None] = mapped_column(String(20), unique=True, index=True, nullable=True)
+    password: Mapped[str] = mapped_column(String(255))
+    avatar_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    timezone: Mapped[str] = mapped_column(String(100), default="Asia/Shanghai")
+    registration_type: Mapped[str] = mapped_column(String(20))
+    last_login_ip: Mapped[str | None] = col.inet_column()
+    last_login_at: Mapped[datetime | None] = col.datetime_tz(nullable=True)
+    created_at: Mapped[datetime] = col.timestamptz()
+    updated_at: Mapped[datetime | None] = col.timestamptz(nullable=True)
+
+    settings: Mapped[UserSettings | None] = relationship(
+        "UserSettings",
+        back_populates="user",
+        uselist=False,
+        foreign_keys="[UserSettings.user_uuid]",
+        primaryjoin="User.uuid == UserSettings.user_uuid",
     )
-    financial_accounts: list["FinancialAccount"] = Relationship(
-        sa_relationship_kwargs={
-            "foreign_keys": "[FinancialAccount.user_uuid]",
-            "primaryjoin": "User.uuid == FinancialAccount.user_uuid",
-            "overlaps": "user",
-        }
+
+    financial_accounts: Mapped[list[FinancialAccount]] = relationship(
+        "FinancialAccount",
+        back_populates="user",
+        foreign_keys="[FinancialAccount.user_uuid]",
+        primaryjoin="User.uuid == FinancialAccount.user_uuid",
     )
 
     @field_validator("email")
     @classmethod
-    def validate_email(cls, v: Optional[str]) -> Optional[str]:
-        """Validate and normalize email format.
-
-        Args:
-            v: Email value to validate
-
-        Returns:
-            Optional[str]: Validated and normalized email or None
-
-        Raises:
-            ValueError: If email format is invalid
-        """
+    def validate_email(cls, v: str | None) -> str | None:
+        """Validate and normalize email format."""
         if v is None:
             return v
 
@@ -95,7 +84,6 @@ class User(BaseModel, table=True):
         if not v_stripped:
             return None
 
-        # Basic email validation
         if "@" not in v_stripped or "." not in v_stripped.split("@")[-1]:
             raise ValueError("Invalid email format")
 
@@ -103,22 +91,10 @@ class User(BaseModel, table=True):
 
     @field_validator("mobile")
     @classmethod
-    def validate_mobile(cls, v: Optional[str]) -> Optional[str]:
-        """Validate mobile number format.
-
-        Args:
-            v: Mobile number to validate
-
-        Returns:
-            Optional[str]: Validated mobile or None
-
-        Raises:
-            ValueError: If mobile format is invalid
-        """
+    def validate_mobile(cls, v: str | None) -> str | None:
+        """Validate mobile number format."""
         if v is not None and v.strip():
-            # Remove common separators
             cleaned = v.strip().replace("-", "").replace(" ", "").replace("(", "").replace(")", "")
-            # Basic validation: should be digits and reasonable length
             if not cleaned.isdigit() or len(cleaned) < 8 or len(cleaned) > 15:
                 raise ValueError("Invalid mobile number format")
             return cleaned
@@ -126,166 +102,40 @@ class User(BaseModel, table=True):
 
     @field_validator("last_login_ip")
     @classmethod
-    def validate_ip_address(cls, v: Optional[str]) -> Optional[str]:
-        """Validate IP address format for PostgresSQL INET type.
-
-        Args:
-            v: IP address string to validate
-
-        Returns:
-            Optional[str]: Validated IP address or None
-
-        Raises:
-            ValueError: If IP address format is invalid
-        """
+    def validate_ip_address(cls, v: str | None) -> str | None:
+        """Validate IP address format."""
         if v is None or not v.strip():
             return None
-        try:
-            ip_obj = ip_address(v.strip())
-            return str(ip_obj)
-        except ValueError as e:
-            raise ValueError(f"Invalid IP address format: {e}")
+        return v.strip()
 
     @model_validator(mode="after")
-    def validate_contact_info(self) -> "User":
-        """Ensure at least one contact method (email or mobile) is provided.
-
-        Returns:
-            User: The validated user instance
-
-        Raises:
-            ValueError: If neither email nor mobile is provided
-        """
+    def validate_contact_info(self) -> User:
+        """Ensure at least one contact method is provided."""
         if not self.email and not self.mobile:
             raise ValueError("Either email or mobile must be provided")
         return self
 
     def verify_password(self, password: str) -> bool:
-        """Verify if the provided password matches the hash.
-
-        Args:
-            password: Plain text password to verify
-
-        Returns:
-            bool: True if password matches, False otherwise
-        """
+        """Verify if the provided password matches the hash."""
         return bcrypt.checkpw(password.encode("utf-8"), self.password.encode("utf-8"))
 
     @staticmethod
     def hash_password(password: str) -> str:
-        """Hash a password using bcrypt.
-
-        Args:
-            password: Plain text password to hash
-
-        Returns:
-            str: Bcrypt hashed password
-        """
+        """Hash a password using bcrypt."""
         salt = bcrypt.gensalt()
         return bcrypt.hashpw(password.encode("utf-8"), salt).decode("utf-8")
 
     @property
     def hashed_password(self) -> str:
-        """Alias for password field to maintain compatibility.
-
-        Returns:
-            str: The hashed password
-        """
+        """Alias for password field."""
         return self.password
 
     @property
     def display_name(self) -> str:
-        """Get display name for the user.
-
-        Returns:
-            str: Username or email/mobile as fallback
-        """
+        """Get display name for the user."""
         return self.username or self.email or self.mobile or "Unknown User"
 
     @property
     def contact_info(self) -> str:
-        """Get primary contact information.
-
-        Returns:
-            str: Email or mobile number
-        """
+        """Get primary contact information."""
         return self.email or self.mobile or ""
-
-
-class UserSettings(BaseModel, table=True):
-    """User settings model for storing user preferences.
-
-    Note: user_uuid is the primary key (no separate id field).
-
-    Attributes:
-        user_uuid: Primary key, references users.uuid
-        currency: User's preferred currency (default: CNY)
-        timezone: User's timezone (default: Asia/Shanghai)
-        avg_daily_spending: Estimated average daily spending
-        safety_balance_threshold: Minimum safe balance threshold
-        created_at: When the settings were created
-        updated_at: When the settings were last updated
-        user: Relationship to user
-    """
-
-    __tablename__ = "user_settings"
-
-    user_uuid: uuid_lib.UUID = Field(sa_column=Column(postgresql.UUID(as_uuid=True), primary_key=True, nullable=False))
-    currency: str = Field(default="CNY", max_length=10)
-    timezone: str = Field(default="Asia/Shanghai", max_length=100)
-    avg_daily_spending: str = Field(default="100.00")  # Decimal(12,2) as string
-    safety_balance_threshold: str = Field(default="500.00")  # Decimal(12,2) as string
-
-    # Relationship
-    user: Optional[User] = Relationship(
-        sa_relationship_kwargs={
-            "foreign_keys": "[UserSettings.user_uuid]",
-            "primaryjoin": "UserSettings.user_uuid == User.uuid",
-            "overlaps": "settings",
-        }
-    )
-
-    @field_validator("safety_balance_threshold", "avg_daily_spending")
-    @classmethod
-    def validate_decimal_string(cls, v: str) -> str:
-        """Validate that the string represents a valid decimal number.
-
-        Args:
-            v: Decimal string to validate
-
-        Returns:
-            str: Validated decimal string
-
-        Raises:
-            ValueError: If the string is not a valid decimal
-        """
-        try:
-            from decimal import Decimal
-
-            # Validate it's a valid decimal
-            decimal_val = Decimal(v)
-            # Ensure it's non-negative
-            if decimal_val < 0:
-                raise ValueError("Value must be non-negative")
-            # Format to 2 decimal places
-            return f"{decimal_val:.2f}"
-        except Exception as e:
-            raise ValueError(f"Invalid decimal format: {e}")
-
-    @property
-    def safety_threshold_float(self) -> float:
-        """Get safety threshold as float.
-
-        Returns:
-            float: Safety threshold value
-        """
-        return float(self.safety_balance_threshold)
-
-    @property
-    def avg_spending_float(self) -> float:
-        """Get average spending as float.
-
-        Returns:
-            float: Average spending value
-        """
-        return float(self.avg_daily_spending)

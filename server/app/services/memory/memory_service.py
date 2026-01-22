@@ -118,7 +118,7 @@ class MemoryService:
             logger.error("memory_service_init_failed", error=str(e))
             raise
 
-    def _build_embedder_config(self) -> dict:
+    def _build_embedder_config(self) -> dict[str, Any]:
         """Build embedder configuration based on provider setting.
 
         Supports:
@@ -131,9 +131,10 @@ class MemoryService:
         """
         provider = settings.LONG_TERM_MEMORY_EMBEDDER_PROVIDER.lower()
 
+        config: dict[str, Any]
         if provider == "ollama":
             # Ollama local embeddings
-            config: dict[str, Any] = {
+            config = {
                 "provider": "ollama",
                 "config": {
                     "model": settings.LONG_TERM_MEMORY_EMBEDDER_MODEL,
@@ -147,7 +148,6 @@ class MemoryService:
                 model=settings.LONG_TERM_MEMORY_EMBEDDER_MODEL,
                 base_url=settings.LONG_TERM_MEMORY_OLLAMA_BASE_URL,
             )
-            return config
 
         elif provider == "huggingface":
             # HuggingFace embeddings
@@ -164,7 +164,6 @@ class MemoryService:
                 "using_huggingface_embedder",
                 model=settings.LONG_TERM_MEMORY_EMBEDDER_MODEL,
             )
-            return config
 
         else:
             # Default: OpenAI or OpenAI-compatible API
@@ -186,7 +185,7 @@ class MemoryService:
                 model=settings.LONG_TERM_MEMORY_EMBEDDER_MODEL,
                 base_url=base_url or "https://api.openai.com/v1",
             )
-            return config
+        return config
 
     # =========================================================================
     # Core CRUD Operations
@@ -195,11 +194,11 @@ class MemoryService:
     async def add_conversation_memory(
         self,
         user_uuid: UUID,
-        messages: list[dict],
+        messages: list[dict[str, Any]],
         session_id: UUID | None = None,
         category: str = "conversation",
-        additional_metadata: dict | None = None,
-    ) -> dict:
+        additional_metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """Add memories from a conversation with proactive fact extraction.
 
         Instead of storing the raw conversation, this method extracts salient
@@ -342,7 +341,7 @@ class MemoryService:
         limit: int = 5,
         rerank: bool = True,
         categories: list[str] | None = None,
-    ) -> list[dict]:
+    ) -> list[dict[str, Any]]:
         """Search for relevant memories with optional category filtering.
 
         Args:
@@ -407,7 +406,7 @@ class MemoryService:
         self,
         user_uuid: UUID,
         limit: int = 100,
-    ) -> list[dict]:
+    ) -> list[dict[str, Any]]:
         """Get all memories for a user.
 
         Args:
@@ -445,7 +444,7 @@ class MemoryService:
     async def get_memory_by_id(
         self,
         memory_id: str,
-    ) -> dict | None:
+    ) -> dict[str, Any] | None:
         """Get a specific memory by ID.
 
         Args:
@@ -547,7 +546,7 @@ class MemoryService:
 
     def format_memories_for_prompt(
         self,
-        memories: list[dict],
+        memories: list[dict[str, Any]],
         max_memories: int = 5,
     ) -> str:
         """Format memories for injection into system prompts.
@@ -585,7 +584,7 @@ class MemoryService:
     async def get_memory_stats(
         self,
         user_uuid: UUID,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Get memory statistics for a user.
 
         Args:
@@ -617,7 +616,7 @@ class MemoryService:
         user_uuid: UUID,
         days_old: int = 180,
         max_memories: int = 500,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Clean up old or excess memories for a user.
 
         Implements two cleanup strategies:

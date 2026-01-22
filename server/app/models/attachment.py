@@ -2,23 +2,28 @@
 
 This module defines the Attachment model for storing file metadata
 with support for multiple storage sources and LangGraph integration.
+
+This model has been migrated to SQLAlchemy 2.0 with Mapped[...] annotations.
 """
 
-import uuid as uuid_lib
-from typing import TYPE_CHECKING, Optional
+from __future__ import annotations
+
+from datetime import datetime
+from typing import TYPE_CHECKING, Any, Optional
+from uuid import UUID, uuid4 as uuid4_factory
 
 import sqlalchemy as sa
-from sqlalchemy import Column, Text
-from sqlalchemy.dialects.postgresql import JSONB, UUID
-from sqlmodel import Field, Relationship
+from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy.dialects.postgresql import UUID as PGUUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
+from app.models.base import Base, col
 
 if TYPE_CHECKING:
     from app.models.storage_config import StorageConfig
 
 
-class Attachment(BaseModel, table=True):
+class Attachment(Base):
     """Unified attachment index model.
 
     Central metadata registry for files, linking to storage configs
@@ -43,50 +48,28 @@ class Attachment(BaseModel, table=True):
 
     __tablename__ = "attachments"
 
-    # Primary key as UUID (matches actual database schema)
-    id: Optional[uuid_lib.UUID] = Field(
-        default_factory=uuid_lib.uuid4,
-        sa_column=Column(UUID(as_uuid=True), primary_key=True, default=uuid_lib.uuid4),
+    id: Mapped[UUID] = col.uuid_pk(uuid4_factory)
+    user_uuid: Mapped[UUID] = col.uuid_fk("users", ondelete="CASCADE", index=True, column="uuid")
+    storage_config_id: Mapped[int] = mapped_column(
+        Integer,
+        sa.ForeignKey("storage_configs.id", ondelete="SET NULL"),
+        index=True,
     )
+    thread_id: Mapped[UUID | None] = col.uuid_column(index=True, nullable=True)
 
-    user_uuid: uuid_lib.UUID = Field(
-        sa_column=Column(
-            UUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False, index=True
-        )
+    filename: Mapped[str] = mapped_column(String(255))
+    object_key: Mapped[str] = mapped_column(String(1024))
+    mime_type: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    size: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    hash: Mapped[str | None] = mapped_column(String(64), index=True, nullable=True)
+    meta_info: Mapped[dict[str, Any]] = col.jsonb_column()
+    created_at: Mapped[datetime] = col.timestamptz()
+    updated_at: Mapped[datetime | None] = col.timestamptz(nullable=True)
+
+    storage_config: Mapped[StorageConfig | None] = relationship(
+        "StorageConfig",
+        back_populates="attachments",
     )
-
-    # Foreign key to storage configuration
-    storage_config_id: int = Field(foreign_key="storage_configs.id", index=True)
-
-    # LangGraph thread/conversation ID for context association
-    thread_id: Optional[uuid_lib.UUID] = Field(
-        default=None,
-        sa_column=Column(UUID(as_uuid=True), index=True),
-    )
-
-    # Original filename for display
-    filename: str = Field(max_length=255)
-
-    # File path/key within storage source (relative to base_path)
-    # e.g., S3 key: "photos/2025/01.jpg" or local: "user_1/chat_abc/file.pdf"
-    object_key: str = Field(max_length=1024)
-
-    # File metadata
-    mime_type: Optional[str] = Field(default=None, max_length=100)
-    size: Optional[int] = Field(default=None)  # Bytes
-
-    # SHA256 hash for deduplication and instant upload detection
-    hash: Optional[str] = Field(default=None, max_length=64, index=True)
-
-    # AI analysis metadata (OCR results, image descriptions, document summaries)
-    # Stored to avoid repeated computation
-    meta_info: Optional[dict] = Field(
-        default_factory=dict,
-        sa_column=Column(JSONB, default={}),
-    )
-
-    # Relationships
-    storage_config: Optional["StorageConfig"] = Relationship(back_populates="attachments")
 
     @property
     def display_name(self) -> str:

@@ -22,7 +22,7 @@ class RecurringTransactionService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def create_recurring_transaction(self, user_uuid: UUID, data: dict) -> dict:
+    async def create_recurring_transaction(self, user_uuid: UUID, data: dict[str, Any]) -> dict[str, Any]:
         """创建周期性交易规则
 
         Args:
@@ -83,7 +83,7 @@ class RecurringTransactionService:
         rrule_str: str,
         start_date: date,
         end_date: date | None = None,
-        exception_dates: list | None = None,
+        exception_dates: list[str] | None = None,
     ) -> datetime | None:
         """计算下次执行日期
 
@@ -126,7 +126,7 @@ class RecurringTransactionService:
             logger.warning(f"Failed to calculate next execution: {e}")
             return None
 
-    def _recurring_tx_to_dict(self, recurring_tx: RecurringTransaction) -> dict:
+    def _recurring_tx_to_dict(self, recurring_tx: RecurringTransaction) -> dict[str, Any]:
         """Convert RecurringTransaction model to dict response."""
         return {
             "id": str(recurring_tx.id),
@@ -142,24 +142,24 @@ class RecurringTransactionService:
             "tags": recurring_tx.tags,
             "recurrence_rule": recurring_tx.recurrence_rule,
             "timezone": recurring_tx.timezone,
-            "start_date": cast(datetime, recurring_tx.start_date).isoformat(),
-            "end_date": cast(datetime, recurring_tx.end_date).isoformat() if recurring_tx.end_date else None,
+            "start_date": recurring_tx.start_date.isoformat(),
+            "end_date": recurring_tx.end_date.isoformat() if recurring_tx.end_date else None,
             "exception_dates": recurring_tx.exception_dates or [],
-            "last_generated_at": cast(datetime, recurring_tx.last_generated_at).isoformat()
+            "last_generated_at": recurring_tx.last_generated_at.isoformat()
             if recurring_tx.last_generated_at
             else None,
-            "next_execution_at": cast(datetime, recurring_tx.next_execution_at).isoformat()
+            "next_execution_at": recurring_tx.next_execution_at.isoformat()
             if recurring_tx.next_execution_at
             else None,
             "description": recurring_tx.description,
             "is_active": recurring_tx.is_active,
-            "created_at": cast(datetime, recurring_tx.created_at).isoformat(),
-            "updated_at": cast(datetime, recurring_tx.updated_at).isoformat(),
+            "created_at": recurring_tx.created_at.isoformat(),
+            "updated_at": recurring_tx.updated_at.isoformat() if recurring_tx.updated_at else None,
         }
 
     async def list_recurring_transactions(
         self, user_uuid: UUID, type_filter: str | None = None, is_active: bool | None = None
-    ) -> list[dict]:
+    ) -> list[dict[str, Any]]:
         """获取周期性交易列表
 
         Args:
@@ -171,25 +171,25 @@ class RecurringTransactionService:
             周期性交易列表
         """
         # 构建查询
-        query = select(RecurringTransaction).where(RecurringTransaction.user_uuid == user_uuid)
+        query = select(RecurringTransaction).where(cast(Any, RecurringTransaction.user_uuid == user_uuid))
 
         # 类型过滤
         if type_filter:
-            query = query.where(RecurringTransaction.type == type_filter.upper())
+            query = query.where(cast(Any, RecurringTransaction.type == type_filter.upper()))
 
         # 激活状态过滤
         if is_active is not None:
-            query = query.where(RecurringTransaction.is_active == is_active)
+            query = query.where(cast(Any, RecurringTransaction.is_active == is_active))
 
         # 按创建时间降序排列
-        query = query.order_by(RecurringTransaction.created_at.desc())
+        query = query.order_by(cast(Any, RecurringTransaction.created_at).desc())
 
         result = await self.db.execute(query)
         recurring_txs = result.scalars().all()
 
         return [self._recurring_tx_to_dict(tx) for tx in recurring_txs]
 
-    async def get_recurring_transaction(self, recurring_id: UUID, user_uuid: UUID) -> dict | None:
+    async def get_recurring_transaction(self, recurring_id: UUID, user_uuid: UUID) -> dict[str, Any] | None:
         """获取周期性交易详情
 
         Args:
@@ -200,9 +200,12 @@ class RecurringTransactionService:
             周期性交易字典，如果不存在则返回None
         """
         query = select(RecurringTransaction).where(
-            and_(
-                RecurringTransaction.id == recurring_id,
-                RecurringTransaction.user_uuid == user_uuid,
+            cast(
+                Any,
+                and_(
+                    cast(Any, RecurringTransaction.id == recurring_id),
+                    cast(Any, RecurringTransaction.user_uuid == user_uuid),
+                ),
             )
         )
         result = await self.db.execute(query)
@@ -213,7 +216,9 @@ class RecurringTransactionService:
 
         return self._recurring_tx_to_dict(recurring_tx)
 
-    async def update_recurring_transaction(self, recurring_id: UUID, user_uuid: UUID, data: dict) -> dict | None:
+    async def update_recurring_transaction(
+        self, recurring_id: UUID, user_uuid: UUID, data: dict[str, Any]
+    ) -> dict[str, Any] | None:
         """更新周期性交易
 
         Args:
@@ -225,9 +230,12 @@ class RecurringTransactionService:
             更新后的周期性交易字典，如果不存在则返回None
         """
         query = select(RecurringTransaction).where(
-            and_(
-                RecurringTransaction.id == recurring_id,
-                RecurringTransaction.user_uuid == user_uuid,
+            cast(
+                Any,
+                and_(
+                    cast(Any, RecurringTransaction.id == recurring_id),
+                    cast(Any, RecurringTransaction.user_uuid == user_uuid),
+                ),
             )
         )
         result = await self.db.execute(query)
@@ -310,9 +318,12 @@ class RecurringTransactionService:
             是否删除成功
         """
         query = select(RecurringTransaction).where(
-            and_(
-                RecurringTransaction.id == recurring_id,
-                RecurringTransaction.user_uuid == user_uuid,
+            cast(
+                Any,
+                and_(
+                    cast(Any, RecurringTransaction.id == recurring_id),
+                    cast(Any, RecurringTransaction.user_uuid == user_uuid),
+                ),
             )
         )
         result = await self.db.execute(query)

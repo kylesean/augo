@@ -11,11 +11,11 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import cast as type_cast
+from typing import Any, cast as type_cast
 from uuid import UUID
 
 from pydantic import BaseModel, Field
-from sqlalchemy import String, and_, cast, desc, func, or_, select
+from sqlalchemy import String, and_, cast as sql_cast, desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import db_manager
@@ -93,7 +93,7 @@ class TransactionItem(BaseModel):
             currency=display_currency,
             category_key=tx.category_key,
             description=tx.description or "",
-            transaction_at=tx.transaction_at.isoformat() if tx.transaction_at else None,
+            transaction_at=tx.transaction_at.isoformat() if tx.transaction_at else "",
             transaction_timezone=tx.transaction_timezone,
             location=tx.location,
             tags=tx.tags,
@@ -102,8 +102,8 @@ class TransactionItem(BaseModel):
             raw_input=tx.raw_input,
             source_account_id=str(tx.source_account_id) if tx.source_account_id else None,
             target_account_id=str(tx.target_account_id) if tx.target_account_id else None,
-            created_at=type_cast(datetime, tx.created_at).isoformat() if tx.created_at else None,
-            updated_at=type_cast(datetime, tx.updated_at).isoformat() if tx.updated_at else None,
+            created_at=tx.created_at.isoformat() if tx.created_at else None,
+            updated_at=tx.updated_at.isoformat() if tx.updated_at else None,
             display=TransactionDisplayValue.from_params(amount=amount_val, tx_type=tx.type, currency=display_currency),
         )
 
@@ -223,60 +223,64 @@ class TransactionQueryService:
         """
         try:
             # 构建基础查询条件
-            conditions = [Transaction.user_uuid == UUID(user_uuid)]
+            conditions = [type_cast(Any, Transaction.user_uuid == UUID(user_uuid))]
 
             # 关键词搜索：匹配 description, location, tags
             if params.keyword:
                 keyword_pattern = f"%{params.keyword}%"
                 conditions.append(
-                    or_(
-                        Transaction.description.ilike(keyword_pattern),  # type: ignore
-                        Transaction.location.ilike(keyword_pattern),  # type: ignore
-                        cast(Transaction.tags, String).ilike(keyword_pattern),  # type: ignore
+                    type_cast(
+                        Any,
+                        or_(
+                            type_cast(Any, Transaction.description).ilike(keyword_pattern),
+                            type_cast(Any, Transaction.location).ilike(keyword_pattern),
+                            sql_cast(Transaction.tags, String).ilike(keyword_pattern),
+                        ),
                     )
                 )
 
-            # 金额范围
+            # 金额范围 - func.abs returns ColumnElement which may need cast or ignore
             if params.min_amount is not None:
-                conditions.append(func.abs(Transaction.amount) >= params.min_amount)
+                conditions.append(type_cast(Any, func.abs(Transaction.amount) >= params.min_amount))
             if params.max_amount is not None:
-                conditions.append(func.abs(Transaction.amount) <= params.max_amount)
+                conditions.append(type_cast(Any, func.abs(Transaction.amount) <= params.max_amount))
 
             # 交易类型
             if params.transaction_types:
                 type_values = [t.value for t in params.transaction_types]
-                conditions.append(Transaction.type.in_(type_values))  # type: ignore
+                conditions.append(type_cast(Any, Transaction.type).in_(type_values))
 
             # 分类
             if params.category_keys:
-                conditions.append(Transaction.category_key.in_(params.category_keys))  # type: ignore
+                conditions.append(type_cast(Any, Transaction.category_key).in_(params.category_keys))
 
             # 标签（JSONB contains）
             if params.tags:
                 for tag in params.tags:
-                    conditions.append(Transaction.tags.contains([tag]))
+                    conditions.append(type_cast(Any, Transaction.tags).contains([tag]))
 
             # 日期范围
             if params.start_date:
                 start_dt = _parse_date_to_utc(params.start_date, end_of_day=False)
                 if start_dt:
-                    conditions.append(Transaction.transaction_at >= start_dt)
+                    conditions.append(type_cast(Any, Transaction.transaction_at >= start_dt))
 
             if params.end_date:
                 end_dt = _parse_date_to_utc(params.end_date, end_of_day=True)
                 if end_dt:
-                    conditions.append(Transaction.transaction_at <= end_dt)
+                    conditions.append(type_cast(Any, Transaction.transaction_at <= end_dt))
 
             # 指定日期（用于首页日历）
             if params.date:
                 day_start = _parse_date_to_utc(params.date, end_of_day=False)
                 day_end = _parse_date_to_utc(params.date, end_of_day=True)
                 if day_start and day_end:
-                    conditions.append(Transaction.transaction_at >= day_start)
-                    conditions.append(Transaction.transaction_at <= day_end)
+                    conditions.append(type_cast(Any, Transaction.transaction_at >= day_start))
+                    conditions.append(type_cast(Any, Transaction.transaction_at <= day_end))
 
             # 构建查询
-            stmt = select(Transaction).where(and_(*conditions))
+            # Mypy cannot handle the *conditions expansion with SQLModel fields correctly
+            stmt = select(Transaction).where(type_cast(Any, and_(True, *conditions)))
 
             # 计算总数
             count_stmt = select(func.count()).select_from(stmt.subquery())
@@ -288,7 +292,8 @@ class TransactionQueryService:
             has_more = params.page < pages
 
             # 排序和分页
-            stmt = stmt.order_by(desc(Transaction.transaction_at))
+            # Transaction.transaction_at is seen as a datetime instance, not a column by Mypy
+            stmt = stmt.order_by(desc(type_cast(Any, Transaction.transaction_at)))
             stmt = stmt.offset((params.page - 1) * params.per_page).limit(params.per_page)
 
             # 执行查询

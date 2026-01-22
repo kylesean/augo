@@ -1,24 +1,25 @@
-"""Notification model for user notifications."""
+"""Notification model for user notifications.
+
+This model has been migrated to SQLAlchemy 2.0 with Mapped[...] annotations.
+"""
+
+from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 from uuid import UUID
 
-import sqlalchemy as sa
 from pydantic import field_validator
-from sqlalchemy.dialects.postgresql import (
-    JSONB,
-    UUID as PGUUID,
-)
-from sqlmodel import Column, Field, Relationship
+from sqlalchemy import Boolean, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
+from app.models.base import Base, col
 
 if TYPE_CHECKING:
     from app.models.user import User
 
 
-class Notification(BaseModel, table=True):
+class Notification(Base):
     """Notification model for storing user notifications.
 
     Attributes:
@@ -37,25 +38,21 @@ class Notification(BaseModel, table=True):
 
     __tablename__ = "notifications"
 
-    id: Optional[int] = Field(default=None, primary_key=True, sa_column_kwargs={"autoincrement": True})
-    user_uuid: UUID = Field(
-        sa_column=Column(
-            PGUUID(as_uuid=True), sa.ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False, index=True
-        )
-    )
-    type: str = Field(max_length=50)
-    title: str = Field(max_length=255)
-    content: Optional[str] = None
-    data: Optional[dict] = Field(default=None, sa_column=Column(JSONB))
-    is_read: bool = Field(default=False, index=True)
-    read_at: Optional[datetime] = None
+    id: Mapped[int | None] = mapped_column(primary_key=True, autoincrement=True)
+    user_uuid: Mapped[UUID] = col.uuid_fk("users", ondelete="CASCADE", index=True, column="uuid")
+    type: Mapped[str] = mapped_column(String(50))
+    title: Mapped[str] = mapped_column(String(255))
+    content: Mapped[str | None] = mapped_column(String, nullable=True)
+    data: Mapped[dict[str, Any] | None] = col.jsonb_column(nullable=True)
+    is_read: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    read_at: Mapped[datetime | None] = col.datetime_tz(nullable=True)
+    created_at: Mapped[datetime] = col.timestamptz()
+    updated_at: Mapped[datetime | None] = col.timestamptz(nullable=True)
 
-    # Relationship
-    user: Optional["User"] = Relationship(
-        sa_relationship_kwargs={
-            "foreign_keys": "[Notification.user_uuid]",
-            "primaryjoin": "Notification.user_uuid == User.uuid",
-        }
+    user: Mapped[User | None] = relationship(
+        "User",
+        foreign_keys="[Notification.user_uuid]",
+        primaryjoin="Notification.user_uuid == User.uuid",
     )
 
     @field_validator("title")

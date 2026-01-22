@@ -9,7 +9,7 @@ This service provides functionality to:
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, cast
 from uuid import UUID
 
 from sqlalchemy import desc, select
@@ -141,10 +141,10 @@ class HistoryService:
         # Fetch attachments with storage configs
         stmt = (
             select(Attachment, StorageConfig)
-            .join(StorageConfig, Attachment.storage_config_id == StorageConfig.id)
+            .join(StorageConfig, cast(Any, Attachment.storage_config_id == StorageConfig.id))
             .where(
-                Attachment.id.in_(attachment_ids),
-                Attachment.user_uuid == user_uuid,
+                cast(Any, Attachment.id).in_(attachment_ids),
+                cast(Any, Attachment.user_uuid == user_uuid),
             )
         )
         result = await self.db.execute(stmt)
@@ -199,12 +199,12 @@ class HistoryService:
         """
         stmt = (
             select(Attachment, StorageConfig)
-            .join(StorageConfig, Attachment.storage_config_id == StorageConfig.id)
+            .join(StorageConfig, cast(Any, Attachment.storage_config_id == StorageConfig.id))
             .where(
-                Attachment.thread_id == thread_id,
-                Attachment.user_uuid == user_uuid,
+                cast(Any, Attachment.thread_id == thread_id),
+                cast(Any, Attachment.user_uuid == user_uuid),
             )
-            .order_by(Attachment.created_at.desc())
+            .order_by(desc(cast(Any, Attachment.created_at)))
         )
         result = await self.db.execute(stmt)
         rows = result.all()

@@ -30,8 +30,8 @@ class CashFlowService:
         user_uuid: UUID,
         forecast_days: int = 60,
         granularity: str = "daily",
-        scenarios: list[dict] | None = None,
-    ) -> dict:
+        scenarios: list[dict[str, Any]] | None = None,
+    ) -> dict[str, Any]:
         """Forecast future cash flow."""
         from app.models.financial_settings import FinancialSettings
 
@@ -195,7 +195,7 @@ class CashFlowService:
             "summary": summary,
         }
 
-    def _aggregate_breakdown(self, daily_breakdown: list[dict], granularity: str) -> list[dict]:
+    def _aggregate_breakdown(self, daily_breakdown: list[dict[str, Any]], granularity: str) -> list[dict[str, Any]]:
         """Aggregate data based on granularity parameter
 
         Args:
@@ -248,7 +248,9 @@ class CashFlowService:
 
         return aggregated
 
-    def _calculate_warnings(self, raw_daily_breakdown: list[dict], safety_threshold: Decimal) -> list[dict]:
+    def _calculate_warnings(
+        self, raw_daily_breakdown: list[dict[str, Any]], safety_threshold: Decimal
+    ) -> list[dict[str, Any]]:
         """Calculate warning information
 
         Args:
@@ -273,7 +275,7 @@ class CashFlowService:
 
         return list(warnings.values())
 
-    def _calculate_summary(self, start_balance: str, raw_daily_breakdown: list[dict]) -> dict:
+    def _calculate_summary(self, start_balance: str, raw_daily_breakdown: list[dict[str, Any]]) -> dict[str, Any]:
         """Calculate summary information
 
         Args:

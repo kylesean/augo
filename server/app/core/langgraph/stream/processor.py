@@ -282,7 +282,7 @@ class StreamProcessor:
 
     async def _process_messages_mode(
         self,
-        chunk: tuple,
+        chunk: tuple[Any, dict[str, Any]],
         session_id: UUID,
         event_buffer: list[GenUIEvent],
     ) -> AsyncGenerator[GenUIEvent]:

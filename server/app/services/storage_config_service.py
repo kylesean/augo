@@ -6,9 +6,10 @@ and user default storage initialization.
 
 from __future__ import annotations
 
+from typing import Any, cast
 from uuid import UUID
 
-from sqlalchemy import desc, select
+from sqlalchemy import asc, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.logging import logger
@@ -37,7 +38,7 @@ class StorageConfigService:
         provider_type: str,
         name: str,
         base_path: str,
-        credentials: dict | None = None,
+        credentials: dict[str, Any] | None = None,
         is_readonly: bool = True,
     ) -> StorageConfig:
         """Create a new storage configuration.
@@ -101,10 +102,10 @@ class StorageConfigService:
         Returns:
             StorageConfig or None
         """
-        query = select(StorageConfig).where(StorageConfig.id == config_id)
+        query = select(StorageConfig).where(cast(Any, StorageConfig.id == config_id))
 
         if user_uuid is not None:
-            query = query.where(StorageConfig.user_uuid == user_uuid)
+            query = query.where(cast(Any, StorageConfig.user_uuid == user_uuid))
 
         result = await self.db.execute(query)
         return result.scalar_one_or_none()
@@ -123,12 +124,12 @@ class StorageConfigService:
         Returns:
             List of StorageConfig models
         """
-        query = select(StorageConfig).where(StorageConfig.user_uuid == user_uuid)
+        query = select(StorageConfig).where(cast(Any, StorageConfig.user_uuid == user_uuid))
 
         if provider_type:
-            query = query.where(StorageConfig.provider_type == provider_type)
+            query = query.where(cast(Any, StorageConfig.provider_type == provider_type))
 
-        query = query.order_by(StorageConfig.created_at.desc())
+        query = query.order_by(desc(cast(Any, StorageConfig.created_at)))
 
         result = await self.db.execute(query)
         return list(result.scalars().all())
@@ -145,10 +146,10 @@ class StorageConfigService:
         query = (
             select(StorageConfig)
             .where(
-                StorageConfig.user_uuid == user_uuid,
-                StorageConfig.provider_type == ProviderType.LOCAL_UPLOADS.value,
+                cast(Any, StorageConfig.user_uuid == user_uuid),
+                cast(Any, StorageConfig.provider_type == ProviderType.LOCAL_UPLOADS.value),
             )
-            .order_by(StorageConfig.created_at.asc())
+            .order_by(asc(cast(Any, StorageConfig.created_at)))
             .limit(1)
         )
 
@@ -184,7 +185,7 @@ class StorageConfigService:
         user_uuid: UUID,
         name: str | None = None,
         base_path: str | None = None,
-        credentials: dict | None = None,
+        credentials: dict[str, Any] | None = None,
         is_readonly: bool | None = None,
     ) -> StorageConfig | None:
         """Update a storage configuration.
@@ -246,7 +247,7 @@ class StorageConfigService:
 
         return True
 
-    def decrypt_credentials(self, config: StorageConfig) -> dict:
+    def decrypt_credentials(self, config: StorageConfig) -> dict[str, Any]:
         """Decrypt credentials from a storage config.
 
         Args:
@@ -265,7 +266,7 @@ class StorageConfigService:
 
         return credential_encryption.decrypt_credentials(encrypted)
 
-    def mask_credentials(self, config: StorageConfig) -> dict:
+    def mask_credentials(self, config: StorageConfig) -> dict[str, Any]:
         """Get masked credentials for API response.
 
         Args:

@@ -5,11 +5,7 @@ import argparse
 import asyncio
 import os
 import sys
-from typing import (
-    Any,
-    Dict,
-    Optional,
-)
+from typing import Any, Optional
 
 import colorama
 from colorama import (
@@ -20,9 +16,10 @@ from tqdm import tqdm
 
 # Fix import path for app module
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from evals.evaluator import Evaluator
+
 from app.core.config import settings
 from app.core.logging import logger
-from evals.evaluator import Evaluator
 
 # Default configuration
 DEFAULT_CONFIG = {
@@ -79,7 +76,7 @@ def print_success(message: str) -> None:
     print(f"{Fore.GREEN}✓ {message}{Style.RESET_ALL}")
 
 
-def get_user_input(prompt: str, default: Optional[str] = None) -> str:
+def get_user_input(prompt: str, default: str | None = None) -> str | None:
     """Get user input with a colored prompt.
 
     Args:
@@ -105,7 +102,7 @@ def get_yes_no(prompt: str, default: bool = True) -> bool:
         True for yes, False for no
     """
     default_value = "Y/n" if default else "y/N"
-    response = get_user_input(f"{prompt} {default_value}")
+    response = get_user_input(f"{prompt} {default_value}", default=None)
 
     if not response:
         return default
@@ -113,7 +110,7 @@ def get_yes_no(prompt: str, default: bool = True) -> bool:
     return response.lower() in ("y", "yes")
 
 
-def display_summary(report: Dict[str, Any]) -> None:
+def display_summary(report: dict[str, Any]) -> None:
     """Display a summary of the evaluation results.
 
     Args:
@@ -187,7 +184,7 @@ async def run_evaluation(generate_report: bool = True) -> None:
         sys.exit(1)
 
 
-def display_configuration(config: Dict[str, Any]) -> None:
+def display_configuration(config: dict[str, Any]) -> None:
     """Display the current configuration.
 
     Args:
@@ -219,13 +216,13 @@ def interactive_mode() -> None:
     change_config = get_yes_no("Would you like to change the default configuration?", default=False)
 
     if change_config:
-        config["generate_report"] = get_yes_no("Generate JSON report?", default=config["generate_report"])
+        config["generate_report"] = get_yes_no("Generate JSON report?", default=bool(config["generate_report"]))
 
     print("\n")
     confirm = get_yes_no("Ready to start evaluation with these settings?", default=True)
 
     if confirm:
-        asyncio.run(run_evaluation(generate_report=config["generate_report"]))
+        asyncio.run(run_evaluation(generate_report=bool(config["generate_report"])))
     else:
         print_warning("Evaluation canceled.")
 
@@ -241,7 +238,7 @@ def quick_mode() -> None:
     display_configuration(DEFAULT_CONFIG)
 
     try:
-        asyncio.run(run_evaluation(generate_report=DEFAULT_CONFIG["generate_report"]))
+        asyncio.run(run_evaluation(generate_report=bool(DEFAULT_CONFIG["generate_report"])))
     except KeyboardInterrupt:
         print_warning("\nEvaluation canceled by user.")
         sys.exit(0)

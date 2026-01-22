@@ -10,6 +10,8 @@ Enhanced Features:
 - Graceful degradation on errors
 """
 
+from typing import Any
+
 from langchain_core.messages import BaseMessage
 
 from app.core.langgraph.middleware.base import BaseMiddleware
@@ -63,8 +65,8 @@ class LongTermMemoryMiddleware(BaseMiddleware):
     async def before_invoke(
         self,
         messages: list[BaseMessage],
-        config: dict,
-    ) -> tuple[list[BaseMessage], dict]:
+        config: dict[str, Any],
+    ) -> tuple[list[BaseMessage], dict[str, Any]]:
         """Inject long-term memory before agent invocation.
 
         MODIFIED: Now passive. Primary memory retrieval is handled by 'search_personal_context' tool.
