@@ -113,7 +113,7 @@ class SimpleLangChainAgent:
         """初始化 middleware 栈"""
         if self._middlewares is None:
             from app.core.database import get_session_context
-            from app.core.langgraph.middleware import SkillConstraintMiddleware
+            from app.core.langgraph.middleware import SkillMiddleware
 
             # LongTermMemoryMiddleware now uses MemoryService internally
             # No need to pass memory instance directly
@@ -124,7 +124,9 @@ class SimpleLangChainAgent:
                     min_relevance_score=0.3,  # Only include relevant memories
                 ),
                 AttachmentMiddleware(get_session_context),
-                SkillConstraintMiddleware(tools=tools),
+                # SkillMiddleware: Official LangChain Skills pattern
+                # Injects skill catalog into system prompt (progressive disclosure)
+                SkillMiddleware(),
             ]
 
             logger.info(
@@ -280,7 +282,7 @@ class SimpleLangChainAgent:
             )
             yield GenUIEvent(
                 type="text_delta",
-                data="\n\n抱歉，我在执行这个任务时尝试了太多次仍未成功。请尝试简化你的请求，或者换一种方式描述。",
+                content="\n\n抱歉，我在执行这个任务时尝试了太多次仍未成功。请尝试简化你的请求，或者换一种方式描述。",
             )
             yield GenUIEvent(type="done")
         finally:
@@ -384,7 +386,7 @@ class SimpleLangChainAgent:
             )
             yield GenUIEvent(
                 type="text_delta",
-                data="\n\n⚠️ 任务执行超过了最大尝试次数。请重新开始对话。",
+                content="\n\n任务执行超过了最大尝试次数。请重新开始对话。",
             )
             yield GenUIEvent(type="done")
         finally:

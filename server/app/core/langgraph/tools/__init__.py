@@ -1,14 +1,14 @@
 """工具模块 - LangGraph Agent 工具集
 
 架构设计：
-- LLM 可见工具：record_transactions, search_transactions, 预算, 文件系统
+- LLM 可见工具：record_transactions, search_transactions, 预算, 文件系统, load_skill
 - 内部工具：execute_transfer（仅 GenUI 回调使用，不暴露给 LLM）
 
 设计原则：
 - 工具语义清晰，LLM 无需额外提示即可正确选择
 - 统一入口：record_transactions 支持混合类型批量记录
 - 转账通过 transfer-expert 技能触发，由 UI 收集账户信息
-- 财务分析、共享空间等通过 Skills + 脚本实现，节省 token 消耗
+- Skills 通过 load_skill 工具按需加载（官方 Progressive Disclosure 模式）
 """
 
 from __future__ import annotations
@@ -27,6 +27,9 @@ from .context import current_session_language, current_user_id
 from .duckduckgo_search import duckduckgo_search_tool
 from .filesystem_tools import filesystem_tools
 from .memory_tools import memory_tools
+
+# Skills: load_skill tool for progressive disclosure
+from .skill_tools import skill_tools
 
 # 统一的交易工具（记录 + 查询）
 from .transaction_tools import transaction_tools as record_tools
@@ -50,7 +53,8 @@ utility_tools: list[BaseTool] = [
 # 包含 read_file, ls, execute
 
 # 4. 最终暴露给 LLM 的工具集（日常对话）
-tools: list[BaseTool] = utility_tools + business_tools + filesystem_tools + memory_tools
+# 包含 load_skill 用于按需加载技能内容
+tools: list[BaseTool] = utility_tools + business_tools + filesystem_tools + memory_tools + skill_tools
 
 # 5. 技能专属工具（已迁移到脚本模式，不再需要）
 # - finance-analyst: 通过 analyze_finance.py, forecast_finance.py 脚本
