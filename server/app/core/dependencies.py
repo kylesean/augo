@@ -172,7 +172,7 @@ class OptionalAuth:
             db: Database session
 
         Returns:
-            Optional[User]: User object if authenticated, None otherwise
+            User | None: User object if authenticated, None otherwise
         """
         if credentials is None:
             return None

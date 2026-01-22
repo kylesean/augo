@@ -316,7 +316,7 @@ class UserSettingsRequest(BaseModel):
             v: Value to validate
 
         Returns:
-            Optional[str]: Validated value
+            str | None: Validated value
 
         Raises:
             ValueError: If value is invalid

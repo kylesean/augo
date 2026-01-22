@@ -462,8 +462,8 @@ def get_pagination_params(
         # In API endpoint
         @app.get("/users")
         async def get_users(
-            page: Optional[int] = None,
-            per_page: Optional[int] = None
+            page: int | None = None,
+            per_page: int | None = None
         ):
             params = get_pagination_params(page, per_page)
             # Use params...

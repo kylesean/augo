@@ -33,7 +33,7 @@ class ExchangeRateService:
         """Fetch latest exchange rates from the external API.
 
         Returns:
-            Optional[Dict[str, Any]]: Exchange rate data from API, or None on failure
+            Dict[str, Any | None]: Exchange rate data from API, or None on failure
         """
         if not self._api_url:
             logger.warning(
@@ -133,7 +133,7 @@ class ExchangeRateService:
         """Get cached exchange rates from Redis.
 
         Returns:
-            Optional[Dict[str, Any]]: Cached exchange rate data, or None if not available
+            Dict[str, Any | None]: Cached exchange rate data, or None if not available
         """
         data = await cache_manager.get(self._cache_key)
 
@@ -157,7 +157,7 @@ class ExchangeRateService:
             target_currency: Target currency code (e.g., "CNY", "EUR")
 
         Returns:
-            Optional[float]: Exchange rate from USD to target currency, or None if not available
+            float | None: Exchange rate from USD to target currency, or None if not available
         """
         data = await self.get_cached_rates()
 
@@ -195,7 +195,7 @@ class ExchangeRateService:
             to_currency: Target currency code
 
         Returns:
-            Optional[float]: Converted amount, or None if conversion not possible
+            float | None: Converted amount, or None if conversion not possible
         """
         from_currency = from_currency.upper()
         to_currency = to_currency.upper()

@@ -71,7 +71,7 @@ def verify_token(token: str) -> str | None:
         token: The JWT token to verify.
 
     Returns:
-        Optional[str]: The subject ID if token is valid, None otherwise.
+        str | None: The subject ID if token is valid, None otherwise.
 
     Raises:
         ValueError: If the token format is invalid
@@ -108,7 +108,7 @@ def refresh_token(old_token: str) -> Token | None:
         old_token: The existing JWT token to refresh.
 
     Returns:
-        Optional[Token]: A new token if the old token is valid, None otherwise.
+        Token | None: A new token if the old token is valid, None otherwise.
 
     Raises:
         ValueError: If the token format is invalid
@@ -137,7 +137,7 @@ def decode_token_payload(token: str) -> dict[str, Any] | None:
         token: The JWT token to decode.
 
     Returns:
-        Optional[dict]: The token payload if decodable, None otherwise.
+        dict | None: The token payload if decodable, None otherwise.
     """
     try:
         # Decode without verification (for inspection only)

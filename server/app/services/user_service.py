@@ -181,10 +181,10 @@ class UserService:
             accounts: List of financial account dictionaries with keys:
                 - name: str (account name)
                 - nature: str ('ASSET' or 'LIABILITY')
-                - type: Optional[str] (account type like 'SAVINGS', 'CREDIT_CARD')
+                - type: str | None (account type like 'SAVINGS', 'CREDIT_CARD')
                 - initialBalance: str (decimal as string)
-                - currencyCode: Optional[str] (default: 'CNY')
-                - includeInNetWorth: Optional[bool] (default: True)
+                - currencyCode: str | None (default: 'CNY')
+                - includeInNetWorth: bool | None (default: True)
 
         Returns:
             Dict containing:
