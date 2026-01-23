@@ -85,35 +85,39 @@ class StreamProcessor:
         session_id: UUID,
         user_uuid: UUID | None = None,
     ) -> AsyncGenerator[GenUIEvent]:
-        """处理 LangGraph 流并生成 GenUI 事件"""
-        from app.core.database import db_manager
-        from app.core.genui import PersistentSurfaceTracker
+        """处理 LangGraph 流并生成 GenUI 事件
 
+        Args:
+            agent: LangGraph Agent 实例
+            input_data: 图输入数据（None 表示从 checkpoint 恢复）
+            config: 运行时配置
+            session_id: 会话 ID
+            user_uuid: 用户 UUID
+
+        Yields:
+            GenUIEvent 事件
+        """
+        self._event_generator.reset()
         event_buffer: list[GenUIEvent] = []
-        user_message_content: str = ""
-        
-        try:
-            async with db_manager.session_factory() as session:
-                # Create persistent tracker for this session
-                tracker = PersistentSurfaceTracker(session, session_id)
-                self._event_generator = EventGenerator(surface_tracker=tracker)
-                self._event_generator.reset()
-                
-                user_message_content = self._extract_user_message(input_data)
-                logger.info("stream_processor_start", session_id=session_id)
 
-                async for mode, chunk in agent.astream(
-                    input_data,
-                    config=config,
-                    stream_mode=["messages", "custom", "updates"],
+        # Extract user message for indexing
+        user_message_content = self._extract_user_message(input_data)
+
+        logger.info("stream_processor_start", session_id=session_id)
+
+        try:
+            async for mode, chunk in agent.astream(
+                input_data,
+                config=config,
+                stream_mode=["messages", "custom", "updates"],
+            ):
+                async for event in self._process_chunk(
+                    mode=mode,
+                    chunk=chunk,
+                    session_id=session_id,
+                    event_buffer=event_buffer,
                 ):
-                    async for event in self._process_chunk(
-                        mode=mode,
-                        chunk=chunk,
-                        session_id=session_id,
-                        event_buffer=event_buffer,
-                    ):
-                        yield event
+                    yield event
 
         except Exception as e:
             logger.error(
@@ -122,13 +126,21 @@ class StreamProcessor:
                 error=str(e),
                 exc_info=True,
             )
-            yield GenUIEvent(type="error", content=f"流处理错误: {str(e)}")
+            # 发送错误事件给客户端
+            yield GenUIEvent(
+                type="error",
+                content=f"流处理错误: {str(e)}",
+            )
 
         finally:
+            # 1. 释放缓冲的事件
             for event in event_buffer:
                 yield event
+
+            # 2. 发送完成事件
             yield GenUIEvent(type="done")
 
+            # 3. 双写消息到 searchable_messages 表（异步，不阻塞响应）
             if user_uuid and session_id:
                 asyncio.create_task(
                     self._index_messages(

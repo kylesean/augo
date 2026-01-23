@@ -154,15 +154,16 @@ async def record_transactions(
             income_items = []
 
             for tx in transactions:
-                # Type safe conversion for dict or Pydantic model
-                if isinstance(tx, dict):
+                # Use Any to avoid static analysis errors with dynamic Pydantic model handling
+                tx_obj: Any = tx
+                if hasattr(tx_obj, "model_dump"):
+                    tx_dict = tx_obj.model_dump()
+                elif hasattr(tx_obj, "dict"):
+                    tx_dict = tx_obj.dict()
+                elif isinstance(tx, dict):
                     tx_dict = tx
-                elif hasattr(tx, "model_dump"):
-                    tx_dict = cast(Any, tx).model_dump()
-                elif hasattr(tx, "dict"):
-                    tx_dict = cast(Any, tx).dict()
                 else:
-                    tx_dict = dict(cast(Any, tx))
+                    tx_dict = dict(tx)
 
                 tx_type = tx_dict.get("type", "expense")
                 amount = tx_dict.get("amount")
@@ -427,15 +428,9 @@ class UpdateTransactionInput(BaseModel):
     """Update transaction input schema"""
 
     transaction_id: str = Field(..., description="Transaction ID to update")
-    amount: float | None = Field(
-        None, description="New amount (optional). Must be positive."
-    )
-    category_key: TransactionCategory | None = Field(
-        None, description="New category key (optional)"
-    )
-    raw_input: str | None = Field(
-        None, description="New description/raw_input (optional)"
-    )
+    amount: float | None = Field(None, description="New amount (optional). Must be positive.")
+    category_key: TransactionCategory | None = Field(None, description="New category key (optional)")
+    raw_input: str | None = Field(None, description="New description/raw_input (optional)")
     tags: list[str] | None = Field(None, description="New tags (optional)")
 
 
@@ -452,6 +447,7 @@ async def update_transaction(
     """Update an existing transaction's properties.
 
     Use this when the user wants to MODIFY an existing transaction, not create a new one.
+
     Examples:
     - "改成 200" -> Update the most recent transaction's amount to 200
     - "改成交通费" -> Update the category to TRANSPORTATION
@@ -486,6 +482,8 @@ async def update_transaction(
             if result.get("success"):
                 # Add component type for GenUI rendering
                 result["componentType"] = "TransactionReceipt"
+                # Add intent to trigger incremental update in GenUI
+                result["_intent"] = "update"
                 logger.info(
                     "update_transaction_success",
                     transaction_id=transaction_id,
