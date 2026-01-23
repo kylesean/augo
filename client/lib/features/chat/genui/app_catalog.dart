@@ -345,8 +345,8 @@ class AppCatalog {
         return _buildErrorWidget(context.buildContext, '交易记录加载失败，请重试');
       }
 
-      // Use ReactiveTransactionCard for DataContext reactive updates
-      final widget = ReactiveTransactionCard(catalogContext: context);
+      // Use standard TransactionCard (no reactive binding needed for one-shot receipts)
+      final widget = TransactionCard(data: data);
       final duration = DateTime.now().difference(startTime).inMilliseconds;
       GenUiLogger.logBuilderInvocation(
         componentName: componentName,

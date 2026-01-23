@@ -3,9 +3,7 @@
 // These tests demonstrate the key capabilities of the new reactive GenUI architecture.
 // Run with: flutter test test/features/chat/genui/reactive_architecture_test.dart
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genui/genui.dart';
 
 import 'package:augo/features/chat/models/genui_surface_info.dart';
 import 'package:augo/features/chat/genui/data_context_helpers.dart';
@@ -44,7 +42,7 @@ void main() {
       });
 
       test('can update status with copyWith', () {
-        final info = GenUiSurfaceInfo(
+        const info = GenUiSurfaceInfo(
           surfaceId: 'surface_001',
           messageId: 'msg_001',
           status: SurfaceStatus.loading,
@@ -130,7 +128,6 @@ void main() {
         // New way: Send DataModelUpdate for /amount only
 
         const surfaceId = 'surface_tx_001';
-        const oldAmount = 100.0;
         const newAmount = 200.0;
 
         // Old way - entire component data
@@ -257,7 +254,7 @@ void main() {
        * 4. Result: Entire widget rebuilds, may cause flicker
        *
        * NEW ARCHITECTURE:
-       * 1. User: "改成 200 元"  
+       * 1. User: "改成 200 元"
        * 2. Backend: Tool returns with _intent='update'
        * 3. Backend: SurfaceTracker finds existing surface
        * 4. Backend: Send DataModelUpdate(path='/amount', value=200)
