@@ -312,13 +312,14 @@ class TransactionCRUDService:
         # Update amount if provided
         if amount is not None and amount > 0:
             old_amount = transaction.amount
-            new_amount = Decimal(str(amount))
+            new_amount_original = Decimal(str(amount))
 
-            # Get user's display currency
+            # Get user's display currency and transaction's storage currency
             display_currency = await get_user_display_currency(self.db, user_uuid)
             tx_currency = (transaction.currency or BASE_CURRENCY).upper()
 
-            # If different currency, convert
+            # Convert to storage currency if needed
+            new_amount_stored = new_amount_original
             if tx_currency != display_currency:
                 rate = await exchange_rate_service.convert(
                     amount=1.0,
@@ -326,11 +327,10 @@ class TransactionCRUDService:
                     to_currency=tx_currency,
                 )
                 if rate:
-                    # User input is in display currency, convert to storage currency
-                    new_amount = Decimal(str(amount)) * Decimal(str(rate))
+                    new_amount_stored = new_amount_original * Decimal(str(rate))
 
-            transaction.amount = new_amount.quantize(Decimal("0.00000001"))
-            transaction.amount_original = Decimal(str(amount))
+            transaction.amount = new_amount_stored.quantize(Decimal("0.00000001"))
+            transaction.amount_original = new_amount_original
             changed_fields.append("/amount")
 
             # Update linked account balance if exists
@@ -346,8 +346,8 @@ class TransactionCRUDService:
                 account_result = await self.db.execute(account_query)
                 account = account_result.scalar_one_or_none()
                 if account:
-                    # Rollback old amount, apply new amount
-                    diff = new_amount - old_amount
+                    # Rollback old amount, apply new amount (in storage currency)
+                    diff = new_amount_stored - old_amount
                     if transaction.type == "EXPENSE":
                         account.current_balance -= diff
                     else:
@@ -386,18 +386,15 @@ class TransactionCRUDService:
             changed_fields=changed_fields,
         )
 
-        # Get display values
+        # Return the user-facing amount (amount_original in display currency)
+        # NOT the storage amount which may be in a different currency
         display_currency = await get_user_display_currency(self.db, user_uuid)
-        exchange_rate = await get_exchange_rate_from_base(display_currency)
-        display_amount = float(transaction.amount)
-        if display_currency != BASE_CURRENCY and exchange_rate:
-            display_amount = display_amount * float(exchange_rate)
+        display_amount = float(transaction.amount_original) if transaction.amount_original else float(transaction.amount)
 
         return {
             "success": True,
             "transaction_id": str(transaction.id),
             "amount": round(display_amount, 2),
-            "amount_original": float(transaction.amount_original) if transaction.amount_original else display_amount,
             "currency": display_currency,
             "type": transaction.type,
             "category_key": transaction.category_key,

@@ -154,14 +154,15 @@ async def record_transactions(
             income_items = []
 
             for tx in transactions:
-                if hasattr(tx, "model_dump"):
-                    tx_dict = tx.model_dump()
-                elif hasattr(tx, "dict"):
-                    tx_dict = tx.dict()
-                elif isinstance(tx, dict):
+                # Type safe conversion for dict or Pydantic model
+                if isinstance(tx, dict):
                     tx_dict = tx
+                elif hasattr(tx, "model_dump"):
+                    tx_dict = cast(Any, tx).model_dump()
+                elif hasattr(tx, "dict"):
+                    tx_dict = cast(Any, tx).dict()
                 else:
-                    tx_dict = dict(tx)
+                    tx_dict = dict(cast(Any, tx))
 
                 tx_type = tx_dict.get("type", "expense")
                 amount = tx_dict.get("amount")

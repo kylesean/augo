@@ -21,10 +21,12 @@ from app.models.transaction import (
 )
 from app.models.user import User
 from app.models.user_settings import UserSettings
+from app.models.genui_surface import GenUISurface
 
 __all__ = [
     "User",
     "UserSettings",
+    "GenUISurface",
     "Session",
     "Attachment",
     "StorageConfig",

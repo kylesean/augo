@@ -20,7 +20,7 @@ from uuid import UUID
 
 from langchain_core.messages import AIMessage, ToolMessage
 
-from app.core.genui import SurfaceTracker
+from app.core.genui import SurfaceTracker, PersistentSurfaceTracker
 from app.core.langgraph.stream.component_detector import ComponentDetector
 from app.core.logging import logger
 from app.schemas.genui import GenUIEvent
@@ -39,7 +39,7 @@ class EventGenerator:
     - 文本过滤决策 (TextFilterPolicy)
     """
 
-    def __init__(self, surface_tracker: SurfaceTracker | None = None) -> None:
+    def __init__(self, surface_tracker: SurfaceTracker | PersistentSurfaceTracker | None = None) -> None:
         # 工具调用时间追踪（用于计算 duration_ms）
         self._tool_start_times: dict[str, float] = {}
         # 工具 ID 到名称的映射
@@ -315,10 +315,16 @@ class EventGenerator:
         # =====================================================================
         # NEW: Check for reusable Surface (enables "update existing UI" scenarios)
         # =====================================================================
-        existing_surface_id = self._surface_tracker.find_reusable_surface(
-            session_id=str(session_id),
-            component_type=component_name,
-        )
+        # Persistent tracker is async, others are sync
+        if isinstance(self._surface_tracker, PersistentSurfaceTracker):
+            existing_surface_id = await self._surface_tracker.find_reusable_surface(
+                component_type=component_name,
+            )
+        else:
+            existing_surface_id = self._surface_tracker.find_reusable_surface(
+                session_id=str(session_id),
+                component_type=component_name,
+            )
 
         if existing_surface_id and self._is_incremental_update(tool_result):
             # Reuse existing Surface with incremental updates
@@ -329,7 +335,7 @@ class EventGenerator:
             )
 
             # Get changes and emit DataModelUpdate for each
-            changes = self._extract_data_changes(existing_surface_id, tool_result)
+            changes = await self._extract_data_changes(existing_surface_id, tool_result)
             for path, value in changes:
                 data_update_msg = DataModelUpdate(
                     dataModelUpdate=DataModelUpdatePayload(
@@ -341,7 +347,10 @@ class EventGenerator:
                 yield GenUIEvent(type="a2ui_message", data=data_update_msg.model_dump())
 
                 # Update tracker state
-                self._surface_tracker.update_surface_data(existing_surface_id, path, value)
+                if isinstance(self._surface_tracker, PersistentSurfaceTracker):
+                    await self._surface_tracker.update_surface_data(existing_surface_id, path, value)
+                else:
+                    self._surface_tracker.update_surface_data(existing_surface_id, path, value)
             return
 
         # =====================================================================
@@ -370,13 +379,21 @@ class EventGenerator:
         component_data = {**tool_result, "_surfaceId": surface_id}
 
         # Register Surface in tracker
-        self._surface_tracker.register_surface(
-            session_id=str(session_id),
-            surface_id=surface_id,
-            component_type=component_name,
-            data=component_data,
-            tool_call_id=tool_call_id,
-        )
+        if isinstance(self._surface_tracker, PersistentSurfaceTracker):
+            await self._surface_tracker.register_surface(
+                surface_id=surface_id,
+                component_type=component_name,
+                data=component_data,
+                tool_call_id=tool_call_id,
+            )
+        else:
+            self._surface_tracker.register_surface(
+                session_id=str(session_id),
+                surface_id=surface_id,
+                component_type=component_name,
+                data=component_data,
+                tool_call_id=tool_call_id,
+            )
 
         # 发送 SurfaceUpdate
         comp = Component(id=component_id, component={component_name: component_data})
@@ -406,7 +423,7 @@ class EventGenerator:
         # Future: Could add heuristics based on changed field count
         return False
 
-    def _extract_data_changes(
+    async def _extract_data_changes(
         self,
         surface_id: str,
         new_data: dict[str, Any],
@@ -415,7 +432,10 @@ class EventGenerator:
 
         Returns list of (path, value) tuples for changed fields.
         """
-        existing_data = self._surface_tracker.get_surface_data(surface_id) or {}
+        if isinstance(self._surface_tracker, PersistentSurfaceTracker):
+            existing_data = await self._surface_tracker.get_surface_data(surface_id) or {}
+        else:
+            existing_data = self._surface_tracker.get_surface_data(surface_id) or {}
         changes: list[tuple[str, Any]] = []
 
         # Compare top-level fields
