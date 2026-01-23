@@ -5,9 +5,10 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i14;
 
-import 'package:augo/core/storage/secure_storage_service.dart' as _i17;
+import 'package:augo/core/storage/secure_storage_service.dart' as _i18;
 import 'package:augo/features/chat/models/chat_message.dart' as _i9;
 import 'package:augo/features/chat/models/chat_message_attachment.dart' as _i11;
+import 'package:augo/features/chat/models/genui_surface_info.dart' as _i16;
 import 'package:augo/features/chat/models/tool_call_info.dart' as _i12;
 import 'package:augo/features/chat/repositories/message_repository.dart' as _i8;
 import 'package:augo/features/chat/services/custom_content_generator.dart'
@@ -16,7 +17,7 @@ import 'package:augo/features/chat/services/extended_genui_conversation.dart'
     as _i4;
 import 'package:augo/features/chat/services/genui_lifecycle_manager.dart'
     as _i13;
-import 'package:augo/features/chat/services/genui_service.dart' as _i16;
+import 'package:augo/features/chat/services/genui_service.dart' as _i17;
 import 'package:augo/features/chat/state_controllers/stream_state_controller.dart'
     as _i3;
 import 'package:augo/features/chat/state_controllers/streaming_controller.dart'
@@ -249,6 +250,38 @@ class MockGenUiLifecycleManager extends _i1.Mock
           as bool);
 
   @override
+  int get totalSurfacesCreated =>
+      (super.noSuchMethod(
+            Invocation.getter(#totalSurfacesCreated),
+            returnValue: 0,
+          )
+          as int);
+
+  @override
+  int get totalReactiveUpdates =>
+      (super.noSuchMethod(
+            Invocation.getter(#totalReactiveUpdates),
+            returnValue: 0,
+          )
+          as int);
+
+  @override
+  int get totalSurfacesDeleted =>
+      (super.noSuchMethod(
+            Invocation.getter(#totalSurfacesDeleted),
+            returnValue: 0,
+          )
+          as int);
+
+  @override
+  int get activeSurfaceCount =>
+      (super.noSuchMethod(
+            Invocation.getter(#activeSurfaceCount),
+            returnValue: 0,
+          )
+          as int);
+
+  @override
   _i14.Future<void> initialize({_i15.Dio? dio, required String? sseBaseUrl}) =>
       (super.noSuchMethod(
             Invocation.method(#initialize, [], {
@@ -261,7 +294,7 @@ class MockGenUiLifecycleManager extends _i1.Mock
           as _i14.Future<void>);
 
   @override
-  void setOnUserMessageSent(dynamic Function(String)? callback) =>
+  void setOnUserMessageSent(void Function(String)? callback) =>
       super.noSuchMethod(
         Invocation.method(#setOnUserMessageSent, [callback]),
         returnValueForMissingStub: null,
@@ -270,6 +303,45 @@ class MockGenUiLifecycleManager extends _i1.Mock
   @override
   void dispose() => super.noSuchMethod(
     Invocation.method(#dispose, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void clearSession() => super.noSuchMethod(
+    Invocation.method(#clearSession, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  _i16.GenUiSurfaceInfo? getSurfaceInfo(String? surfaceId) =>
+      (super.noSuchMethod(Invocation.method(#getSurfaceInfo, [surfaceId]))
+          as _i16.GenUiSurfaceInfo?);
+
+  @override
+  List<_i16.GenUiSurfaceInfo> getSurfacesForMessage(String? messageId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getSurfacesForMessage, [messageId]),
+            returnValue: <_i16.GenUiSurfaceInfo>[],
+          )
+          as List<_i16.GenUiSurfaceInfo>);
+
+  @override
+  void updateSurfaceStatus(String? surfaceId, _i16.SurfaceStatus? status) =>
+      super.noSuchMethod(
+        Invocation.method(#updateSurfaceStatus, [surfaceId, status]),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void handleDataModelUpdate(String? surfaceId, String? path) =>
+      super.noSuchMethod(
+        Invocation.method(#handleDataModelUpdate, [surfaceId, path]),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void handleDeleteSurface(String? surfaceId) => super.noSuchMethod(
+    Invocation.method(#handleDeleteSurface, [surfaceId]),
     returnValueForMissingStub: null,
   );
 
@@ -425,7 +497,7 @@ class MockStreamingController extends _i1.Mock
           as bool);
 
   @override
-  void setGenUiService(_i16.GenUiService? service) => super.noSuchMethod(
+  void setGenUiService(_i17.GenUiService? service) => super.noSuchMethod(
     Invocation.method(#setGenUiService, [service]),
     returnValueForMissingStub: null,
   );
@@ -523,7 +595,7 @@ class MockStreamingController extends _i1.Mock
 /// A class which mocks [GenUiService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockGenUiService extends _i1.Mock implements _i16.GenUiService {
+class MockGenUiService extends _i1.Mock implements _i17.GenUiService {
   MockGenUiService() {
     _i1.throwOnMissingStub(this);
   }
@@ -563,16 +635,16 @@ class MockGenUiService extends _i1.Mock implements _i16.GenUiService {
   @override
   _i14.Future<void> initialize({
     required _i5.Catalog? catalog,
-    required _i17.SecureStorageService? storageService,
+    required _i18.SecureStorageService? storageService,
     required String? sseBaseUrl,
-    required dynamic Function(_i5.SurfaceAdded)? onSurfaceAdded,
-    required dynamic Function(_i5.SurfaceRemoved)? onSurfaceRemoved,
-    required dynamic Function(String)? onTextResponse,
-    _i16.OnSessionInit? onSessionInit,
-    _i16.OnStreamComplete? onStreamComplete,
-    _i16.OnTitleUpdate? onTitleUpdate,
-    _i16.OnErrorCallback? onError,
-    dynamic Function(String)? onSurfaceIdAdded,
+    required void Function(_i5.SurfaceAdded)? onSurfaceAdded,
+    required void Function(_i5.SurfaceRemoved)? onSurfaceRemoved,
+    required void Function(String)? onTextResponse,
+    _i17.OnSessionInit? onSessionInit,
+    _i17.OnStreamComplete? onStreamComplete,
+    _i17.OnTitleUpdate? onTitleUpdate,
+    _i17.OnErrorCallback? onError,
+    void Function(String)? onSurfaceIdAdded,
     void Function(Map<String, dynamic>)? onTransactionCreated,
     dynamic configuration,
     _i15.Dio? dio,
@@ -678,11 +750,10 @@ class MockExtendedGenUiConversation extends _i1.Mock
           as _i5.GenUiHost);
 
   @override
-  set onUserMessageSent(dynamic Function(String)? callback) =>
-      super.noSuchMethod(
-        Invocation.setter(#onUserMessageSent, callback),
-        returnValueForMissingStub: null,
-      );
+  set onUserMessageSent(void Function(String)? callback) => super.noSuchMethod(
+    Invocation.setter(#onUserMessageSent, callback),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void setSessionId(String? sessionId) => super.noSuchMethod(

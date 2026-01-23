@@ -3,8 +3,26 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'genui_surface_info.freezed.dart';
 part 'genui_surface_info.g.dart';
 
-/// Surface status
-enum SurfaceStatus { loading, ready, error, removed }
+/// Surface status for lifecycle tracking
+enum SurfaceStatus {
+  /// Surface created, widget building
+  loading,
+
+  /// Widget rendered successfully
+  rendered,
+
+  /// DataModel updated reactively (via DataModelUpdate)
+  updated,
+
+  /// Surface is ready
+  ready,
+
+  /// Error occurred
+  error,
+
+  /// Surface removed (via DeleteSurface)
+  removed,
+}
 
 /// GenUI Surface info
 @freezed

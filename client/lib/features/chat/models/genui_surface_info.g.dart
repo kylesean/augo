@@ -32,6 +32,8 @@ Map<String, dynamic> _$GenUiSurfaceInfoToJson(_GenUiSurfaceInfo instance) =>
 
 const _$SurfaceStatusEnumMap = {
   SurfaceStatus.loading: 'loading',
+  SurfaceStatus.rendered: 'rendered',
+  SurfaceStatus.updated: 'updated',
   SurfaceStatus.ready: 'ready',
   SurfaceStatus.error: 'error',
   SurfaceStatus.removed: 'removed',

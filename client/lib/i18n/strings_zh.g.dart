@@ -5,20 +5,16 @@
 // ignore_for_file: type=lint, unused_import
 // dart format off
 
-part of 'strings.g.dart';
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+import 'package:slang/generated.dart';
+import 'strings.g.dart';
 
 // Path: <root>
-typedef TranslationsZh = Translations; // ignore: unused_element
-class Translations with BaseTranslations<AppLocale, Translations> {
-	/// Returns the current translations of the given [context].
-	///
-	/// Usage:
-	/// final t = Translations.of(context);
-	static Translations of(BuildContext context) => InheritedLocaleData.of<AppLocale, Translations>(context).translations;
-
+class TranslationsZh with BaseTranslations<AppLocale, Translations> implements Translations {
 	/// You can call this constructor and build your own translation instance of this locale.
 	/// Constructing via the enum [AppLocale.build] is preferred.
-	Translations({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
+	TranslationsZh({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
 		: assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
 		  $meta = meta ?? TranslationMetadata(
 		    locale: AppLocale.zh,
@@ -33,3867 +29,1946 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	@override final TranslationMetadata<AppLocale, Translations> $meta;
 
 	/// Access flat map
-	dynamic operator[](String key) => $meta.getTranslation(key);
+	@override dynamic operator[](String key) => $meta.getTranslation(key);
 
-	late final Translations _root = this; // ignore: unused_field
+	late final TranslationsZh _root = this; // ignore: unused_field
 
-	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
+	@override
+	TranslationsZh $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsZh(meta: meta ?? this.$meta);
 
 	// Translations
-	late final TranslationsCommonZh common = TranslationsCommonZh.internal(_root);
-	late final TranslationsTimeZh time = TranslationsTimeZh.internal(_root);
-	late final TranslationsGreetingZh greeting = TranslationsGreetingZh.internal(_root);
-	late final TranslationsNavigationZh navigation = TranslationsNavigationZh.internal(_root);
-	late final TranslationsAuthZh auth = TranslationsAuthZh.internal(_root);
-	late final TranslationsTransactionZh transaction = TranslationsTransactionZh.internal(_root);
-	late final TranslationsHomeZh home = TranslationsHomeZh.internal(_root);
-	late final TranslationsCommentZh comment = TranslationsCommentZh.internal(_root);
-	late final TranslationsCalendarZh calendar = TranslationsCalendarZh.internal(_root);
-	late final TranslationsCategoryZh category = TranslationsCategoryZh.internal(_root);
-	late final TranslationsSettingsZh settings = TranslationsSettingsZh.internal(_root);
-	late final TranslationsAppearanceZh appearance = TranslationsAppearanceZh.internal(_root);
-	late final TranslationsSpeechZh speech = TranslationsSpeechZh.internal(_root);
-	late final TranslationsAmountThemeZh amountTheme = TranslationsAmountThemeZh.internal(_root);
-	late final TranslationsLocaleZh locale = TranslationsLocaleZh.internal(_root);
-	late final TranslationsBudgetZh budget = TranslationsBudgetZh.internal(_root);
-	late final TranslationsDateRangeZh dateRange = TranslationsDateRangeZh.internal(_root);
-	late final TranslationsForecastZh forecast = TranslationsForecastZh.internal(_root);
-	late final TranslationsChatZh chat = TranslationsChatZh.internal(_root);
-	late final TranslationsFootprintZh footprint = TranslationsFootprintZh.internal(_root);
-	late final TranslationsMediaZh media = TranslationsMediaZh.internal(_root);
-	late final TranslationsErrorZh error = TranslationsErrorZh.internal(_root);
-	late final TranslationsFontTestZh fontTest = TranslationsFontTestZh.internal(_root);
-	late final TranslationsWizardZh wizard = TranslationsWizardZh.internal(_root);
-	late final TranslationsUserZh user = TranslationsUserZh.internal(_root);
-	late final TranslationsAccountZh account = TranslationsAccountZh.internal(_root);
-	late final TranslationsFinancialZh financial = TranslationsFinancialZh.internal(_root);
-	late final TranslationsAppZh app = TranslationsAppZh.internal(_root);
-	late final TranslationsStatisticsZh statistics = TranslationsStatisticsZh.internal(_root);
-	late final TranslationsCurrencyZh currency = TranslationsCurrencyZh.internal(_root);
-	late final TranslationsBudgetSuggestionZh budgetSuggestion = TranslationsBudgetSuggestionZh.internal(_root);
-	late final TranslationsServerZh server = TranslationsServerZh.internal(_root);
-	late final TranslationsSharedSpaceZh sharedSpace = TranslationsSharedSpaceZh.internal(_root);
-	late final TranslationsErrorMappingZh errorMapping = TranslationsErrorMappingZh.internal(_root);
+	@override late final _TranslationsCommonZh common = _TranslationsCommonZh._(_root);
+	@override late final _TranslationsTimeZh time = _TranslationsTimeZh._(_root);
+	@override late final _TranslationsGreetingZh greeting = _TranslationsGreetingZh._(_root);
+	@override late final _TranslationsNavigationZh navigation = _TranslationsNavigationZh._(_root);
+	@override late final _TranslationsAuthZh auth = _TranslationsAuthZh._(_root);
+	@override late final _TranslationsTransactionZh transaction = _TranslationsTransactionZh._(_root);
+	@override late final _TranslationsHomeZh home = _TranslationsHomeZh._(_root);
+	@override late final _TranslationsCommentZh comment = _TranslationsCommentZh._(_root);
+	@override late final _TranslationsCalendarZh calendar = _TranslationsCalendarZh._(_root);
+	@override late final _TranslationsCategoryZh category = _TranslationsCategoryZh._(_root);
+	@override late final _TranslationsSettingsZh settings = _TranslationsSettingsZh._(_root);
+	@override late final _TranslationsAppearanceZh appearance = _TranslationsAppearanceZh._(_root);
+	@override late final _TranslationsSpeechZh speech = _TranslationsSpeechZh._(_root);
+	@override late final _TranslationsAmountThemeZh amountTheme = _TranslationsAmountThemeZh._(_root);
+	@override late final _TranslationsLocaleZh locale = _TranslationsLocaleZh._(_root);
+	@override late final _TranslationsBudgetZh budget = _TranslationsBudgetZh._(_root);
+	@override late final _TranslationsDateRangeZh dateRange = _TranslationsDateRangeZh._(_root);
+	@override late final _TranslationsForecastZh forecast = _TranslationsForecastZh._(_root);
+	@override late final _TranslationsChatZh chat = _TranslationsChatZh._(_root);
+	@override late final _TranslationsFootprintZh footprint = _TranslationsFootprintZh._(_root);
+	@override late final _TranslationsMediaZh media = _TranslationsMediaZh._(_root);
+	@override late final _TranslationsErrorZh error = _TranslationsErrorZh._(_root);
+	@override late final _TranslationsFontTestZh fontTest = _TranslationsFontTestZh._(_root);
+	@override late final _TranslationsWizardZh wizard = _TranslationsWizardZh._(_root);
+	@override late final _TranslationsUserZh user = _TranslationsUserZh._(_root);
+	@override late final _TranslationsAccountZh account = _TranslationsAccountZh._(_root);
+	@override late final _TranslationsFinancialZh financial = _TranslationsFinancialZh._(_root);
+	@override late final _TranslationsAppZh app = _TranslationsAppZh._(_root);
+	@override late final _TranslationsStatisticsZh statistics = _TranslationsStatisticsZh._(_root);
+	@override late final _TranslationsCurrencyZh currency = _TranslationsCurrencyZh._(_root);
+	@override late final _TranslationsBudgetSuggestionZh budgetSuggestion = _TranslationsBudgetSuggestionZh._(_root);
+	@override late final _TranslationsServerZh server = _TranslationsServerZh._(_root);
+	@override late final _TranslationsSharedSpaceZh sharedSpace = _TranslationsSharedSpaceZh._(_root);
+	@override late final _TranslationsErrorMappingZh errorMapping = _TranslationsErrorMappingZh._(_root);
 }
 
 // Path: common
-class TranslationsCommonZh {
-	TranslationsCommonZh.internal(this._root);
+class _TranslationsCommonZh implements TranslationsCommonEn {
+	_TranslationsCommonZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '加载中...'
-	String get loading => '加载中...';
-
-	/// zh: '错误'
-	String get error => '错误';
-
-	/// zh: '重试'
-	String get retry => '重试';
-
-	/// zh: '取消'
-	String get cancel => '取消';
-
-	/// zh: '确认'
-	String get confirm => '确认';
-
-	/// zh: '保存'
-	String get save => '保存';
-
-	/// zh: '删除'
-	String get delete => '删除';
-
-	/// zh: '编辑'
-	String get edit => '编辑';
-
-	/// zh: '添加'
-	String get add => '添加';
-
-	/// zh: '搜索'
-	String get search => '搜索';
-
-	/// zh: '筛选'
-	String get filter => '筛选';
-
-	/// zh: '排序'
-	String get sort => '排序';
-
-	/// zh: '刷新'
-	String get refresh => '刷新';
-
-	/// zh: '更多'
-	String get more => '更多';
-
-	/// zh: '收起'
-	String get less => '收起';
-
-	/// zh: '全部'
-	String get all => '全部';
-
-	/// zh: '无'
-	String get none => '无';
-
-	/// zh: '确定'
-	String get ok => '确定';
-
-	/// zh: '未知'
-	String get unknown => '未知';
-
-	/// zh: '暂无数据'
-	String get noData => '暂无数据';
-
-	/// zh: '加载更多'
-	String get loadMore => '加载更多';
-
-	/// zh: '没有更多了'
-	String get noMore => '没有更多了';
-
-	/// zh: '加载失败'
-	String get loadFailed => '加载失败';
-
-	/// zh: '交易记录'
-	String get history => '交易记录';
-
-	/// zh: '重置'
-	String get reset => '重置';
+	@override String get loading => '加载中...';
+	@override String get error => '错误';
+	@override String get retry => '重试';
+	@override String get cancel => '取消';
+	@override String get confirm => '确认';
+	@override String get save => '保存';
+	@override String get delete => '删除';
+	@override String get edit => '编辑';
+	@override String get add => '添加';
+	@override String get search => '搜索';
+	@override String get filter => '筛选';
+	@override String get sort => '排序';
+	@override String get refresh => '刷新';
+	@override String get more => '更多';
+	@override String get less => '收起';
+	@override String get all => '全部';
+	@override String get none => '无';
+	@override String get ok => '确定';
+	@override String get unknown => '未知';
+	@override String get noData => '暂无数据';
+	@override String get loadMore => '加载更多';
+	@override String get noMore => '没有更多了';
+	@override String get loadFailed => '加载失败';
+	@override String get history => '交易记录';
+	@override String get reset => '重置';
 }
 
 // Path: time
-class TranslationsTimeZh {
-	TranslationsTimeZh.internal(this._root);
+class _TranslationsTimeZh implements TranslationsTimeEn {
+	_TranslationsTimeZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '今天'
-	String get today => '今天';
-
-	/// zh: '昨天'
-	String get yesterday => '昨天';
-
-	/// zh: '前天'
-	String get dayBeforeYesterday => '前天';
-
-	/// zh: '本周'
-	String get thisWeek => '本周';
-
-	/// zh: '本月'
-	String get thisMonth => '本月';
-
-	/// zh: '今年'
-	String get thisYear => '今年';
-
-	/// zh: '选择日期'
-	String get selectDate => '选择日期';
-
-	/// zh: '选择时间'
-	String get selectTime => '选择时间';
-
-	/// zh: '刚刚'
-	String get justNow => '刚刚';
-
-	/// zh: '$count分钟前'
-	String minutesAgo({required Object count}) => '${count}分钟前';
-
-	/// zh: '$count小时前'
-	String hoursAgo({required Object count}) => '${count}小时前';
-
-	/// zh: '$count天前'
-	String daysAgo({required Object count}) => '${count}天前';
-
-	/// zh: '$count周前'
-	String weeksAgo({required Object count}) => '${count}周前';
+	@override String get today => '今天';
+	@override String get yesterday => '昨天';
+	@override String get dayBeforeYesterday => '前天';
+	@override String get thisWeek => '本周';
+	@override String get thisMonth => '本月';
+	@override String get thisYear => '今年';
+	@override String get selectDate => '选择日期';
+	@override String get selectTime => '选择时间';
+	@override String get justNow => '刚刚';
+	@override String minutesAgo({required Object count}) => '${count}分钟前';
+	@override String hoursAgo({required Object count}) => '${count}小时前';
+	@override String daysAgo({required Object count}) => '${count}天前';
+	@override String weeksAgo({required Object count}) => '${count}周前';
 }
 
 // Path: greeting
-class TranslationsGreetingZh {
-	TranslationsGreetingZh.internal(this._root);
+class _TranslationsGreetingZh implements TranslationsGreetingEn {
+	_TranslationsGreetingZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '上午好'
-	String get morning => '上午好';
-
-	/// zh: '下午好'
-	String get afternoon => '下午好';
-
-	/// zh: '晚上好'
-	String get evening => '晚上好';
+	@override String get morning => '上午好';
+	@override String get afternoon => '下午好';
+	@override String get evening => '晚上好';
 }
 
 // Path: navigation
-class TranslationsNavigationZh {
-	TranslationsNavigationZh.internal(this._root);
+class _TranslationsNavigationZh implements TranslationsNavigationEn {
+	_TranslationsNavigationZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '首页'
-	String get home => '首页';
-
-	/// zh: '预测'
-	String get forecast => '预测';
-
-	/// zh: '足迹'
-	String get footprint => '足迹';
-
-	/// zh: '我的'
-	String get profile => '我的';
+	@override String get home => '首页';
+	@override String get forecast => '预测';
+	@override String get footprint => '足迹';
+	@override String get profile => '我的';
 }
 
 // Path: auth
-class TranslationsAuthZh {
-	TranslationsAuthZh.internal(this._root);
+class _TranslationsAuthZh implements TranslationsAuthEn {
+	_TranslationsAuthZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '登录'
-	String get login => '登录';
-
-	/// zh: '登录中...'
-	String get loggingIn => '登录中...';
-
-	/// zh: '退出'
-	String get logout => '退出';
-
-	/// zh: '已成功退出登录'
-	String get logoutSuccess => '已成功退出登录';
-
-	/// zh: '确认退出登录'
-	String get confirmLogoutTitle => '确认退出登录';
-
-	/// zh: '您确定要退出当前的登录状态吗？'
-	String get confirmLogoutContent => '您确定要退出当前的登录状态吗？';
-
-	/// zh: '注册'
-	String get register => '注册';
-
-	/// zh: '注册中...'
-	String get registering => '注册中...';
-
-	/// zh: '欢迎回来'
-	String get welcomeBack => '欢迎回来';
-
-	/// zh: '欢迎回来!'
-	String get loginSuccess => '欢迎回来!';
-
-	/// zh: '登录失败'
-	String get loginFailed => '登录失败';
-
-	/// zh: '请稍后重试。'
-	String get pleaseTryAgain => '请稍后重试。';
-
-	/// zh: '登录以继续使用 AI 记账助理'
-	String get loginSubtitle => '登录以继续使用 AI 记账助理';
-
-	/// zh: '还没有账户？注册'
-	String get noAccount => '还没有账户？注册';
-
-	/// zh: '创建您的账户'
-	String get createAccount => '创建您的账户';
-
-	/// zh: '设置密码'
-	String get setPassword => '设置密码';
-
-	/// zh: '设置您的账户密码'
-	String get setAccountPassword => '设置您的账户密码';
-
-	/// zh: '完成注册'
-	String get completeRegistration => '完成注册';
-
-	/// zh: '注册成功!'
-	String get registrationSuccess => '注册成功!';
-
-	/// zh: '注册失败'
-	String get registrationFailed => '注册失败';
-
-	late final TranslationsAuthEmailZh email = TranslationsAuthEmailZh.internal(_root);
-	late final TranslationsAuthPasswordZh password = TranslationsAuthPasswordZh.internal(_root);
-	late final TranslationsAuthVerificationCodeZh verificationCode = TranslationsAuthVerificationCodeZh.internal(_root);
+	@override String get login => '登录';
+	@override String get loggingIn => '登录中...';
+	@override String get logout => '退出';
+	@override String get logoutSuccess => '已成功退出登录';
+	@override String get confirmLogoutTitle => '确认退出登录';
+	@override String get confirmLogoutContent => '您确定要退出当前的登录状态吗？';
+	@override String get register => '注册';
+	@override String get registering => '注册中...';
+	@override String get welcomeBack => '欢迎回来';
+	@override String get loginSuccess => '欢迎回来!';
+	@override String get loginFailed => '登录失败';
+	@override String get pleaseTryAgain => '请稍后重试。';
+	@override String get loginSubtitle => '登录以继续使用 AI 记账助理';
+	@override String get noAccount => '还没有账户？注册';
+	@override String get createAccount => '创建您的账户';
+	@override String get setPassword => '设置密码';
+	@override String get setAccountPassword => '设置您的账户密码';
+	@override String get completeRegistration => '完成注册';
+	@override String get registrationSuccess => '注册成功!';
+	@override String get registrationFailed => '注册失败';
+	@override late final _TranslationsAuthEmailZh email = _TranslationsAuthEmailZh._(_root);
+	@override late final _TranslationsAuthPasswordZh password = _TranslationsAuthPasswordZh._(_root);
+	@override late final _TranslationsAuthVerificationCodeZh verificationCode = _TranslationsAuthVerificationCodeZh._(_root);
 }
 
 // Path: transaction
-class TranslationsTransactionZh {
-	TranslationsTransactionZh.internal(this._root);
+class _TranslationsTransactionZh implements TranslationsTransactionEn {
+	_TranslationsTransactionZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '支出'
-	String get expense => '支出';
-
-	/// zh: '收入'
-	String get income => '收入';
-
-	/// zh: '转账'
-	String get transfer => '转账';
-
-	/// zh: '金额'
-	String get amount => '金额';
-
-	/// zh: '分类'
-	String get category => '分类';
-
-	/// zh: '描述'
-	String get description => '描述';
-
-	/// zh: '标签'
-	String get tags => '标签';
-
-	/// zh: '保存记账'
-	String get saveTransaction => '保存记账';
-
-	/// zh: '请输入金额'
-	String get pleaseEnterAmount => '请输入金额';
-
-	/// zh: '请选择分类'
-	String get pleaseSelectCategory => '请选择分类';
-
-	/// zh: '保存失败'
-	String get saveFailed => '保存失败';
-
-	/// zh: '记录这笔交易的详细信息...'
-	String get descriptionHint => '记录这笔交易的详细信息...';
-
-	/// zh: '添加自定义标签'
-	String get addCustomTag => '添加自定义标签';
-
-	/// zh: '常用标签'
-	String get commonTags => '常用标签';
-
-	/// zh: '最多添加 $maxTags 个标签'
-	String maxTagsHint({required Object maxTags}) => '最多添加 ${maxTags} 个标签';
-
-	/// zh: '没有找到交易记录'
-	String get noTransactionsFound => '没有找到交易记录';
-
-	/// zh: '尝试调整搜索条件或创建新的交易记录'
-	String get tryAdjustingSearch => '尝试调整搜索条件或创建新的交易记录';
-
-	/// zh: '无描述'
-	String get noDescription => '无描述';
-
-	/// zh: '支付'
-	String get payment => '支付';
-
-	/// zh: '账户'
-	String get account => '账户';
-
-	/// zh: '时间'
-	String get time => '时间';
-
-	/// zh: '地点'
-	String get location => '地点';
-
-	/// zh: '交易详情'
-	String get transactionDetail => '交易详情';
-
-	/// zh: '收藏'
-	String get favorite => '收藏';
-
-	/// zh: '确认删除'
-	String get confirmDelete => '确认删除';
-
-	/// zh: '您确定要删除此条交易记录吗？此操作无法撤销。'
-	String get deleteTransactionConfirm => '您确定要删除此条交易记录吗？此操作无法撤销。';
-
-	/// zh: '没有可用的操作'
-	String get noActions => '没有可用的操作';
-
-	/// zh: '已删除'
-	String get deleted => '已删除';
-
-	/// zh: '删除失败，请稍后重试'
-	String get deleteFailed => '删除失败，请稍后重试';
-
-	/// zh: '关联账户'
-	String get linkedAccount => '关联账户';
-
-	/// zh: '关联空间'
-	String get linkedSpace => '关联空间';
-
-	/// zh: '未关联'
-	String get notLinked => '未关联';
-
-	/// zh: '关联'
-	String get link => '关联';
-
-	/// zh: '更换账户'
-	String get changeAccount => '更换账户';
-
-	/// zh: '添加空间'
-	String get addSpace => '添加空间';
-
-	/// zh: '$count 个空间'
-	String nSpaces({required Object count}) => '${count} 个空间';
-
-	/// zh: '选择关联账户'
-	String get selectLinkedAccount => '选择关联账户';
-
-	/// zh: '选择关联空间'
-	String get selectLinkedSpace => '选择关联空间';
-
-	/// zh: '暂无可用空间'
-	String get noSpacesAvailable => '暂无可用空间';
-
-	/// zh: '关联成功'
-	String get linkSuccess => '关联成功';
-
-	/// zh: '关联失败'
-	String get linkFailed => '关联失败';
-
-	/// zh: '消息'
-	String get rawInput => '消息';
-
-	/// zh: '无消息'
-	String get noRawInput => '无消息';
+	@override String get expense => '支出';
+	@override String get income => '收入';
+	@override String get transfer => '转账';
+	@override String get amount => '金额';
+	@override String get category => '分类';
+	@override String get description => '描述';
+	@override String get tags => '标签';
+	@override String get saveTransaction => '保存记账';
+	@override String get pleaseEnterAmount => '请输入金额';
+	@override String get pleaseSelectCategory => '请选择分类';
+	@override String get saveFailed => '保存失败';
+	@override String get descriptionHint => '记录这笔交易的详细信息...';
+	@override String get addCustomTag => '添加自定义标签';
+	@override String get commonTags => '常用标签';
+	@override String maxTagsHint({required Object maxTags}) => '最多添加 ${maxTags} 个标签';
+	@override String get noTransactionsFound => '没有找到交易记录';
+	@override String get tryAdjustingSearch => '尝试调整搜索条件或创建新的交易记录';
+	@override String get noDescription => '无描述';
+	@override String get payment => '支付';
+	@override String get account => '账户';
+	@override String get time => '时间';
+	@override String get location => '地点';
+	@override String get transactionDetail => '交易详情';
+	@override String get favorite => '收藏';
+	@override String get confirmDelete => '确认删除';
+	@override String get deleteTransactionConfirm => '您确定要删除此条交易记录吗？此操作无法撤销。';
+	@override String get noActions => '没有可用的操作';
+	@override String get deleted => '已删除';
+	@override String get deleteFailed => '删除失败，请稍后重试';
+	@override String get linkedAccount => '关联账户';
+	@override String get linkedSpace => '关联空间';
+	@override String get notLinked => '未关联';
+	@override String get link => '关联';
+	@override String get changeAccount => '更换账户';
+	@override String get addSpace => '添加空间';
+	@override String nSpaces({required Object count}) => '${count} 个空间';
+	@override String get selectLinkedAccount => '选择关联账户';
+	@override String get selectLinkedSpace => '选择关联空间';
+	@override String get noSpacesAvailable => '暂无可用空间';
+	@override String get linkSuccess => '关联成功';
+	@override String get linkFailed => '关联失败';
+	@override String get rawInput => '消息';
+	@override String get noRawInput => '无消息';
 }
 
 // Path: home
-class TranslationsHomeZh {
-	TranslationsHomeZh.internal(this._root);
+class _TranslationsHomeZh implements TranslationsHomeEn {
+	_TranslationsHomeZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '总消费金额'
-	String get totalExpense => '总消费金额';
-
-	/// zh: '今日支出'
-	String get todayExpense => '今日支出';
-
-	/// zh: '本月支出'
-	String get monthExpense => '本月支出';
-
-	/// zh: '$year年进度'
-	String yearProgress({required Object year}) => '${year}年进度';
-
-	/// zh: '••••••••'
-	String get amountHidden => '••••••••';
-
-	/// zh: '加载失败'
-	String get loadFailed => '加载失败';
-
-	/// zh: '暂无交易记录'
-	String get noTransactions => '暂无交易记录';
-
-	/// zh: '刷新试试'
-	String get tryRefresh => '刷新试试';
-
-	/// zh: '没有更多数据了'
-	String get noMoreData => '没有更多数据了';
-
-	/// zh: '用户未登录，无法加载数据'
-	String get userNotLoggedIn => '用户未登录，无法加载数据';
+	@override String get totalExpense => '总消费金额';
+	@override String get todayExpense => '今日支出';
+	@override String get monthExpense => '本月支出';
+	@override String yearProgress({required Object year}) => '${year}年进度';
+	@override String get amountHidden => '••••••••';
+	@override String get loadFailed => '加载失败';
+	@override String get noTransactions => '暂无交易记录';
+	@override String get tryRefresh => '刷新试试';
+	@override String get noMoreData => '没有更多数据了';
+	@override String get userNotLoggedIn => '用户未登录，无法加载数据';
 }
 
 // Path: comment
-class TranslationsCommentZh {
-	TranslationsCommentZh.internal(this._root);
+class _TranslationsCommentZh implements TranslationsCommentEn {
+	_TranslationsCommentZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '错误'
-	String get error => '错误';
-
-	/// zh: '评论失败'
-	String get commentFailed => '评论失败';
-
-	/// zh: '回复 @$name:'
-	String replyToPrefix({required Object name}) => '回复 @${name}:';
-
-	/// zh: '回复'
-	String get reply => '回复';
-
-	/// zh: '添加备注...'
-	String get addNote => '添加备注...';
-
-	/// zh: '确认删除'
-	String get confirmDeleteTitle => '确认删除';
-
-	/// zh: '你确定要删除这条评论吗？此操作无法撤销。'
-	String get confirmDeleteContent => '你确定要删除这条评论吗？此操作无法撤销。';
-
-	/// zh: '成功'
-	String get success => '成功';
-
-	/// zh: '评论已删除'
-	String get commentDeleted => '评论已删除';
-
-	/// zh: '删除失败'
-	String get deleteFailed => '删除失败';
-
-	/// zh: '删除评论'
-	String get deleteComment => '删除评论';
-
-	/// zh: '提示'
-	String get hint => '提示';
-
-	/// zh: '没有可用的操作'
-	String get noActions => '没有可用的操作';
-
-	/// zh: '备注'
-	String get note => '备注';
-
-	/// zh: '暂无备注'
-	String get noNote => '暂无备注';
-
-	/// zh: '加载备注失败'
-	String get loadFailed => '加载备注失败';
+	@override String get error => '错误';
+	@override String get commentFailed => '评论失败';
+	@override String replyToPrefix({required Object name}) => '回复 @${name}:';
+	@override String get reply => '回复';
+	@override String get addNote => '添加备注...';
+	@override String get confirmDeleteTitle => '确认删除';
+	@override String get confirmDeleteContent => '你确定要删除这条评论吗？此操作无法撤销。';
+	@override String get success => '成功';
+	@override String get commentDeleted => '评论已删除';
+	@override String get deleteFailed => '删除失败';
+	@override String get deleteComment => '删除评论';
+	@override String get hint => '提示';
+	@override String get noActions => '没有可用的操作';
+	@override String get note => '备注';
+	@override String get noNote => '暂无备注';
+	@override String get loadFailed => '加载备注失败';
 }
 
 // Path: calendar
-class TranslationsCalendarZh {
-	TranslationsCalendarZh.internal(this._root);
+class _TranslationsCalendarZh implements TranslationsCalendarEn {
+	_TranslationsCalendarZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '消费日历'
-	String get title => '消费日历';
-
-	late final TranslationsCalendarWeekdaysZh weekdays = TranslationsCalendarWeekdaysZh.internal(_root);
-
-	/// zh: '加载日历数据失败'
-	String get loadFailed => '加载日历数据失败';
-
-	/// zh: '本月: $amount'
-	String thisMonth({required Object amount}) => '本月: ${amount}';
-
-	/// zh: '统计中...'
-	String get counting => '统计中...';
-
-	/// zh: '无法统计'
-	String get unableToCount => '无法统计';
-
-	/// zh: '趋势: '
-	String get trend => '趋势: ';
-
-	/// zh: '当日无交易记录'
-	String get noTransactionsTitle => '当日无交易记录';
-
-	/// zh: '加载交易失败'
-	String get loadTransactionFailed => '加载交易失败';
+	@override String get title => '消费日历';
+	@override late final _TranslationsCalendarWeekdaysZh weekdays = _TranslationsCalendarWeekdaysZh._(_root);
+	@override String get loadFailed => '加载日历数据失败';
+	@override String thisMonth({required Object amount}) => '本月: ${amount}';
+	@override String get counting => '统计中...';
+	@override String get unableToCount => '无法统计';
+	@override String get trend => '趋势: ';
+	@override String get noTransactionsTitle => '当日无交易记录';
+	@override String get loadTransactionFailed => '加载交易失败';
 }
 
 // Path: category
-class TranslationsCategoryZh {
-	TranslationsCategoryZh.internal(this._root);
+class _TranslationsCategoryZh implements TranslationsCategoryEn {
+	_TranslationsCategoryZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '日常消费'
-	String get dailyConsumption => '日常消费';
-
-	/// zh: '交通出行'
-	String get transportation => '交通出行';
-
-	/// zh: '医疗健康'
-	String get healthcare => '医疗健康';
-
-	/// zh: '住房物业'
-	String get housing => '住房物业';
-
-	/// zh: '教育培训'
-	String get education => '教育培训';
-
-	/// zh: '收入进账'
-	String get incomeCategory => '收入进账';
-
-	/// zh: '社交馈赠'
-	String get socialGifts => '社交馈赠';
-
-	/// zh: '资金周转'
-	String get moneyTransfer => '资金周转';
-
-	/// zh: '其他'
-	String get other => '其他';
-
-	/// zh: '餐饮美食'
-	String get foodDining => '餐饮美食';
-
-	/// zh: '购物消费'
-	String get shoppingRetail => '购物消费';
-
-	/// zh: '居住物业'
-	String get housingUtilities => '居住物业';
-
-	/// zh: '个人护理'
-	String get personalCare => '个人护理';
-
-	/// zh: '休闲娱乐'
-	String get entertainment => '休闲娱乐';
-
-	/// zh: '医疗健康'
-	String get medicalHealth => '医疗健康';
-
-	/// zh: '保险'
-	String get insurance => '保险';
-
-	/// zh: '人情往来'
-	String get socialGifting => '人情往来';
-
-	/// zh: '金融税务'
-	String get financialTax => '金融税务';
-
-	/// zh: '其他支出'
-	String get others => '其他支出';
-
-	/// zh: '工资薪水'
-	String get salaryWage => '工资薪水';
-
-	/// zh: '经营交易'
-	String get businessTrade => '经营交易';
-
-	/// zh: '投资回报'
-	String get investmentReturns => '投资回报';
-
-	/// zh: '礼金红包'
-	String get giftBonus => '礼金红包';
-
-	/// zh: '退款返利'
-	String get refundRebate => '退款返利';
-
-	/// zh: '转账'
-	String get generalTransfer => '转账';
-
-	/// zh: '债务还款'
-	String get debtRepayment => '债务还款';
+	@override String get dailyConsumption => '日常消费';
+	@override String get transportation => '交通出行';
+	@override String get healthcare => '医疗健康';
+	@override String get housing => '住房物业';
+	@override String get education => '教育培训';
+	@override String get incomeCategory => '收入进账';
+	@override String get socialGifts => '社交馈赠';
+	@override String get moneyTransfer => '资金周转';
+	@override String get other => '其他';
+	@override String get foodDining => '餐饮美食';
+	@override String get shoppingRetail => '购物消费';
+	@override String get housingUtilities => '居住物业';
+	@override String get personalCare => '个人护理';
+	@override String get entertainment => '休闲娱乐';
+	@override String get medicalHealth => '医疗健康';
+	@override String get insurance => '保险';
+	@override String get socialGifting => '人情往来';
+	@override String get financialTax => '金融税务';
+	@override String get others => '其他支出';
+	@override String get salaryWage => '工资薪水';
+	@override String get businessTrade => '经营交易';
+	@override String get investmentReturns => '投资回报';
+	@override String get giftBonus => '礼金红包';
+	@override String get refundRebate => '退款返利';
+	@override String get generalTransfer => '转账';
+	@override String get debtRepayment => '债务还款';
 }
 
 // Path: settings
-class TranslationsSettingsZh {
-	TranslationsSettingsZh.internal(this._root);
+class _TranslationsSettingsZh implements TranslationsSettingsEn {
+	_TranslationsSettingsZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '设置'
-	String get title => '设置';
-
-	/// zh: '语言'
-	String get language => '语言';
-
-	/// zh: '语言设置'
-	String get languageSettings => '语言设置';
-
-	/// zh: '选择语言'
-	String get selectLanguage => '选择语言';
-
-	/// zh: '语言已更改'
-	String get languageChanged => '语言已更改';
-
-	/// zh: '重启应用以应用更改'
-	String get restartToApply => '重启应用以应用更改';
-
-	/// zh: '主题'
-	String get theme => '主题';
-
-	/// zh: '深色模式'
-	String get darkMode => '深色模式';
-
-	/// zh: '浅色模式'
-	String get lightMode => '浅色模式';
-
-	/// zh: '跟随系统'
-	String get systemMode => '跟随系统';
-
-	/// zh: '开发者选项'
-	String get developerOptions => '开发者选项';
-
-	/// zh: '认证状态调试'
-	String get authDebug => '认证状态调试';
-
-	/// zh: '查看认证状态和调试信息'
-	String get authDebugSubtitle => '查看认证状态和调试信息';
-
-	/// zh: '字体测试'
-	String get fontTest => '字体测试';
-
-	/// zh: '测试应用字体显示效果'
-	String get fontTestSubtitle => '测试应用字体显示效果';
-
-	/// zh: '帮助与反馈'
-	String get helpAndFeedback => '帮助与反馈';
-
-	/// zh: '获取帮助或提供反馈'
-	String get helpAndFeedbackSubtitle => '获取帮助或提供反馈';
-
-	/// zh: '关于应用'
-	String get aboutApp => '关于应用';
-
-	/// zh: '版本信息和开发者信息'
-	String get aboutAppSubtitle => '版本信息和开发者信息';
-
-	/// zh: '已切换为 $currency，新交易将以此货币记录'
-	String currencyChangedRefreshHint({required Object currency}) => '已切换为 ${currency}，新交易将以此货币记录';
-
-	/// zh: '共享空间'
-	String get sharedSpace => '共享空间';
-
-	/// zh: '语音识别'
-	String get speechRecognition => '语音识别';
-
-	/// zh: '配置语音输入参数'
-	String get speechRecognitionSubtitle => '配置语音输入参数';
-
-	/// zh: '金额显示样式'
-	String get amountDisplayStyle => '金额显示样式';
-
-	/// zh: '显示币种'
-	String get currency => '显示币种';
-
-	/// zh: '外观设置'
-	String get appearance => '外观设置';
-
-	/// zh: '主题模式与配色方案'
-	String get appearanceSubtitle => '主题模式与配色方案';
-
-	/// zh: '语音测试'
-	String get speechTest => '语音测试';
-
-	/// zh: '测试 WebSocket 语音连接'
-	String get speechTestSubtitle => '测试 WebSocket 语音连接';
-
-	/// zh: '普通用户'
-	String get userTypeRegular => '普通用户';
-
-	/// zh: '选择金额显示样式'
-	String get selectAmountStyle => '选择金额显示样式';
-
-	/// zh: '注意：金额样式主要应用于「交易流水」和「趋势分析」。为了保持视觉清晰，「账户余额」和「资产概览」等状态类数值将保持中性颜色。'
-	String get amountStyleNotice => '注意：金额样式主要应用于「交易流水」和「趋势分析」。为了保持视觉清晰，「账户余额」和「资产概览」等状态类数值将保持中性颜色。';
-
-	/// zh: '选择您的主要货币。未来的记账将默认使用此货币，统计和汇总也将以此货币显示。历史交易的原始金额不受影响。'
-	String get currencyDescription => '选择您的主要货币。未来的记账将默认使用此货币，统计和汇总也将以此货币显示。历史交易的原始金额不受影响。';
-
-	/// zh: '修改用户名'
-	String get editUsername => '修改用户名';
-
-	/// zh: '请输入用户名'
-	String get enterUsername => '请输入用户名';
-
-	/// zh: '用户名不能为空'
-	String get usernameRequired => '用户名不能为空';
-
-	/// zh: '用户名已更新'
-	String get usernameUpdated => '用户名已更新';
-
-	/// zh: '头像已更新'
-	String get avatarUpdated => '头像已更新';
-
-	/// zh: '外观设置已更新'
-	String get appearanceUpdated => '外观设置已更新';
+	@override String get title => '设置';
+	@override String get language => '语言';
+	@override String get languageSettings => '语言设置';
+	@override String get selectLanguage => '选择语言';
+	@override String get languageChanged => '语言已更改';
+	@override String get restartToApply => '重启应用以应用更改';
+	@override String get theme => '主题';
+	@override String get darkMode => '深色模式';
+	@override String get lightMode => '浅色模式';
+	@override String get systemMode => '跟随系统';
+	@override String get developerOptions => '开发者选项';
+	@override String get authDebug => '认证状态调试';
+	@override String get authDebugSubtitle => '查看认证状态和调试信息';
+	@override String get fontTest => '字体测试';
+	@override String get fontTestSubtitle => '测试应用字体显示效果';
+	@override String get helpAndFeedback => '帮助与反馈';
+	@override String get helpAndFeedbackSubtitle => '获取帮助或提供反馈';
+	@override String get aboutApp => '关于应用';
+	@override String get aboutAppSubtitle => '版本信息和开发者信息';
+	@override String currencyChangedRefreshHint({required Object currency}) => '已切换为 ${currency}，新交易将以此货币记录';
+	@override String get sharedSpace => '共享空间';
+	@override String get speechRecognition => '语音识别';
+	@override String get speechRecognitionSubtitle => '配置语音输入参数';
+	@override String get amountDisplayStyle => '金额显示样式';
+	@override String get currency => '显示币种';
+	@override String get appearance => '外观设置';
+	@override String get appearanceSubtitle => '主题模式与配色方案';
+	@override String get speechTest => '语音测试';
+	@override String get speechTestSubtitle => '测试 WebSocket 语音连接';
+	@override String get userTypeRegular => '普通用户';
+	@override String get selectAmountStyle => '选择金额显示样式';
+	@override String get amountStyleNotice => '注意：金额样式主要应用于「交易流水」和「趋势分析」。为了保持视觉清晰，「账户余额」和「资产概览」等状态类数值将保持中性颜色。';
+	@override String get currencyDescription => '选择您的主要货币。未来的记账将默认使用此货币，统计和汇总也将以此货币显示。历史交易的原始金额不受影响。';
+	@override String get editUsername => '修改用户名';
+	@override String get enterUsername => '请输入用户名';
+	@override String get usernameRequired => '用户名不能为空';
+	@override String get usernameUpdated => '用户名已更新';
+	@override String get avatarUpdated => '头像已更新';
+	@override String get appearanceUpdated => '外观设置已更新';
 }
 
 // Path: appearance
-class TranslationsAppearanceZh {
-	TranslationsAppearanceZh.internal(this._root);
+class _TranslationsAppearanceZh implements TranslationsAppearanceEn {
+	_TranslationsAppearanceZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '外观设置'
-	String get title => '外观设置';
-
-	/// zh: '主题模式'
-	String get themeMode => '主题模式';
-
-	/// zh: '浅色'
-	String get light => '浅色';
-
-	/// zh: '深色'
-	String get dark => '深色';
-
-	/// zh: '跟随系统'
-	String get system => '跟随系统';
-
-	/// zh: '配色方案'
-	String get colorScheme => '配色方案';
-
-	late final TranslationsAppearancePalettesZh palettes = TranslationsAppearancePalettesZh.internal(_root);
+	@override String get title => '外观设置';
+	@override String get themeMode => '主题模式';
+	@override String get light => '浅色';
+	@override String get dark => '深色';
+	@override String get system => '跟随系统';
+	@override String get colorScheme => '配色方案';
+	@override late final _TranslationsAppearancePalettesZh palettes = _TranslationsAppearancePalettesZh._(_root);
 }
 
 // Path: speech
-class TranslationsSpeechZh {
-	TranslationsSpeechZh.internal(this._root);
+class _TranslationsSpeechZh implements TranslationsSpeechEn {
+	_TranslationsSpeechZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '语音识别设置'
-	String get title => '语音识别设置';
-
-	/// zh: '语音识别服务'
-	String get service => '语音识别服务';
-
-	/// zh: '系统语音'
-	String get systemVoice => '系统语音';
-
-	/// zh: '使用手机内置的语音识别服务（推荐）'
-	String get systemVoiceSubtitle => '使用手机内置的语音识别服务（推荐）';
-
-	/// zh: '自建 ASR 服务'
-	String get selfHostedASR => '自建 ASR 服务';
-
-	/// zh: '使用 WebSocket 连接到自建语音识别服务'
-	String get selfHostedASRSubtitle => '使用 WebSocket 连接到自建语音识别服务';
-
-	/// zh: '服务器配置'
-	String get serverConfig => '服务器配置';
-
-	/// zh: '服务器地址'
-	String get serverAddress => '服务器地址';
-
-	/// zh: '端口'
-	String get port => '端口';
-
-	/// zh: '路径'
-	String get path => '路径';
-
-	/// zh: '保存配置'
-	String get saveConfig => '保存配置';
-
-	/// zh: '信息'
-	String get info => '信息';
-
-	/// zh: '• 系统语音：使用设备内置服务，无需配置，响应更快 • 自建 ASR：适用于自定义模型或离线场景 更改将在下次使用语音输入时生效。'
-	String get infoContent => '• 系统语音：使用设备内置服务，无需配置，响应更快\n• 自建 ASR：适用于自定义模型或离线场景\n\n更改将在下次使用语音输入时生效。';
-
-	/// zh: '请输入服务器地址'
-	String get enterAddress => '请输入服务器地址';
-
-	/// zh: '请输入有效的端口 (1-65535)'
-	String get enterValidPort => '请输入有效的端口 (1-65535)';
-
-	/// zh: '配置已保存'
-	String get configSaved => '配置已保存';
+	@override String get title => '语音识别设置';
+	@override String get service => '语音识别服务';
+	@override String get systemVoice => '系统语音';
+	@override String get systemVoiceSubtitle => '使用手机内置的语音识别服务（推荐）';
+	@override String get selfHostedASR => '自建 ASR 服务';
+	@override String get selfHostedASRSubtitle => '使用 WebSocket 连接到自建语音识别服务';
+	@override String get serverConfig => '服务器配置';
+	@override String get serverAddress => '服务器地址';
+	@override String get port => '端口';
+	@override String get path => '路径';
+	@override String get saveConfig => '保存配置';
+	@override String get info => '信息';
+	@override String get infoContent => '• 系统语音：使用设备内置服务，无需配置，响应更快\n• 自建 ASR：适用于自定义模型或离线场景\n\n更改将在下次使用语音输入时生效。';
+	@override String get enterAddress => '请输入服务器地址';
+	@override String get enterValidPort => '请输入有效的端口 (1-65535)';
+	@override String get configSaved => '配置已保存';
 }
 
 // Path: amountTheme
-class TranslationsAmountThemeZh {
-	TranslationsAmountThemeZh.internal(this._root);
+class _TranslationsAmountThemeZh implements TranslationsAmountThemeEn {
+	_TranslationsAmountThemeZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '中国市场'
-	String get chinaMarket => '中国市场';
-
-	/// zh: '红涨绿跌/黑跌'
-	String get chinaMarketDesc => '红涨绿跌/黑跌';
-
-	/// zh: '国际标准'
-	String get international => '国际标准';
-
-	/// zh: '绿涨红跌'
-	String get internationalDesc => '绿涨红跌';
-
-	/// zh: '极简模式'
-	String get minimalist => '极简模式';
-
-	/// zh: '仅通过符号区分'
-	String get minimalistDesc => '仅通过符号区分';
-
-	/// zh: '色弱友好'
-	String get colorBlind => '色弱友好';
-
-	/// zh: '蓝橙配色方案'
-	String get colorBlindDesc => '蓝橙配色方案';
+	@override String get chinaMarket => '中国市场';
+	@override String get chinaMarketDesc => '红涨绿跌/黑跌';
+	@override String get international => '国际标准';
+	@override String get internationalDesc => '绿涨红跌';
+	@override String get minimalist => '极简模式';
+	@override String get minimalistDesc => '仅通过符号区分';
+	@override String get colorBlind => '色弱友好';
+	@override String get colorBlindDesc => '蓝橙配色方案';
 }
 
 // Path: locale
-class TranslationsLocaleZh {
-	TranslationsLocaleZh.internal(this._root);
+class _TranslationsLocaleZh implements TranslationsLocaleEn {
+	_TranslationsLocaleZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '中文（简体）'
-	String get chinese => '中文（简体）';
-
-	/// zh: '中文（繁体）'
-	String get traditionalChinese => '中文（繁体）';
-
-	/// zh: 'English'
-	String get english => 'English';
-
-	/// zh: '日本語'
-	String get japanese => '日本語';
-
-	/// zh: '한국어'
-	String get korean => '한국어';
+	@override String get chinese => '中文（简体）';
+	@override String get traditionalChinese => '中文（繁体）';
+	@override String get english => 'English';
+	@override String get japanese => '日本語';
+	@override String get korean => '한국어';
 }
 
 // Path: budget
-class TranslationsBudgetZh {
-	TranslationsBudgetZh.internal(this._root);
+class _TranslationsBudgetZh implements TranslationsBudgetEn {
+	_TranslationsBudgetZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '预算管理'
-	String get title => '预算管理';
-
-	/// zh: '预算详情'
-	String get detail => '预算详情';
-
-	/// zh: '预算信息'
-	String get info => '预算信息';
-
-	/// zh: '总预算'
-	String get totalBudget => '总预算';
-
-	/// zh: '分类预算'
-	String get categoryBudget => '分类预算';
-
-	/// zh: '本月预算汇总'
-	String get monthlySummary => '本月预算汇总';
-
-	/// zh: '已使用'
-	String get used => '已使用';
-
-	/// zh: '剩余'
-	String get remaining => '剩余';
-
-	/// zh: '超支'
-	String get overspent => '超支';
-
-	/// zh: '预算'
-	String get budget => '预算';
-
-	/// zh: '加载失败'
-	String get loadFailed => '加载失败';
-
-	/// zh: '暂无预算'
-	String get noBudget => '暂无预算';
-
-	/// zh: '通过 Augo 助手说"帮我设置预算"来创建'
-	String get createHint => '通过 Augo 助手说"帮我设置预算"来创建';
-
-	/// zh: '已暂停'
-	String get paused => '已暂停';
-
-	/// zh: '暂停'
-	String get pause => '暂停';
-
-	/// zh: '恢复'
-	String get resume => '恢复';
-
-	/// zh: '预算已暂停'
-	String get budgetPaused => '预算已暂停';
-
-	/// zh: '预算已恢复'
-	String get budgetResumed => '预算已恢复';
-
-	/// zh: '操作失败'
-	String get operationFailed => '操作失败';
-
-	/// zh: '删除预算'
-	String get deleteBudget => '删除预算';
-
-	/// zh: '确定要删除这个预算吗？此操作不可撤销。'
-	String get deleteConfirm => '确定要删除这个预算吗？此操作不可撤销。';
-
-	/// zh: '类型'
-	String get type => '类型';
-
-	/// zh: '分类'
-	String get category => '分类';
-
-	/// zh: '周期'
-	String get period => '周期';
-
-	/// zh: '滚动预算'
-	String get rollover => '滚动预算';
-
-	/// zh: '滚动余额'
-	String get rolloverBalance => '滚动余额';
-
-	/// zh: '开启'
-	String get enabled => '开启';
-
-	/// zh: '关闭'
-	String get disabled => '关闭';
-
-	/// zh: '预算正常'
-	String get statusNormal => '预算正常';
-
-	/// zh: '接近上限'
-	String get statusWarning => '接近上限';
-
-	/// zh: '已超支'
-	String get statusOverspent => '已超支';
-
-	/// zh: '目标达成'
-	String get statusAchieved => '目标达成';
-
-	/// zh: '还剩 $amount 可用'
-	String tipNormal({required Object amount}) => '还剩 ${amount} 可用';
-
-	/// zh: '仅剩 $amount，请注意控制'
-	String tipWarning({required Object amount}) => '仅剩 ${amount}，请注意控制';
-
-	/// zh: '已超支 $amount'
-	String tipOverspent({required Object amount}) => '已超支 ${amount}';
-
-	/// zh: '恭喜完成储蓄目标！'
-	String get tipAchieved => '恭喜完成储蓄目标！';
-
-	/// zh: '剩余 $amount'
-	String remainingAmount({required Object amount}) => '剩余 ${amount}';
-
-	/// zh: '超支 $amount'
-	String overspentAmount({required Object amount}) => '超支 ${amount}';
-
-	/// zh: '预算 $amount'
-	String budgetAmount({required Object amount}) => '预算 ${amount}';
-
-	/// zh: '活跃'
-	String get active => '活跃';
-
-	/// zh: '全部'
-	String get all => '全部';
-
-	/// zh: '预算不存在或已被删除'
-	String get notFound => '预算不存在或已被删除';
-
-	/// zh: '预算设置'
-	String get setup => '预算设置';
-
-	/// zh: '预算设置'
-	String get settings => '预算设置';
-
-	/// zh: '设置预算金额'
-	String get setAmount => '设置预算金额';
-
-	/// zh: '为每个分类设置预算金额'
-	String get setAmountDesc => '为每个分类设置预算金额';
-
-	/// zh: '月度预算'
-	String get monthly => '月度预算';
-
-	/// zh: '按月管理您的支出，适合大多数人'
-	String get monthlyDesc => '按月管理您的支出，适合大多数人';
-
-	/// zh: '周预算'
-	String get weekly => '周预算';
-
-	/// zh: '按周管理支出，更精细的控制'
-	String get weeklyDesc => '按周管理支出，更精细的控制';
-
-	/// zh: '年度预算'
-	String get yearly => '年度预算';
-
-	/// zh: '长期财务规划，适合大额支出管理'
-	String get yearlyDesc => '长期财务规划，适合大额支出管理';
-
-	/// zh: '编辑预算'
-	String get editBudget => '编辑预算';
-
-	/// zh: '修改预算金额和分类'
-	String get editBudgetDesc => '修改预算金额和分类';
-
-	/// zh: '提醒设置'
-	String get reminderSettings => '提醒设置';
-
-	/// zh: '设置预算提醒和通知'
-	String get reminderSettingsDesc => '设置预算提醒和通知';
-
-	/// zh: '预算报告'
-	String get report => '预算报告';
-
-	/// zh: '查看详细的预算分析报告'
-	String get reportDesc => '查看详细的预算分析报告';
-
-	/// zh: '欢迎使用预算功能！'
-	String get welcome => '欢迎使用预算功能！';
-
-	/// zh: '创建新的预算计划'
-	String get createNewPlan => '创建新的预算计划';
-
-	/// zh: '通过设置预算，您可以更好地控制支出，实现财务目标。让我们开始设置您的第一个预算计划吧！'
-	String get welcomeDesc => '通过设置预算，您可以更好地控制支出，实现财务目标。让我们开始设置您的第一个预算计划吧！';
-
-	/// zh: '为不同的支出类别设置预算限额，帮助您更好地管理财务。'
-	String get createDesc => '为不同的支出类别设置预算限额，帮助您更好地管理财务。';
-
-	/// zh: '新建预算'
-	String get newBudget => '新建预算';
-
-	/// zh: '预算金额'
-	String get budgetAmountLabel => '预算金额';
-
-	/// zh: '货币'
-	String get currency => '货币';
-
-	/// zh: '周期设置'
-	String get periodSettings => '周期设置';
-
-	/// zh: '开启后按规则自动生成交易'
-	String get autoGenerateTransactions => '开启后按规则自动生成交易';
-
-	/// zh: '周期'
-	String get cycle => '周期';
-
-	/// zh: '预算分类'
-	String get budgetCategory => '预算分类';
-
-	/// zh: '高级选项'
-	String get advancedOptions => '高级选项';
-
-	/// zh: '周期类型'
-	String get periodType => '周期类型';
-
-	/// zh: '起算日'
-	String get anchorDay => '起算日';
-
-	/// zh: '选择周期类型'
-	String get selectPeriodType => '选择周期类型';
-
-	/// zh: '选择起算日'
-	String get selectAnchorDay => '选择起算日';
-
-	/// zh: '未用完的预算结转到下期'
-	String get rolloverDescription => '未用完的预算结转到下期';
-
-	/// zh: '创建预算'
-	String get createBudget => '创建预算';
-
-	/// zh: '保存'
-	String get save => '保存';
-
-	/// zh: '请输入预算金额'
-	String get pleaseEnterAmount => '请输入预算金额';
-
-	/// zh: '请输入有效的预算金额'
-	String get invalidAmount => '请输入有效的预算金额';
-
-	/// zh: '预算更新成功'
-	String get updateSuccess => '预算更新成功';
-
-	/// zh: '预算创建成功'
-	String get createSuccess => '预算创建成功';
-
-	/// zh: '预算已删除'
-	String get deleteSuccess => '预算已删除';
-
-	/// zh: '删除失败'
-	String get deleteFailed => '删除失败';
-
-	/// zh: '每月 $day 号'
-	String everyMonthDay({required Object day}) => '每月 ${day} 号';
-
-	/// zh: '每周'
-	String get periodWeekly => '每周';
-
-	/// zh: '双周'
-	String get periodBiweekly => '双周';
-
-	/// zh: '每月'
-	String get periodMonthly => '每月';
-
-	/// zh: '每年'
-	String get periodYearly => '每年';
-
-	/// zh: '进行中'
-	String get statusActive => '进行中';
-
-	/// zh: '已归档'
-	String get statusArchived => '已归档';
-
-	/// zh: '正常'
-	String get periodStatusOnTrack => '正常';
-
-	/// zh: '预警'
-	String get periodStatusWarning => '预警';
-
-	/// zh: '超支'
-	String get periodStatusExceeded => '超支';
-
-	/// zh: '达成'
-	String get periodStatusAchieved => '达成';
-
-	/// zh: '$percent% 已使用'
-	String usedPercent({required Object percent}) => '${percent}% 已使用';
-
-	/// zh: '$day 号'
-	String dayOfMonth({required Object day}) => '${day} 号';
-
-	/// zh: '万'
-	String get tenThousandSuffix => '万';
+	@override String get title => '预算管理';
+	@override String get detail => '预算详情';
+	@override String get info => '预算信息';
+	@override String get totalBudget => '总预算';
+	@override String get categoryBudget => '分类预算';
+	@override String get monthlySummary => '本月预算汇总';
+	@override String get used => '已使用';
+	@override String get remaining => '剩余';
+	@override String get overspent => '超支';
+	@override String get budget => '预算';
+	@override String get loadFailed => '加载失败';
+	@override String get noBudget => '暂无预算';
+	@override String get createHint => '通过 Augo 助手说"帮我设置预算"来创建';
+	@override String get paused => '已暂停';
+	@override String get pause => '暂停';
+	@override String get resume => '恢复';
+	@override String get budgetPaused => '预算已暂停';
+	@override String get budgetResumed => '预算已恢复';
+	@override String get operationFailed => '操作失败';
+	@override String get deleteBudget => '删除预算';
+	@override String get deleteConfirm => '确定要删除这个预算吗？此操作不可撤销。';
+	@override String get type => '类型';
+	@override String get category => '分类';
+	@override String get period => '周期';
+	@override String get rollover => '滚动预算';
+	@override String get rolloverBalance => '滚动余额';
+	@override String get enabled => '开启';
+	@override String get disabled => '关闭';
+	@override String get statusNormal => '预算正常';
+	@override String get statusWarning => '接近上限';
+	@override String get statusOverspent => '已超支';
+	@override String get statusAchieved => '目标达成';
+	@override String tipNormal({required Object amount}) => '还剩 ${amount} 可用';
+	@override String tipWarning({required Object amount}) => '仅剩 ${amount}，请注意控制';
+	@override String tipOverspent({required Object amount}) => '已超支 ${amount}';
+	@override String get tipAchieved => '恭喜完成储蓄目标！';
+	@override String remainingAmount({required Object amount}) => '剩余 ${amount}';
+	@override String overspentAmount({required Object amount}) => '超支 ${amount}';
+	@override String budgetAmount({required Object amount}) => '预算 ${amount}';
+	@override String get active => '活跃';
+	@override String get all => '全部';
+	@override String get notFound => '预算不存在或已被删除';
+	@override String get setup => '预算设置';
+	@override String get settings => '预算设置';
+	@override String get setAmount => '设置预算金额';
+	@override String get setAmountDesc => '为每个分类设置预算金额';
+	@override String get monthly => '月度预算';
+	@override String get monthlyDesc => '按月管理您的支出，适合大多数人';
+	@override String get weekly => '周预算';
+	@override String get weeklyDesc => '按周管理支出，更精细的控制';
+	@override String get yearly => '年度预算';
+	@override String get yearlyDesc => '长期财务规划，适合大额支出管理';
+	@override String get editBudget => '编辑预算';
+	@override String get editBudgetDesc => '修改预算金额和分类';
+	@override String get reminderSettings => '提醒设置';
+	@override String get reminderSettingsDesc => '设置预算提醒和通知';
+	@override String get report => '预算报告';
+	@override String get reportDesc => '查看详细的预算分析报告';
+	@override String get welcome => '欢迎使用预算功能！';
+	@override String get createNewPlan => '创建新的预算计划';
+	@override String get welcomeDesc => '通过设置预算，您可以更好地控制支出，实现财务目标。让我们开始设置您的第一个预算计划吧！';
+	@override String get createDesc => '为不同的支出类别设置预算限额，帮助您更好地管理财务。';
+	@override String get newBudget => '新建预算';
+	@override String get budgetAmountLabel => '预算金额';
+	@override String get currency => '货币';
+	@override String get periodSettings => '周期设置';
+	@override String get autoGenerateTransactions => '开启后按规则自动生成交易';
+	@override String get cycle => '周期';
+	@override String get budgetCategory => '预算分类';
+	@override String get advancedOptions => '高级选项';
+	@override String get periodType => '周期类型';
+	@override String get anchorDay => '起算日';
+	@override String get selectPeriodType => '选择周期类型';
+	@override String get selectAnchorDay => '选择起算日';
+	@override String get rolloverDescription => '未用完的预算结转到下期';
+	@override String get createBudget => '创建预算';
+	@override String get save => '保存';
+	@override String get pleaseEnterAmount => '请输入预算金额';
+	@override String get invalidAmount => '请输入有效的预算金额';
+	@override String get updateSuccess => '预算更新成功';
+	@override String get createSuccess => '预算创建成功';
+	@override String get deleteSuccess => '预算已删除';
+	@override String get deleteFailed => '删除失败';
+	@override String everyMonthDay({required Object day}) => '每月 ${day} 号';
+	@override String get periodWeekly => '每周';
+	@override String get periodBiweekly => '双周';
+	@override String get periodMonthly => '每月';
+	@override String get periodYearly => '每年';
+	@override String get statusActive => '进行中';
+	@override String get statusArchived => '已归档';
+	@override String get periodStatusOnTrack => '正常';
+	@override String get periodStatusWarning => '预警';
+	@override String get periodStatusExceeded => '超支';
+	@override String get periodStatusAchieved => '达成';
+	@override String usedPercent({required Object percent}) => '${percent}% 已使用';
+	@override String dayOfMonth({required Object day}) => '${day} 号';
+	@override String get tenThousandSuffix => '万';
 }
 
 // Path: dateRange
-class TranslationsDateRangeZh {
-	TranslationsDateRangeZh.internal(this._root);
+class _TranslationsDateRangeZh implements TranslationsDateRangeEn {
+	_TranslationsDateRangeZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '自定义'
-	String get custom => '自定义';
-
-	/// zh: '选择时间范围'
-	String get pickerTitle => '选择时间范围';
-
-	/// zh: '开始日期'
-	String get startDate => '开始日期';
-
-	/// zh: '结束日期'
-	String get endDate => '结束日期';
-
-	/// zh: '请选择日期范围'
-	String get hint => '请选择日期范围';
+	@override String get custom => '自定义';
+	@override String get pickerTitle => '选择时间范围';
+	@override String get startDate => '开始日期';
+	@override String get endDate => '结束日期';
+	@override String get hint => '请选择日期范围';
 }
 
 // Path: forecast
-class TranslationsForecastZh {
-	TranslationsForecastZh.internal(this._root);
+class _TranslationsForecastZh implements TranslationsForecastEn {
+	_TranslationsForecastZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '预测'
-	String get title => '预测';
-
-	/// zh: '基于您的财务数据智能预测未来现金流'
-	String get subtitle => '基于您的财务数据智能预测未来现金流';
-
-	/// zh: '你好，我是你的财务领航员'
-	String get financialNavigator => '你好，我是你的财务领航员';
-
-	/// zh: '只需3步，我们一起绘制你未来的财务地图'
-	String get financialMapSubtitle => '只需3步，我们一起绘制你未来的财务地图';
-
-	/// zh: '预测未来现金流'
-	String get predictCashFlow => '预测未来现金流';
-
-	/// zh: '看清每一天的财务状况'
-	String get predictCashFlowDesc => '看清每一天的财务状况';
-
-	/// zh: 'AI智能建议'
-	String get aiSmartSuggestions => 'AI智能建议';
-
-	/// zh: '个性化的财务决策指导'
-	String get aiSmartSuggestionsDesc => '个性化的财务决策指导';
-
-	/// zh: '风险预警'
-	String get riskWarning => '风险预警';
-
-	/// zh: '提前发现潜在的财务风险'
-	String get riskWarningDesc => '提前发现潜在的财务风险';
-
-	/// zh: '我正在分析你的财务数据，生成未来30天的现金流预测'
-	String get analyzing => '我正在分析你的财务数据，生成未来30天的现金流预测';
-
-	/// zh: '分析收入支出模式'
-	String get analyzePattern => '分析收入支出模式';
-
-	/// zh: '计算现金流趋势'
-	String get calculateTrend => '计算现金流趋势';
-
-	/// zh: '生成风险预警'
-	String get generateWarning => '生成风险预警';
-
-	/// zh: '正在加载财务预测...'
-	String get loadingForecast => '正在加载财务预测...';
-
-	/// zh: '今日'
-	String get todayLabel => '今日';
-
-	/// zh: '明日'
-	String get tomorrowLabel => '明日';
-
-	/// zh: '余额'
-	String get balanceLabel => '余额';
-
-	/// zh: '无特殊事件'
-	String get noSpecialEvents => '无特殊事件';
-
-	/// zh: '财务安全线'
-	String get financialSafetyLine => '财务安全线';
-
-	/// zh: '当前设置'
-	String get currentSetting => '当前设置';
-
-	/// zh: '日常消费预估'
-	String get dailySpendingEstimate => '日常消费预估';
-
-	/// zh: '调整每日消费预测金额'
-	String get adjustDailySpendingAmount => '调整每日消费预测金额';
-
-	/// zh: '告诉我你的财务"安心线"是多少？'
-	String get tellMeYourSafetyLine => '告诉我你的财务"安心线"是多少？';
-
-	/// zh: '这是你希望账户保持的最低余额，当余额接近这个数值时，我会提醒你注意财务风险。'
-	String get safetyLineDescription => '这是你希望账户保持的最低余额，当余额接近这个数值时，我会提醒你注意财务风险。';
-
-	/// zh: '每天的"小日子"大概花多少？'
-	String get dailySpendingQuestion => '每天的"小日子"大概花多少？';
-
-	/// zh: '包括吃饭、交通、购物等日常开销 这只是一个初始估算，我会通过你未来的真实记录，让预测越来越准'
-	String get dailySpendingDescription => '包括吃饭、交通、购物等日常开销\n这只是一个初始估算，我会通过你未来的真实记录，让预测越来越准';
-
-	/// zh: '每天'
-	String get perDay => '每天';
-
-	/// zh: '参考标准'
-	String get referenceStandard => '参考标准';
-
-	/// zh: '节俭型'
-	String get frugalType => '节俭型';
-
-	/// zh: '舒适型'
-	String get comfortableType => '舒适型';
-
-	/// zh: '宽松型'
-	String get relaxedType => '宽松型';
-
-	/// zh: '50-100元/天'
-	String get frugalAmount => '50-100元/天';
-
-	/// zh: '100-200元/天'
-	String get comfortableAmount => '100-200元/天';
-
-	/// zh: '200-300元/天'
-	String get relaxedAmount => '200-300元/天';
-
-	late final TranslationsForecastRecurringTransactionZh recurringTransaction = TranslationsForecastRecurringTransactionZh.internal(_root);
+	@override String get title => '预测';
+	@override String get subtitle => '基于您的财务数据智能预测未来现金流';
+	@override String get financialNavigator => '你好，我是你的财务领航员';
+	@override String get financialMapSubtitle => '只需3步，我们一起绘制你未来的财务地图';
+	@override String get predictCashFlow => '预测未来现金流';
+	@override String get predictCashFlowDesc => '看清每一天的财务状况';
+	@override String get aiSmartSuggestions => 'AI智能建议';
+	@override String get aiSmartSuggestionsDesc => '个性化的财务决策指导';
+	@override String get riskWarning => '风险预警';
+	@override String get riskWarningDesc => '提前发现潜在的财务风险';
+	@override String get analyzing => '我正在分析你的财务数据，生成未来30天的现金流预测';
+	@override String get analyzePattern => '分析收入支出模式';
+	@override String get calculateTrend => '计算现金流趋势';
+	@override String get generateWarning => '生成风险预警';
+	@override String get loadingForecast => '正在加载财务预测...';
+	@override String get todayLabel => '今日';
+	@override String get tomorrowLabel => '明日';
+	@override String get balanceLabel => '余额';
+	@override String get noSpecialEvents => '无特殊事件';
+	@override String get financialSafetyLine => '财务安全线';
+	@override String get currentSetting => '当前设置';
+	@override String get dailySpendingEstimate => '日常消费预估';
+	@override String get adjustDailySpendingAmount => '调整每日消费预测金额';
+	@override String get tellMeYourSafetyLine => '告诉我你的财务"安心线"是多少？';
+	@override String get safetyLineDescription => '这是你希望账户保持的最低余额，当余额接近这个数值时，我会提醒你注意财务风险。';
+	@override String get dailySpendingQuestion => '每天的"小日子"大概花多少？';
+	@override String get dailySpendingDescription => '包括吃饭、交通、购物等日常开销\n这只是一个初始估算，我会通过你未来的真实记录，让预测越来越准';
+	@override String get perDay => '每天';
+	@override String get referenceStandard => '参考标准';
+	@override String get frugalType => '节俭型';
+	@override String get comfortableType => '舒适型';
+	@override String get relaxedType => '宽松型';
+	@override String get frugalAmount => '50-100元/天';
+	@override String get comfortableAmount => '100-200元/天';
+	@override String get relaxedAmount => '200-300元/天';
+	@override late final _TranslationsForecastRecurringTransactionZh recurringTransaction = _TranslationsForecastRecurringTransactionZh._(_root);
 }
 
 // Path: chat
-class TranslationsChatZh {
-	TranslationsChatZh.internal(this._root);
+class _TranslationsChatZh implements TranslationsChatEn {
+	_TranslationsChatZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '新聊天'
-	String get newChat => '新聊天';
-
-	/// zh: '没有消息可显示。'
-	String get noMessages => '没有消息可显示。';
-
-	/// zh: '加载失败'
-	String get loadingFailed => '加载失败';
-
-	/// zh: '输入消息...'
-	String get inputMessage => '输入消息...';
-
-	/// zh: '正在聆听...'
-	String get listening => '正在聆听...';
-
-	/// zh: '正在处理...'
-	String get aiThinking => '正在处理...';
-
-	late final TranslationsChatToolsZh tools = TranslationsChatToolsZh.internal(_root);
-
-	/// zh: '未识别到语音，请重试'
-	String get speechNotRecognized => '未识别到语音，请重试';
-
-	/// zh: '当前支出'
-	String get currentExpense => '当前支出';
-
-	/// zh: '正在加载组件...'
-	String get loadingComponent => '正在加载组件...';
-
-	/// zh: '暂无历史会话'
-	String get noHistory => '暂无历史会话';
-
-	/// zh: '开启一段新对话吧！'
-	String get startNewChat => '开启一段新对话吧！';
-
-	/// zh: '搜索会话'
-	String get searchHint => '搜索会话';
-
-	/// zh: '库'
-	String get library => '库';
-
-	/// zh: '查看个人资料'
-	String get viewProfile => '查看个人资料';
-
-	/// zh: '未找到相关会话'
-	String get noRelatedFound => '未找到相关会话';
-
-	/// zh: '尝试搜索其他关键词'
-	String get tryOtherKeywords => '尝试搜索其他关键词';
-
-	/// zh: '搜索失败'
-	String get searchFailed => '搜索失败';
-
-	/// zh: '删除会话'
-	String get deleteConversation => '删除会话';
-
-	/// zh: '确定要删除这个会话吗？此操作无法撤销。'
-	String get deleteConversationConfirm => '确定要删除这个会话吗？此操作无法撤销。';
-
-	/// zh: '会话已删除'
-	String get conversationDeleted => '会话已删除';
-
-	/// zh: '删除会话失败'
-	String get deleteConversationFailed => '删除会话失败';
-
-	late final TranslationsChatTransferWizardZh transferWizard = TranslationsChatTransferWizardZh.internal(_root);
-	late final TranslationsChatGenuiZh genui = TranslationsChatGenuiZh.internal(_root);
-	late final TranslationsChatWelcomeZh welcome = TranslationsChatWelcomeZh.internal(_root);
+	@override String get newChat => '新聊天';
+	@override String get noMessages => '没有消息可显示。';
+	@override String get loadingFailed => '加载失败';
+	@override String get inputMessage => '输入消息...';
+	@override String get listening => '正在聆听...';
+	@override String get aiThinking => '正在处理...';
+	@override late final _TranslationsChatToolsZh tools = _TranslationsChatToolsZh._(_root);
+	@override String get speechNotRecognized => '未识别到语音，请重试';
+	@override String get currentExpense => '当前支出';
+	@override String get loadingComponent => '正在加载组件...';
+	@override String get noHistory => '暂无历史会话';
+	@override String get startNewChat => '开启一段新对话吧！';
+	@override String get searchHint => '搜索会话';
+	@override String get library => '库';
+	@override String get viewProfile => '查看个人资料';
+	@override String get noRelatedFound => '未找到相关会话';
+	@override String get tryOtherKeywords => '尝试搜索其他关键词';
+	@override String get searchFailed => '搜索失败';
+	@override String get deleteConversation => '删除会话';
+	@override String get deleteConversationConfirm => '确定要删除这个会话吗？此操作无法撤销。';
+	@override String get conversationDeleted => '会话已删除';
+	@override String get deleteConversationFailed => '删除会话失败';
+	@override late final _TranslationsChatTransferWizardZh transferWizard = _TranslationsChatTransferWizardZh._(_root);
+	@override late final _TranslationsChatGenuiZh genui = _TranslationsChatGenuiZh._(_root);
+	@override late final _TranslationsChatWelcomeZh welcome = _TranslationsChatWelcomeZh._(_root);
 }
 
 // Path: footprint
-class TranslationsFootprintZh {
-	TranslationsFootprintZh.internal(this._root);
+class _TranslationsFootprintZh implements TranslationsFootprintEn {
+	_TranslationsFootprintZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '搜索'
-	String get searchIn => '搜索';
-
-	/// zh: '在所有记录中搜索相关内容'
-	String get searchInAllRecords => '在所有记录中搜索相关内容';
+	@override String get searchIn => '搜索';
+	@override String get searchInAllRecords => '在所有记录中搜索相关内容';
 }
 
 // Path: media
-class TranslationsMediaZh {
-	TranslationsMediaZh.internal(this._root);
+class _TranslationsMediaZh implements TranslationsMediaEn {
+	_TranslationsMediaZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '选择照片'
-	String get selectPhotos => '选择照片';
-
-	/// zh: '添加文件'
-	String get addFiles => '添加文件';
-
-	/// zh: '拍照'
-	String get takePhoto => '拍照';
-
-	/// zh: '相机'
-	String get camera => '相机';
-
-	/// zh: '照片'
-	String get photos => '照片';
-
-	/// zh: '文件'
-	String get files => '文件';
-
-	/// zh: '显示全部'
-	String get showAll => '显示全部';
-
-	/// zh: '所有照片'
-	String get allPhotos => '所有照片';
-
-	/// zh: '拍照中...'
-	String get takingPhoto => '拍照中...';
-
-	/// zh: '照片已保存'
-	String get photoTaken => '照片已保存';
-
-	/// zh: '需要相机权限'
-	String get cameraPermissionRequired => '需要相机权限';
-
-	/// zh: '文件大小超过10MB限制'
-	String get fileSizeExceeded => '文件大小超过10MB限制';
-
-	/// zh: '不支持的文件格式'
-	String get unsupportedFormat => '不支持的文件格式';
-
-	/// zh: '需要相册访问权限'
-	String get permissionDenied => '需要相册访问权限';
-
-	/// zh: '存储空间不足'
-	String get storageInsufficient => '存储空间不足';
-
-	/// zh: '网络连接错误'
-	String get networkError => '网络连接错误';
-
-	/// zh: '上传时发生未知错误'
-	String get unknownUploadError => '上传时发生未知错误';
+	@override String get selectPhotos => '选择照片';
+	@override String get addFiles => '添加文件';
+	@override String get takePhoto => '拍照';
+	@override String get camera => '相机';
+	@override String get photos => '照片';
+	@override String get files => '文件';
+	@override String get showAll => '显示全部';
+	@override String get allPhotos => '所有照片';
+	@override String get takingPhoto => '拍照中...';
+	@override String get photoTaken => '照片已保存';
+	@override String get cameraPermissionRequired => '需要相机权限';
+	@override String get fileSizeExceeded => '文件大小超过10MB限制';
+	@override String get unsupportedFormat => '不支持的文件格式';
+	@override String get permissionDenied => '需要相册访问权限';
+	@override String get storageInsufficient => '存储空间不足';
+	@override String get networkError => '网络连接错误';
+	@override String get unknownUploadError => '上传时发生未知错误';
 }
 
 // Path: error
-class TranslationsErrorZh {
-	TranslationsErrorZh.internal(this._root);
+class _TranslationsErrorZh implements TranslationsErrorEn {
+	_TranslationsErrorZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '需要权限'
-	String get permissionRequired => '需要权限';
-
-	/// zh: '请在设置中开启相册和存储权限，以便选择和上传文件。'
-	String get permissionInstructions => '请在设置中开启相册和存储权限，以便选择和上传文件。';
-
-	/// zh: '打开设置'
-	String get openSettings => '打开设置';
-
-	/// zh: '文件过大'
-	String get fileTooLarge => '文件过大';
-
-	/// zh: '请选择小于10MB的文件，或者压缩后再上传。'
-	String get fileSizeHint => '请选择小于10MB的文件，或者压缩后再上传。';
-
-	/// zh: '支持的格式包括：图片(jpg, png, gif等)、文档(pdf, doc, txt等)、音视频文件等。'
-	String get supportedFormatsHint => '支持的格式包括：图片(jpg, png, gif等)、文档(pdf, doc, txt等)、音视频文件等。';
-
-	/// zh: '请清理设备存储空间后重试，或选择较小的文件。'
-	String get storageCleanupHint => '请清理设备存储空间后重试，或选择较小的文件。';
-
-	/// zh: '请检查网络连接是否正常，然后重试。'
-	String get networkErrorHint => '请检查网络连接是否正常，然后重试。';
-
-	/// zh: '平台不支持'
-	String get platformNotSupported => '平台不支持';
-
-	/// zh: '文件读取失败'
-	String get fileReadError => '文件读取失败';
-
-	/// zh: '文件可能已损坏或被其他程序占用，请重新选择文件。'
-	String get fileReadErrorHint => '文件可能已损坏或被其他程序占用，请重新选择文件。';
-
-	/// zh: '文件验证失败'
-	String get validationError => '文件验证失败';
-
-	/// zh: '未知错误'
-	String get unknownError => '未知错误';
-
-	/// zh: '发生了意外错误，请重试或联系技术支持。'
-	String get unknownErrorHint => '发生了意外错误，请重试或联系技术支持。';
-
-	late final TranslationsErrorGenuiZh genui = TranslationsErrorGenuiZh.internal(_root);
+	@override String get permissionRequired => '需要权限';
+	@override String get permissionInstructions => '请在设置中开启相册和存储权限，以便选择和上传文件。';
+	@override String get openSettings => '打开设置';
+	@override String get fileTooLarge => '文件过大';
+	@override String get fileSizeHint => '请选择小于10MB的文件，或者压缩后再上传。';
+	@override String get supportedFormatsHint => '支持的格式包括：图片(jpg, png, gif等)、文档(pdf, doc, txt等)、音视频文件等。';
+	@override String get storageCleanupHint => '请清理设备存储空间后重试，或选择较小的文件。';
+	@override String get networkErrorHint => '请检查网络连接是否正常，然后重试。';
+	@override String get platformNotSupported => '平台不支持';
+	@override String get fileReadError => '文件读取失败';
+	@override String get fileReadErrorHint => '文件可能已损坏或被其他程序占用，请重新选择文件。';
+	@override String get validationError => '文件验证失败';
+	@override String get unknownError => '未知错误';
+	@override String get unknownErrorHint => '发生了意外错误，请重试或联系技术支持。';
+	@override late final _TranslationsErrorGenuiZh genui = _TranslationsErrorGenuiZh._(_root);
 }
 
 // Path: fontTest
-class TranslationsFontTestZh {
-	TranslationsFontTestZh.internal(this._root);
+class _TranslationsFontTestZh implements TranslationsFontTestEn {
+	_TranslationsFontTestZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '字体测试页面'
-	String get page => '字体测试页面';
-
-	/// zh: '字体显示测试'
-	String get displayTest => '字体显示测试';
-
-	/// zh: '中文文本测试'
-	String get chineseTextTest => '中文文本测试';
-
-	/// zh: '英文文本测试'
-	String get englishTextTest => '英文文本测试';
-
-	/// zh: '这是一段中文文本，用于测试字体显示效果。'
-	String get sample1 => '这是一段中文文本，用于测试字体显示效果。';
-
-	/// zh: '支出分类汇总，购物最高'
-	String get sample2 => '支出分类汇总，购物最高';
-
-	/// zh: '人工智能助手为您提供专业的财务分析服务'
-	String get sample3 => '人工智能助手为您提供专业的财务分析服务';
-
-	/// zh: '数据可视化图表展示您的消费趋势'
-	String get sample4 => '数据可视化图表展示您的消费趋势';
-
-	/// zh: '微信支付、支付宝、银行卡等多种支付方式'
-	String get sample5 => '微信支付、支付宝、银行卡等多种支付方式';
+	@override String get page => '字体测试页面';
+	@override String get displayTest => '字体显示测试';
+	@override String get chineseTextTest => '中文文本测试';
+	@override String get englishTextTest => '英文文本测试';
+	@override String get sample1 => '这是一段中文文本，用于测试字体显示效果。';
+	@override String get sample2 => '支出分类汇总，购物最高';
+	@override String get sample3 => '人工智能助手为您提供专业的财务分析服务';
+	@override String get sample4 => '数据可视化图表展示您的消费趋势';
+	@override String get sample5 => '微信支付、支付宝、银行卡等多种支付方式';
 }
 
 // Path: wizard
-class TranslationsWizardZh {
-	TranslationsWizardZh.internal(this._root);
+class _TranslationsWizardZh implements TranslationsWizardEn {
+	_TranslationsWizardZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '下一步'
-	String get nextStep => '下一步';
-
-	/// zh: '上一步'
-	String get previousStep => '上一步';
-
-	/// zh: '完成绘制'
-	String get completeMapping => '完成绘制';
+	@override String get nextStep => '下一步';
+	@override String get previousStep => '上一步';
+	@override String get completeMapping => '完成绘制';
 }
 
 // Path: user
-class TranslationsUserZh {
-	TranslationsUserZh.internal(this._root);
+class _TranslationsUserZh implements TranslationsUserEn {
+	_TranslationsUserZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '用户名'
-	String get username => '用户名';
-
-	/// zh: 'user@example.com'
-	String get defaultEmail => 'user@example.com';
+	@override String get username => '用户名';
+	@override String get defaultEmail => 'user@example.com';
 }
 
 // Path: account
-class TranslationsAccountZh {
-	TranslationsAccountZh.internal(this._root);
+class _TranslationsAccountZh implements TranslationsAccountEn {
+	_TranslationsAccountZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '编辑账户'
-	String get editTitle => '编辑账户';
-
-	/// zh: '新建账户'
-	String get addTitle => '新建账户';
-
-	/// zh: '选择账户类型'
-	String get selectTypeTitle => '选择账户类型';
-
-	/// zh: '账户名称'
-	String get nameLabel => '账户名称';
-
-	/// zh: '当前余额'
-	String get amountLabel => '当前余额';
-
-	/// zh: '币种'
-	String get currencyLabel => '币种';
-
-	/// zh: '隐藏'
-	String get hiddenLabel => '隐藏';
-
-	/// zh: '在账户列表中隐藏该账户'
-	String get hiddenDesc => '在账户列表中隐藏该账户';
-
-	/// zh: '计入资产'
-	String get includeInNetWorthLabel => '计入资产';
-
-	/// zh: '用于净资产统计'
-	String get includeInNetWorthDesc => '用于净资产统计';
-
-	/// zh: '例如：工资卡'
-	String get nameHint => '例如：工资卡';
-
-	/// zh: '0.00'
-	String get amountHint => '0.00';
-
-	/// zh: '删除账户'
-	String get deleteAccount => '删除账户';
-
-	/// zh: '确定要删除该账户吗？此操作无法撤销。'
-	String get deleteConfirm => '确定要删除该账户吗？此操作无法撤销。';
-
-	/// zh: '保存修改'
-	String get save => '保存修改';
-
-	/// zh: '资产类'
-	String get assetsCategory => '资产类';
-
-	/// zh: '负债/信用类'
-	String get liabilitiesCategory => '负债/信用类';
-
-	/// zh: '现金钱包'
-	String get cash => '现金钱包';
-
-	/// zh: '银行存款'
-	String get deposit => '银行存款';
-
-	/// zh: '信用卡'
-	String get creditCard => '信用卡';
-
-	/// zh: '投资理财'
-	String get investment => '投资理财';
-
-	/// zh: '电子钱包'
-	String get eWallet => '电子钱包';
-
-	/// zh: '贷款账户'
-	String get loan => '贷款账户';
-
-	/// zh: '应收款项'
-	String get receivable => '应收款项';
-
-	/// zh: '应付款项'
-	String get payable => '应付款项';
-
-	/// zh: '其他账户'
-	String get other => '其他账户';
-
-	late final TranslationsAccountTypesZh types = TranslationsAccountTypesZh.internal(_root);
+	@override String get editTitle => '编辑账户';
+	@override String get addTitle => '新建账户';
+	@override String get selectTypeTitle => '选择账户类型';
+	@override String get nameLabel => '账户名称';
+	@override String get amountLabel => '当前余额';
+	@override String get currencyLabel => '币种';
+	@override String get hiddenLabel => '隐藏';
+	@override String get hiddenDesc => '在账户列表中隐藏该账户';
+	@override String get includeInNetWorthLabel => '计入资产';
+	@override String get includeInNetWorthDesc => '用于净资产统计';
+	@override String get nameHint => '例如：工资卡';
+	@override String get amountHint => '0.00';
+	@override String get deleteAccount => '删除账户';
+	@override String get deleteConfirm => '确定要删除该账户吗？此操作无法撤销。';
+	@override String get save => '保存修改';
+	@override String get assetsCategory => '资产类';
+	@override String get liabilitiesCategory => '负债/信用类';
+	@override String get cash => '现金钱包';
+	@override String get deposit => '银行存款';
+	@override String get creditCard => '信用卡';
+	@override String get investment => '投资理财';
+	@override String get eWallet => '电子钱包';
+	@override String get loan => '贷款账户';
+	@override String get receivable => '应收款项';
+	@override String get payable => '应付款项';
+	@override String get other => '其他账户';
+	@override late final _TranslationsAccountTypesZh types = _TranslationsAccountTypesZh._(_root);
 }
 
 // Path: financial
-class TranslationsFinancialZh {
-	TranslationsFinancialZh.internal(this._root);
+class _TranslationsFinancialZh implements TranslationsFinancialEn {
+	_TranslationsFinancialZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '财务'
-	String get title => '财务';
-
-	/// zh: '财务管理'
-	String get management => '财务管理';
-
-	/// zh: '总净值'
-	String get netWorth => '总净值';
-
-	/// zh: '总资产'
-	String get assets => '总资产';
-
-	/// zh: '总负债'
-	String get liabilities => '总负债';
-
-	/// zh: '暂无账户'
-	String get noAccounts => '暂无账户';
-
-	/// zh: '点击下方按钮添加您的第一个账户'
-	String get addFirstAccount => '点击下方按钮添加您的第一个账户';
-
-	/// zh: '资产账户'
-	String get assetAccounts => '资产账户';
-
-	/// zh: '负债账户'
-	String get liabilityAccounts => '负债账户';
-
-	/// zh: '选择货币'
-	String get selectCurrency => '选择货币';
-
-	/// zh: '取消'
-	String get cancel => '取消';
-
-	/// zh: '确定'
-	String get confirm => '确定';
-
-	/// zh: '财务设置'
-	String get settings => '财务设置';
-
-	/// zh: '预算管理'
-	String get budgetManagement => '预算管理';
-
-	/// zh: '周期交易'
-	String get recurringTransactions => '周期交易';
-
-	/// zh: '安全阈值'
-	String get safetyThreshold => '安全阈值';
-
-	/// zh: '每日消费'
-	String get dailyBurnRate => '每日消费';
-
-	/// zh: '财务助手'
-	String get financialAssistant => '财务助手';
-
-	/// zh: '管理您的财务设置'
-	String get manageFinancialSettings => '管理您的财务设置';
-
-	/// zh: '财务安全线设置'
-	String get safetyThresholdSettings => '财务安全线设置';
-
-	/// zh: '设置您的财务安全阈值'
-	String get setSafetyThreshold => '设置您的财务安全阈值';
-
-	/// zh: '财务安全线已保存'
-	String get safetyThresholdSaved => '财务安全线已保存';
-
-	/// zh: '日常消费预估'
-	String get dailyBurnRateSettings => '日常消费预估';
-
-	/// zh: '设置您的日常消费预估金额'
-	String get setDailyBurnRate => '设置您的日常消费预估金额';
-
-	/// zh: '日常消费预估已保存'
-	String get dailyBurnRateSaved => '日常消费预估已保存';
-
-	/// zh: '保存失败'
-	String get saveFailed => '保存失败';
+	@override String get title => '财务';
+	@override String get management => '财务管理';
+	@override String get netWorth => '总净值';
+	@override String get assets => '总资产';
+	@override String get liabilities => '总负债';
+	@override String get noAccounts => '暂无账户';
+	@override String get addFirstAccount => '点击下方按钮添加您的第一个账户';
+	@override String get assetAccounts => '资产账户';
+	@override String get liabilityAccounts => '负债账户';
+	@override String get selectCurrency => '选择货币';
+	@override String get cancel => '取消';
+	@override String get confirm => '确定';
+	@override String get settings => '财务设置';
+	@override String get budgetManagement => '预算管理';
+	@override String get recurringTransactions => '周期交易';
+	@override String get safetyThreshold => '安全阈值';
+	@override String get dailyBurnRate => '每日消费';
+	@override String get financialAssistant => '财务助手';
+	@override String get manageFinancialSettings => '管理您的财务设置';
+	@override String get safetyThresholdSettings => '财务安全线设置';
+	@override String get setSafetyThreshold => '设置您的财务安全阈值';
+	@override String get safetyThresholdSaved => '财务安全线已保存';
+	@override String get dailyBurnRateSettings => '日常消费预估';
+	@override String get setDailyBurnRate => '设置您的日常消费预估金额';
+	@override String get dailyBurnRateSaved => '日常消费预估已保存';
+	@override String get saveFailed => '保存失败';
 }
 
 // Path: app
-class TranslationsAppZh {
-	TranslationsAppZh.internal(this._root);
+class _TranslationsAppZh implements TranslationsAppEn {
+	_TranslationsAppZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '智见增长，格物致富。'
-	String get splashTitle => '智见增长，格物致富。';
-
-	/// zh: '智能财务助手'
-	String get splashSubtitle => '智能财务助手';
+	@override String get splashTitle => '智见增长，格物致富。';
+	@override String get splashSubtitle => '智能财务助手';
 }
 
 // Path: statistics
-class TranslationsStatisticsZh {
-	TranslationsStatisticsZh.internal(this._root);
+class _TranslationsStatisticsZh implements TranslationsStatisticsEn {
+	_TranslationsStatisticsZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '统计分析'
-	String get title => '统计分析';
-
-	/// zh: '统计分析'
-	String get analyze => '统计分析';
-
-	/// zh: '导出功能开发中...'
-	String get exportInProgress => '导出功能开发中...';
-
-	/// zh: '大额消费排行'
-	String get ranking => '大额消费排行';
-
-	/// zh: '暂无数据'
-	String get noData => '暂无数据';
-
-	late final TranslationsStatisticsOverviewZh overview = TranslationsStatisticsOverviewZh.internal(_root);
-	late final TranslationsStatisticsTrendZh trend = TranslationsStatisticsTrendZh.internal(_root);
-	late final TranslationsStatisticsAnalysisZh analysis = TranslationsStatisticsAnalysisZh.internal(_root);
-	late final TranslationsStatisticsFilterZh filter = TranslationsStatisticsFilterZh.internal(_root);
-	late final TranslationsStatisticsSortZh sort = TranslationsStatisticsSortZh.internal(_root);
-
-	/// zh: '导出列表'
-	String get exportList => '导出列表';
-
-	late final TranslationsStatisticsEmptyStateZh emptyState = TranslationsStatisticsEmptyStateZh.internal(_root);
-
-	/// zh: '没有更多数据了'
-	String get noMoreData => '没有更多数据了';
+	@override String get title => '统计分析';
+	@override String get analyze => '统计分析';
+	@override String get exportInProgress => '导出功能开发中...';
+	@override String get ranking => '大额消费排行';
+	@override String get noData => '暂无数据';
+	@override late final _TranslationsStatisticsOverviewZh overview = _TranslationsStatisticsOverviewZh._(_root);
+	@override late final _TranslationsStatisticsTrendZh trend = _TranslationsStatisticsTrendZh._(_root);
+	@override late final _TranslationsStatisticsAnalysisZh analysis = _TranslationsStatisticsAnalysisZh._(_root);
+	@override late final _TranslationsStatisticsFilterZh filter = _TranslationsStatisticsFilterZh._(_root);
+	@override late final _TranslationsStatisticsSortZh sort = _TranslationsStatisticsSortZh._(_root);
+	@override String get exportList => '导出列表';
+	@override late final _TranslationsStatisticsEmptyStateZh emptyState = _TranslationsStatisticsEmptyStateZh._(_root);
+	@override String get noMoreData => '没有更多数据了';
 }
 
 // Path: currency
-class TranslationsCurrencyZh {
-	TranslationsCurrencyZh.internal(this._root);
+class _TranslationsCurrencyZh implements TranslationsCurrencyEn {
+	_TranslationsCurrencyZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '人民币'
-	String get cny => '人民币';
-
-	/// zh: '美元'
-	String get usd => '美元';
-
-	/// zh: '欧元'
-	String get eur => '欧元';
-
-	/// zh: '日元'
-	String get jpy => '日元';
-
-	/// zh: '英镑'
-	String get gbp => '英镑';
-
-	/// zh: '澳元'
-	String get aud => '澳元';
-
-	/// zh: '加元'
-	String get cad => '加元';
-
-	/// zh: '瑞士法郎'
-	String get chf => '瑞士法郎';
-
-	/// zh: '俄罗斯卢布'
-	String get rub => '俄罗斯卢布';
-
-	/// zh: '港币'
-	String get hkd => '港币';
-
-	/// zh: '新台币'
-	String get twd => '新台币';
-
-	/// zh: '印度卢比'
-	String get inr => '印度卢比';
+	@override String get cny => '人民币';
+	@override String get usd => '美元';
+	@override String get eur => '欧元';
+	@override String get jpy => '日元';
+	@override String get gbp => '英镑';
+	@override String get aud => '澳元';
+	@override String get cad => '加元';
+	@override String get chf => '瑞士法郎';
+	@override String get rub => '俄罗斯卢布';
+	@override String get hkd => '港币';
+	@override String get twd => '新台币';
+	@override String get inr => '印度卢比';
 }
 
 // Path: budgetSuggestion
-class TranslationsBudgetSuggestionZh {
-	TranslationsBudgetSuggestionZh.internal(this._root);
+class _TranslationsBudgetSuggestionZh implements TranslationsBudgetSuggestionEn {
+	_TranslationsBudgetSuggestionZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '$category 占支出的 $percentage%，建议设置预算上限'
-	String highPercentage({required Object category, required Object percentage}) => '${category} 占支出的 ${percentage}%，建议设置预算上限';
-
-	/// zh: '本月支出增长了 $percentage%，需要关注'
-	String monthlyIncrease({required Object percentage}) => '本月支出增长了 ${percentage}%，需要关注';
-
-	/// zh: '$category 有 $count 笔小额交易，可能是订阅消费'
-	String frequentSmall({required Object category, required Object count}) => '${category} 有 ${count} 笔小额交易，可能是订阅消费';
-
-	/// zh: '财务洞察'
-	String get financialInsights => '财务洞察';
+	@override String highPercentage({required Object category, required Object percentage}) => '${category} 占支出的 ${percentage}%，建议设置预算上限';
+	@override String monthlyIncrease({required Object percentage}) => '本月支出增长了 ${percentage}%，需要关注';
+	@override String frequentSmall({required Object category, required Object count}) => '${category} 有 ${count} 笔小额交易，可能是订阅消费';
+	@override String get financialInsights => '财务洞察';
 }
 
 // Path: server
-class TranslationsServerZh {
-	TranslationsServerZh.internal(this._root);
+class _TranslationsServerZh implements TranslationsServerEn {
+	_TranslationsServerZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '连接服务器'
-	String get title => '连接服务器';
-
-	/// zh: '输入您自部署的服务器地址，或扫描服务器启动时显示的二维码'
-	String get subtitle => '输入您自部署的服务器地址，或扫描服务器启动时显示的二维码';
-
-	/// zh: '服务器地址'
-	String get urlLabel => '服务器地址';
-
-	/// zh: '例如：https://api.example.com 或 192.168.1.100:8000'
-	String get urlPlaceholder => '例如：https://api.example.com 或 192.168.1.100:8000';
-
-	/// zh: '扫描二维码'
-	String get scanQr => '扫描二维码';
-
-	/// zh: '对准服务器终端显示的二维码'
-	String get scanQrInstruction => '对准服务器终端显示的二维码';
-
-	/// zh: '测试连接'
-	String get testConnection => '测试连接';
-
-	/// zh: '正在连接...'
-	String get connecting => '正在连接...';
-
-	/// zh: '已连接'
-	String get connected => '已连接';
-
-	/// zh: '连接失败'
-	String get connectionFailed => '连接失败';
-
-	/// zh: '继续登录'
-	String get continueToLogin => '继续登录';
-
-	/// zh: '保存并返回'
-	String get saveAndReturn => '保存并返回';
-
-	/// zh: '服务器设置'
-	String get serverSettings => '服务器设置';
-
-	/// zh: '当前服务器'
-	String get currentServer => '当前服务器';
-
-	/// zh: '版本'
-	String get version => '版本';
-
-	/// zh: '环境'
-	String get environment => '环境';
-
-	/// zh: '更换服务器'
-	String get changeServer => '更换服务器';
-
-	/// zh: '更换服务器将退出登录，是否继续？'
-	String get changeServerWarning => '更换服务器将退出登录，是否继续？';
-
-	late final TranslationsServerErrorZh error = TranslationsServerErrorZh.internal(_root);
+	@override String get title => '连接服务器';
+	@override String get subtitle => '输入您自部署的服务器地址，或扫描服务器启动时显示的二维码';
+	@override String get urlLabel => '服务器地址';
+	@override String get urlPlaceholder => '例如：https://api.example.com 或 192.168.1.100:8000';
+	@override String get scanQr => '扫描二维码';
+	@override String get scanQrInstruction => '对准服务器终端显示的二维码';
+	@override String get testConnection => '测试连接';
+	@override String get connecting => '正在连接...';
+	@override String get connected => '已连接';
+	@override String get connectionFailed => '连接失败';
+	@override String get continueToLogin => '继续登录';
+	@override String get saveAndReturn => '保存并返回';
+	@override String get serverSettings => '服务器设置';
+	@override String get currentServer => '当前服务器';
+	@override String get version => '版本';
+	@override String get environment => '环境';
+	@override String get changeServer => '更换服务器';
+	@override String get changeServerWarning => '更换服务器将退出登录，是否继续？';
+	@override late final _TranslationsServerErrorZh error = _TranslationsServerErrorZh._(_root);
 }
 
 // Path: sharedSpace
-class TranslationsSharedSpaceZh {
-	TranslationsSharedSpaceZh.internal(this._root);
+class _TranslationsSharedSpaceZh implements TranslationsSharedSpaceEn {
+	_TranslationsSharedSpaceZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-	late final TranslationsSharedSpaceDashboardZh dashboard = TranslationsSharedSpaceDashboardZh.internal(_root);
-	late final TranslationsSharedSpaceRolesZh roles = TranslationsSharedSpaceRolesZh.internal(_root);
+	@override late final _TranslationsSharedSpaceDashboardZh dashboard = _TranslationsSharedSpaceDashboardZh._(_root);
+	@override late final _TranslationsSharedSpaceRolesZh roles = _TranslationsSharedSpaceRolesZh._(_root);
 }
 
 // Path: errorMapping
-class TranslationsErrorMappingZh {
-	TranslationsErrorMappingZh.internal(this._root);
+class _TranslationsErrorMappingZh implements TranslationsErrorMappingEn {
+	_TranslationsErrorMappingZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-	late final TranslationsErrorMappingGenericZh generic = TranslationsErrorMappingGenericZh.internal(_root);
-	late final TranslationsErrorMappingAuthZh auth = TranslationsErrorMappingAuthZh.internal(_root);
-	late final TranslationsErrorMappingTransactionZh transaction = TranslationsErrorMappingTransactionZh.internal(_root);
-	late final TranslationsErrorMappingSpaceZh space = TranslationsErrorMappingSpaceZh.internal(_root);
-	late final TranslationsErrorMappingRecurringZh recurring = TranslationsErrorMappingRecurringZh.internal(_root);
-	late final TranslationsErrorMappingUploadZh upload = TranslationsErrorMappingUploadZh.internal(_root);
-	late final TranslationsErrorMappingAiZh ai = TranslationsErrorMappingAiZh.internal(_root);
+	@override late final _TranslationsErrorMappingGenericZh generic = _TranslationsErrorMappingGenericZh._(_root);
+	@override late final _TranslationsErrorMappingAuthZh auth = _TranslationsErrorMappingAuthZh._(_root);
+	@override late final _TranslationsErrorMappingTransactionZh transaction = _TranslationsErrorMappingTransactionZh._(_root);
+	@override late final _TranslationsErrorMappingSpaceZh space = _TranslationsErrorMappingSpaceZh._(_root);
+	@override late final _TranslationsErrorMappingRecurringZh recurring = _TranslationsErrorMappingRecurringZh._(_root);
+	@override late final _TranslationsErrorMappingUploadZh upload = _TranslationsErrorMappingUploadZh._(_root);
+	@override late final _TranslationsErrorMappingAiZh ai = _TranslationsErrorMappingAiZh._(_root);
 }
 
 // Path: auth.email
-class TranslationsAuthEmailZh {
-	TranslationsAuthEmailZh.internal(this._root);
+class _TranslationsAuthEmailZh implements TranslationsAuthEmailEn {
+	_TranslationsAuthEmailZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '邮箱'
-	String get label => '邮箱';
-
-	/// zh: '请输入您的邮箱'
-	String get placeholder => '请输入您的邮箱';
-
-	/// zh: '邮箱不能为空'
-	String get required => '邮箱不能为空';
-
-	/// zh: '请输入有效的邮箱地址'
-	String get invalid => '请输入有效的邮箱地址';
+	@override String get label => '邮箱';
+	@override String get placeholder => '请输入您的邮箱';
+	@override String get required => '邮箱不能为空';
+	@override String get invalid => '请输入有效的邮箱地址';
 }
 
 // Path: auth.password
-class TranslationsAuthPasswordZh {
-	TranslationsAuthPasswordZh.internal(this._root);
+class _TranslationsAuthPasswordZh implements TranslationsAuthPasswordEn {
+	_TranslationsAuthPasswordZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '密码'
-	String get label => '密码';
-
-	/// zh: '请输入您的密码'
-	String get placeholder => '请输入您的密码';
-
-	/// zh: '密码不能为空'
-	String get required => '密码不能为空';
-
-	/// zh: '密码长度不能少于6位'
-	String get tooShort => '密码长度不能少于6位';
-
-	/// zh: '密码必须包含数字和字母'
-	String get mustContainNumbersAndLetters => '密码必须包含数字和字母';
-
-	/// zh: '确认密码'
-	String get confirm => '确认密码';
-
-	/// zh: '请再次输入您的密码'
-	String get confirmPlaceholder => '请再次输入您的密码';
-
-	/// zh: '两次输入的密码不一致'
-	String get mismatch => '两次输入的密码不一致';
+	@override String get label => '密码';
+	@override String get placeholder => '请输入您的密码';
+	@override String get required => '密码不能为空';
+	@override String get tooShort => '密码长度不能少于6位';
+	@override String get mustContainNumbersAndLetters => '密码必须包含数字和字母';
+	@override String get confirm => '确认密码';
+	@override String get confirmPlaceholder => '请再次输入您的密码';
+	@override String get mismatch => '两次输入的密码不一致';
 }
 
 // Path: auth.verificationCode
-class TranslationsAuthVerificationCodeZh {
-	TranslationsAuthVerificationCodeZh.internal(this._root);
+class _TranslationsAuthVerificationCodeZh implements TranslationsAuthVerificationCodeEn {
+	_TranslationsAuthVerificationCodeZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '验证码'
-	String get label => '验证码';
-
-	/// zh: '获取验证码'
-	String get get => '获取验证码';
-
-	/// zh: '发送中...'
-	String get sending => '发送中...';
-
-	/// zh: '验证码已发送'
-	String get sent => '验证码已发送';
-
-	/// zh: '发送失败'
-	String get sendFailed => '发送失败';
-
-	/// zh: '暂不校验，随意输入'
-	String get placeholder => '暂不校验，随意输入';
-
-	/// zh: '验证码不能为空'
-	String get required => '验证码不能为空';
+	@override String get label => '验证码';
+	@override String get get => '获取验证码';
+	@override String get sending => '发送中...';
+	@override String get sent => '验证码已发送';
+	@override String get sendFailed => '发送失败';
+	@override String get placeholder => '暂不校验，随意输入';
+	@override String get required => '验证码不能为空';
 }
 
 // Path: calendar.weekdays
-class TranslationsCalendarWeekdaysZh {
-	TranslationsCalendarWeekdaysZh.internal(this._root);
+class _TranslationsCalendarWeekdaysZh implements TranslationsCalendarWeekdaysEn {
+	_TranslationsCalendarWeekdaysZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '一'
-	String get mon => '一';
-
-	/// zh: '二'
-	String get tue => '二';
-
-	/// zh: '三'
-	String get wed => '三';
-
-	/// zh: '四'
-	String get thu => '四';
-
-	/// zh: '五'
-	String get fri => '五';
-
-	/// zh: '六'
-	String get sat => '六';
-
-	/// zh: '日'
-	String get sun => '日';
+	@override String get mon => '一';
+	@override String get tue => '二';
+	@override String get wed => '三';
+	@override String get thu => '四';
+	@override String get fri => '五';
+	@override String get sat => '六';
+	@override String get sun => '日';
 }
 
 // Path: appearance.palettes
-class TranslationsAppearancePalettesZh {
-	TranslationsAppearancePalettesZh.internal(this._root);
+class _TranslationsAppearancePalettesZh implements TranslationsAppearancePalettesEn {
+	_TranslationsAppearancePalettesZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '锌灰'
-	String get zinc => '锌灰';
-
-	/// zh: '板岩'
-	String get slate => '板岩';
-
-	/// zh: '绯红'
-	String get red => '绯红';
-
-	/// zh: '玫瑰'
-	String get rose => '玫瑰';
-
-	/// zh: '橙色'
-	String get orange => '橙色';
-
-	/// zh: '绿色'
-	String get green => '绿色';
-
-	/// zh: '蓝色'
-	String get blue => '蓝色';
-
-	/// zh: '黄色'
-	String get yellow => '黄色';
-
-	/// zh: '紫罗兰'
-	String get violet => '紫罗兰';
+	@override String get zinc => '锌灰';
+	@override String get slate => '板岩';
+	@override String get red => '绯红';
+	@override String get rose => '玫瑰';
+	@override String get orange => '橙色';
+	@override String get green => '绿色';
+	@override String get blue => '蓝色';
+	@override String get yellow => '黄色';
+	@override String get violet => '紫罗兰';
 }
 
 // Path: forecast.recurringTransaction
-class TranslationsForecastRecurringTransactionZh {
-	TranslationsForecastRecurringTransactionZh.internal(this._root);
+class _TranslationsForecastRecurringTransactionZh implements TranslationsForecastRecurringTransactionEn {
+	_TranslationsForecastRecurringTransactionZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '周期交易'
-	String get title => '周期交易';
-
-	/// zh: '全部'
-	String get all => '全部';
-
-	/// zh: '支出'
-	String get expense => '支出';
-
-	/// zh: '收入'
-	String get income => '收入';
-
-	/// zh: '转账'
-	String get transfer => '转账';
-
-	/// zh: '暂无周期交易'
-	String get noRecurring => '暂无周期交易';
-
-	/// zh: '创建周期交易后，系统将自动为您生成交易记录'
-	String get createHint => '创建周期交易后，系统将自动为您生成交易记录';
-
-	/// zh: '创建周期交易'
-	String get create => '创建周期交易';
-
-	/// zh: '编辑周期交易'
-	String get edit => '编辑周期交易';
-
-	/// zh: '新建周期交易'
-	String get newTransaction => '新建周期交易';
-
-	/// zh: '确定要删除周期交易「$name」吗？此操作不可撤销。'
-	String deleteConfirm({required Object name}) => '确定要删除周期交易「${name}」吗？此操作不可撤销。';
-
-	/// zh: '确定要启用周期交易「$name」吗？启用后将按照设定的规则自动生成交易记录。'
-	String activateConfirm({required Object name}) => '确定要启用周期交易「${name}」吗？启用后将按照设定的规则自动生成交易记录。';
-
-	/// zh: '确定要暂停周期交易「$name」吗？暂停后将不再自动生成交易记录。'
-	String pauseConfirm({required Object name}) => '确定要暂停周期交易「${name}」吗？暂停后将不再自动生成交易记录。';
-
-	/// zh: '周期交易已创建'
-	String get created => '周期交易已创建';
-
-	/// zh: '周期交易已更新'
-	String get updated => '周期交易已更新';
-
-	/// zh: '已启用'
-	String get activated => '已启用';
-
-	/// zh: '已暂停'
-	String get paused => '已暂停';
-
-	/// zh: '下次'
-	String get nextTime => '下次';
-
-	/// zh: '按时间排序'
-	String get sortByTime => '按时间排序';
-
-	/// zh: '全部周期'
-	String get allPeriod => '全部周期';
-
-	/// zh: '$type周期 ($count)'
-	String periodCount({required Object type, required Object count}) => '${type}周期 (${count})';
-
-	/// zh: '确认删除'
-	String get confirmDelete => '确认删除';
-
-	/// zh: '确认启用'
-	String get confirmActivate => '确认启用';
-
-	/// zh: '确认暂停'
-	String get confirmPause => '确认暂停';
-
-	/// zh: '动态均值'
-	String get dynamicAmount => '动态均值';
-
-	/// zh: '金额需手动确认'
-	String get dynamicAmountTitle => '金额需手动确认';
-
-	/// zh: '系统将在账单日发送提醒，需要您手动确认具体金额后才会记账。'
-	String get dynamicAmountDescription => '系统将在账单日发送提醒，需要您手动确认具体金额后才会记账。';
+	@override String get title => '周期交易';
+	@override String get all => '全部';
+	@override String get expense => '支出';
+	@override String get income => '收入';
+	@override String get transfer => '转账';
+	@override String get noRecurring => '暂无周期交易';
+	@override String get createHint => '创建周期交易后，系统将自动为您生成交易记录';
+	@override String get create => '创建周期交易';
+	@override String get edit => '编辑周期交易';
+	@override String get newTransaction => '新建周期交易';
+	@override String deleteConfirm({required Object name}) => '确定要删除周期交易「${name}」吗？此操作不可撤销。';
+	@override String activateConfirm({required Object name}) => '确定要启用周期交易「${name}」吗？启用后将按照设定的规则自动生成交易记录。';
+	@override String pauseConfirm({required Object name}) => '确定要暂停周期交易「${name}」吗？暂停后将不再自动生成交易记录。';
+	@override String get created => '周期交易已创建';
+	@override String get updated => '周期交易已更新';
+	@override String get activated => '已启用';
+	@override String get paused => '已暂停';
+	@override String get nextTime => '下次';
+	@override String get sortByTime => '按时间排序';
+	@override String get allPeriod => '全部周期';
+	@override String periodCount({required Object type, required Object count}) => '${type}周期 (${count})';
+	@override String get confirmDelete => '确认删除';
+	@override String get confirmActivate => '确认启用';
+	@override String get confirmPause => '确认暂停';
+	@override String get dynamicAmount => '动态均值';
+	@override String get dynamicAmountTitle => '金额需手动确认';
+	@override String get dynamicAmountDescription => '系统将在账单日发送提醒，需要您手动确认具体金额后才会记账。';
 }
 
 // Path: chat.tools
-class TranslationsChatToolsZh {
-	TranslationsChatToolsZh.internal(this._root);
+class _TranslationsChatToolsZh implements TranslationsChatToolsEn {
+	_TranslationsChatToolsZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '正在处理...'
-	String get processing => '正在处理...';
-
-	/// zh: '正在查看文件...'
-	String get readFile => '正在查看文件...';
-
-	/// zh: '正在查询交易...'
-	String get searchTransactions => '正在查询交易...';
-
-	/// zh: '正在检查预算...'
-	String get queryBudgetStatus => '正在检查预算...';
-
-	/// zh: '正在创建预算计划...'
-	String get createBudget => '正在创建预算计划...';
-
-	/// zh: '正在分析现金流...'
-	String get getCashFlowAnalysis => '正在分析现金流...';
-
-	/// zh: '正在计算财务健康分...'
-	String get getFinancialHealthScore => '正在计算财务健康分...';
-
-	/// zh: '正在生成财务报告...'
-	String get getFinancialSummary => '正在生成财务报告...';
-
-	/// zh: '正在评估财务健康...'
-	String get evaluateFinancialHealth => '正在评估财务健康...';
-
-	/// zh: '正在预测未来余额...'
-	String get forecastBalance => '正在预测未来余额...';
-
-	/// zh: '正在模拟购买影响...'
-	String get simulateExpenseImpact => '正在模拟购买影响...';
-
-	/// zh: '正在记账...'
-	String get recordTransactions => '正在记账...';
-
-	/// zh: '正在记账...'
-	String get createTransaction => '正在记账...';
-
-	/// zh: '正在搜索网络...'
-	String get duckduckgoSearch => '正在搜索网络...';
-
-	/// zh: '正在执行转账...'
-	String get executeTransfer => '正在执行转账...';
-
-	/// zh: '正在浏览目录...'
-	String get listDir => '正在浏览目录...';
-
-	/// zh: '正在执行脚本...'
-	String get execute => '正在执行脚本...';
-
-	/// zh: '正在分析财务状况...'
-	String get analyzeFinance => '正在分析财务状况...';
-
-	/// zh: '正在预测财务趋势...'
-	String get forecastFinance => '正在预测财务趋势...';
-
-	/// zh: '正在分析预算...'
-	String get analyzeBudget => '正在分析预算...';
-
-	/// zh: '正在审计分析...'
-	String get auditAnalysis => '正在审计分析...';
-
-	/// zh: '正在处理预算...'
-	String get budgetOps => '正在处理预算...';
-
-	/// zh: '正在创建共享账单...'
-	String get createSharedTransaction => '正在创建共享账单...';
-
-	/// zh: '正在获取共享空间...'
-	String get listSpaces => '正在获取共享空间...';
-
-	/// zh: '正在查询空间摘要...'
-	String get querySpaceSummary => '正在查询空间摘要...';
-
-	/// zh: '正在准备转账...'
-	String get prepareTransfer => '正在准备转账...';
-
-	/// zh: '正在处理请求...'
-	String get unknown => '正在处理请求...';
-
-	late final TranslationsChatToolsDoneZh done = TranslationsChatToolsDoneZh.internal(_root);
-	late final TranslationsChatToolsFailedZh failed = TranslationsChatToolsFailedZh.internal(_root);
-
-	/// zh: '已取消'
-	String get cancelled => '已取消';
+	@override String get processing => '正在处理...';
+	@override String get read_file => '正在查看文件...';
+	@override String get search_transactions => '正在查询交易...';
+	@override String get query_budget_status => '正在检查预算...';
+	@override String get create_budget => '正在创建预算计划...';
+	@override String get get_cash_flow_analysis => '正在分析现金流...';
+	@override String get get_financial_health_score => '正在计算财务健康分...';
+	@override String get get_financial_summary => '正在生成财务报告...';
+	@override String get evaluate_financial_health => '正在评估财务健康...';
+	@override String get forecast_balance => '正在预测未来余额...';
+	@override String get simulate_expense_impact => '正在模拟购买影响...';
+	@override String get record_transactions => '正在记账...';
+	@override String get create_transaction => '正在记账...';
+	@override String get duckduckgo_search => '正在搜索网络...';
+	@override String get execute_transfer => '正在执行转账...';
+	@override String get list_dir => '正在浏览目录...';
+	@override String get execute => '正在执行脚本...';
+	@override String get analyze_finance => '正在分析财务状况...';
+	@override String get forecast_finance => '正在预测财务趋势...';
+	@override String get analyze_budget => '正在分析预算...';
+	@override String get audit_analysis => '正在审计分析...';
+	@override String get budget_ops => '正在处理预算...';
+	@override String get create_shared_transaction => '正在创建共享账单...';
+	@override String get list_spaces => '正在获取共享空间...';
+	@override String get query_space_summary => '正在查询空间摘要...';
+	@override String get prepare_transfer => '正在准备转账...';
+	@override String get unknown => '正在处理请求...';
+	@override late final _TranslationsChatToolsDoneZh done = _TranslationsChatToolsDoneZh._(_root);
+	@override late final _TranslationsChatToolsFailedZh failed = _TranslationsChatToolsFailedZh._(_root);
+	@override String get cancelled => '已取消';
 }
 
 // Path: chat.transferWizard
-class TranslationsChatTransferWizardZh {
-	TranslationsChatTransferWizardZh.internal(this._root);
+class _TranslationsChatTransferWizardZh implements TranslationsChatTransferWizardEn {
+	_TranslationsChatTransferWizardZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '转账向导'
-	String get title => '转账向导';
-
-	/// zh: '转账金额'
-	String get amount => '转账金额';
-
-	/// zh: '请输入金额'
-	String get amountHint => '请输入金额';
-
-	/// zh: '转出账户'
-	String get sourceAccount => '转出账户';
-
-	/// zh: '转入账户'
-	String get targetAccount => '转入账户';
-
-	/// zh: '请选择账户'
-	String get selectAccount => '请选择账户';
-
-	/// zh: '选择收款账户'
-	String get selectReceiveAccount => '选择收款账户';
-
-	/// zh: '确认转账'
-	String get confirmTransfer => '确认转账';
-
-	/// zh: '已确认'
-	String get confirmed => '已确认';
-
-	/// zh: '转账成功'
-	String get transferSuccess => '转账成功';
+	@override String get title => '转账向导';
+	@override String get amount => '转账金额';
+	@override String get amountHint => '请输入金额';
+	@override String get sourceAccount => '转出账户';
+	@override String get targetAccount => '转入账户';
+	@override String get selectAccount => '请选择账户';
+	@override String get selectReceiveAccount => '选择收款账户';
+	@override String get confirmTransfer => '确认转账';
+	@override String get confirmed => '已确认';
+	@override String get transferSuccess => '转账成功';
 }
 
 // Path: chat.genui
-class TranslationsChatGenuiZh {
-	TranslationsChatGenuiZh.internal(this._root);
+class _TranslationsChatGenuiZh implements TranslationsChatGenuiEn {
+	_TranslationsChatGenuiZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-	late final TranslationsChatGenuiExpenseSummaryZh expenseSummary = TranslationsChatGenuiExpenseSummaryZh.internal(_root);
-	late final TranslationsChatGenuiTransactionListZh transactionList = TranslationsChatGenuiTransactionListZh.internal(_root);
-	late final TranslationsChatGenuiTransactionGroupReceiptZh transactionGroupReceipt = TranslationsChatGenuiTransactionGroupReceiptZh.internal(_root);
-	late final TranslationsChatGenuiBudgetReceiptZh budgetReceipt = TranslationsChatGenuiBudgetReceiptZh.internal(_root);
-	late final TranslationsChatGenuiBudgetStatusCardZh budgetStatusCard = TranslationsChatGenuiBudgetStatusCardZh.internal(_root);
-	late final TranslationsChatGenuiCashFlowForecastZh cashFlowForecast = TranslationsChatGenuiCashFlowForecastZh.internal(_root);
-	late final TranslationsChatGenuiHealthScoreZh healthScore = TranslationsChatGenuiHealthScoreZh.internal(_root);
-	late final TranslationsChatGenuiSpaceSelectorZh spaceSelector = TranslationsChatGenuiSpaceSelectorZh.internal(_root);
-	late final TranslationsChatGenuiTransferPathZh transferPath = TranslationsChatGenuiTransferPathZh.internal(_root);
-	late final TranslationsChatGenuiTransactionCardZh transactionCard = TranslationsChatGenuiTransactionCardZh.internal(_root);
-	late final TranslationsChatGenuiTransactionConfirmationZh transactionConfirmation = TranslationsChatGenuiTransactionConfirmationZh.internal(_root);
-	late final TranslationsChatGenuiBudgetAnalysisZh budgetAnalysis = TranslationsChatGenuiBudgetAnalysisZh.internal(_root);
-	late final TranslationsChatGenuiCashFlowCardZh cashFlowCard = TranslationsChatGenuiCashFlowCardZh.internal(_root);
+	@override late final _TranslationsChatGenuiExpenseSummaryZh expenseSummary = _TranslationsChatGenuiExpenseSummaryZh._(_root);
+	@override late final _TranslationsChatGenuiTransactionListZh transactionList = _TranslationsChatGenuiTransactionListZh._(_root);
+	@override late final _TranslationsChatGenuiTransactionGroupReceiptZh transactionGroupReceipt = _TranslationsChatGenuiTransactionGroupReceiptZh._(_root);
+	@override late final _TranslationsChatGenuiBudgetReceiptZh budgetReceipt = _TranslationsChatGenuiBudgetReceiptZh._(_root);
+	@override late final _TranslationsChatGenuiBudgetStatusCardZh budgetStatusCard = _TranslationsChatGenuiBudgetStatusCardZh._(_root);
+	@override late final _TranslationsChatGenuiCashFlowForecastZh cashFlowForecast = _TranslationsChatGenuiCashFlowForecastZh._(_root);
+	@override late final _TranslationsChatGenuiHealthScoreZh healthScore = _TranslationsChatGenuiHealthScoreZh._(_root);
+	@override late final _TranslationsChatGenuiSpaceSelectorZh spaceSelector = _TranslationsChatGenuiSpaceSelectorZh._(_root);
+	@override late final _TranslationsChatGenuiTransferPathZh transferPath = _TranslationsChatGenuiTransferPathZh._(_root);
+	@override late final _TranslationsChatGenuiTransactionCardZh transactionCard = _TranslationsChatGenuiTransactionCardZh._(_root);
+	@override late final _TranslationsChatGenuiTransactionConfirmationZh transactionConfirmation = _TranslationsChatGenuiTransactionConfirmationZh._(_root);
+	@override late final _TranslationsChatGenuiBudgetAnalysisZh budgetAnalysis = _TranslationsChatGenuiBudgetAnalysisZh._(_root);
+	@override late final _TranslationsChatGenuiCashFlowCardZh cashFlowCard = _TranslationsChatGenuiCashFlowCardZh._(_root);
 }
 
 // Path: chat.welcome
-class TranslationsChatWelcomeZh {
-	TranslationsChatWelcomeZh.internal(this._root);
+class _TranslationsChatWelcomeZh implements TranslationsChatWelcomeEn {
+	_TranslationsChatWelcomeZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-	late final TranslationsChatWelcomeMorningZh morning = TranslationsChatWelcomeMorningZh.internal(_root);
-	late final TranslationsChatWelcomeMiddayZh midday = TranslationsChatWelcomeMiddayZh.internal(_root);
-	late final TranslationsChatWelcomeAfternoonZh afternoon = TranslationsChatWelcomeAfternoonZh.internal(_root);
-	late final TranslationsChatWelcomeEveningZh evening = TranslationsChatWelcomeEveningZh.internal(_root);
-	late final TranslationsChatWelcomeNightZh night = TranslationsChatWelcomeNightZh.internal(_root);
+	@override late final _TranslationsChatWelcomeMorningZh morning = _TranslationsChatWelcomeMorningZh._(_root);
+	@override late final _TranslationsChatWelcomeMiddayZh midday = _TranslationsChatWelcomeMiddayZh._(_root);
+	@override late final _TranslationsChatWelcomeAfternoonZh afternoon = _TranslationsChatWelcomeAfternoonZh._(_root);
+	@override late final _TranslationsChatWelcomeEveningZh evening = _TranslationsChatWelcomeEveningZh._(_root);
+	@override late final _TranslationsChatWelcomeNightZh night = _TranslationsChatWelcomeNightZh._(_root);
 }
 
 // Path: error.genui
-class TranslationsErrorGenuiZh {
-	TranslationsErrorGenuiZh.internal(this._root);
+class _TranslationsErrorGenuiZh implements TranslationsErrorGenuiEn {
+	_TranslationsErrorGenuiZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '组件加载失败'
-	String get loadingFailed => '组件加载失败';
-
-	/// zh: '架构验证失败'
-	String get schemaFailed => '架构验证失败';
-
-	/// zh: '组件定义不符合 GenUI 规范，降级为纯文本显示'
-	String get schemaDescription => '组件定义不符合 GenUI 规范，降级为纯文本显示';
-
-	/// zh: '网络错误'
-	String get networkError => '网络错误';
-
-	/// zh: '已重试 $retryCount/$maxRetries 次'
-	String retryStatus({required Object retryCount, required Object maxRetries}) => '已重试 ${retryCount}/${maxRetries} 次';
-
-	/// zh: '已达最大重试次数'
-	String get maxRetriesReached => '已达最大重试次数';
+	@override String get loadingFailed => '组件加载失败';
+	@override String get schemaFailed => '架构验证失败';
+	@override String get schemaDescription => '组件定义不符合 GenUI 规范，降级为纯文本显示';
+	@override String get networkError => '网络错误';
+	@override String retryStatus({required Object retryCount, required Object maxRetries}) => '已重试 ${retryCount}/${maxRetries} 次';
+	@override String get maxRetriesReached => '已达最大重试次数';
 }
 
 // Path: account.types
-class TranslationsAccountTypesZh {
-	TranslationsAccountTypesZh.internal(this._root);
+class _TranslationsAccountTypesZh implements TranslationsAccountTypesEn {
+	_TranslationsAccountTypesZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '现金'
-	String get cashTitle => '现金';
-
-	/// zh: '纸币、硬币等实体货币'
-	String get cashSubtitle => '纸币、硬币等实体货币';
-
-	/// zh: '银行存款'
-	String get depositTitle => '银行存款';
-
-	/// zh: '储蓄卡、活期/定期存款'
-	String get depositSubtitle => '储蓄卡、活期/定期存款';
-
-	/// zh: '电子钱包'
-	String get eMoneyTitle => '电子钱包';
-
-	/// zh: '第三方支付平台余额'
-	String get eMoneySubtitle => '第三方支付平台余额';
-
-	/// zh: '投资账户'
-	String get investmentTitle => '投资账户';
-
-	/// zh: '股票、基金、债券等'
-	String get investmentSubtitle => '股票、基金、债券等';
-
-	/// zh: '应收款项'
-	String get receivableTitle => '应收款项';
-
-	/// zh: '借出款项、待收账款'
-	String get receivableSubtitle => '借出款项、待收账款';
-
-	/// zh: '他人欠我'
-	String get receivableHelper => '他人欠我';
-
-	/// zh: '信用卡'
-	String get creditCardTitle => '信用卡';
-
-	/// zh: '信用卡账户欠款'
-	String get creditCardSubtitle => '信用卡账户欠款';
-
-	/// zh: '贷款'
-	String get loanTitle => '贷款';
-
-	/// zh: '房贷、车贷、消费贷等'
-	String get loanSubtitle => '房贷、车贷、消费贷等';
-
-	/// zh: '应付款项'
-	String get payableTitle => '应付款项';
-
-	/// zh: '借入款项、待付账款'
-	String get payableSubtitle => '借入款项、待付账款';
-
-	/// zh: '我欠他人'
-	String get payableHelper => '我欠他人';
+	@override String get cashTitle => '现金';
+	@override String get cashSubtitle => '纸币、硬币等实体货币';
+	@override String get depositTitle => '银行存款';
+	@override String get depositSubtitle => '储蓄卡、活期/定期存款';
+	@override String get eMoneyTitle => '电子钱包';
+	@override String get eMoneySubtitle => '第三方支付平台余额';
+	@override String get investmentTitle => '投资账户';
+	@override String get investmentSubtitle => '股票、基金、债券等';
+	@override String get receivableTitle => '应收款项';
+	@override String get receivableSubtitle => '借出款项、待收账款';
+	@override String get receivableHelper => '他人欠我';
+	@override String get creditCardTitle => '信用卡';
+	@override String get creditCardSubtitle => '信用卡账户欠款';
+	@override String get loanTitle => '贷款';
+	@override String get loanSubtitle => '房贷、车贷、消费贷等';
+	@override String get payableTitle => '应付款项';
+	@override String get payableSubtitle => '借入款项、待付账款';
+	@override String get payableHelper => '我欠他人';
 }
 
 // Path: statistics.overview
-class TranslationsStatisticsOverviewZh {
-	TranslationsStatisticsOverviewZh.internal(this._root);
+class _TranslationsStatisticsOverviewZh implements TranslationsStatisticsOverviewEn {
+	_TranslationsStatisticsOverviewZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '总结余'
-	String get balance => '总结余';
-
-	/// zh: '总收入'
-	String get income => '总收入';
-
-	/// zh: '总支出'
-	String get expense => '总支出';
+	@override String get balance => '总结余';
+	@override String get income => '总收入';
+	@override String get expense => '总支出';
 }
 
 // Path: statistics.trend
-class TranslationsStatisticsTrendZh {
-	TranslationsStatisticsTrendZh.internal(this._root);
+class _TranslationsStatisticsTrendZh implements TranslationsStatisticsTrendEn {
+	_TranslationsStatisticsTrendZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '收支趋势'
-	String get title => '收支趋势';
-
-	/// zh: '支出'
-	String get expense => '支出';
-
-	/// zh: '收入'
-	String get income => '收入';
+	@override String get title => '收支趋势';
+	@override String get expense => '支出';
+	@override String get income => '收入';
 }
 
 // Path: statistics.analysis
-class TranslationsStatisticsAnalysisZh {
-	TranslationsStatisticsAnalysisZh.internal(this._root);
+class _TranslationsStatisticsAnalysisZh implements TranslationsStatisticsAnalysisEn {
+	_TranslationsStatisticsAnalysisZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '支出分析'
-	String get title => '支出分析';
-
-	/// zh: '总计'
-	String get total => '总计';
-
-	/// zh: '支出分类明细'
-	String get breakdown => '支出分类明细';
+	@override String get title => '支出分析';
+	@override String get total => '总计';
+	@override String get breakdown => '支出分类明细';
 }
 
 // Path: statistics.filter
-class TranslationsStatisticsFilterZh {
-	TranslationsStatisticsFilterZh.internal(this._root);
+class _TranslationsStatisticsFilterZh implements TranslationsStatisticsFilterEn {
+	_TranslationsStatisticsFilterZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '账户类型'
-	String get accountType => '账户类型';
-
-	/// zh: '全部账户'
-	String get allAccounts => '全部账户';
-
-	/// zh: '确认应用'
-	String get apply => '确认应用';
+	@override String get accountType => '账户类型';
+	@override String get allAccounts => '全部账户';
+	@override String get apply => '确认应用';
 }
 
 // Path: statistics.sort
-class TranslationsStatisticsSortZh {
-	TranslationsStatisticsSortZh.internal(this._root);
+class _TranslationsStatisticsSortZh implements TranslationsStatisticsSortEn {
+	_TranslationsStatisticsSortZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '按金额排序'
-	String get amount => '按金额排序';
-
-	/// zh: '按时间排序'
-	String get date => '按时间排序';
+	@override String get amount => '按金额排序';
+	@override String get date => '按时间排序';
 }
 
 // Path: statistics.emptyState
-class TranslationsStatisticsEmptyStateZh {
-	TranslationsStatisticsEmptyStateZh.internal(this._root);
+class _TranslationsStatisticsEmptyStateZh implements TranslationsStatisticsEmptyStateEn {
+	_TranslationsStatisticsEmptyStateZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '开启财务洞察'
-	String get title => '开启财务洞察';
-
-	/// zh: '您的财务报表目前是一张白纸。 记录第一笔消费，让数据为您讲述财富故事。'
-	String get description => '您的财务报表目前是一张白纸。\n记录第一笔消费，让数据为您讲述财富故事。';
-
-	/// zh: '记录首笔交易'
-	String get action => '记录首笔交易';
+	@override String get title => '开启财务洞察';
+	@override String get description => '您的财务报表目前是一张白纸。\n记录第一笔消费，让数据为您讲述财富故事。';
+	@override String get action => '记录首笔交易';
 }
 
 // Path: server.error
-class TranslationsServerErrorZh {
-	TranslationsServerErrorZh.internal(this._root);
+class _TranslationsServerErrorZh implements TranslationsServerErrorEn {
+	_TranslationsServerErrorZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '请输入服务器地址'
-	String get urlRequired => '请输入服务器地址';
-
-	/// zh: 'URL 格式无效'
-	String get invalidUrl => 'URL 格式无效';
-
-	/// zh: '连接超时'
-	String get connectionTimeout => '连接超时';
-
-	/// zh: '无法连接到服务器'
-	String get connectionRefused => '无法连接到服务器';
-
-	/// zh: 'SSL 证书错误'
-	String get sslError => 'SSL 证书错误';
-
-	/// zh: '服务器错误'
-	String get serverError => '服务器错误';
+	@override String get urlRequired => '请输入服务器地址';
+	@override String get invalidUrl => 'URL 格式无效';
+	@override String get connectionTimeout => '连接超时';
+	@override String get connectionRefused => '无法连接到服务器';
+	@override String get sslError => 'SSL 证书错误';
+	@override String get serverError => '服务器错误';
 }
 
 // Path: sharedSpace.dashboard
-class TranslationsSharedSpaceDashboardZh {
-	TranslationsSharedSpaceDashboardZh.internal(this._root);
+class _TranslationsSharedSpaceDashboardZh implements TranslationsSharedSpaceDashboardEn {
+	_TranslationsSharedSpaceDashboardZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '累计总支出'
-	String get cumulativeTotalExpense => '累计总支出';
-
-	/// zh: '参与成员'
-	String get participatingMembers => '参与成员';
-
-	/// zh: '$count 人'
-	String membersCount({required Object count}) => '${count} 人';
-
-	/// zh: '成员人均'
-	String get averagePerMember => '成员人均';
-
-	/// zh: '成员消费分布'
-	String get spendingDistribution => '成员消费分布';
-
-	/// zh: '实时更新'
-	String get realtimeUpdates => '实时更新';
-
-	/// zh: '已支付'
-	String get paid => '已支付';
+	@override String get cumulativeTotalExpense => '累计总支出';
+	@override String get participatingMembers => '参与成员';
+	@override String membersCount({required Object count}) => '${count} 人';
+	@override String get averagePerMember => '成员人均';
+	@override String get spendingDistribution => '成员消费分布';
+	@override String get realtimeUpdates => '实时更新';
+	@override String get paid => '已支付';
 }
 
 // Path: sharedSpace.roles
-class TranslationsSharedSpaceRolesZh {
-	TranslationsSharedSpaceRolesZh.internal(this._root);
+class _TranslationsSharedSpaceRolesZh implements TranslationsSharedSpaceRolesEn {
+	_TranslationsSharedSpaceRolesZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '主理人'
-	String get owner => '主理人';
-
-	/// zh: '管理员'
-	String get admin => '管理员';
-
-	/// zh: '成员'
-	String get member => '成员';
+	@override String get owner => '主理人';
+	@override String get admin => '管理员';
+	@override String get member => '成员';
 }
 
 // Path: errorMapping.generic
-class TranslationsErrorMappingGenericZh {
-	TranslationsErrorMappingGenericZh.internal(this._root);
+class _TranslationsErrorMappingGenericZh implements TranslationsErrorMappingGenericEn {
+	_TranslationsErrorMappingGenericZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '请求无效'
-	String get badRequest => '请求无效';
-
-	/// zh: '认证失败，请重新登录'
-	String get authFailed => '认证失败，请重新登录';
-
-	/// zh: '权限不足'
-	String get permissionDenied => '权限不足';
-
-	/// zh: '资源未找到'
-	String get notFound => '资源未找到';
-
-	/// zh: '服务器内部错误'
-	String get serverError => '服务器内部错误';
-
-	/// zh: '系统错误'
-	String get systemError => '系统错误';
-
-	/// zh: '数据验证失败'
-	String get validationFailed => '数据验证失败';
+	@override String get badRequest => '请求无效';
+	@override String get authFailed => '认证失败，请重新登录';
+	@override String get permissionDenied => '权限不足';
+	@override String get notFound => '资源未找到';
+	@override String get serverError => '服务器内部错误';
+	@override String get systemError => '系统错误';
+	@override String get validationFailed => '数据验证失败';
 }
 
 // Path: errorMapping.auth
-class TranslationsErrorMappingAuthZh {
-	TranslationsErrorMappingAuthZh.internal(this._root);
+class _TranslationsErrorMappingAuthZh implements TranslationsErrorMappingAuthEn {
+	_TranslationsErrorMappingAuthZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '认证失败'
-	String get failed => '认证失败';
-
-	/// zh: '邮箱错误'
-	String get emailWrong => '邮箱错误';
-
-	/// zh: '手机号错误'
-	String get phoneWrong => '手机号错误';
-
-	/// zh: '该手机号已被注册'
-	String get phoneRegistered => '该手机号已被注册';
-
-	/// zh: '该邮箱已被注册'
-	String get emailRegistered => '该邮箱已被注册';
-
-	/// zh: '验证码发送失败'
-	String get sendFailed => '验证码发送失败';
-
-	/// zh: '验证码已过期'
-	String get expired => '验证码已过期';
-
-	/// zh: '验证码发送太频繁'
-	String get tooFrequent => '验证码发送太频繁';
-
-	/// zh: '不支持的验证码类型'
-	String get unsupportedType => '不支持的验证码类型';
-
-	/// zh: '密码错误'
-	String get wrongPassword => '密码错误';
-
-	/// zh: '用户不存在'
-	String get userNotFound => '用户不存在';
-
-	/// zh: '偏好设置参数缺失'
-	String get prefsMissing => '偏好设置参数缺失';
-
-	/// zh: '无效的客户端时区'
-	String get invalidTimezone => '无效的客户端时区';
+	@override String get failed => '认证失败';
+	@override String get emailWrong => '邮箱错误';
+	@override String get phoneWrong => '手机号错误';
+	@override String get phoneRegistered => '该手机号已被注册';
+	@override String get emailRegistered => '该邮箱已被注册';
+	@override String get sendFailed => '验证码发送失败';
+	@override String get expired => '验证码已过期';
+	@override String get tooFrequent => '验证码发送太频繁';
+	@override String get unsupportedType => '不支持的验证码类型';
+	@override String get wrongPassword => '密码错误';
+	@override String get userNotFound => '用户不存在';
+	@override String get prefsMissing => '偏好设置参数缺失';
+	@override String get invalidTimezone => '无效的客户端时区';
 }
 
 // Path: errorMapping.transaction
-class TranslationsErrorMappingTransactionZh {
-	TranslationsErrorMappingTransactionZh.internal(this._root);
+class _TranslationsErrorMappingTransactionZh implements TranslationsErrorMappingTransactionEn {
+	_TranslationsErrorMappingTransactionZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '评论内容不能为空'
-	String get commentEmpty => '评论内容不能为空';
-
-	/// zh: '无效的父评论ID'
-	String get invalidParent => '无效的父评论ID';
-
-	/// zh: '评论保存失败'
-	String get saveFailed => '评论保存失败';
-
-	/// zh: '评论删除失败'
-	String get deleteFailed => '评论删除失败';
-
-	/// zh: '交易记录不存在'
-	String get notExists => '交易记录不存在';
+	@override String get commentEmpty => '评论内容不能为空';
+	@override String get invalidParent => '无效的父评论ID';
+	@override String get saveFailed => '评论保存失败';
+	@override String get deleteFailed => '评论删除失败';
+	@override String get notExists => '交易记录不存在';
 }
 
 // Path: errorMapping.space
-class TranslationsErrorMappingSpaceZh {
-	TranslationsErrorMappingSpaceZh.internal(this._root);
+class _TranslationsErrorMappingSpaceZh implements TranslationsErrorMappingSpaceEn {
+	_TranslationsErrorMappingSpaceZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '共享空间不存在或无权访问'
-	String get notFound => '共享空间不存在或无权访问';
-
-	/// zh: '无权邀请成员'
-	String get inviteDenied => '无权邀请成员';
-
-	/// zh: '不能邀请你自己'
-	String get inviteSelf => '不能邀请你自己';
-
-	/// zh: '邀请已发送'
-	String get inviteSent => '邀请已发送';
-
-	/// zh: '该用户已是成员或已被邀请'
-	String get alreadyMember => '该用户已是成员或已被邀请';
-
-	/// zh: '无效操作'
-	String get invalidAction => '无效操作';
-
-	/// zh: '邀请不存在'
-	String get invitationNotFound => '邀请不存在';
-
-	/// zh: '仅拥有者可执行此操作'
-	String get onlyOwner => '仅拥有者可执行此操作';
-
-	/// zh: '不能移除空间拥有者'
-	String get ownerNotRemovable => '不能移除空间拥有者';
-
-	/// zh: '成员不存在'
-	String get memberNotFound => '成员不存在';
-
-	/// zh: '该用户不是此空间的成员'
-	String get notMember => '该用户不是此空间的成员';
-
-	/// zh: '拥有者不能直接退出，请先转让所有权'
-	String get ownerCantLeave => '拥有者不能直接退出，请先转让所有权';
-
-	/// zh: '无效的邀请码'
-	String get invalidCode => '无效的邀请码';
-
-	/// zh: '邀请码已过期或达到上限'
-	String get codeExpired => '邀请码已过期或达到上限';
+	@override String get notFound => '共享空间不存在或无权访问';
+	@override String get inviteDenied => '无权邀请成员';
+	@override String get inviteSelf => '不能邀请你自己';
+	@override String get inviteSent => '邀请已发送';
+	@override String get alreadyMember => '该用户已是成员或已被邀请';
+	@override String get invalidAction => '无效操作';
+	@override String get invitationNotFound => '邀请不存在';
+	@override String get onlyOwner => '仅拥有者可执行此操作';
+	@override String get ownerNotRemovable => '不能移除空间拥有者';
+	@override String get memberNotFound => '成员不存在';
+	@override String get notMember => '该用户不是此空间的成员';
+	@override String get ownerCantLeave => '拥有者不能直接退出，请先转让所有权';
+	@override String get invalidCode => '无效的邀请码';
+	@override String get codeExpired => '邀请码已过期或达到上限';
 }
 
 // Path: errorMapping.recurring
-class TranslationsErrorMappingRecurringZh {
-	TranslationsErrorMappingRecurringZh.internal(this._root);
+class _TranslationsErrorMappingRecurringZh implements TranslationsErrorMappingRecurringEn {
+	_TranslationsErrorMappingRecurringZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '无效的重复规则'
-	String get invalidRule => '无效的重复规则';
-
-	/// zh: '未找到重复规则'
-	String get ruleNotFound => '未找到重复规则';
+	@override String get invalidRule => '无效的重复规则';
+	@override String get ruleNotFound => '未找到重复规则';
 }
 
 // Path: errorMapping.upload
-class TranslationsErrorMappingUploadZh {
-	TranslationsErrorMappingUploadZh.internal(this._root);
+class _TranslationsErrorMappingUploadZh implements TranslationsErrorMappingUploadEn {
+	_TranslationsErrorMappingUploadZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '未上传文件'
-	String get noFile => '未上传文件';
-
-	/// zh: '文件过大'
-	String get tooLarge => '文件过大';
-
-	/// zh: '不支持的文件类型'
-	String get unsupportedType => '不支持的文件类型';
-
-	/// zh: '文件数量过多'
-	String get tooManyFiles => '文件数量过多';
+	@override String get noFile => '未上传文件';
+	@override String get tooLarge => '文件过大';
+	@override String get unsupportedType => '不支持的文件类型';
+	@override String get tooManyFiles => '文件数量过多';
 }
 
 // Path: errorMapping.ai
-class TranslationsErrorMappingAiZh {
-	TranslationsErrorMappingAiZh.internal(this._root);
+class _TranslationsErrorMappingAiZh implements TranslationsErrorMappingAiEn {
+	_TranslationsErrorMappingAiZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '上下文长度超出限制'
-	String get contextLimit => '上下文长度超出限制';
-
-	/// zh: 'Token配额不足'
-	String get tokenLimit => 'Token配额不足';
-
-	/// zh: '用户消息为空'
-	String get emptyMessage => '用户消息为空';
+	@override String get contextLimit => '上下文长度超出限制';
+	@override String get tokenLimit => 'Token配额不足';
+	@override String get emptyMessage => '用户消息为空';
 }
 
 // Path: chat.tools.done
-class TranslationsChatToolsDoneZh {
-	TranslationsChatToolsDoneZh.internal(this._root);
+class _TranslationsChatToolsDoneZh implements TranslationsChatToolsDoneEn {
+	_TranslationsChatToolsDoneZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '已查看文件'
-	String get readFile => '已查看文件';
-
-	/// zh: '已查询交易'
-	String get searchTransactions => '已查询交易';
-
-	/// zh: '已检查预算'
-	String get queryBudgetStatus => '已检查预算';
-
-	/// zh: '已创建预算'
-	String get createBudget => '已创建预算';
-
-	/// zh: '已分析现金流'
-	String get getCashFlowAnalysis => '已分析现金流';
-
-	/// zh: '已计算健康分'
-	String get getFinancialHealthScore => '已计算健康分';
-
-	/// zh: '财务报告生成完成'
-	String get getFinancialSummary => '财务报告生成完成';
-
-	/// zh: '财务健康评估完成'
-	String get evaluateFinancialHealth => '财务健康评估完成';
-
-	/// zh: '余额预测完成'
-	String get forecastBalance => '余额预测完成';
-
-	/// zh: '购买影响模拟完成'
-	String get simulateExpenseImpact => '购买影响模拟完成';
-
-	/// zh: '记账完成'
-	String get recordTransactions => '记账完成';
-
-	/// zh: '已完成记账'
-	String get createTransaction => '已完成记账';
-
-	/// zh: '已搜索网络'
-	String get duckduckgoSearch => '已搜索网络';
-
-	/// zh: '转账完成'
-	String get executeTransfer => '转账完成';
-
-	/// zh: '已浏览目录'
-	String get listDir => '已浏览目录';
-
-	/// zh: '脚本执行完成'
-	String get execute => '脚本执行完成';
-
-	/// zh: '财务分析完成'
-	String get analyzeFinance => '财务分析完成';
-
-	/// zh: '财务预测完成'
-	String get forecastFinance => '财务预测完成';
-
-	/// zh: '预算分析完成'
-	String get analyzeBudget => '预算分析完成';
-
-	/// zh: '审计分析完成'
-	String get auditAnalysis => '审计分析完成';
-
-	/// zh: '预算处理完成'
-	String get budgetOps => '预算处理完成';
-
-	/// zh: '共享账单创建完成'
-	String get createSharedTransaction => '共享账单创建完成';
-
-	/// zh: '共享空间获取完成'
-	String get listSpaces => '共享空间获取完成';
-
-	/// zh: '空间摘要查询完成'
-	String get querySpaceSummary => '空间摘要查询完成';
-
-	/// zh: '转账准备完成'
-	String get prepareTransfer => '转账准备完成';
-
-	/// zh: '处理完成'
-	String get unknown => '处理完成';
+	@override String get read_file => '已查看文件';
+	@override String get search_transactions => '已查询交易';
+	@override String get query_budget_status => '已检查预算';
+	@override String get create_budget => '已创建预算';
+	@override String get get_cash_flow_analysis => '已分析现金流';
+	@override String get get_financial_health_score => '已计算健康分';
+	@override String get get_financial_summary => '财务报告生成完成';
+	@override String get evaluate_financial_health => '财务健康评估完成';
+	@override String get forecast_balance => '余额预测完成';
+	@override String get simulate_expense_impact => '购买影响模拟完成';
+	@override String get record_transactions => '记账完成';
+	@override String get create_transaction => '已完成记账';
+	@override String get duckduckgo_search => '已搜索网络';
+	@override String get execute_transfer => '转账完成';
+	@override String get list_dir => '已浏览目录';
+	@override String get execute => '脚本执行完成';
+	@override String get analyze_finance => '财务分析完成';
+	@override String get forecast_finance => '财务预测完成';
+	@override String get analyze_budget => '预算分析完成';
+	@override String get audit_analysis => '审计分析完成';
+	@override String get budget_ops => '预算处理完成';
+	@override String get create_shared_transaction => '共享账单创建完成';
+	@override String get list_spaces => '共享空间获取完成';
+	@override String get query_space_summary => '空间摘要查询完成';
+	@override String get prepare_transfer => '转账准备完成';
+	@override String get unknown => '处理完成';
 }
 
 // Path: chat.tools.failed
-class TranslationsChatToolsFailedZh {
-	TranslationsChatToolsFailedZh.internal(this._root);
+class _TranslationsChatToolsFailedZh implements TranslationsChatToolsFailedEn {
+	_TranslationsChatToolsFailedZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '操作失败'
-	String get unknown => '操作失败';
+	@override String get unknown => '操作失败';
 }
 
 // Path: chat.genui.expenseSummary
-class TranslationsChatGenuiExpenseSummaryZh {
-	TranslationsChatGenuiExpenseSummaryZh.internal(this._root);
+class _TranslationsChatGenuiExpenseSummaryZh implements TranslationsChatGenuiExpenseSummaryEn {
+	_TranslationsChatGenuiExpenseSummaryZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '总支出'
-	String get totalExpense => '总支出';
-
-	/// zh: '主要支出'
-	String get mainExpenses => '主要支出';
-
-	/// zh: '查看全部 $count 笔消费'
-	String viewAll({required Object count}) => '查看全部 ${count} 笔消费';
-
-	/// zh: '消费明细'
-	String get details => '消费明细';
+	@override String get totalExpense => '总支出';
+	@override String get mainExpenses => '主要支出';
+	@override String viewAll({required Object count}) => '查看全部 ${count} 笔消费';
+	@override String get details => '消费明细';
 }
 
 // Path: chat.genui.transactionList
-class TranslationsChatGenuiTransactionListZh {
-	TranslationsChatGenuiTransactionListZh.internal(this._root);
+class _TranslationsChatGenuiTransactionListZh implements TranslationsChatGenuiTransactionListEn {
+	_TranslationsChatGenuiTransactionListZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '搜索结果 ($count)'
-	String searchResults({required Object count}) => '搜索结果 (${count})';
-
-	/// zh: '已加载 $count'
-	String loaded({required Object count}) => '已加载 ${count}';
-
-	/// zh: '未找到相关交易'
-	String get noResults => '未找到相关交易';
-
-	/// zh: '滚动加载更多'
-	String get loadMore => '滚动加载更多';
-
-	/// zh: '全部加载完成'
-	String get allLoaded => '全部加载完成';
+	@override String searchResults({required Object count}) => '搜索结果 (${count})';
+	@override String loaded({required Object count}) => '已加载 ${count}';
+	@override String get noResults => '未找到相关交易';
+	@override String get loadMore => '滚动加载更多';
+	@override String get allLoaded => '全部加载完成';
 }
 
 // Path: chat.genui.transactionGroupReceipt
-class TranslationsChatGenuiTransactionGroupReceiptZh {
-	TranslationsChatGenuiTransactionGroupReceiptZh.internal(this._root);
+class _TranslationsChatGenuiTransactionGroupReceiptZh implements TranslationsChatGenuiTransactionGroupReceiptEn {
+	_TranslationsChatGenuiTransactionGroupReceiptZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '交易成功'
-	String get title => '交易成功';
-
-	/// zh: '$count笔'
-	String count({required Object count}) => '${count}笔';
-
-	/// zh: '共计'
-	String get total => '共计';
-
-	/// zh: '选择关联账户'
-	String get selectAccount => '选择关联账户';
-
-	/// zh: '此账户将应用到以上所有笔交易'
-	String get selectAccountSubtitle => '此账户将应用到以上所有笔交易';
-
-	/// zh: '已关联账户：$name'
-	String associatedAccount({required Object name}) => '已关联账户：${name}';
-
-	/// zh: '点击关联账户（支持批量操作）'
-	String get clickToAssociate => '点击关联账户（支持批量操作）';
-
-	/// zh: '已成功为所有交易关联账户'
-	String get associateSuccess => '已成功为所有交易关联账户';
-
-	/// zh: '操作失败: $error'
-	String associateFailed({required Object error}) => '操作失败: ${error}';
-
-	/// zh: '账户关联'
-	String get accountAssociation => '账户关联';
-
-	/// zh: '共享空间'
-	String get sharedSpace => '共享空间';
-
-	/// zh: '未关联'
-	String get notAssociated => '未关联';
-
-	/// zh: '添加'
-	String get addSpace => '添加';
-
-	/// zh: '选择共享空间'
-	String get selectSpace => '选择共享空间';
-
-	/// zh: '已关联到共享空间'
-	String get spaceAssociateSuccess => '已关联到共享空间';
-
-	/// zh: '关联共享空间失败: $error'
-	String spaceAssociateFailed({required Object error}) => '关联共享空间失败: ${error}';
-
-	/// zh: '币种不一致'
-	String get currencyMismatchTitle => '币种不一致';
-
-	/// zh: '交易币种与账户币种不同，系统将按当时汇率换算后扣减账户余额。'
-	String get currencyMismatchDesc => '交易币种与账户币种不同，系统将按当时汇率换算后扣减账户余额。';
-
-	/// zh: '交易金额'
-	String get transactionAmount => '交易金额';
-
-	/// zh: '账户币种'
-	String get accountCurrency => '账户币种';
-
-	/// zh: '目标账户'
-	String get targetAccount => '目标账户';
-
-	/// zh: '提示：账户余额将按当时汇率进行换算扣减'
-	String get currencyMismatchNote => '提示：账户余额将按当时汇率进行换算扣减';
-
-	/// zh: '确认关联'
-	String get confirmAssociate => '确认关联';
-
-	/// zh: '$count 空间'
-	String spaceCount({required Object count}) => '${count} 空间';
+	@override String get title => '交易成功';
+	@override String count({required Object count}) => '${count}笔';
+	@override String get total => '共计';
+	@override String get selectAccount => '选择关联账户';
+	@override String get selectAccountSubtitle => '此账户将应用到以上所有笔交易';
+	@override String associatedAccount({required Object name}) => '已关联账户：${name}';
+	@override String get clickToAssociate => '点击关联账户（支持批量操作）';
+	@override String get associateSuccess => '已成功为所有交易关联账户';
+	@override String associateFailed({required Object error}) => '操作失败: ${error}';
+	@override String get accountAssociation => '账户关联';
+	@override String get sharedSpace => '共享空间';
+	@override String get notAssociated => '未关联';
+	@override String get addSpace => '添加';
+	@override String get selectSpace => '选择共享空间';
+	@override String get spaceAssociateSuccess => '已关联到共享空间';
+	@override String spaceAssociateFailed({required Object error}) => '关联共享空间失败: ${error}';
+	@override String get currencyMismatchTitle => '币种不一致';
+	@override String get currencyMismatchDesc => '交易币种与账户币种不同，系统将按当时汇率换算后扣减账户余额。';
+	@override String get transactionAmount => '交易金额';
+	@override String get accountCurrency => '账户币种';
+	@override String get targetAccount => '目标账户';
+	@override String get currencyMismatchNote => '提示：账户余额将按当时汇率进行换算扣减';
+	@override String get confirmAssociate => '确认关联';
+	@override String spaceCount({required Object count}) => '${count} 空间';
 }
 
 // Path: chat.genui.budgetReceipt
-class TranslationsChatGenuiBudgetReceiptZh {
-	TranslationsChatGenuiBudgetReceiptZh.internal(this._root);
+class _TranslationsChatGenuiBudgetReceiptZh implements TranslationsChatGenuiBudgetReceiptEn {
+	_TranslationsChatGenuiBudgetReceiptZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '新预算'
-	String get newBudget => '新预算';
-
-	/// zh: '预算已创建'
-	String get budgetCreated => '预算已创建';
-
-	/// zh: '滚动预算'
-	String get rolloverBudget => '滚动预算';
-
-	/// zh: '创建预算失败'
-	String get createFailed => '创建预算失败';
-
-	/// zh: '本月'
-	String get thisMonth => '本月';
-
-	/// zh: '$start月$startDay日 - $end月$endDay日'
-	String dateRange({required Object start, required Object startDay, required Object end, required Object endDay}) => '${start}月${startDay}日 - ${end}月${endDay}日';
+	@override String get newBudget => '新预算';
+	@override String get budgetCreated => '预算已创建';
+	@override String get rolloverBudget => '滚动预算';
+	@override String get createFailed => '创建预算失败';
+	@override String get thisMonth => '本月';
+	@override String dateRange({required Object start, required Object startDay, required Object end, required Object endDay}) => '${start}月${startDay}日 - ${end}月${endDay}日';
 }
 
 // Path: chat.genui.budgetStatusCard
-class TranslationsChatGenuiBudgetStatusCardZh {
-	TranslationsChatGenuiBudgetStatusCardZh.internal(this._root);
+class _TranslationsChatGenuiBudgetStatusCardZh implements TranslationsChatGenuiBudgetStatusCardEn {
+	_TranslationsChatGenuiBudgetStatusCardZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '预算'
-	String get budget => '预算';
-
-	/// zh: '预算概览'
-	String get overview => '预算概览';
-
-	/// zh: '总预算'
-	String get totalBudget => '总预算';
-
-	/// zh: '已用 ¥$amount'
-	String spent({required Object amount}) => '已用 ¥${amount}';
-
-	/// zh: '剩余 ¥$amount'
-	String remaining({required Object amount}) => '剩余 ¥${amount}';
-
-	/// zh: '已超支'
-	String get exceeded => '已超支';
-
-	/// zh: '预算紧张'
-	String get warning => '预算紧张';
-
-	/// zh: '预算充裕'
-	String get plentiful => '预算充裕';
-
-	/// zh: '正常'
-	String get normal => '正常';
+	@override String get budget => '预算';
+	@override String get overview => '预算概览';
+	@override String get totalBudget => '总预算';
+	@override String spent({required Object amount}) => '已用 ¥${amount}';
+	@override String remaining({required Object amount}) => '剩余 ¥${amount}';
+	@override String get exceeded => '已超支';
+	@override String get warning => '预算紧张';
+	@override String get plentiful => '预算充裕';
+	@override String get normal => '正常';
 }
 
 // Path: chat.genui.cashFlowForecast
-class TranslationsChatGenuiCashFlowForecastZh {
-	TranslationsChatGenuiCashFlowForecastZh.internal(this._root);
+class _TranslationsChatGenuiCashFlowForecastZh implements TranslationsChatGenuiCashFlowForecastEn {
+	_TranslationsChatGenuiCashFlowForecastZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '现金流预测'
-	String get title => '现金流预测';
-
-	/// zh: '周期性交易'
-	String get recurringTransaction => '周期性交易';
-
-	/// zh: '周期性收入'
-	String get recurringIncome => '周期性收入';
-
-	/// zh: '周期性支出'
-	String get recurringExpense => '周期性支出';
-
-	/// zh: '周期性转账'
-	String get recurringTransfer => '周期性转账';
-
-	/// zh: '未来 $days 天'
-	String nextDays({required Object days}) => '未来 ${days} 天';
-
-	/// zh: '暂无预测数据'
-	String get noData => '暂无预测数据';
-
-	/// zh: '预测摘要'
-	String get summary => '预测摘要';
-
-	/// zh: '预测可变支出'
-	String get variableExpense => '预测可变支出';
-
-	/// zh: '预计净变化'
-	String get netChange => '预计净变化';
-
-	/// zh: '关键事件'
-	String get keyEvents => '关键事件';
-
-	/// zh: '预测期内无重大事件'
-	String get noSignificantEvents => '预测期内无重大事件';
-
-	/// zh: 'M月d日'
-	String get dateFormat => 'M月d日';
+	@override String get title => '现金流预测';
+	@override String get recurringTransaction => '周期性交易';
+	@override String get recurringIncome => '周期性收入';
+	@override String get recurringExpense => '周期性支出';
+	@override String get recurringTransfer => '周期性转账';
+	@override String nextDays({required Object days}) => '未来 ${days} 天';
+	@override String get noData => '暂无预测数据';
+	@override String get summary => '预测摘要';
+	@override String get variableExpense => '预测可变支出';
+	@override String get netChange => '预计净变化';
+	@override String get keyEvents => '关键事件';
+	@override String get noSignificantEvents => '预测期内无重大事件';
+	@override String get dateFormat => 'M月d日';
 }
 
 // Path: chat.genui.healthScore
-class TranslationsChatGenuiHealthScoreZh {
-	TranslationsChatGenuiHealthScoreZh.internal(this._root);
+class _TranslationsChatGenuiHealthScoreZh implements TranslationsChatGenuiHealthScoreEn {
+	_TranslationsChatGenuiHealthScoreZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '财务健康'
-	String get title => '财务健康';
-
-	/// zh: '改进建议'
-	String get suggestions => '改进建议';
-
-	/// zh: '$score分'
-	String scorePoint({required Object score}) => '${score}分';
-
-	late final TranslationsChatGenuiHealthScoreStatusZh status = TranslationsChatGenuiHealthScoreStatusZh.internal(_root);
+	@override String get title => '财务健康';
+	@override String get suggestions => '改进建议';
+	@override String scorePoint({required Object score}) => '${score}分';
+	@override late final _TranslationsChatGenuiHealthScoreStatusZh status = _TranslationsChatGenuiHealthScoreStatusZh._(_root);
 }
 
 // Path: chat.genui.spaceSelector
-class TranslationsChatGenuiSpaceSelectorZh {
-	TranslationsChatGenuiSpaceSelectorZh.internal(this._root);
+class _TranslationsChatGenuiSpaceSelectorZh implements TranslationsChatGenuiSpaceSelectorEn {
+	_TranslationsChatGenuiSpaceSelectorZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '已选择'
-	String get selected => '已选择';
-
-	/// zh: '未命名空间'
-	String get unnamedSpace => '未命名空间';
-
-	/// zh: '已关联'
-	String get linked => '已关联';
-
-	/// zh: '创建者'
-	String get roleOwner => '创建者';
-
-	/// zh: '管理员'
-	String get roleAdmin => '管理员';
-
-	/// zh: '成员'
-	String get roleMember => '成员';
+	@override String get selected => '已选择';
+	@override String get unnamedSpace => '未命名空间';
+	@override String get linked => '已关联';
+	@override String get roleOwner => '创建者';
+	@override String get roleAdmin => '管理员';
+	@override String get roleMember => '成员';
 }
 
 // Path: chat.genui.transferPath
-class TranslationsChatGenuiTransferPathZh {
-	TranslationsChatGenuiTransferPathZh.internal(this._root);
+class _TranslationsChatGenuiTransferPathZh implements TranslationsChatGenuiTransferPathEn {
+	_TranslationsChatGenuiTransferPathZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '选择转出账户'
-	String get selectSource => '选择转出账户';
-
-	/// zh: '选择转入账户'
-	String get selectTarget => '选择转入账户';
-
-	/// zh: '转出 (FROM)'
-	String get from => '转出 (FROM)';
-
-	/// zh: '转入 (TO)'
-	String get to => '转入 (TO)';
-
-	/// zh: '请选择'
-	String get select => '请选择';
-
-	/// zh: '操作已取消'
-	String get cancelled => '操作已取消';
-
-	/// zh: '无法加载账户数据'
-	String get loadError => '无法加载账户数据';
-
-	/// zh: '历史记录中缺少账户信息'
-	String get historyMissing => '历史记录中缺少账户信息';
-
-	/// zh: '金额待确认'
-	String get amountUnconfirmed => '金额待确认';
-
-	/// zh: '已确认：$source → $target'
-	String confirmedWithArrow({required Object source, required Object target}) => '已确认：${source} → ${target}';
-
-	/// zh: '确认：$source → $target'
-	String confirmAction({required Object source, required Object target}) => '确认：${source} → ${target}';
-
-	/// zh: '请先选择转出账户'
-	String get pleaseSelectSource => '请先选择转出账户';
-
-	/// zh: '请选择转入账户'
-	String get pleaseSelectTarget => '请选择转入账户';
-
-	/// zh: '确认转账链路'
-	String get confirmLinks => '确认转账链路';
-
-	/// zh: '链路已锁定'
-	String get linkLocked => '链路已锁定';
-
-	/// zh: '点击下方按钮确认执行'
-	String get clickToConfirm => '点击下方按钮确认执行';
-
-	/// zh: '重选'
-	String get reselect => '重选';
-
-	/// zh: '转账'
-	String get title => '转账';
-
-	/// zh: '历史记录'
-	String get history => '历史记录';
-
-	/// zh: '未知账户'
-	String get unknownAccount => '未知账户';
-
-	/// zh: '已确认'
-	String get confirmed => '已确认';
+	@override String get selectSource => '选择转出账户';
+	@override String get selectTarget => '选择转入账户';
+	@override String get from => '转出 (FROM)';
+	@override String get to => '转入 (TO)';
+	@override String get select => '请选择';
+	@override String get cancelled => '操作已取消';
+	@override String get loadError => '无法加载账户数据';
+	@override String get historyMissing => '历史记录中缺少账户信息';
+	@override String get amountUnconfirmed => '金额待确认';
+	@override String confirmedWithArrow({required Object source, required Object target}) => '已确认：${source} → ${target}';
+	@override String confirmAction({required Object source, required Object target}) => '确认：${source} → ${target}';
+	@override String get pleaseSelectSource => '请先选择转出账户';
+	@override String get pleaseSelectTarget => '请选择转入账户';
+	@override String get confirmLinks => '确认转账链路';
+	@override String get linkLocked => '链路已锁定';
+	@override String get clickToConfirm => '点击下方按钮确认执行';
+	@override String get reselect => '重选';
+	@override String get title => '转账';
+	@override String get history => '历史记录';
+	@override String get unknownAccount => '未知账户';
+	@override String get confirmed => '已确认';
 }
 
 // Path: chat.genui.transactionCard
-class TranslationsChatGenuiTransactionCardZh {
-	TranslationsChatGenuiTransactionCardZh.internal(this._root);
+class _TranslationsChatGenuiTransactionCardZh implements TranslationsChatGenuiTransactionCardEn {
+	_TranslationsChatGenuiTransactionCardZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '交易成功'
-	String get title => '交易成功';
-
-	/// zh: '已关联账户'
-	String get associatedAccount => '已关联账户';
-
-	/// zh: '不计入资产'
-	String get notCounted => '不计入资产';
-
-	/// zh: '修改'
-	String get modify => '修改';
-
-	/// zh: '关联账户'
-	String get associate => '关联账户';
-
-	/// zh: '选择关联账户'
-	String get selectAccount => '选择关联账户';
-
-	/// zh: '暂无可用账户，请先添加账户'
-	String get noAccount => '暂无可用账户，请先添加账户';
-
-	/// zh: '交易 ID 缺失，无法更新'
-	String get missingId => '交易 ID 缺失，无法更新';
-
-	/// zh: '已关联到 $name'
-	String associatedTo({required Object name}) => '已关联到 ${name}';
-
-	/// zh: '更新失败: $error'
-	String updateFailed({required Object error}) => '更新失败: ${error}';
-
-	/// zh: '共享空间'
-	String get sharedSpace => '共享空间';
-
-	/// zh: '暂无可用共享空间'
-	String get noSpace => '暂无可用共享空间';
-
-	/// zh: '选择共享空间'
-	String get selectSpace => '选择共享空间';
-
-	/// zh: '已关联到共享空间'
-	String get linkedToSpace => '已关联到共享空间';
+	@override String get title => '交易成功';
+	@override String get associatedAccount => '已关联账户';
+	@override String get notCounted => '不计入资产';
+	@override String get modify => '修改';
+	@override String get associate => '关联账户';
+	@override String get selectAccount => '选择关联账户';
+	@override String get noAccount => '暂无可用账户，请先添加账户';
+	@override String get missingId => '交易 ID 缺失，无法更新';
+	@override String associatedTo({required Object name}) => '已关联到 ${name}';
+	@override String updateFailed({required Object error}) => '更新失败: ${error}';
+	@override String get sharedSpace => '共享空间';
+	@override String get noSpace => '暂无可用共享空间';
+	@override String get selectSpace => '选择共享空间';
+	@override String get linkedToSpace => '已关联到共享空间';
 }
 
 // Path: chat.genui.transactionConfirmation
-class TranslationsChatGenuiTransactionConfirmationZh {
-	TranslationsChatGenuiTransactionConfirmationZh.internal(this._root);
+class _TranslationsChatGenuiTransactionConfirmationZh implements TranslationsChatGenuiTransactionConfirmationEn {
+	_TranslationsChatGenuiTransactionConfirmationZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '检测到多个关联账户'
-	String get multipleAccounts => '检测到多个关联账户';
-
-	/// zh: '已确认'
-	String get confirmed => '已确认';
+	@override String get multipleAccounts => '检测到多个关联账户';
+	@override String get confirmed => '已确认';
 }
 
 // Path: chat.genui.budgetAnalysis
-class TranslationsChatGenuiBudgetAnalysisZh {
-	TranslationsChatGenuiBudgetAnalysisZh.internal(this._root);
+class _TranslationsChatGenuiBudgetAnalysisZh implements TranslationsChatGenuiBudgetAnalysisEn {
+	_TranslationsChatGenuiBudgetAnalysisZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '预算分析报告'
-	String get title => '预算分析报告';
-
-	/// zh: '过去 $days 天'
-	String periodDays({required Object days}) => '过去 ${days} 天';
-
-	/// zh: '总支出'
-	String get totalExpense => '总支出';
-
-	/// zh: '环比 $change%'
-	String momChange({required Object change}) => '环比 ${change}%';
-
-	/// zh: '分类占比'
-	String get categoryDistribution => '分类占比';
-
-	/// zh: '大额支出'
-	String get topSpenders => '大额支出';
-
-	/// zh: '$amount万'
-	String amountWan({required Object amount}) => '${amount}万';
+	@override String get title => '预算分析报告';
+	@override String periodDays({required Object days}) => '过去 ${days} 天';
+	@override String get totalExpense => '总支出';
+	@override String momChange({required Object change}) => '环比 ${change}%';
+	@override String get categoryDistribution => '分类占比';
+	@override String get topSpenders => '大额支出';
+	@override String amountWan({required Object amount}) => '${amount}万';
 }
 
 // Path: chat.genui.cashFlowCard
-class TranslationsChatGenuiCashFlowCardZh {
-	TranslationsChatGenuiCashFlowCardZh.internal(this._root);
+class _TranslationsChatGenuiCashFlowCardZh implements TranslationsChatGenuiCashFlowCardEn {
+	_TranslationsChatGenuiCashFlowCardZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '现金流分析'
-	String get title => '现金流分析';
-
-	/// zh: '储蓄 $rate%'
-	String savingsRate({required Object rate}) => '储蓄 ${rate}%';
-
-	/// zh: '总收入'
-	String get totalIncome => '总收入';
-
-	/// zh: '总支出'
-	String get totalExpense => '总支出';
-
-	/// zh: '必要支出'
-	String get essentialExpense => '必要支出';
-
-	/// zh: '可选消费'
-	String get discretionaryExpense => '可选消费';
-
-	/// zh: 'AI 分析'
-	String get aiInsight => 'AI 分析';
+	@override String get title => '现金流分析';
+	@override String savingsRate({required Object rate}) => '储蓄 ${rate}%';
+	@override String get totalIncome => '总收入';
+	@override String get totalExpense => '总支出';
+	@override String get essentialExpense => '必要支出';
+	@override String get discretionaryExpense => '可选消费';
+	@override String get aiInsight => 'AI 分析';
 }
 
 // Path: chat.welcome.morning
-class TranslationsChatWelcomeMorningZh {
-	TranslationsChatWelcomeMorningZh.internal(this._root);
+class _TranslationsChatWelcomeMorningZh implements TranslationsChatWelcomeMorningEn {
+	_TranslationsChatWelcomeMorningZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '新的一天，从记录开始'
-	String get subtitle => '新的一天，从记录开始';
-
-	late final TranslationsChatWelcomeMorningBreakfastZh breakfast = TranslationsChatWelcomeMorningBreakfastZh.internal(_root);
-	late final TranslationsChatWelcomeMorningYesterdayReviewZh yesterdayReview = TranslationsChatWelcomeMorningYesterdayReviewZh.internal(_root);
-	late final TranslationsChatWelcomeMorningTodayBudgetZh todayBudget = TranslationsChatWelcomeMorningTodayBudgetZh.internal(_root);
+	@override String get subtitle => '新的一天，从记录开始';
+	@override late final _TranslationsChatWelcomeMorningBreakfastZh breakfast = _TranslationsChatWelcomeMorningBreakfastZh._(_root);
+	@override late final _TranslationsChatWelcomeMorningYesterdayReviewZh yesterdayReview = _TranslationsChatWelcomeMorningYesterdayReviewZh._(_root);
+	@override late final _TranslationsChatWelcomeMorningTodayBudgetZh todayBudget = _TranslationsChatWelcomeMorningTodayBudgetZh._(_root);
 }
 
 // Path: chat.welcome.midday
-class TranslationsChatWelcomeMiddayZh {
-	TranslationsChatWelcomeMiddayZh.internal(this._root);
+class _TranslationsChatWelcomeMiddayZh implements TranslationsChatWelcomeMiddayEn {
+	_TranslationsChatWelcomeMiddayZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '中午好'
-	String get greeting => '中午好';
-
-	/// zh: '午间时光，顺手记一笔'
-	String get subtitle => '午间时光，顺手记一笔';
-
-	late final TranslationsChatWelcomeMiddayLunchZh lunch = TranslationsChatWelcomeMiddayLunchZh.internal(_root);
-	late final TranslationsChatWelcomeMiddayWeeklyExpenseZh weeklyExpense = TranslationsChatWelcomeMiddayWeeklyExpenseZh.internal(_root);
-	late final TranslationsChatWelcomeMiddayCheckBalanceZh checkBalance = TranslationsChatWelcomeMiddayCheckBalanceZh.internal(_root);
+	@override String get greeting => '中午好';
+	@override String get subtitle => '午间时光，顺手记一笔';
+	@override late final _TranslationsChatWelcomeMiddayLunchZh lunch = _TranslationsChatWelcomeMiddayLunchZh._(_root);
+	@override late final _TranslationsChatWelcomeMiddayWeeklyExpenseZh weeklyExpense = _TranslationsChatWelcomeMiddayWeeklyExpenseZh._(_root);
+	@override late final _TranslationsChatWelcomeMiddayCheckBalanceZh checkBalance = _TranslationsChatWelcomeMiddayCheckBalanceZh._(_root);
 }
 
 // Path: chat.welcome.afternoon
-class TranslationsChatWelcomeAfternoonZh {
-	TranslationsChatWelcomeAfternoonZh.internal(this._root);
+class _TranslationsChatWelcomeAfternoonZh implements TranslationsChatWelcomeAfternoonEn {
+	_TranslationsChatWelcomeAfternoonZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '下午茶时间，理理财'
-	String get subtitle => '下午茶时间，理理财';
-
-	late final TranslationsChatWelcomeAfternoonQuickRecordZh quickRecord = TranslationsChatWelcomeAfternoonQuickRecordZh.internal(_root);
-	late final TranslationsChatWelcomeAfternoonAnalyzeSpendingZh analyzeSpending = TranslationsChatWelcomeAfternoonAnalyzeSpendingZh.internal(_root);
-	late final TranslationsChatWelcomeAfternoonBudgetProgressZh budgetProgress = TranslationsChatWelcomeAfternoonBudgetProgressZh.internal(_root);
+	@override String get subtitle => '下午茶时间，理理财';
+	@override late final _TranslationsChatWelcomeAfternoonQuickRecordZh quickRecord = _TranslationsChatWelcomeAfternoonQuickRecordZh._(_root);
+	@override late final _TranslationsChatWelcomeAfternoonAnalyzeSpendingZh analyzeSpending = _TranslationsChatWelcomeAfternoonAnalyzeSpendingZh._(_root);
+	@override late final _TranslationsChatWelcomeAfternoonBudgetProgressZh budgetProgress = _TranslationsChatWelcomeAfternoonBudgetProgressZh._(_root);
 }
 
 // Path: chat.welcome.evening
-class TranslationsChatWelcomeEveningZh {
-	TranslationsChatWelcomeEveningZh.internal(this._root);
+class _TranslationsChatWelcomeEveningZh implements TranslationsChatWelcomeEveningEn {
+	_TranslationsChatWelcomeEveningZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '辛苦一天，来理理账'
-	String get subtitle => '辛苦一天，来理理账';
-
-	late final TranslationsChatWelcomeEveningDinnerZh dinner = TranslationsChatWelcomeEveningDinnerZh.internal(_root);
-	late final TranslationsChatWelcomeEveningTodaySummaryZh todaySummary = TranslationsChatWelcomeEveningTodaySummaryZh.internal(_root);
-	late final TranslationsChatWelcomeEveningTomorrowPlanZh tomorrowPlan = TranslationsChatWelcomeEveningTomorrowPlanZh.internal(_root);
+	@override String get subtitle => '辛苦一天，来理理账';
+	@override late final _TranslationsChatWelcomeEveningDinnerZh dinner = _TranslationsChatWelcomeEveningDinnerZh._(_root);
+	@override late final _TranslationsChatWelcomeEveningTodaySummaryZh todaySummary = _TranslationsChatWelcomeEveningTodaySummaryZh._(_root);
+	@override late final _TranslationsChatWelcomeEveningTomorrowPlanZh tomorrowPlan = _TranslationsChatWelcomeEveningTomorrowPlanZh._(_root);
 }
 
 // Path: chat.welcome.night
-class TranslationsChatWelcomeNightZh {
-	TranslationsChatWelcomeNightZh.internal(this._root);
+class _TranslationsChatWelcomeNightZh implements TranslationsChatWelcomeNightEn {
+	_TranslationsChatWelcomeNightZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '夜深了'
-	String get greeting => '夜深了';
-
-	/// zh: '静心理财，规划未来'
-	String get subtitle => '静心理财，规划未来';
-
-	late final TranslationsChatWelcomeNightMakeupRecordZh makeupRecord = TranslationsChatWelcomeNightMakeupRecordZh.internal(_root);
-	late final TranslationsChatWelcomeNightMonthlyReviewZh monthlyReview = TranslationsChatWelcomeNightMonthlyReviewZh.internal(_root);
-	late final TranslationsChatWelcomeNightFinancialThinkingZh financialThinking = TranslationsChatWelcomeNightFinancialThinkingZh.internal(_root);
+	@override String get greeting => '夜深了';
+	@override String get subtitle => '静心理财，规划未来';
+	@override late final _TranslationsChatWelcomeNightMakeupRecordZh makeupRecord = _TranslationsChatWelcomeNightMakeupRecordZh._(_root);
+	@override late final _TranslationsChatWelcomeNightMonthlyReviewZh monthlyReview = _TranslationsChatWelcomeNightMonthlyReviewZh._(_root);
+	@override late final _TranslationsChatWelcomeNightFinancialThinkingZh financialThinking = _TranslationsChatWelcomeNightFinancialThinkingZh._(_root);
 }
 
 // Path: chat.genui.healthScore.status
-class TranslationsChatGenuiHealthScoreStatusZh {
-	TranslationsChatGenuiHealthScoreStatusZh.internal(this._root);
+class _TranslationsChatGenuiHealthScoreStatusZh implements TranslationsChatGenuiHealthScoreStatusEn {
+	_TranslationsChatGenuiHealthScoreStatusZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '财务状况优秀'
-	String get excellent => '财务状况优秀';
-
-	/// zh: '财务状况良好'
-	String get good => '财务状况良好';
-
-	/// zh: '财务状况一般'
-	String get fair => '财务状况一般';
-
-	/// zh: '财务状况需改善'
-	String get needsImprovement => '财务状况需改善';
-
-	/// zh: '财务状况较差'
-	String get poor => '财务状况较差';
+	@override String get excellent => '财务状况优秀';
+	@override String get good => '财务状况良好';
+	@override String get fair => '财务状况一般';
+	@override String get needsImprovement => '财务状况需改善';
+	@override String get poor => '财务状况较差';
 }
 
 // Path: chat.welcome.morning.breakfast
-class TranslationsChatWelcomeMorningBreakfastZh {
-	TranslationsChatWelcomeMorningBreakfastZh.internal(this._root);
+class _TranslationsChatWelcomeMorningBreakfastZh implements TranslationsChatWelcomeMorningBreakfastEn {
+	_TranslationsChatWelcomeMorningBreakfastZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '早餐记账'
-	String get title => '早餐记账';
-
-	/// zh: '记一笔早餐'
-	String get prompt => '记一笔早餐';
-
-	/// zh: '快速记录今天的第一笔消费'
-	String get description => '快速记录今天的第一笔消费';
+	@override String get title => '早餐记账';
+	@override String get prompt => '记一笔早餐';
+	@override String get description => '快速记录今天的第一笔消费';
 }
 
 // Path: chat.welcome.morning.yesterdayReview
-class TranslationsChatWelcomeMorningYesterdayReviewZh {
-	TranslationsChatWelcomeMorningYesterdayReviewZh.internal(this._root);
+class _TranslationsChatWelcomeMorningYesterdayReviewZh implements TranslationsChatWelcomeMorningYesterdayReviewEn {
+	_TranslationsChatWelcomeMorningYesterdayReviewZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '昨日回顾'
-	String get title => '昨日回顾';
-
-	/// zh: '分析昨天的消费'
-	String get prompt => '分析昨天的消费';
-
-	/// zh: '看看昨天花了多少钱'
-	String get description => '看看昨天花了多少钱';
+	@override String get title => '昨日回顾';
+	@override String get prompt => '分析昨天的消费';
+	@override String get description => '看看昨天花了多少钱';
 }
 
 // Path: chat.welcome.morning.todayBudget
-class TranslationsChatWelcomeMorningTodayBudgetZh {
-	TranslationsChatWelcomeMorningTodayBudgetZh.internal(this._root);
+class _TranslationsChatWelcomeMorningTodayBudgetZh implements TranslationsChatWelcomeMorningTodayBudgetEn {
+	_TranslationsChatWelcomeMorningTodayBudgetZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '今日预算'
-	String get title => '今日预算';
-
-	/// zh: '今天还剩多少预算'
-	String get prompt => '今天还剩多少预算';
-
-	/// zh: '规划一天的消费额度'
-	String get description => '规划一天的消费额度';
+	@override String get title => '今日预算';
+	@override String get prompt => '今天还剩多少预算';
+	@override String get description => '规划一天的消费额度';
 }
 
 // Path: chat.welcome.midday.lunch
-class TranslationsChatWelcomeMiddayLunchZh {
-	TranslationsChatWelcomeMiddayLunchZh.internal(this._root);
+class _TranslationsChatWelcomeMiddayLunchZh implements TranslationsChatWelcomeMiddayLunchEn {
+	_TranslationsChatWelcomeMiddayLunchZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '午餐记账'
-	String get title => '午餐记账';
-
-	/// zh: '记一笔午餐'
-	String get prompt => '记一笔午餐';
-
-	/// zh: '记录午餐开销'
-	String get description => '记录午餐开销';
+	@override String get title => '午餐记账';
+	@override String get prompt => '记一笔午餐';
+	@override String get description => '记录午餐开销';
 }
 
 // Path: chat.welcome.midday.weeklyExpense
-class TranslationsChatWelcomeMiddayWeeklyExpenseZh {
-	TranslationsChatWelcomeMiddayWeeklyExpenseZh.internal(this._root);
+class _TranslationsChatWelcomeMiddayWeeklyExpenseZh implements TranslationsChatWelcomeMiddayWeeklyExpenseEn {
+	_TranslationsChatWelcomeMiddayWeeklyExpenseZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '本周消费'
-	String get title => '本周消费';
-
-	/// zh: '分析本周消费'
-	String get prompt => '分析本周消费';
-
-	/// zh: '了解本周花费情况'
-	String get description => '了解本周花费情况';
+	@override String get title => '本周消费';
+	@override String get prompt => '分析本周消费';
+	@override String get description => '了解本周花费情况';
 }
 
 // Path: chat.welcome.midday.checkBalance
-class TranslationsChatWelcomeMiddayCheckBalanceZh {
-	TranslationsChatWelcomeMiddayCheckBalanceZh.internal(this._root);
+class _TranslationsChatWelcomeMiddayCheckBalanceZh implements TranslationsChatWelcomeMiddayCheckBalanceEn {
+	_TranslationsChatWelcomeMiddayCheckBalanceZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '查看余额'
-	String get title => '查看余额';
-
-	/// zh: '查看账户余额'
-	String get prompt => '查看账户余额';
-
-	/// zh: '看看各账户还剩多少'
-	String get description => '看看各账户还剩多少';
+	@override String get title => '查看余额';
+	@override String get prompt => '查看账户余额';
+	@override String get description => '看看各账户还剩多少';
 }
 
 // Path: chat.welcome.afternoon.quickRecord
-class TranslationsChatWelcomeAfternoonQuickRecordZh {
-	TranslationsChatWelcomeAfternoonQuickRecordZh.internal(this._root);
+class _TranslationsChatWelcomeAfternoonQuickRecordZh implements TranslationsChatWelcomeAfternoonQuickRecordEn {
+	_TranslationsChatWelcomeAfternoonQuickRecordZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '随手记账'
-	String get title => '随手记账';
-
-	/// zh: '帮我记一笔'
-	String get prompt => '帮我记一笔';
-
-	/// zh: '快速记录一笔消费'
-	String get description => '快速记录一笔消费';
+	@override String get title => '随手记账';
+	@override String get prompt => '帮我记一笔';
+	@override String get description => '快速记录一笔消费';
 }
 
 // Path: chat.welcome.afternoon.analyzeSpending
-class TranslationsChatWelcomeAfternoonAnalyzeSpendingZh {
-	TranslationsChatWelcomeAfternoonAnalyzeSpendingZh.internal(this._root);
+class _TranslationsChatWelcomeAfternoonAnalyzeSpendingZh implements TranslationsChatWelcomeAfternoonAnalyzeSpendingEn {
+	_TranslationsChatWelcomeAfternoonAnalyzeSpendingZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '分析消费'
-	String get title => '分析消费';
-
-	/// zh: '分析本月消费'
-	String get prompt => '分析本月消费';
-
-	/// zh: '查看消费趋势和构成'
-	String get description => '查看消费趋势和构成';
+	@override String get title => '分析消费';
+	@override String get prompt => '分析本月消费';
+	@override String get description => '查看消费趋势和构成';
 }
 
 // Path: chat.welcome.afternoon.budgetProgress
-class TranslationsChatWelcomeAfternoonBudgetProgressZh {
-	TranslationsChatWelcomeAfternoonBudgetProgressZh.internal(this._root);
+class _TranslationsChatWelcomeAfternoonBudgetProgressZh implements TranslationsChatWelcomeAfternoonBudgetProgressEn {
+	_TranslationsChatWelcomeAfternoonBudgetProgressZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '财务健康'
-	String get title => '财务健康';
-
-	/// zh: '评估我的财务健康'
-	String get prompt => '评估我的财务健康';
-
-	/// zh: '收支平衡评分与建议'
-	String get description => '收支平衡评分与建议';
+	@override String get title => '财务健康';
+	@override String get prompt => '评估我的财务健康';
+	@override String get description => '收支平衡评分与建议';
 }
 
 // Path: chat.welcome.evening.dinner
-class TranslationsChatWelcomeEveningDinnerZh {
-	TranslationsChatWelcomeEveningDinnerZh.internal(this._root);
+class _TranslationsChatWelcomeEveningDinnerZh implements TranslationsChatWelcomeEveningDinnerEn {
+	_TranslationsChatWelcomeEveningDinnerZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '晚餐记账'
-	String get title => '晚餐记账';
-
-	/// zh: '记一笔晚餐'
-	String get prompt => '记一笔晚餐';
-
-	/// zh: '记录今天的晚餐消费'
-	String get description => '记录今天的晚餐消费';
+	@override String get title => '晚餐记账';
+	@override String get prompt => '记一笔晚餐';
+	@override String get description => '记录今天的晚餐消费';
 }
 
 // Path: chat.welcome.evening.todaySummary
-class TranslationsChatWelcomeEveningTodaySummaryZh {
-	TranslationsChatWelcomeEveningTodaySummaryZh.internal(this._root);
+class _TranslationsChatWelcomeEveningTodaySummaryZh implements TranslationsChatWelcomeEveningTodaySummaryEn {
+	_TranslationsChatWelcomeEveningTodaySummaryZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '今日总结'
-	String get title => '今日总结';
-
-	/// zh: '总结今天的消费'
-	String get prompt => '总结今天的消费';
-
-	/// zh: '看看今天花了多少'
-	String get description => '看看今天花了多少';
+	@override String get title => '今日总结';
+	@override String get prompt => '总结今天的消费';
+	@override String get description => '看看今天花了多少';
 }
 
 // Path: chat.welcome.evening.tomorrowPlan
-class TranslationsChatWelcomeEveningTomorrowPlanZh {
-	TranslationsChatWelcomeEveningTomorrowPlanZh.internal(this._root);
+class _TranslationsChatWelcomeEveningTomorrowPlanZh implements TranslationsChatWelcomeEveningTomorrowPlanEn {
+	_TranslationsChatWelcomeEveningTomorrowPlanZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '明日计划'
-	String get title => '明日计划';
-
-	/// zh: '明天有什么固定支出'
-	String get prompt => '明天有什么固定支出';
-
-	/// zh: '提前规划明天的消费'
-	String get description => '提前规划明天的消费';
+	@override String get title => '明日计划';
+	@override String get prompt => '明天有什么固定支出';
+	@override String get description => '提前规划明天的消费';
 }
 
 // Path: chat.welcome.night.makeupRecord
-class TranslationsChatWelcomeNightMakeupRecordZh {
-	TranslationsChatWelcomeNightMakeupRecordZh.internal(this._root);
+class _TranslationsChatWelcomeNightMakeupRecordZh implements TranslationsChatWelcomeNightMakeupRecordEn {
+	_TranslationsChatWelcomeNightMakeupRecordZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '补记今日'
-	String get title => '补记今日';
-
-	/// zh: '帮我补记今天的消费'
-	String get prompt => '帮我补记今天的消费';
-
-	/// zh: '把今天忘记的账补上'
-	String get description => '把今天忘记的账补上';
+	@override String get title => '补记今日';
+	@override String get prompt => '帮我补记今天的消费';
+	@override String get description => '把今天忘记的账补上';
 }
 
 // Path: chat.welcome.night.monthlyReview
-class TranslationsChatWelcomeNightMonthlyReviewZh {
-	TranslationsChatWelcomeNightMonthlyReviewZh.internal(this._root);
+class _TranslationsChatWelcomeNightMonthlyReviewZh implements TranslationsChatWelcomeNightMonthlyReviewEn {
+	_TranslationsChatWelcomeNightMonthlyReviewZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '本月分析'
-	String get title => '本月分析';
-
-	/// zh: '详细分析本月支出'
-	String get prompt => '详细分析本月支出';
-
-	/// zh: '回顾这个月的钱花哪了'
-	String get description => '回顾这个月的钱花哪了';
+	@override String get title => '本月分析';
+	@override String get prompt => '详细分析本月支出';
+	@override String get description => '回顾这个月的钱花哪了';
 }
 
 // Path: chat.welcome.night.financialThinking
-class TranslationsChatWelcomeNightFinancialThinkingZh {
-	TranslationsChatWelcomeNightFinancialThinkingZh.internal(this._root);
+class _TranslationsChatWelcomeNightFinancialThinkingZh implements TranslationsChatWelcomeNightFinancialThinkingEn {
+	_TranslationsChatWelcomeNightFinancialThinkingZh._(this._root);
 
-	final Translations _root; // ignore: unused_field
+	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-
-	/// zh: '未来预测'
-	String get title => '未来预测';
-
-	/// zh: '预测未来 30 天余额'
-	String get prompt => '预测未来 30 天余额';
-
-	/// zh: '看清未来的财务趋势'
-	String get description => '看清未来的财务趋势';
+	@override String get title => '未来预测';
+	@override String get prompt => '预测未来 30 天余额';
+	@override String get description => '看清未来的财务趋势';
 }
 
 /// The flat map containing all translations for locale <zh>.
@@ -3901,7 +1976,7 @@ class TranslationsChatWelcomeNightFinancialThinkingZh {
 ///
 /// The Dart AOT compiler has issues with very large switch statements,
 /// so the map is split into smaller functions (512 entries each).
-extension on Translations {
+extension on TranslationsZh {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
 			'common.loading' => '加载中...',
@@ -4352,57 +2427,57 @@ extension on Translations {
 			'chat.listening' => '正在聆听...',
 			'chat.aiThinking' => '正在处理...',
 			'chat.tools.processing' => '正在处理...',
-			'chat.tools.readFile' => '正在查看文件...',
-			'chat.tools.searchTransactions' => '正在查询交易...',
-			'chat.tools.queryBudgetStatus' => '正在检查预算...',
-			'chat.tools.createBudget' => '正在创建预算计划...',
-			'chat.tools.getCashFlowAnalysis' => '正在分析现金流...',
-			'chat.tools.getFinancialHealthScore' => '正在计算财务健康分...',
-			'chat.tools.getFinancialSummary' => '正在生成财务报告...',
-			'chat.tools.evaluateFinancialHealth' => '正在评估财务健康...',
-			'chat.tools.forecastBalance' => '正在预测未来余额...',
-			'chat.tools.simulateExpenseImpact' => '正在模拟购买影响...',
-			'chat.tools.recordTransactions' => '正在记账...',
-			'chat.tools.createTransaction' => '正在记账...',
-			'chat.tools.duckduckgoSearch' => '正在搜索网络...',
-			'chat.tools.executeTransfer' => '正在执行转账...',
-			'chat.tools.listDir' => '正在浏览目录...',
+			'chat.tools.read_file' => '正在查看文件...',
+			'chat.tools.search_transactions' => '正在查询交易...',
+			'chat.tools.query_budget_status' => '正在检查预算...',
+			'chat.tools.create_budget' => '正在创建预算计划...',
+			'chat.tools.get_cash_flow_analysis' => '正在分析现金流...',
+			'chat.tools.get_financial_health_score' => '正在计算财务健康分...',
+			'chat.tools.get_financial_summary' => '正在生成财务报告...',
+			'chat.tools.evaluate_financial_health' => '正在评估财务健康...',
+			'chat.tools.forecast_balance' => '正在预测未来余额...',
+			'chat.tools.simulate_expense_impact' => '正在模拟购买影响...',
+			'chat.tools.record_transactions' => '正在记账...',
+			'chat.tools.create_transaction' => '正在记账...',
+			'chat.tools.duckduckgo_search' => '正在搜索网络...',
+			'chat.tools.execute_transfer' => '正在执行转账...',
+			'chat.tools.list_dir' => '正在浏览目录...',
 			'chat.tools.execute' => '正在执行脚本...',
-			'chat.tools.analyzeFinance' => '正在分析财务状况...',
-			'chat.tools.forecastFinance' => '正在预测财务趋势...',
-			'chat.tools.analyzeBudget' => '正在分析预算...',
-			'chat.tools.auditAnalysis' => '正在审计分析...',
-			'chat.tools.budgetOps' => '正在处理预算...',
-			'chat.tools.createSharedTransaction' => '正在创建共享账单...',
-			'chat.tools.listSpaces' => '正在获取共享空间...',
-			'chat.tools.querySpaceSummary' => '正在查询空间摘要...',
-			'chat.tools.prepareTransfer' => '正在准备转账...',
+			'chat.tools.analyze_finance' => '正在分析财务状况...',
+			'chat.tools.forecast_finance' => '正在预测财务趋势...',
+			'chat.tools.analyze_budget' => '正在分析预算...',
+			'chat.tools.audit_analysis' => '正在审计分析...',
+			'chat.tools.budget_ops' => '正在处理预算...',
+			'chat.tools.create_shared_transaction' => '正在创建共享账单...',
+			'chat.tools.list_spaces' => '正在获取共享空间...',
+			'chat.tools.query_space_summary' => '正在查询空间摘要...',
+			'chat.tools.prepare_transfer' => '正在准备转账...',
 			'chat.tools.unknown' => '正在处理请求...',
-			'chat.tools.done.readFile' => '已查看文件',
-			'chat.tools.done.searchTransactions' => '已查询交易',
-			'chat.tools.done.queryBudgetStatus' => '已检查预算',
-			'chat.tools.done.createBudget' => '已创建预算',
-			'chat.tools.done.getCashFlowAnalysis' => '已分析现金流',
-			'chat.tools.done.getFinancialHealthScore' => '已计算健康分',
-			'chat.tools.done.getFinancialSummary' => '财务报告生成完成',
-			'chat.tools.done.evaluateFinancialHealth' => '财务健康评估完成',
-			'chat.tools.done.forecastBalance' => '余额预测完成',
-			'chat.tools.done.simulateExpenseImpact' => '购买影响模拟完成',
-			'chat.tools.done.recordTransactions' => '记账完成',
-			'chat.tools.done.createTransaction' => '已完成记账',
-			'chat.tools.done.duckduckgoSearch' => '已搜索网络',
-			'chat.tools.done.executeTransfer' => '转账完成',
-			'chat.tools.done.listDir' => '已浏览目录',
+			'chat.tools.done.read_file' => '已查看文件',
+			'chat.tools.done.search_transactions' => '已查询交易',
+			'chat.tools.done.query_budget_status' => '已检查预算',
+			'chat.tools.done.create_budget' => '已创建预算',
+			'chat.tools.done.get_cash_flow_analysis' => '已分析现金流',
+			'chat.tools.done.get_financial_health_score' => '已计算健康分',
+			'chat.tools.done.get_financial_summary' => '财务报告生成完成',
+			'chat.tools.done.evaluate_financial_health' => '财务健康评估完成',
+			'chat.tools.done.forecast_balance' => '余额预测完成',
+			'chat.tools.done.simulate_expense_impact' => '购买影响模拟完成',
+			'chat.tools.done.record_transactions' => '记账完成',
+			'chat.tools.done.create_transaction' => '已完成记账',
+			'chat.tools.done.duckduckgo_search' => '已搜索网络',
+			'chat.tools.done.execute_transfer' => '转账完成',
+			'chat.tools.done.list_dir' => '已浏览目录',
 			'chat.tools.done.execute' => '脚本执行完成',
-			'chat.tools.done.analyzeFinance' => '财务分析完成',
-			'chat.tools.done.forecastFinance' => '财务预测完成',
-			'chat.tools.done.analyzeBudget' => '预算分析完成',
-			'chat.tools.done.auditAnalysis' => '审计分析完成',
-			'chat.tools.done.budgetOps' => '预算处理完成',
-			'chat.tools.done.createSharedTransaction' => '共享账单创建完成',
-			'chat.tools.done.listSpaces' => '共享空间获取完成',
-			'chat.tools.done.querySpaceSummary' => '空间摘要查询完成',
-			'chat.tools.done.prepareTransfer' => '转账准备完成',
+			'chat.tools.done.analyze_finance' => '财务分析完成',
+			'chat.tools.done.forecast_finance' => '财务预测完成',
+			'chat.tools.done.analyze_budget' => '预算分析完成',
+			'chat.tools.done.audit_analysis' => '审计分析完成',
+			'chat.tools.done.budget_ops' => '预算处理完成',
+			'chat.tools.done.create_shared_transaction' => '共享账单创建完成',
+			'chat.tools.done.list_spaces' => '共享空间获取完成',
+			'chat.tools.done.query_space_summary' => '空间摘要查询完成',
+			'chat.tools.done.prepare_transfer' => '转账准备完成',
 			'chat.tools.done.unknown' => '处理完成',
 			'chat.tools.failed.unknown' => '操作失败',
 			'chat.tools.cancelled' => '已取消',

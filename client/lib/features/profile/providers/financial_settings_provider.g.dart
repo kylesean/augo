@@ -46,7 +46,7 @@ final class FinancialSettingsNotifierProvider
 }
 
 String _$financialSettingsNotifierHash() =>
-    r'22c5c466c11cf44079d2562438cc972d0190a530';
+    r'c0f79dbd55f07a6da2e218cbc7fc9e21cefa2463';
 
 /// Financial settings state notifier
 

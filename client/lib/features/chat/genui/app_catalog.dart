@@ -24,7 +24,6 @@ class AppCatalog {
       _buildExpenseTable(),
       _buildChartCard(),
       _buildSummaryCard(),
-      _buildTransferPathBuilder(),
       _buildTransferWizard(),
       _buildBudgetStatusCard(),
       _buildBudgetReceipt(),
@@ -269,53 +268,6 @@ class AppCatalog {
         required: ['title', 'summary', 'items'],
       ),
       widgetBuilder: _buildSummaryCardWidget,
-    );
-  }
-
-  /// 转账链路构建器组件
-  ///
-  /// 用于在转账时让用户同时选择转出和转入账户（多轮对话交互）
-  static CatalogItem _buildTransferPathBuilder() {
-    return CatalogItem(
-      name: 'TransferPathBuilder',
-      dataSchema: ObjectSchema(
-        properties: {
-          'amount': NumberSchema(description: '转账金额'),
-          'currency': StringSchema(description: '货币代码'),
-          'sourceAccounts': ListSchema(
-            description: '可选转出账户列表',
-            items: ObjectSchema(
-              properties: {
-                'id': StringSchema(description: '账户ID'),
-                'name': StringSchema(description: '账户名称'),
-                'type': StringSchema(description: '账户类型'),
-                'balance': NumberSchema(description: '账户余额'),
-                'currency': StringSchema(description: '货币代码'),
-                'subtitle': StringSchema(description: '账户副标题'),
-              },
-              required: ['id', 'name'],
-            ),
-          ),
-          'targetAccounts': ListSchema(
-            description: '可选转入账户列表',
-            items: ObjectSchema(
-              properties: {
-                'id': StringSchema(description: '账户ID'),
-                'name': StringSchema(description: '账户名称'),
-                'type': StringSchema(description: '账户类型'),
-                'balance': NumberSchema(description: '账户余额'),
-                'currency': StringSchema(description: '货币代码'),
-                'subtitle': StringSchema(description: '账户副标题'),
-              },
-              required: ['id', 'name'],
-            ),
-          ),
-          'preselectedSourceId': StringSchema(description: '预选的转出账户ID'),
-          'preselectedTargetId': StringSchema(description: '预选的转入账户ID'),
-        },
-        required: ['amount', 'sourceAccounts', 'targetAccounts'],
-      ),
-      widgetBuilder: _buildTransferPathBuilderWidget,
     );
   }
 
@@ -600,61 +552,6 @@ class AppCatalog {
     }
   }
 
-  /// 构建账户选择器 Widget
-  static Widget _buildTransferPathBuilderWidget(CatalogItemContext context) {
-    final startTime = DateTime.now();
-    const componentName = 'TransferPathBuilder';
-
-    try {
-      final data = context.data as Map<String, dynamic>;
-
-      // 验证必需字段 (使用 camelCase 与后端一致)
-      if (!_validateRequiredFields(data, [
-        'amount',
-        'sourceAccounts',
-        'targetAccounts',
-      ])) {
-        final duration = DateTime.now().difference(startTime).inMilliseconds;
-        GenUiLogger.logBuilderInvocation(
-          componentName: componentName,
-          success: false,
-          durationMs: duration,
-        );
-        return _buildErrorWidget(context.buildContext, '转账功能加载失败，请重试');
-      }
-
-      // 统一使用 TransferPathBuilder
-      // 传递 surfaceId 以便跟踪提交状态
-      final widgetData = Map<String, dynamic>.from(data);
-      widgetData['_surfaceId'] = context.surfaceId;
-
-      final widget = TransferPathBuilder(
-        data: widgetData,
-        dispatchEvent: context.dispatchEvent,
-      );
-      final duration = DateTime.now().difference(startTime).inMilliseconds;
-      GenUiLogger.logBuilderInvocation(
-        componentName: componentName,
-        success: true,
-        durationMs: duration,
-      );
-      return widget;
-    } catch (e, stackTrace) {
-      final duration = DateTime.now().difference(startTime).inMilliseconds;
-      GenUiLogger.logBuilderInvocation(
-        componentName: componentName,
-        success: false,
-        durationMs: duration,
-      );
-      GenUiLogger.logError(
-        message: 'Builder failed for $componentName',
-        error: e,
-        stackTrace: stackTrace,
-      );
-      return _buildErrorWidget(context.buildContext, '渲染失败: $e');
-    }
-  }
-
   /// 构建转账向导 Widget
   static Widget _buildTransferWizardWidget(CatalogItemContext context) {
     final startTime = DateTime.now();
@@ -676,14 +573,8 @@ class AppCatalog {
         );
         return _buildErrorWidget(context.buildContext, '转账向导加载失败，请重试');
       }
-
-      final widgetData = Map<String, dynamic>.from(data);
-      widgetData['_surfaceId'] = context.surfaceId;
-
-      final widget = TransferWizard(
-        data: widgetData,
-        dispatchEvent: context.dispatchEvent,
-      );
+      // Use ReactiveTransferWizard for DataContext reactive updates
+      final widget = ReactiveTransferWizard(catalogContext: context);
       final duration = DateTime.now().difference(startTime).inMilliseconds;
       GenUiLogger.logBuilderInvocation(
         componentName: componentName,

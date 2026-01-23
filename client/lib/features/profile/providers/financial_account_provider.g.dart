@@ -42,7 +42,7 @@ final class FinancialAccountNotifierProvider
 }
 
 String _$financialAccountNotifierHash() =>
-    r'54898bd17143e12828361165fb4e53eac605584d';
+    r'a202b4d38a680498a482effa73804fc664893b70';
 
 abstract class _$FinancialAccountNotifier
     extends $Notifier<FinancialAccountState> {

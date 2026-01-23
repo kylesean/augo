@@ -8,12 +8,12 @@ part of 'welcome_guide_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// 欢迎引导 Provider - 根据当前时段返回问候语和场景化建议
+/// Welcome Guide Provider - returns greetings and contextual suggestions based on current time
 
 @ProviderFor(welcomeGuide)
 const welcomeGuideProvider = WelcomeGuideProvider._();
 
-/// 欢迎引导 Provider - 根据当前时段返回问候语和场景化建议
+/// Welcome Guide Provider - returns greetings and contextual suggestions based on current time
 
 final class WelcomeGuideProvider
     extends
@@ -23,7 +23,7 @@ final class WelcomeGuideProvider
           WelcomeGuideState
         >
     with $Provider<WelcomeGuideState> {
-  /// 欢迎引导 Provider - 根据当前时段返回问候语和场景化建议
+  /// Welcome Guide Provider - returns greetings and contextual suggestions based on current time
   const WelcomeGuideProvider._()
     : super(
         from: null,

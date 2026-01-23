@@ -5,25 +5,27 @@
 // ignore_for_file: type=lint, unused_import
 // dart format off
 
-import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
-import 'package:slang/generated.dart';
-import 'strings.g.dart';
+part of 'strings.g.dart';
 
 // Path: <root>
-class TranslationsEn extends Translations with BaseTranslations<AppLocale, Translations> {
+typedef TranslationsEn = Translations; // ignore: unused_element
+class Translations with BaseTranslations<AppLocale, Translations> {
+	/// Returns the current translations of the given [context].
+	///
+	/// Usage:
+	/// final t = Translations.of(context);
+	static Translations of(BuildContext context) => InheritedLocaleData.of<AppLocale, Translations>(context).translations;
+
 	/// You can call this constructor and build your own translation instance of this locale.
 	/// Constructing via the enum [AppLocale.build] is preferred.
-	TranslationsEn({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
+	Translations({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
 		: assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
 		  $meta = meta ?? TranslationMetadata(
 		    locale: AppLocale.en,
 		    overrides: overrides ?? {},
 		    cardinalResolver: cardinalResolver,
 		    ordinalResolver: ordinalResolver,
-		  ),
-		  super(cardinalResolver: cardinalResolver, ordinalResolver: ordinalResolver) {
-		super.$meta.setFlatMapFunction($meta.getTranslation); // copy base translations to super.$meta
+		  ) {
 		$meta.setFlatMapFunction(_flatMapFunction);
 	}
 
@@ -31,1915 +33,3814 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override final TranslationMetadata<AppLocale, Translations> $meta;
 
 	/// Access flat map
-	@override dynamic operator[](String key) => $meta.getTranslation(key) ?? super.$meta.getTranslation(key);
+	dynamic operator[](String key) => $meta.getTranslation(key);
 
-	late final TranslationsEn _root = this; // ignore: unused_field
+	late final Translations _root = this; // ignore: unused_field
 
-	@override
-	TranslationsEn $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsEn(meta: meta ?? this.$meta);
+	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
 
 	// Translations
-	@override late final _TranslationsCommonEn common = _TranslationsCommonEn._(_root);
-	@override late final _TranslationsTimeEn time = _TranslationsTimeEn._(_root);
-	@override late final _TranslationsGreetingEn greeting = _TranslationsGreetingEn._(_root);
-	@override late final _TranslationsNavigationEn navigation = _TranslationsNavigationEn._(_root);
-	@override late final _TranslationsAuthEn auth = _TranslationsAuthEn._(_root);
-	@override late final _TranslationsTransactionEn transaction = _TranslationsTransactionEn._(_root);
-	@override late final _TranslationsHomeEn home = _TranslationsHomeEn._(_root);
-	@override late final _TranslationsCommentEn comment = _TranslationsCommentEn._(_root);
-	@override late final _TranslationsCalendarEn calendar = _TranslationsCalendarEn._(_root);
-	@override late final _TranslationsCategoryEn category = _TranslationsCategoryEn._(_root);
-	@override late final _TranslationsSettingsEn settings = _TranslationsSettingsEn._(_root);
-	@override late final _TranslationsAppearanceEn appearance = _TranslationsAppearanceEn._(_root);
-	@override late final _TranslationsSpeechEn speech = _TranslationsSpeechEn._(_root);
-	@override late final _TranslationsAmountThemeEn amountTheme = _TranslationsAmountThemeEn._(_root);
-	@override late final _TranslationsLocaleEn locale = _TranslationsLocaleEn._(_root);
-	@override late final _TranslationsBudgetEn budget = _TranslationsBudgetEn._(_root);
-	@override late final _TranslationsDateRangeEn dateRange = _TranslationsDateRangeEn._(_root);
-	@override late final _TranslationsForecastEn forecast = _TranslationsForecastEn._(_root);
-	@override late final _TranslationsChatEn chat = _TranslationsChatEn._(_root);
-	@override late final _TranslationsFootprintEn footprint = _TranslationsFootprintEn._(_root);
-	@override late final _TranslationsMediaEn media = _TranslationsMediaEn._(_root);
-	@override late final _TranslationsErrorEn error = _TranslationsErrorEn._(_root);
-	@override late final _TranslationsFontTestEn fontTest = _TranslationsFontTestEn._(_root);
-	@override late final _TranslationsWizardEn wizard = _TranslationsWizardEn._(_root);
-	@override late final _TranslationsUserEn user = _TranslationsUserEn._(_root);
-	@override late final _TranslationsAccountEn account = _TranslationsAccountEn._(_root);
-	@override late final _TranslationsFinancialEn financial = _TranslationsFinancialEn._(_root);
-	@override late final _TranslationsAppEn app = _TranslationsAppEn._(_root);
-	@override late final _TranslationsStatisticsEn statistics = _TranslationsStatisticsEn._(_root);
-	@override late final _TranslationsCurrencyEn currency = _TranslationsCurrencyEn._(_root);
-	@override late final _TranslationsBudgetSuggestionEn budgetSuggestion = _TranslationsBudgetSuggestionEn._(_root);
-	@override late final _TranslationsServerEn server = _TranslationsServerEn._(_root);
-	@override late final _TranslationsSharedSpaceEn sharedSpace = _TranslationsSharedSpaceEn._(_root);
-	@override late final _TranslationsErrorMappingEn errorMapping = _TranslationsErrorMappingEn._(_root);
+	late final TranslationsCommonEn common = TranslationsCommonEn._(_root);
+	late final TranslationsTimeEn time = TranslationsTimeEn._(_root);
+	late final TranslationsGreetingEn greeting = TranslationsGreetingEn._(_root);
+	late final TranslationsNavigationEn navigation = TranslationsNavigationEn._(_root);
+	late final TranslationsAuthEn auth = TranslationsAuthEn._(_root);
+	late final TranslationsTransactionEn transaction = TranslationsTransactionEn._(_root);
+	late final TranslationsHomeEn home = TranslationsHomeEn._(_root);
+	late final TranslationsCommentEn comment = TranslationsCommentEn._(_root);
+	late final TranslationsCalendarEn calendar = TranslationsCalendarEn._(_root);
+	late final TranslationsCategoryEn category = TranslationsCategoryEn._(_root);
+	late final TranslationsSettingsEn settings = TranslationsSettingsEn._(_root);
+	late final TranslationsAppearanceEn appearance = TranslationsAppearanceEn._(_root);
+	late final TranslationsSpeechEn speech = TranslationsSpeechEn._(_root);
+	late final TranslationsAmountThemeEn amountTheme = TranslationsAmountThemeEn._(_root);
+	late final TranslationsLocaleEn locale = TranslationsLocaleEn._(_root);
+	late final TranslationsBudgetEn budget = TranslationsBudgetEn._(_root);
+	late final TranslationsDateRangeEn dateRange = TranslationsDateRangeEn._(_root);
+	late final TranslationsForecastEn forecast = TranslationsForecastEn._(_root);
+	late final TranslationsChatEn chat = TranslationsChatEn._(_root);
+	late final TranslationsFootprintEn footprint = TranslationsFootprintEn._(_root);
+	late final TranslationsMediaEn media = TranslationsMediaEn._(_root);
+	late final TranslationsErrorEn error = TranslationsErrorEn._(_root);
+	late final TranslationsFontTestEn fontTest = TranslationsFontTestEn._(_root);
+	late final TranslationsWizardEn wizard = TranslationsWizardEn._(_root);
+	late final TranslationsUserEn user = TranslationsUserEn._(_root);
+	late final TranslationsAccountEn account = TranslationsAccountEn._(_root);
+	late final TranslationsFinancialEn financial = TranslationsFinancialEn._(_root);
+	late final TranslationsAppEn app = TranslationsAppEn._(_root);
+	late final TranslationsStatisticsEn statistics = TranslationsStatisticsEn._(_root);
+	late final TranslationsCurrencyEn currency = TranslationsCurrencyEn._(_root);
+	late final TranslationsBudgetSuggestionEn budgetSuggestion = TranslationsBudgetSuggestionEn._(_root);
+	late final TranslationsServerEn server = TranslationsServerEn._(_root);
+	late final TranslationsSharedSpaceEn sharedSpace = TranslationsSharedSpaceEn._(_root);
+	late final TranslationsErrorMappingEn errorMapping = TranslationsErrorMappingEn._(_root);
 }
 
 // Path: common
-class _TranslationsCommonEn extends TranslationsCommonZh {
-	_TranslationsCommonEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsCommonEn {
+	TranslationsCommonEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get loading => 'Loading...';
-	@override String get error => 'Error';
-	@override String get retry => 'Retry';
-	@override String get cancel => 'Cancel';
-	@override String get confirm => 'Confirm';
-	@override String get save => 'Save';
-	@override String get delete => 'Delete';
-	@override String get edit => 'Edit';
-	@override String get add => 'Add';
-	@override String get search => 'Search';
-	@override String get filter => 'Filter';
-	@override String get sort => 'Sort';
-	@override String get refresh => 'Refresh';
-	@override String get more => 'More';
-	@override String get less => 'Less';
-	@override String get all => 'All';
-	@override String get none => 'None';
-	@override String get ok => 'OK';
-	@override String get unknown => 'Unknown';
-	@override String get noData => 'No Data';
-	@override String get loadMore => 'Load More';
-	@override String get noMore => 'No More';
-	@override String get loadFailed => 'Loading failed';
-	@override String get history => 'Transactions';
-	@override String get reset => 'Reset';
+
+	/// en: 'Loading...'
+	String get loading => 'Loading...';
+
+	/// en: 'Error'
+	String get error => 'Error';
+
+	/// en: 'Retry'
+	String get retry => 'Retry';
+
+	/// en: 'Cancel'
+	String get cancel => 'Cancel';
+
+	/// en: 'Confirm'
+	String get confirm => 'Confirm';
+
+	/// en: 'Save'
+	String get save => 'Save';
+
+	/// en: 'Delete'
+	String get delete => 'Delete';
+
+	/// en: 'Edit'
+	String get edit => 'Edit';
+
+	/// en: 'Add'
+	String get add => 'Add';
+
+	/// en: 'Search'
+	String get search => 'Search';
+
+	/// en: 'Filter'
+	String get filter => 'Filter';
+
+	/// en: 'Sort'
+	String get sort => 'Sort';
+
+	/// en: 'Refresh'
+	String get refresh => 'Refresh';
+
+	/// en: 'More'
+	String get more => 'More';
+
+	/// en: 'Less'
+	String get less => 'Less';
+
+	/// en: 'All'
+	String get all => 'All';
+
+	/// en: 'None'
+	String get none => 'None';
+
+	/// en: 'OK'
+	String get ok => 'OK';
+
+	/// en: 'Unknown'
+	String get unknown => 'Unknown';
+
+	/// en: 'No Data'
+	String get noData => 'No Data';
+
+	/// en: 'Load More'
+	String get loadMore => 'Load More';
+
+	/// en: 'No More'
+	String get noMore => 'No More';
+
+	/// en: 'Loading failed'
+	String get loadFailed => 'Loading failed';
+
+	/// en: 'Transactions'
+	String get history => 'Transactions';
+
+	/// en: 'Reset'
+	String get reset => 'Reset';
 }
 
 // Path: time
-class _TranslationsTimeEn extends TranslationsTimeZh {
-	_TranslationsTimeEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsTimeEn {
+	TranslationsTimeEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get today => 'Today';
-	@override String get yesterday => 'Yesterday';
-	@override String get dayBeforeYesterday => 'Day Before Yesterday';
-	@override String get thisWeek => 'Week';
-	@override String get thisMonth => 'Month';
-	@override String get thisYear => 'Year';
-	@override String get selectDate => 'Select Date';
-	@override String get selectTime => 'Select Time';
-	@override String get justNow => 'Just now';
-	@override String minutesAgo({required Object count}) => '${count}m ago';
-	@override String hoursAgo({required Object count}) => '${count}h ago';
-	@override String daysAgo({required Object count}) => '${count}d ago';
-	@override String weeksAgo({required Object count}) => '${count}w ago';
+
+	/// en: 'Today'
+	String get today => 'Today';
+
+	/// en: 'Yesterday'
+	String get yesterday => 'Yesterday';
+
+	/// en: 'Day Before Yesterday'
+	String get dayBeforeYesterday => 'Day Before Yesterday';
+
+	/// en: 'Week'
+	String get thisWeek => 'Week';
+
+	/// en: 'Month'
+	String get thisMonth => 'Month';
+
+	/// en: 'Year'
+	String get thisYear => 'Year';
+
+	/// en: 'Select Date'
+	String get selectDate => 'Select Date';
+
+	/// en: 'Select Time'
+	String get selectTime => 'Select Time';
+
+	/// en: 'Just now'
+	String get justNow => 'Just now';
+
+	/// en: '${count}m ago'
+	String minutesAgo({required Object count}) => '${count}m ago';
+
+	/// en: '${count}h ago'
+	String hoursAgo({required Object count}) => '${count}h ago';
+
+	/// en: '${count}d ago'
+	String daysAgo({required Object count}) => '${count}d ago';
+
+	/// en: '${count}w ago'
+	String weeksAgo({required Object count}) => '${count}w ago';
 }
 
 // Path: greeting
-class _TranslationsGreetingEn extends TranslationsGreetingZh {
-	_TranslationsGreetingEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsGreetingEn {
+	TranslationsGreetingEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get morning => 'Good Morning';
-	@override String get afternoon => 'Good Afternoon';
-	@override String get evening => 'Good Evening';
+
+	/// en: 'Good Morning'
+	String get morning => 'Good Morning';
+
+	/// en: 'Good Afternoon'
+	String get afternoon => 'Good Afternoon';
+
+	/// en: 'Good Evening'
+	String get evening => 'Good Evening';
 }
 
 // Path: navigation
-class _TranslationsNavigationEn extends TranslationsNavigationZh {
-	_TranslationsNavigationEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsNavigationEn {
+	TranslationsNavigationEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get home => 'Home';
-	@override String get forecast => 'Forecast';
-	@override String get footprint => 'Footprint';
-	@override String get profile => 'Profile';
+
+	/// en: 'Home'
+	String get home => 'Home';
+
+	/// en: 'Forecast'
+	String get forecast => 'Forecast';
+
+	/// en: 'Footprint'
+	String get footprint => 'Footprint';
+
+	/// en: 'Profile'
+	String get profile => 'Profile';
 }
 
 // Path: auth
-class _TranslationsAuthEn extends TranslationsAuthZh {
-	_TranslationsAuthEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsAuthEn {
+	TranslationsAuthEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get login => 'Log In';
-	@override String get loggingIn => 'Logging in...';
-	@override String get logout => 'Log Out';
-	@override String get logoutSuccess => 'Logged out successfully';
-	@override String get confirmLogoutTitle => 'Confirm Logout';
-	@override String get confirmLogoutContent => 'Are you sure you want to log out?';
-	@override String get register => 'Sign Up';
-	@override String get registering => 'Signing up...';
-	@override String get welcomeBack => 'Welcome Back';
-	@override String get loginSuccess => 'Welcome back!';
-	@override String get loginFailed => 'Login Failed';
-	@override String get pleaseTryAgain => 'Please try again later.';
-	@override String get loginSubtitle => 'Log in to continue using Augo';
-	@override String get noAccount => 'Don\'t have an account? Sign Up';
-	@override String get createAccount => 'Create Your Account';
-	@override String get setPassword => 'Set Password';
-	@override String get setAccountPassword => 'Set Your Account Password';
-	@override String get completeRegistration => 'Complete Registration';
-	@override String get registrationSuccess => 'Registration successful!';
-	@override String get registrationFailed => 'Registration failed';
-	@override late final _TranslationsAuthEmailEn email = _TranslationsAuthEmailEn._(_root);
-	@override late final _TranslationsAuthPasswordEn password = _TranslationsAuthPasswordEn._(_root);
-	@override late final _TranslationsAuthVerificationCodeEn verificationCode = _TranslationsAuthVerificationCodeEn._(_root);
+
+	/// en: 'Log In'
+	String get login => 'Log In';
+
+	/// en: 'Logging in...'
+	String get loggingIn => 'Logging in...';
+
+	/// en: 'Log Out'
+	String get logout => 'Log Out';
+
+	/// en: 'Logged out successfully'
+	String get logoutSuccess => 'Logged out successfully';
+
+	/// en: 'Confirm Logout'
+	String get confirmLogoutTitle => 'Confirm Logout';
+
+	/// en: 'Are you sure you want to log out?'
+	String get confirmLogoutContent => 'Are you sure you want to log out?';
+
+	/// en: 'Sign Up'
+	String get register => 'Sign Up';
+
+	/// en: 'Signing up...'
+	String get registering => 'Signing up...';
+
+	/// en: 'Welcome Back'
+	String get welcomeBack => 'Welcome Back';
+
+	/// en: 'Welcome back!'
+	String get loginSuccess => 'Welcome back!';
+
+	/// en: 'Login Failed'
+	String get loginFailed => 'Login Failed';
+
+	/// en: 'Please try again later.'
+	String get pleaseTryAgain => 'Please try again later.';
+
+	/// en: 'Log in to continue using Augo'
+	String get loginSubtitle => 'Log in to continue using Augo';
+
+	/// en: 'Don't have an account? Sign Up'
+	String get noAccount => 'Don\'t have an account? Sign Up';
+
+	/// en: 'Create Your Account'
+	String get createAccount => 'Create Your Account';
+
+	/// en: 'Set Password'
+	String get setPassword => 'Set Password';
+
+	/// en: 'Set Your Account Password'
+	String get setAccountPassword => 'Set Your Account Password';
+
+	/// en: 'Complete Registration'
+	String get completeRegistration => 'Complete Registration';
+
+	/// en: 'Registration successful!'
+	String get registrationSuccess => 'Registration successful!';
+
+	/// en: 'Registration failed'
+	String get registrationFailed => 'Registration failed';
+
+	late final TranslationsAuthEmailEn email = TranslationsAuthEmailEn._(_root);
+	late final TranslationsAuthPasswordEn password = TranslationsAuthPasswordEn._(_root);
+	late final TranslationsAuthVerificationCodeEn verificationCode = TranslationsAuthVerificationCodeEn._(_root);
 }
 
 // Path: transaction
-class _TranslationsTransactionEn extends TranslationsTransactionZh {
-	_TranslationsTransactionEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsTransactionEn {
+	TranslationsTransactionEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get expense => 'Expense';
-	@override String get income => 'Income';
-	@override String get transfer => 'Transfer';
-	@override String get amount => 'Amount';
-	@override String get category => 'Category';
-	@override String get description => 'Description';
-	@override String get tags => 'Tags';
-	@override String get saveTransaction => 'Save Transaction';
-	@override String get pleaseEnterAmount => 'Please enter amount';
-	@override String get pleaseSelectCategory => 'Please select category';
-	@override String get saveFailed => 'Failed to save';
-	@override String get descriptionHint => 'Record details of this transaction...';
-	@override String get addCustomTag => 'Add Custom Tag';
-	@override String get commonTags => 'Common Tags';
-	@override String maxTagsHint({required Object maxTags}) => 'Maximum ${maxTags} tags allowed';
-	@override String get noTransactionsFound => 'No transactions found';
-	@override String get tryAdjustingSearch => 'Try adjusting search criteria or create new transactions';
-	@override String get noDescription => 'No description';
-	@override String get payment => 'Payment';
-	@override String get account => 'Account';
-	@override String get time => 'Time';
-	@override String get location => 'Location';
-	@override String get transactionDetail => 'Transaction Details';
-	@override String get favorite => 'Favorite';
-	@override String get confirmDelete => 'Confirm Delete';
-	@override String get deleteTransactionConfirm => 'Are you sure you want to delete this transaction? This action cannot be undone.';
-	@override String get noActions => 'No actions available';
-	@override String get deleted => 'Deleted';
-	@override String get deleteFailed => 'Delete failed, please try again';
-	@override String get linkedAccount => 'Linked Account';
-	@override String get linkedSpace => 'Linked Space';
-	@override String get notLinked => 'Not linked';
-	@override String get link => 'Link';
-	@override String get changeAccount => 'Change Account';
-	@override String get addSpace => 'Add Space';
-	@override String nSpaces({required Object count}) => '${count} spaces';
-	@override String get selectLinkedAccount => 'Select Linked Account';
-	@override String get selectLinkedSpace => 'Select Linked Space';
-	@override String get noSpacesAvailable => 'No spaces available';
-	@override String get linkSuccess => 'Link successful';
-	@override String get linkFailed => 'Link failed';
-	@override String get rawInput => 'Message';
-	@override String get noRawInput => 'No message';
+
+	/// en: 'Expense'
+	String get expense => 'Expense';
+
+	/// en: 'Income'
+	String get income => 'Income';
+
+	/// en: 'Transfer'
+	String get transfer => 'Transfer';
+
+	/// en: 'Amount'
+	String get amount => 'Amount';
+
+	/// en: 'Category'
+	String get category => 'Category';
+
+	/// en: 'Description'
+	String get description => 'Description';
+
+	/// en: 'Tags'
+	String get tags => 'Tags';
+
+	/// en: 'Save Transaction'
+	String get saveTransaction => 'Save Transaction';
+
+	/// en: 'Please enter amount'
+	String get pleaseEnterAmount => 'Please enter amount';
+
+	/// en: 'Please select category'
+	String get pleaseSelectCategory => 'Please select category';
+
+	/// en: 'Failed to save'
+	String get saveFailed => 'Failed to save';
+
+	/// en: 'Record details of this transaction...'
+	String get descriptionHint => 'Record details of this transaction...';
+
+	/// en: 'Add Custom Tag'
+	String get addCustomTag => 'Add Custom Tag';
+
+	/// en: 'Common Tags'
+	String get commonTags => 'Common Tags';
+
+	/// en: 'Maximum $maxTags tags allowed'
+	String maxTagsHint({required Object maxTags}) => 'Maximum ${maxTags} tags allowed';
+
+	/// en: 'No transactions found'
+	String get noTransactionsFound => 'No transactions found';
+
+	/// en: 'Try adjusting search criteria or create new transactions'
+	String get tryAdjustingSearch => 'Try adjusting search criteria or create new transactions';
+
+	/// en: 'No description'
+	String get noDescription => 'No description';
+
+	/// en: 'Payment'
+	String get payment => 'Payment';
+
+	/// en: 'Account'
+	String get account => 'Account';
+
+	/// en: 'Time'
+	String get time => 'Time';
+
+	/// en: 'Location'
+	String get location => 'Location';
+
+	/// en: 'Transaction Details'
+	String get transactionDetail => 'Transaction Details';
+
+	/// en: 'Favorite'
+	String get favorite => 'Favorite';
+
+	/// en: 'Confirm Delete'
+	String get confirmDelete => 'Confirm Delete';
+
+	/// en: 'Are you sure you want to delete this transaction? This action cannot be undone.'
+	String get deleteTransactionConfirm => 'Are you sure you want to delete this transaction? This action cannot be undone.';
+
+	/// en: 'No actions available'
+	String get noActions => 'No actions available';
+
+	/// en: 'Deleted'
+	String get deleted => 'Deleted';
+
+	/// en: 'Delete failed, please try again'
+	String get deleteFailed => 'Delete failed, please try again';
+
+	/// en: 'Linked Account'
+	String get linkedAccount => 'Linked Account';
+
+	/// en: 'Linked Space'
+	String get linkedSpace => 'Linked Space';
+
+	/// en: 'Not linked'
+	String get notLinked => 'Not linked';
+
+	/// en: 'Link'
+	String get link => 'Link';
+
+	/// en: 'Change Account'
+	String get changeAccount => 'Change Account';
+
+	/// en: 'Add Space'
+	String get addSpace => 'Add Space';
+
+	/// en: '$count spaces'
+	String nSpaces({required Object count}) => '${count} spaces';
+
+	/// en: 'Select Linked Account'
+	String get selectLinkedAccount => 'Select Linked Account';
+
+	/// en: 'Select Linked Space'
+	String get selectLinkedSpace => 'Select Linked Space';
+
+	/// en: 'No spaces available'
+	String get noSpacesAvailable => 'No spaces available';
+
+	/// en: 'Link successful'
+	String get linkSuccess => 'Link successful';
+
+	/// en: 'Link failed'
+	String get linkFailed => 'Link failed';
+
+	/// en: 'Message'
+	String get rawInput => 'Message';
+
+	/// en: 'No message'
+	String get noRawInput => 'No message';
 }
 
 // Path: home
-class _TranslationsHomeEn extends TranslationsHomeZh {
-	_TranslationsHomeEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsHomeEn {
+	TranslationsHomeEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get totalExpense => 'Total Expense';
-	@override String get todayExpense => 'Today\'s';
-	@override String get monthExpense => 'This Month\'s';
-	@override String yearProgress({required Object year}) => '${year} Progress';
-	@override String get amountHidden => '••••••••';
-	@override String get loadFailed => 'Load failed';
-	@override String get noTransactions => 'No transactions';
-	@override String get tryRefresh => 'Pull to refresh';
-	@override String get noMoreData => 'No more data';
-	@override String get userNotLoggedIn => 'User not logged in';
+
+	/// en: 'Total Expense'
+	String get totalExpense => 'Total Expense';
+
+	/// en: 'Today's'
+	String get todayExpense => 'Today\'s';
+
+	/// en: 'This Month's'
+	String get monthExpense => 'This Month\'s';
+
+	/// en: '$year Progress'
+	String yearProgress({required Object year}) => '${year} Progress';
+
+	/// en: '••••••••'
+	String get amountHidden => '••••••••';
+
+	/// en: 'Load failed'
+	String get loadFailed => 'Load failed';
+
+	/// en: 'No transactions'
+	String get noTransactions => 'No transactions';
+
+	/// en: 'Pull to refresh'
+	String get tryRefresh => 'Pull to refresh';
+
+	/// en: 'No more data'
+	String get noMoreData => 'No more data';
+
+	/// en: 'User not logged in'
+	String get userNotLoggedIn => 'User not logged in';
 }
 
 // Path: comment
-class _TranslationsCommentEn extends TranslationsCommentZh {
-	_TranslationsCommentEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsCommentEn {
+	TranslationsCommentEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get error => 'Error';
-	@override String get commentFailed => 'Comment failed';
-	@override String replyToPrefix({required Object name}) => 'Reply to @${name}:';
-	@override String get reply => 'Reply';
-	@override String get addNote => 'Add a note...';
-	@override String get confirmDeleteTitle => 'Confirm Delete';
-	@override String get confirmDeleteContent => 'Are you sure you want to delete this comment? This action cannot be undone.';
-	@override String get success => 'Success';
-	@override String get commentDeleted => 'Comment deleted';
-	@override String get deleteFailed => 'Failed to delete';
-	@override String get deleteComment => 'Delete Comment';
-	@override String get hint => 'Hint';
-	@override String get noActions => 'No actions available';
-	@override String get note => 'Note';
-	@override String get noNote => 'No notes yet';
-	@override String get loadFailed => 'Failed to load notes';
+
+	/// en: 'Error'
+	String get error => 'Error';
+
+	/// en: 'Comment failed'
+	String get commentFailed => 'Comment failed';
+
+	/// en: 'Reply to @$name:'
+	String replyToPrefix({required Object name}) => 'Reply to @${name}:';
+
+	/// en: 'Reply'
+	String get reply => 'Reply';
+
+	/// en: 'Add a note...'
+	String get addNote => 'Add a note...';
+
+	/// en: 'Confirm Delete'
+	String get confirmDeleteTitle => 'Confirm Delete';
+
+	/// en: 'Are you sure you want to delete this comment? This action cannot be undone.'
+	String get confirmDeleteContent => 'Are you sure you want to delete this comment? This action cannot be undone.';
+
+	/// en: 'Success'
+	String get success => 'Success';
+
+	/// en: 'Comment deleted'
+	String get commentDeleted => 'Comment deleted';
+
+	/// en: 'Failed to delete'
+	String get deleteFailed => 'Failed to delete';
+
+	/// en: 'Delete Comment'
+	String get deleteComment => 'Delete Comment';
+
+	/// en: 'Hint'
+	String get hint => 'Hint';
+
+	/// en: 'No actions available'
+	String get noActions => 'No actions available';
+
+	/// en: 'Note'
+	String get note => 'Note';
+
+	/// en: 'No notes yet'
+	String get noNote => 'No notes yet';
+
+	/// en: 'Failed to load notes'
+	String get loadFailed => 'Failed to load notes';
 }
 
 // Path: calendar
-class _TranslationsCalendarEn extends TranslationsCalendarZh {
-	_TranslationsCalendarEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsCalendarEn {
+	TranslationsCalendarEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Expense Calendar';
-	@override late final _TranslationsCalendarWeekdaysEn weekdays = _TranslationsCalendarWeekdaysEn._(_root);
-	@override String get loadFailed => 'Failed to load calendar data';
-	@override String thisMonth({required Object amount}) => 'Month: ${amount}';
-	@override String get counting => 'Counting...';
-	@override String get unableToCount => 'Unable to count';
-	@override String get trend => 'Trend: ';
-	@override String get noTransactionsTitle => 'No transactions on this day';
-	@override String get loadTransactionFailed => 'Failed to load transactions';
+
+	/// en: 'Expense Calendar'
+	String get title => 'Expense Calendar';
+
+	late final TranslationsCalendarWeekdaysEn weekdays = TranslationsCalendarWeekdaysEn._(_root);
+
+	/// en: 'Failed to load calendar data'
+	String get loadFailed => 'Failed to load calendar data';
+
+	/// en: 'Month: $amount'
+	String thisMonth({required Object amount}) => 'Month: ${amount}';
+
+	/// en: 'Counting...'
+	String get counting => 'Counting...';
+
+	/// en: 'Unable to count'
+	String get unableToCount => 'Unable to count';
+
+	/// en: 'Trend: '
+	String get trend => 'Trend: ';
+
+	/// en: 'No transactions on this day'
+	String get noTransactionsTitle => 'No transactions on this day';
+
+	/// en: 'Failed to load transactions'
+	String get loadTransactionFailed => 'Failed to load transactions';
 }
 
 // Path: category
-class _TranslationsCategoryEn extends TranslationsCategoryZh {
-	_TranslationsCategoryEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsCategoryEn {
+	TranslationsCategoryEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get dailyConsumption => 'Daily Expenses';
-	@override String get transportation => 'Transportation';
-	@override String get healthcare => 'Healthcare';
-	@override String get housing => 'Housing & Utilities';
-	@override String get education => 'Education';
-	@override String get incomeCategory => 'Income';
-	@override String get socialGifts => 'Gifts & Donations';
-	@override String get moneyTransfer => 'Transfers';
-	@override String get other => 'Other';
-	@override String get foodDining => 'Food & Dining';
-	@override String get shoppingRetail => 'Shopping';
-	@override String get housingUtilities => 'Housing & Utilities';
-	@override String get personalCare => 'Personal Care';
-	@override String get entertainment => 'Entertainment';
-	@override String get medicalHealth => 'Medical & Health';
-	@override String get insurance => 'Insurance';
-	@override String get socialGifting => 'Social & Gifting';
-	@override String get financialTax => 'Financial & Tax';
-	@override String get others => 'Others';
-	@override String get salaryWage => 'Salary';
-	@override String get businessTrade => 'Business';
-	@override String get investmentReturns => 'Investment Returns';
-	@override String get giftBonus => 'Gift & Bonus';
-	@override String get refundRebate => 'Refund';
-	@override String get generalTransfer => 'Transfer';
-	@override String get debtRepayment => 'Debt Repayment';
+
+	/// en: 'Daily Expenses'
+	String get dailyConsumption => 'Daily Expenses';
+
+	/// en: 'Transportation'
+	String get transportation => 'Transportation';
+
+	/// en: 'Healthcare'
+	String get healthcare => 'Healthcare';
+
+	/// en: 'Housing & Utilities'
+	String get housing => 'Housing & Utilities';
+
+	/// en: 'Education'
+	String get education => 'Education';
+
+	/// en: 'Income'
+	String get incomeCategory => 'Income';
+
+	/// en: 'Gifts & Donations'
+	String get socialGifts => 'Gifts & Donations';
+
+	/// en: 'Transfers'
+	String get moneyTransfer => 'Transfers';
+
+	/// en: 'Other'
+	String get other => 'Other';
+
+	/// en: 'Food & Dining'
+	String get foodDining => 'Food & Dining';
+
+	/// en: 'Shopping'
+	String get shoppingRetail => 'Shopping';
+
+	/// en: 'Housing & Utilities'
+	String get housingUtilities => 'Housing & Utilities';
+
+	/// en: 'Personal Care'
+	String get personalCare => 'Personal Care';
+
+	/// en: 'Entertainment'
+	String get entertainment => 'Entertainment';
+
+	/// en: 'Medical & Health'
+	String get medicalHealth => 'Medical & Health';
+
+	/// en: 'Insurance'
+	String get insurance => 'Insurance';
+
+	/// en: 'Social & Gifting'
+	String get socialGifting => 'Social & Gifting';
+
+	/// en: 'Financial & Tax'
+	String get financialTax => 'Financial & Tax';
+
+	/// en: 'Others'
+	String get others => 'Others';
+
+	/// en: 'Salary'
+	String get salaryWage => 'Salary';
+
+	/// en: 'Business'
+	String get businessTrade => 'Business';
+
+	/// en: 'Investment Returns'
+	String get investmentReturns => 'Investment Returns';
+
+	/// en: 'Gift & Bonus'
+	String get giftBonus => 'Gift & Bonus';
+
+	/// en: 'Refund'
+	String get refundRebate => 'Refund';
+
+	/// en: 'Transfer'
+	String get generalTransfer => 'Transfer';
+
+	/// en: 'Debt Repayment'
+	String get debtRepayment => 'Debt Repayment';
 }
 
 // Path: settings
-class _TranslationsSettingsEn extends TranslationsSettingsZh {
-	_TranslationsSettingsEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsSettingsEn {
+	TranslationsSettingsEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Settings';
-	@override String get language => 'Language';
-	@override String get languageSettings => 'Language Settings';
-	@override String get selectLanguage => 'Select Language';
-	@override String get languageChanged => 'Language Changed';
-	@override String get restartToApply => 'Restart app to apply changes';
-	@override String get theme => 'Theme';
-	@override String get darkMode => 'Dark Mode';
-	@override String get lightMode => 'Light Mode';
-	@override String get systemMode => 'Follow System';
-	@override String get developerOptions => 'Developer Options';
-	@override String get authDebug => 'Auth Debug';
-	@override String get authDebugSubtitle => 'View authentication status and debug info';
-	@override String get fontTest => 'Font Test';
-	@override String get fontTestSubtitle => 'Test application font display';
-	@override String get helpAndFeedback => 'Help & Feedback';
-	@override String get helpAndFeedbackSubtitle => 'Get help or provide feedback';
-	@override String get aboutApp => 'About';
-	@override String get aboutAppSubtitle => 'Version info and developer information';
-	@override String currencyChangedRefreshHint({required Object currency}) => 'Switched to ${currency}. New transactions will use this currency.';
-	@override String get sharedSpace => 'Shared Space';
-	@override String get speechRecognition => 'Speech Recognition';
-	@override String get speechRecognitionSubtitle => 'Configure voice input parameters';
-	@override String get amountDisplayStyle => 'Amount Display Style';
-	@override String get currency => 'Currency';
-	@override String get appearance => 'Appearance Settings';
-	@override String get appearanceSubtitle => 'Theme mode and color scheme';
-	@override String get speechTest => 'Speech Test';
-	@override String get speechTestSubtitle => 'Test WebSocket speech connection';
-	@override String get userTypeRegular => 'Regular User';
-	@override String get selectAmountStyle => 'Select Amount Display Style';
-	@override String get amountStyleNotice => 'Note: Amount styles are primarily applied to \'Transactions\' and \'Trends\'. To maintain visual clarity, \'Account Balances\' and \'Asset Summaries\' will remain in neutral colors.';
-	@override String get currencyDescription => 'Choose your preferred display currency. All amounts will be displayed in this currency.';
-	@override String get editUsername => 'Edit Username';
-	@override String get enterUsername => 'Enter username';
-	@override String get usernameRequired => 'Username is required';
-	@override String get usernameUpdated => 'Username updated';
-	@override String get avatarUpdated => 'Avatar updated';
+
+	/// en: 'Settings'
+	String get title => 'Settings';
+
+	/// en: 'Language'
+	String get language => 'Language';
+
+	/// en: 'Language Settings'
+	String get languageSettings => 'Language Settings';
+
+	/// en: 'Select Language'
+	String get selectLanguage => 'Select Language';
+
+	/// en: 'Language Changed'
+	String get languageChanged => 'Language Changed';
+
+	/// en: 'Restart app to apply changes'
+	String get restartToApply => 'Restart app to apply changes';
+
+	/// en: 'Theme'
+	String get theme => 'Theme';
+
+	/// en: 'Dark Mode'
+	String get darkMode => 'Dark Mode';
+
+	/// en: 'Light Mode'
+	String get lightMode => 'Light Mode';
+
+	/// en: 'Follow System'
+	String get systemMode => 'Follow System';
+
+	/// en: 'Developer Options'
+	String get developerOptions => 'Developer Options';
+
+	/// en: 'Auth Debug'
+	String get authDebug => 'Auth Debug';
+
+	/// en: 'View authentication status and debug info'
+	String get authDebugSubtitle => 'View authentication status and debug info';
+
+	/// en: 'Font Test'
+	String get fontTest => 'Font Test';
+
+	/// en: 'Test application font display'
+	String get fontTestSubtitle => 'Test application font display';
+
+	/// en: 'Help & Feedback'
+	String get helpAndFeedback => 'Help & Feedback';
+
+	/// en: 'Get help or provide feedback'
+	String get helpAndFeedbackSubtitle => 'Get help or provide feedback';
+
+	/// en: 'About'
+	String get aboutApp => 'About';
+
+	/// en: 'Version info and developer information'
+	String get aboutAppSubtitle => 'Version info and developer information';
+
+	/// en: 'Switched to $currency. New transactions will use this currency.'
+	String currencyChangedRefreshHint({required Object currency}) => 'Switched to ${currency}. New transactions will use this currency.';
+
+	/// en: 'Shared Space'
+	String get sharedSpace => 'Shared Space';
+
+	/// en: 'Speech Recognition'
+	String get speechRecognition => 'Speech Recognition';
+
+	/// en: 'Configure voice input parameters'
+	String get speechRecognitionSubtitle => 'Configure voice input parameters';
+
+	/// en: 'Amount Display Style'
+	String get amountDisplayStyle => 'Amount Display Style';
+
+	/// en: 'Currency'
+	String get currency => 'Currency';
+
+	/// en: 'Appearance Settings'
+	String get appearance => 'Appearance Settings';
+
+	/// en: 'Theme mode and color scheme'
+	String get appearanceSubtitle => 'Theme mode and color scheme';
+
+	/// en: 'Speech Test'
+	String get speechTest => 'Speech Test';
+
+	/// en: 'Test WebSocket speech connection'
+	String get speechTestSubtitle => 'Test WebSocket speech connection';
+
+	/// en: 'Regular User'
+	String get userTypeRegular => 'Regular User';
+
+	/// en: 'Select Amount Display Style'
+	String get selectAmountStyle => 'Select Amount Display Style';
+
+	/// en: 'Note: Amount styles are primarily applied to 'Transactions' and 'Trends'. To maintain visual clarity, 'Account Balances' and 'Asset Summaries' will remain in neutral colors.'
+	String get amountStyleNotice => 'Note: Amount styles are primarily applied to \'Transactions\' and \'Trends\'. To maintain visual clarity, \'Account Balances\' and \'Asset Summaries\' will remain in neutral colors.';
+
+	/// en: 'Choose your preferred display currency. All amounts will be displayed in this currency.'
+	String get currencyDescription => 'Choose your preferred display currency. All amounts will be displayed in this currency.';
+
+	/// en: 'Edit Username'
+	String get editUsername => 'Edit Username';
+
+	/// en: 'Enter username'
+	String get enterUsername => 'Enter username';
+
+	/// en: 'Username is required'
+	String get usernameRequired => 'Username is required';
+
+	/// en: 'Username updated'
+	String get usernameUpdated => 'Username updated';
+
+	/// en: 'Avatar updated'
+	String get avatarUpdated => 'Avatar updated';
 }
 
 // Path: appearance
-class _TranslationsAppearanceEn extends TranslationsAppearanceZh {
-	_TranslationsAppearanceEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsAppearanceEn {
+	TranslationsAppearanceEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Appearance Settings';
-	@override String get themeMode => 'Theme Mode';
-	@override String get light => 'Light';
-	@override String get dark => 'Dark';
-	@override String get system => 'System';
-	@override String get colorScheme => 'Color Scheme';
-	@override late final _TranslationsAppearancePalettesEn palettes = _TranslationsAppearancePalettesEn._(_root);
+
+	/// en: 'Appearance Settings'
+	String get title => 'Appearance Settings';
+
+	/// en: 'Theme Mode'
+	String get themeMode => 'Theme Mode';
+
+	/// en: 'Light'
+	String get light => 'Light';
+
+	/// en: 'Dark'
+	String get dark => 'Dark';
+
+	/// en: 'System'
+	String get system => 'System';
+
+	/// en: 'Color Scheme'
+	String get colorScheme => 'Color Scheme';
+
+	late final TranslationsAppearancePalettesEn palettes = TranslationsAppearancePalettesEn._(_root);
 }
 
 // Path: speech
-class _TranslationsSpeechEn extends TranslationsSpeechZh {
-	_TranslationsSpeechEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsSpeechEn {
+	TranslationsSpeechEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Speech Recognition Settings';
-	@override String get service => 'Speech Recognition Service';
-	@override String get systemVoice => 'System Voice';
-	@override String get systemVoiceSubtitle => 'Use built-in device service (Recommended)';
-	@override String get selfHostedASR => 'Self-hosted ASR';
-	@override String get selfHostedASRSubtitle => 'Use WebSocket connection to self-hosted service';
-	@override String get serverConfig => 'Server Configuration';
-	@override String get serverAddress => 'Server Address';
-	@override String get port => 'Port';
-	@override String get path => 'Path';
-	@override String get saveConfig => 'Save Configuration';
-	@override String get info => 'Information';
-	@override String get infoContent => '• System Voice: Uses device service, no config needed, faster response\n• Self-hosted ASR: Suitable for custom models or offline scenarios\n\nChanges will take effect next time you use voice input.';
-	@override String get enterAddress => 'Please enter server address';
-	@override String get enterValidPort => 'Please enter a valid port (1-65535)';
-	@override String get configSaved => 'Configuration saved';
+
+	/// en: 'Speech Recognition Settings'
+	String get title => 'Speech Recognition Settings';
+
+	/// en: 'Speech Recognition Service'
+	String get service => 'Speech Recognition Service';
+
+	/// en: 'System Voice'
+	String get systemVoice => 'System Voice';
+
+	/// en: 'Use built-in device service (Recommended)'
+	String get systemVoiceSubtitle => 'Use built-in device service (Recommended)';
+
+	/// en: 'Self-hosted ASR'
+	String get selfHostedASR => 'Self-hosted ASR';
+
+	/// en: 'Use WebSocket connection to self-hosted service'
+	String get selfHostedASRSubtitle => 'Use WebSocket connection to self-hosted service';
+
+	/// en: 'Server Configuration'
+	String get serverConfig => 'Server Configuration';
+
+	/// en: 'Server Address'
+	String get serverAddress => 'Server Address';
+
+	/// en: 'Port'
+	String get port => 'Port';
+
+	/// en: 'Path'
+	String get path => 'Path';
+
+	/// en: 'Save Configuration'
+	String get saveConfig => 'Save Configuration';
+
+	/// en: 'Information'
+	String get info => 'Information';
+
+	/// en: '• System Voice: Uses device service, no config needed, faster response • Self-hosted ASR: Suitable for custom models or offline scenarios Changes will take effect next time you use voice input.'
+	String get infoContent => '• System Voice: Uses device service, no config needed, faster response\n• Self-hosted ASR: Suitable for custom models or offline scenarios\n\nChanges will take effect next time you use voice input.';
+
+	/// en: 'Please enter server address'
+	String get enterAddress => 'Please enter server address';
+
+	/// en: 'Please enter a valid port (1-65535)'
+	String get enterValidPort => 'Please enter a valid port (1-65535)';
+
+	/// en: 'Configuration saved'
+	String get configSaved => 'Configuration saved';
 }
 
 // Path: amountTheme
-class _TranslationsAmountThemeEn extends TranslationsAmountThemeZh {
-	_TranslationsAmountThemeEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsAmountThemeEn {
+	TranslationsAmountThemeEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get chinaMarket => 'China Market Style';
-	@override String get chinaMarketDesc => 'Red up, Green/Black down (Recommended)';
-	@override String get international => 'International Standard';
-	@override String get internationalDesc => 'Green up, Red down';
-	@override String get minimalist => 'Minimalist';
-	@override String get minimalistDesc => 'Distinguish with symbols only';
-	@override String get colorBlind => 'Color Blind Friendly';
-	@override String get colorBlindDesc => 'Blue-Orange color scheme';
+
+	/// en: 'China Market Style'
+	String get chinaMarket => 'China Market Style';
+
+	/// en: 'Red up, Green/Black down (Recommended)'
+	String get chinaMarketDesc => 'Red up, Green/Black down (Recommended)';
+
+	/// en: 'International Standard'
+	String get international => 'International Standard';
+
+	/// en: 'Green up, Red down'
+	String get internationalDesc => 'Green up, Red down';
+
+	/// en: 'Minimalist'
+	String get minimalist => 'Minimalist';
+
+	/// en: 'Distinguish with symbols only'
+	String get minimalistDesc => 'Distinguish with symbols only';
+
+	/// en: 'Color Blind Friendly'
+	String get colorBlind => 'Color Blind Friendly';
+
+	/// en: 'Blue-Orange color scheme'
+	String get colorBlindDesc => 'Blue-Orange color scheme';
 }
 
 // Path: locale
-class _TranslationsLocaleEn extends TranslationsLocaleZh {
-	_TranslationsLocaleEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsLocaleEn {
+	TranslationsLocaleEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get chinese => 'Simplified Chinese';
-	@override String get english => 'English';
-	@override String get japanese => 'Japanese';
-	@override String get korean => 'Korean';
-	@override String get traditionalChinese => 'Traditional Chinese';
+
+	/// en: 'Simplified Chinese'
+	String get chinese => 'Simplified Chinese';
+
+	/// en: 'English'
+	String get english => 'English';
+
+	/// en: 'Japanese'
+	String get japanese => 'Japanese';
+
+	/// en: 'Korean'
+	String get korean => 'Korean';
+
+	/// en: 'Traditional Chinese'
+	String get traditionalChinese => 'Traditional Chinese';
 }
 
 // Path: budget
-class _TranslationsBudgetEn extends TranslationsBudgetZh {
-	_TranslationsBudgetEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsBudgetEn {
+	TranslationsBudgetEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Budget Management';
-	@override String get detail => 'Budget Details';
-	@override String get info => 'Budget Info';
-	@override String get totalBudget => 'Total Budget';
-	@override String get categoryBudget => 'Category Budget';
-	@override String get monthlySummary => 'Monthly Budget Summary';
-	@override String get used => 'Used';
-	@override String get remaining => 'Remaining';
-	@override String get overspent => 'Overspent';
-	@override String get budget => 'Budget';
-	@override String get loadFailed => 'Failed to load';
-	@override String get noBudget => 'No budgets yet';
-	@override String get createHint => 'Say "Help me set a budget" to your Augo assistant';
-	@override String get paused => 'Paused';
-	@override String get pause => 'Pause';
-	@override String get resume => 'Resume';
-	@override String get budgetPaused => 'Budget paused';
-	@override String get budgetResumed => 'Budget resumed';
-	@override String get operationFailed => 'Operation failed';
-	@override String get deleteBudget => 'Delete Budget';
-	@override String get deleteConfirm => 'Are you sure you want to delete this budget? This cannot be undone.';
-	@override String get type => 'Type';
-	@override String get category => 'Category';
-	@override String get period => 'Repeat Rule';
-	@override String get rollover => 'Rollover';
-	@override String get rolloverBalance => 'Rollover Balance';
-	@override String get enabled => 'Enabled';
-	@override String get disabled => 'Disabled';
-	@override String get statusNormal => 'On Track';
-	@override String get statusWarning => 'Near Limit';
-	@override String get statusOverspent => 'Overspent';
-	@override String get statusAchieved => 'Goal Achieved';
-	@override String tipNormal({required Object amount}) => '${amount} remaining';
-	@override String tipWarning({required Object amount}) => 'Only ${amount} left, be careful';
-	@override String tipOverspent({required Object amount}) => 'Overspent by ${amount}';
-	@override String get tipAchieved => 'Congratulations on achieving your savings goal!';
-	@override String remainingAmount({required Object amount}) => '${amount} remaining';
-	@override String overspentAmount({required Object amount}) => 'Overspent ${amount}';
-	@override String budgetAmount({required Object amount}) => 'Budget ${amount}';
-	@override String get active => 'Active';
-	@override String get all => 'All';
-	@override String get notFound => 'Budget not found or deleted';
-	@override String get setup => 'Budget Setup';
-	@override String get settings => 'Budget Settings';
-	@override String get setAmount => 'Set Budget Amount';
-	@override String get setAmountDesc => 'Set budget amount for each category';
-	@override String get monthly => 'Monthly Budget';
-	@override String get monthlyDesc => 'Manage expenses monthly, suitable for most users';
-	@override String get weekly => 'Weekly Budget';
-	@override String get weeklyDesc => 'Manage expenses weekly for finer control';
-	@override String get yearly => 'Annual Budget';
-	@override String get yearlyDesc => 'Long-term financial planning for major expenses';
-	@override String get editBudget => 'Edit Budget';
-	@override String get editBudgetDesc => 'Modify budget amounts and categories';
-	@override String get reminderSettings => 'Reminder Settings';
-	@override String get reminderSettingsDesc => 'Set budget reminders and notifications';
-	@override String get report => 'Budget Report';
-	@override String get reportDesc => 'View detailed budget analysis reports';
-	@override String get welcome => 'Welcome to Budget Feature!';
-	@override String get createNewPlan => 'Create New Budget Plan';
-	@override String get welcomeDesc => 'Set budgets to better control spending and achieve financial goals. Let\'s start setting up your first budget plan!';
-	@override String get createDesc => 'Set budget limits for different spending categories to manage your finances better.';
-	@override String get newBudget => 'New Budget';
-	@override String get budgetAmountLabel => 'Budget Amount';
-	@override String get currency => 'Currency';
-	@override String get periodSettings => 'Period Settings';
-	@override String get autoGenerateTransactions => 'Automatically generate transactions by rule';
-	@override String get cycle => 'Cycle';
-	@override String get budgetCategory => 'Budget Category';
-	@override String get advancedOptions => 'Advanced Options';
-	@override String get periodType => 'Period Type';
-	@override String get anchorDay => 'Anchor Day';
-	@override String get selectPeriodType => 'Select Period Type';
-	@override String get selectAnchorDay => 'Select Anchor Day';
-	@override String get rolloverDescription => 'Carry over unused budget to next period';
-	@override String get createBudget => 'Create Budget';
-	@override String get save => 'Save';
-	@override String get pleaseEnterAmount => 'Please enter budget amount';
-	@override String get invalidAmount => 'Please enter a valid amount';
-	@override String get updateSuccess => 'Budget updated successfully';
-	@override String get createSuccess => 'Budget created successfully';
-	@override String get deleteSuccess => 'Budget deleted';
-	@override String get deleteFailed => 'Delete failed';
-	@override String everyMonthDay({required Object day}) => 'Day ${day} of each month';
-	@override String get periodWeekly => 'Weekly';
-	@override String get periodBiweekly => 'Biweekly';
-	@override String get periodMonthly => 'Monthly';
-	@override String get periodYearly => 'Yearly';
-	@override String get statusActive => 'Active';
-	@override String get statusArchived => 'Archived';
-	@override String get periodStatusOnTrack => 'On Track';
-	@override String get periodStatusWarning => 'Warning';
-	@override String get periodStatusExceeded => 'Exceeded';
-	@override String get periodStatusAchieved => 'Achieved';
-	@override String usedPercent({required Object percent}) => '${percent}% used';
-	@override String dayOfMonth({required Object day}) => 'Day ${day}';
-	@override String get tenThousandSuffix => '0k';
+
+	/// en: 'Budget Management'
+	String get title => 'Budget Management';
+
+	/// en: 'Budget Details'
+	String get detail => 'Budget Details';
+
+	/// en: 'Budget Info'
+	String get info => 'Budget Info';
+
+	/// en: 'Total Budget'
+	String get totalBudget => 'Total Budget';
+
+	/// en: 'Category Budget'
+	String get categoryBudget => 'Category Budget';
+
+	/// en: 'Monthly Budget Summary'
+	String get monthlySummary => 'Monthly Budget Summary';
+
+	/// en: 'Used'
+	String get used => 'Used';
+
+	/// en: 'Remaining'
+	String get remaining => 'Remaining';
+
+	/// en: 'Overspent'
+	String get overspent => 'Overspent';
+
+	/// en: 'Budget'
+	String get budget => 'Budget';
+
+	/// en: 'Failed to load'
+	String get loadFailed => 'Failed to load';
+
+	/// en: 'No budgets yet'
+	String get noBudget => 'No budgets yet';
+
+	/// en: 'Say "Help me set a budget" to your Augo assistant'
+	String get createHint => 'Say "Help me set a budget" to your Augo assistant';
+
+	/// en: 'Paused'
+	String get paused => 'Paused';
+
+	/// en: 'Pause'
+	String get pause => 'Pause';
+
+	/// en: 'Resume'
+	String get resume => 'Resume';
+
+	/// en: 'Budget paused'
+	String get budgetPaused => 'Budget paused';
+
+	/// en: 'Budget resumed'
+	String get budgetResumed => 'Budget resumed';
+
+	/// en: 'Operation failed'
+	String get operationFailed => 'Operation failed';
+
+	/// en: 'Delete Budget'
+	String get deleteBudget => 'Delete Budget';
+
+	/// en: 'Are you sure you want to delete this budget? This cannot be undone.'
+	String get deleteConfirm => 'Are you sure you want to delete this budget? This cannot be undone.';
+
+	/// en: 'Type'
+	String get type => 'Type';
+
+	/// en: 'Category'
+	String get category => 'Category';
+
+	/// en: 'Repeat Rule'
+	String get period => 'Repeat Rule';
+
+	/// en: 'Rollover'
+	String get rollover => 'Rollover';
+
+	/// en: 'Rollover Balance'
+	String get rolloverBalance => 'Rollover Balance';
+
+	/// en: 'Enabled'
+	String get enabled => 'Enabled';
+
+	/// en: 'Disabled'
+	String get disabled => 'Disabled';
+
+	/// en: 'On Track'
+	String get statusNormal => 'On Track';
+
+	/// en: 'Near Limit'
+	String get statusWarning => 'Near Limit';
+
+	/// en: 'Overspent'
+	String get statusOverspent => 'Overspent';
+
+	/// en: 'Goal Achieved'
+	String get statusAchieved => 'Goal Achieved';
+
+	/// en: '$amount remaining'
+	String tipNormal({required Object amount}) => '${amount} remaining';
+
+	/// en: 'Only $amount left, be careful'
+	String tipWarning({required Object amount}) => 'Only ${amount} left, be careful';
+
+	/// en: 'Overspent by $amount'
+	String tipOverspent({required Object amount}) => 'Overspent by ${amount}';
+
+	/// en: 'Congratulations on achieving your savings goal!'
+	String get tipAchieved => 'Congratulations on achieving your savings goal!';
+
+	/// en: '$amount remaining'
+	String remainingAmount({required Object amount}) => '${amount} remaining';
+
+	/// en: 'Overspent $amount'
+	String overspentAmount({required Object amount}) => 'Overspent ${amount}';
+
+	/// en: 'Budget $amount'
+	String budgetAmount({required Object amount}) => 'Budget ${amount}';
+
+	/// en: 'Active'
+	String get active => 'Active';
+
+	/// en: 'All'
+	String get all => 'All';
+
+	/// en: 'Budget not found or deleted'
+	String get notFound => 'Budget not found or deleted';
+
+	/// en: 'Budget Setup'
+	String get setup => 'Budget Setup';
+
+	/// en: 'Budget Settings'
+	String get settings => 'Budget Settings';
+
+	/// en: 'Set Budget Amount'
+	String get setAmount => 'Set Budget Amount';
+
+	/// en: 'Set budget amount for each category'
+	String get setAmountDesc => 'Set budget amount for each category';
+
+	/// en: 'Monthly Budget'
+	String get monthly => 'Monthly Budget';
+
+	/// en: 'Manage expenses monthly, suitable for most users'
+	String get monthlyDesc => 'Manage expenses monthly, suitable for most users';
+
+	/// en: 'Weekly Budget'
+	String get weekly => 'Weekly Budget';
+
+	/// en: 'Manage expenses weekly for finer control'
+	String get weeklyDesc => 'Manage expenses weekly for finer control';
+
+	/// en: 'Annual Budget'
+	String get yearly => 'Annual Budget';
+
+	/// en: 'Long-term financial planning for major expenses'
+	String get yearlyDesc => 'Long-term financial planning for major expenses';
+
+	/// en: 'Edit Budget'
+	String get editBudget => 'Edit Budget';
+
+	/// en: 'Modify budget amounts and categories'
+	String get editBudgetDesc => 'Modify budget amounts and categories';
+
+	/// en: 'Reminder Settings'
+	String get reminderSettings => 'Reminder Settings';
+
+	/// en: 'Set budget reminders and notifications'
+	String get reminderSettingsDesc => 'Set budget reminders and notifications';
+
+	/// en: 'Budget Report'
+	String get report => 'Budget Report';
+
+	/// en: 'View detailed budget analysis reports'
+	String get reportDesc => 'View detailed budget analysis reports';
+
+	/// en: 'Welcome to Budget Feature!'
+	String get welcome => 'Welcome to Budget Feature!';
+
+	/// en: 'Create New Budget Plan'
+	String get createNewPlan => 'Create New Budget Plan';
+
+	/// en: 'Set budgets to better control spending and achieve financial goals. Let's start setting up your first budget plan!'
+	String get welcomeDesc => 'Set budgets to better control spending and achieve financial goals. Let\'s start setting up your first budget plan!';
+
+	/// en: 'Set budget limits for different spending categories to manage your finances better.'
+	String get createDesc => 'Set budget limits for different spending categories to manage your finances better.';
+
+	/// en: 'New Budget'
+	String get newBudget => 'New Budget';
+
+	/// en: 'Budget Amount'
+	String get budgetAmountLabel => 'Budget Amount';
+
+	/// en: 'Currency'
+	String get currency => 'Currency';
+
+	/// en: 'Period Settings'
+	String get periodSettings => 'Period Settings';
+
+	/// en: 'Automatically generate transactions by rule'
+	String get autoGenerateTransactions => 'Automatically generate transactions by rule';
+
+	/// en: 'Cycle'
+	String get cycle => 'Cycle';
+
+	/// en: 'Budget Category'
+	String get budgetCategory => 'Budget Category';
+
+	/// en: 'Advanced Options'
+	String get advancedOptions => 'Advanced Options';
+
+	/// en: 'Period Type'
+	String get periodType => 'Period Type';
+
+	/// en: 'Anchor Day'
+	String get anchorDay => 'Anchor Day';
+
+	/// en: 'Select Period Type'
+	String get selectPeriodType => 'Select Period Type';
+
+	/// en: 'Select Anchor Day'
+	String get selectAnchorDay => 'Select Anchor Day';
+
+	/// en: 'Carry over unused budget to next period'
+	String get rolloverDescription => 'Carry over unused budget to next period';
+
+	/// en: 'Create Budget'
+	String get createBudget => 'Create Budget';
+
+	/// en: 'Save'
+	String get save => 'Save';
+
+	/// en: 'Please enter budget amount'
+	String get pleaseEnterAmount => 'Please enter budget amount';
+
+	/// en: 'Please enter a valid amount'
+	String get invalidAmount => 'Please enter a valid amount';
+
+	/// en: 'Budget updated successfully'
+	String get updateSuccess => 'Budget updated successfully';
+
+	/// en: 'Budget created successfully'
+	String get createSuccess => 'Budget created successfully';
+
+	/// en: 'Budget deleted'
+	String get deleteSuccess => 'Budget deleted';
+
+	/// en: 'Delete failed'
+	String get deleteFailed => 'Delete failed';
+
+	/// en: 'Day $day of each month'
+	String everyMonthDay({required Object day}) => 'Day ${day} of each month';
+
+	/// en: 'Weekly'
+	String get periodWeekly => 'Weekly';
+
+	/// en: 'Biweekly'
+	String get periodBiweekly => 'Biweekly';
+
+	/// en: 'Monthly'
+	String get periodMonthly => 'Monthly';
+
+	/// en: 'Yearly'
+	String get periodYearly => 'Yearly';
+
+	/// en: 'Active'
+	String get statusActive => 'Active';
+
+	/// en: 'Archived'
+	String get statusArchived => 'Archived';
+
+	/// en: 'On Track'
+	String get periodStatusOnTrack => 'On Track';
+
+	/// en: 'Warning'
+	String get periodStatusWarning => 'Warning';
+
+	/// en: 'Exceeded'
+	String get periodStatusExceeded => 'Exceeded';
+
+	/// en: 'Achieved'
+	String get periodStatusAchieved => 'Achieved';
+
+	/// en: '$percent% used'
+	String usedPercent({required Object percent}) => '${percent}% used';
+
+	/// en: 'Day $day'
+	String dayOfMonth({required Object day}) => 'Day ${day}';
+
+	/// en: '0k'
+	String get tenThousandSuffix => '0k';
 }
 
 // Path: dateRange
-class _TranslationsDateRangeEn extends TranslationsDateRangeZh {
-	_TranslationsDateRangeEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsDateRangeEn {
+	TranslationsDateRangeEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get custom => 'Custom';
-	@override String get pickerTitle => 'Select Date Range';
-	@override String get startDate => 'Start Date';
-	@override String get endDate => 'End Date';
-	@override String get hint => 'Please select a date range';
+
+	/// en: 'Custom'
+	String get custom => 'Custom';
+
+	/// en: 'Select Date Range'
+	String get pickerTitle => 'Select Date Range';
+
+	/// en: 'Start Date'
+	String get startDate => 'Start Date';
+
+	/// en: 'End Date'
+	String get endDate => 'End Date';
+
+	/// en: 'Please select a date range'
+	String get hint => 'Please select a date range';
 }
 
 // Path: forecast
-class _TranslationsForecastEn extends TranslationsForecastZh {
-	_TranslationsForecastEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsForecastEn {
+	TranslationsForecastEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Forecast';
-	@override String get subtitle => 'AI-powered cash flow predictions based on your financial data';
-	@override String get financialNavigator => 'Hello, I\'m your Financial Navigator';
-	@override String get financialMapSubtitle => 'In just 3 steps, let\'s map your financial future together';
-	@override String get predictCashFlow => 'Predict Cash Flow';
-	@override String get predictCashFlowDesc => 'See your daily financial status';
-	@override String get aiSmartSuggestions => 'AI Smart Suggestions';
-	@override String get aiSmartSuggestionsDesc => 'Personalized financial decision guidance';
-	@override String get riskWarning => 'Risk Alerts';
-	@override String get riskWarningDesc => 'Detect potential financial risks early';
-	@override String get analyzing => 'Analyzing your financial data to generate a 30-day cash flow forecast';
-	@override String get analyzePattern => 'Analyzing income & expense patterns';
-	@override String get calculateTrend => 'Calculating cash flow trends';
-	@override String get generateWarning => 'Generating risk alerts';
-	@override String get loadingForecast => 'Loading financial forecast...';
-	@override String get todayLabel => 'Today';
-	@override String get tomorrowLabel => 'Tomorrow';
-	@override String get balanceLabel => 'Balance';
-	@override String get noSpecialEvents => 'No special events';
-	@override String get financialSafetyLine => 'Financial Safety Net';
-	@override String get currentSetting => 'Current Setting';
-	@override String get dailySpendingEstimate => 'Daily Spending Estimate';
-	@override String get adjustDailySpendingAmount => 'Adjust daily spending forecast amount';
-	@override String get tellMeYourSafetyLine => 'What\'s your financial safety threshold?';
-	@override String get safetyLineDescription => 'This is the minimum balance you want to maintain. I\'ll alert you when your balance approaches this amount.';
-	@override String get dailySpendingQuestion => 'How much do you spend daily?';
-	@override String get dailySpendingDescription => 'Including meals, transportation, shopping and other daily expenses\nThis is just an initial estimate - predictions will improve with your actual records';
-	@override String get perDay => 'per day';
-	@override String get referenceStandard => 'Reference';
-	@override String get frugalType => 'Frugal';
-	@override String get comfortableType => 'Comfortable';
-	@override String get relaxedType => 'Relaxed';
-	@override String get frugalAmount => '¥50-100/day';
-	@override String get comfortableAmount => '¥100-200/day';
-	@override String get relaxedAmount => '¥200-300/day';
-	@override late final _TranslationsForecastRecurringTransactionEn recurringTransaction = _TranslationsForecastRecurringTransactionEn._(_root);
+
+	/// en: 'Forecast'
+	String get title => 'Forecast';
+
+	/// en: 'AI-powered cash flow predictions based on your financial data'
+	String get subtitle => 'AI-powered cash flow predictions based on your financial data';
+
+	/// en: 'Hello, I'm your Financial Navigator'
+	String get financialNavigator => 'Hello, I\'m your Financial Navigator';
+
+	/// en: 'In just 3 steps, let's map your financial future together'
+	String get financialMapSubtitle => 'In just 3 steps, let\'s map your financial future together';
+
+	/// en: 'Predict Cash Flow'
+	String get predictCashFlow => 'Predict Cash Flow';
+
+	/// en: 'See your daily financial status'
+	String get predictCashFlowDesc => 'See your daily financial status';
+
+	/// en: 'AI Smart Suggestions'
+	String get aiSmartSuggestions => 'AI Smart Suggestions';
+
+	/// en: 'Personalized financial decision guidance'
+	String get aiSmartSuggestionsDesc => 'Personalized financial decision guidance';
+
+	/// en: 'Risk Alerts'
+	String get riskWarning => 'Risk Alerts';
+
+	/// en: 'Detect potential financial risks early'
+	String get riskWarningDesc => 'Detect potential financial risks early';
+
+	/// en: 'Analyzing your financial data to generate a 30-day cash flow forecast'
+	String get analyzing => 'Analyzing your financial data to generate a 30-day cash flow forecast';
+
+	/// en: 'Analyzing income & expense patterns'
+	String get analyzePattern => 'Analyzing income & expense patterns';
+
+	/// en: 'Calculating cash flow trends'
+	String get calculateTrend => 'Calculating cash flow trends';
+
+	/// en: 'Generating risk alerts'
+	String get generateWarning => 'Generating risk alerts';
+
+	/// en: 'Loading financial forecast...'
+	String get loadingForecast => 'Loading financial forecast...';
+
+	/// en: 'Today'
+	String get todayLabel => 'Today';
+
+	/// en: 'Tomorrow'
+	String get tomorrowLabel => 'Tomorrow';
+
+	/// en: 'Balance'
+	String get balanceLabel => 'Balance';
+
+	/// en: 'No special events'
+	String get noSpecialEvents => 'No special events';
+
+	/// en: 'Financial Safety Net'
+	String get financialSafetyLine => 'Financial Safety Net';
+
+	/// en: 'Current Setting'
+	String get currentSetting => 'Current Setting';
+
+	/// en: 'Daily Spending Estimate'
+	String get dailySpendingEstimate => 'Daily Spending Estimate';
+
+	/// en: 'Adjust daily spending forecast amount'
+	String get adjustDailySpendingAmount => 'Adjust daily spending forecast amount';
+
+	/// en: 'What's your financial safety threshold?'
+	String get tellMeYourSafetyLine => 'What\'s your financial safety threshold?';
+
+	/// en: 'This is the minimum balance you want to maintain. I'll alert you when your balance approaches this amount.'
+	String get safetyLineDescription => 'This is the minimum balance you want to maintain. I\'ll alert you when your balance approaches this amount.';
+
+	/// en: 'How much do you spend daily?'
+	String get dailySpendingQuestion => 'How much do you spend daily?';
+
+	/// en: 'Including meals, transportation, shopping and other daily expenses This is just an initial estimate - predictions will improve with your actual records'
+	String get dailySpendingDescription => 'Including meals, transportation, shopping and other daily expenses\nThis is just an initial estimate - predictions will improve with your actual records';
+
+	/// en: 'per day'
+	String get perDay => 'per day';
+
+	/// en: 'Reference'
+	String get referenceStandard => 'Reference';
+
+	/// en: 'Frugal'
+	String get frugalType => 'Frugal';
+
+	/// en: 'Comfortable'
+	String get comfortableType => 'Comfortable';
+
+	/// en: 'Relaxed'
+	String get relaxedType => 'Relaxed';
+
+	/// en: '¥50-100/day'
+	String get frugalAmount => '¥50-100/day';
+
+	/// en: '¥100-200/day'
+	String get comfortableAmount => '¥100-200/day';
+
+	/// en: '¥200-300/day'
+	String get relaxedAmount => '¥200-300/day';
+
+	late final TranslationsForecastRecurringTransactionEn recurringTransaction = TranslationsForecastRecurringTransactionEn._(_root);
 }
 
 // Path: chat
-class _TranslationsChatEn extends TranslationsChatZh {
-	_TranslationsChatEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatEn {
+	TranslationsChatEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get newChat => 'New Chat';
-	@override String get noMessages => 'No messages to display.';
-	@override String get loadingFailed => 'Loading failed';
-	@override String get inputMessage => 'Type a message...';
-	@override String get aiThinking => 'AI processing...';
-	@override String get listening => 'Listening...';
-	@override late final _TranslationsChatToolsEn tools = _TranslationsChatToolsEn._(_root);
-	@override String get speechNotRecognized => 'Speech not recognized, please try again';
-	@override String get currentExpense => 'Session Expense';
-	@override String get loadingComponent => 'Loading component...';
-	@override String get noHistory => 'No historical sessions';
-	@override String get startNewChat => 'Start a new conversation!';
-	@override String get searchHint => 'Search conversations';
-	@override String get library => 'Library';
-	@override String get viewProfile => 'View profile';
-	@override String get noRelatedFound => 'No related conversations found';
-	@override String get tryOtherKeywords => 'Try searching with other keywords';
-	@override String get searchFailed => 'Search failed';
-	@override String get deleteConversation => 'Delete Conversation';
-	@override String get deleteConversationConfirm => 'Are you sure you want to delete this conversation? This action cannot be undone.';
-	@override String get conversationDeleted => 'Conversation deleted';
-	@override String get deleteConversationFailed => 'Failed to delete conversation';
-	@override late final _TranslationsChatTransferWizardEn transferWizard = _TranslationsChatTransferWizardEn._(_root);
-	@override late final _TranslationsChatGenuiEn genui = _TranslationsChatGenuiEn._(_root);
-	@override late final _TranslationsChatWelcomeEn welcome = _TranslationsChatWelcomeEn._(_root);
+
+	/// en: 'New Chat'
+	String get newChat => 'New Chat';
+
+	/// en: 'No messages to display.'
+	String get noMessages => 'No messages to display.';
+
+	/// en: 'Loading failed'
+	String get loadingFailed => 'Loading failed';
+
+	/// en: 'Type a message...'
+	String get inputMessage => 'Type a message...';
+
+	/// en: 'AI processing...'
+	String get aiThinking => 'AI processing...';
+
+	/// en: 'Listening...'
+	String get listening => 'Listening...';
+
+	late final TranslationsChatToolsEn tools = TranslationsChatToolsEn._(_root);
+
+	/// en: 'Speech not recognized, please try again'
+	String get speechNotRecognized => 'Speech not recognized, please try again';
+
+	/// en: 'Session Expense'
+	String get currentExpense => 'Session Expense';
+
+	/// en: 'Loading component...'
+	String get loadingComponent => 'Loading component...';
+
+	/// en: 'No historical sessions'
+	String get noHistory => 'No historical sessions';
+
+	/// en: 'Start a new conversation!'
+	String get startNewChat => 'Start a new conversation!';
+
+	/// en: 'Search conversations'
+	String get searchHint => 'Search conversations';
+
+	/// en: 'Library'
+	String get library => 'Library';
+
+	/// en: 'View profile'
+	String get viewProfile => 'View profile';
+
+	/// en: 'No related conversations found'
+	String get noRelatedFound => 'No related conversations found';
+
+	/// en: 'Try searching with other keywords'
+	String get tryOtherKeywords => 'Try searching with other keywords';
+
+	/// en: 'Search failed'
+	String get searchFailed => 'Search failed';
+
+	/// en: 'Delete Conversation'
+	String get deleteConversation => 'Delete Conversation';
+
+	/// en: 'Are you sure you want to delete this conversation? This action cannot be undone.'
+	String get deleteConversationConfirm => 'Are you sure you want to delete this conversation? This action cannot be undone.';
+
+	/// en: 'Conversation deleted'
+	String get conversationDeleted => 'Conversation deleted';
+
+	/// en: 'Failed to delete conversation'
+	String get deleteConversationFailed => 'Failed to delete conversation';
+
+	late final TranslationsChatTransferWizardEn transferWizard = TranslationsChatTransferWizardEn._(_root);
+	late final TranslationsChatGenuiEn genui = TranslationsChatGenuiEn._(_root);
+	late final TranslationsChatWelcomeEn welcome = TranslationsChatWelcomeEn._(_root);
 }
 
 // Path: footprint
-class _TranslationsFootprintEn extends TranslationsFootprintZh {
-	_TranslationsFootprintEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsFootprintEn {
+	TranslationsFootprintEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get searchIn => 'Search';
-	@override String get searchInAllRecords => 'Search in all records';
+
+	/// en: 'Search'
+	String get searchIn => 'Search';
+
+	/// en: 'Search in all records'
+	String get searchInAllRecords => 'Search in all records';
 }
 
 // Path: media
-class _TranslationsMediaEn extends TranslationsMediaZh {
-	_TranslationsMediaEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsMediaEn {
+	TranslationsMediaEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get selectPhotos => 'Select Photos';
-	@override String get addFiles => 'Add Files';
-	@override String get takePhoto => 'Take Photo';
-	@override String get camera => 'Camera';
-	@override String get photos => 'Photos';
-	@override String get files => 'Files';
-	@override String get showAll => 'Show All';
-	@override String get allPhotos => 'All Photos';
-	@override String get takingPhoto => 'Taking photo...';
-	@override String get photoTaken => 'Photo saved';
-	@override String get cameraPermissionRequired => 'Camera permission required';
-	@override String get fileSizeExceeded => 'File size exceeds 10MB limit';
-	@override String get unsupportedFormat => 'Unsupported file format';
-	@override String get permissionDenied => 'Photo library access required';
-	@override String get storageInsufficient => 'Insufficient storage space';
-	@override String get networkError => 'Network connection error';
-	@override String get unknownUploadError => 'Unknown error during upload';
+
+	/// en: 'Select Photos'
+	String get selectPhotos => 'Select Photos';
+
+	/// en: 'Add Files'
+	String get addFiles => 'Add Files';
+
+	/// en: 'Take Photo'
+	String get takePhoto => 'Take Photo';
+
+	/// en: 'Camera'
+	String get camera => 'Camera';
+
+	/// en: 'Photos'
+	String get photos => 'Photos';
+
+	/// en: 'Files'
+	String get files => 'Files';
+
+	/// en: 'Show All'
+	String get showAll => 'Show All';
+
+	/// en: 'All Photos'
+	String get allPhotos => 'All Photos';
+
+	/// en: 'Taking photo...'
+	String get takingPhoto => 'Taking photo...';
+
+	/// en: 'Photo saved'
+	String get photoTaken => 'Photo saved';
+
+	/// en: 'Camera permission required'
+	String get cameraPermissionRequired => 'Camera permission required';
+
+	/// en: 'File size exceeds 10MB limit'
+	String get fileSizeExceeded => 'File size exceeds 10MB limit';
+
+	/// en: 'Unsupported file format'
+	String get unsupportedFormat => 'Unsupported file format';
+
+	/// en: 'Photo library access required'
+	String get permissionDenied => 'Photo library access required';
+
+	/// en: 'Insufficient storage space'
+	String get storageInsufficient => 'Insufficient storage space';
+
+	/// en: 'Network connection error'
+	String get networkError => 'Network connection error';
+
+	/// en: 'Unknown error during upload'
+	String get unknownUploadError => 'Unknown error during upload';
 }
 
 // Path: error
-class _TranslationsErrorEn extends TranslationsErrorZh {
-	_TranslationsErrorEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsErrorEn {
+	TranslationsErrorEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get permissionRequired => 'Permission Required';
-	@override String get permissionInstructions => 'Please enable photo library and storage permissions in Settings to select and upload files.';
-	@override String get openSettings => 'Open Settings';
-	@override String get fileTooLarge => 'File Too Large';
-	@override String get fileSizeHint => 'Please select files under 10MB, or compress before uploading.';
-	@override String get supportedFormatsHint => 'Supported formats: images (jpg, png, gif), documents (pdf, doc, txt), audio/video files.';
-	@override String get storageCleanupHint => 'Please free up storage space and try again, or select smaller files.';
-	@override String get networkErrorHint => 'Please check your network connection and try again.';
-	@override String get platformNotSupported => 'Platform Not Supported';
-	@override String get fileReadError => 'File Read Error';
-	@override String get fileReadErrorHint => 'The file may be corrupted or in use. Please select a different file.';
-	@override String get validationError => 'File Validation Error';
-	@override String get unknownError => 'Unknown Error';
-	@override String get unknownErrorHint => 'An unexpected error occurred. Please try again or contact support.';
-	@override late final _TranslationsErrorGenuiEn genui = _TranslationsErrorGenuiEn._(_root);
+
+	/// en: 'Permission Required'
+	String get permissionRequired => 'Permission Required';
+
+	/// en: 'Please enable photo library and storage permissions in Settings to select and upload files.'
+	String get permissionInstructions => 'Please enable photo library and storage permissions in Settings to select and upload files.';
+
+	/// en: 'Open Settings'
+	String get openSettings => 'Open Settings';
+
+	/// en: 'File Too Large'
+	String get fileTooLarge => 'File Too Large';
+
+	/// en: 'Please select files under 10MB, or compress before uploading.'
+	String get fileSizeHint => 'Please select files under 10MB, or compress before uploading.';
+
+	/// en: 'Supported formats: images (jpg, png, gif), documents (pdf, doc, txt), audio/video files.'
+	String get supportedFormatsHint => 'Supported formats: images (jpg, png, gif), documents (pdf, doc, txt), audio/video files.';
+
+	/// en: 'Please free up storage space and try again, or select smaller files.'
+	String get storageCleanupHint => 'Please free up storage space and try again, or select smaller files.';
+
+	/// en: 'Please check your network connection and try again.'
+	String get networkErrorHint => 'Please check your network connection and try again.';
+
+	/// en: 'Platform Not Supported'
+	String get platformNotSupported => 'Platform Not Supported';
+
+	/// en: 'File Read Error'
+	String get fileReadError => 'File Read Error';
+
+	/// en: 'The file may be corrupted or in use. Please select a different file.'
+	String get fileReadErrorHint => 'The file may be corrupted or in use. Please select a different file.';
+
+	/// en: 'File Validation Error'
+	String get validationError => 'File Validation Error';
+
+	/// en: 'Unknown Error'
+	String get unknownError => 'Unknown Error';
+
+	/// en: 'An unexpected error occurred. Please try again or contact support.'
+	String get unknownErrorHint => 'An unexpected error occurred. Please try again or contact support.';
+
+	late final TranslationsErrorGenuiEn genui = TranslationsErrorGenuiEn._(_root);
 }
 
 // Path: fontTest
-class _TranslationsFontTestEn extends TranslationsFontTestZh {
-	_TranslationsFontTestEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsFontTestEn {
+	TranslationsFontTestEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get page => 'Font Test Page';
-	@override String get displayTest => 'Font Display Test';
-	@override String get chineseTextTest => 'Chinese Text Test';
-	@override String get englishTextTest => 'English Text Test';
-	@override String get sample1 => 'This is a sample text for testing font display effects.';
-	@override String get sample2 => 'Expense category summary, shopping is highest';
-	@override String get sample3 => 'AI assistant provides professional financial analysis services';
-	@override String get sample4 => 'Data visualization charts show your spending trends';
-	@override String get sample5 => 'WeChat Pay, Alipay, bank cards and other payment methods';
+
+	/// en: 'Font Test Page'
+	String get page => 'Font Test Page';
+
+	/// en: 'Font Display Test'
+	String get displayTest => 'Font Display Test';
+
+	/// en: 'Chinese Text Test'
+	String get chineseTextTest => 'Chinese Text Test';
+
+	/// en: 'English Text Test'
+	String get englishTextTest => 'English Text Test';
+
+	/// en: 'This is a sample text for testing font display effects.'
+	String get sample1 => 'This is a sample text for testing font display effects.';
+
+	/// en: 'Expense category summary, shopping is highest'
+	String get sample2 => 'Expense category summary, shopping is highest';
+
+	/// en: 'AI assistant provides professional financial analysis services'
+	String get sample3 => 'AI assistant provides professional financial analysis services';
+
+	/// en: 'Data visualization charts show your spending trends'
+	String get sample4 => 'Data visualization charts show your spending trends';
+
+	/// en: 'WeChat Pay, Alipay, bank cards and other payment methods'
+	String get sample5 => 'WeChat Pay, Alipay, bank cards and other payment methods';
 }
 
 // Path: wizard
-class _TranslationsWizardEn extends TranslationsWizardZh {
-	_TranslationsWizardEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsWizardEn {
+	TranslationsWizardEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get nextStep => 'Next';
-	@override String get previousStep => 'Previous';
-	@override String get completeMapping => 'Complete';
+
+	/// en: 'Next'
+	String get nextStep => 'Next';
+
+	/// en: 'Previous'
+	String get previousStep => 'Previous';
+
+	/// en: 'Complete'
+	String get completeMapping => 'Complete';
 }
 
 // Path: user
-class _TranslationsUserEn extends TranslationsUserZh {
-	_TranslationsUserEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsUserEn {
+	TranslationsUserEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get username => 'Username';
-	@override String get defaultEmail => 'user@example.com';
+
+	/// en: 'Username'
+	String get username => 'Username';
+
+	/// en: 'user@example.com'
+	String get defaultEmail => 'user@example.com';
 }
 
 // Path: account
-class _TranslationsAccountEn extends TranslationsAccountZh {
-	_TranslationsAccountEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsAccountEn {
+	TranslationsAccountEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get editTitle => 'Edit Account';
-	@override String get addTitle => 'New Account';
-	@override String get selectTypeTitle => 'Select Account Type';
-	@override String get nameLabel => 'Account Name';
-	@override String get amountLabel => 'Current Balance';
-	@override String get currencyLabel => 'Currency';
-	@override String get hiddenLabel => 'Hidden';
-	@override String get hiddenDesc => 'Hide this account from the list';
-	@override String get includeInNetWorthLabel => 'Include in Net Worth';
-	@override String get includeInNetWorthDesc => 'Count towards total net worth';
-	@override String get nameHint => 'e.g. Salary Card';
-	@override String get amountHint => '0.00';
-	@override String get deleteAccount => 'Delete Account';
-	@override String get deleteConfirm => 'Are you sure you want to delete this account? This cannot be undone.';
-	@override String get save => 'Save Changes';
-	@override String get assetsCategory => 'Assets';
-	@override String get liabilitiesCategory => 'Liabilities/Credit';
-	@override String get cash => 'Cash Wallet';
-	@override String get deposit => 'Bank Deposit';
-	@override String get creditCard => 'Credit Card';
-	@override String get investment => 'Investment';
-	@override String get eWallet => 'E-Wallet';
-	@override String get loan => 'Loan';
-	@override String get receivable => 'Receivable';
-	@override String get payable => 'Payable';
-	@override String get other => 'Other';
-	@override late final _TranslationsAccountTypesEn types = _TranslationsAccountTypesEn._(_root);
+
+	/// en: 'Edit Account'
+	String get editTitle => 'Edit Account';
+
+	/// en: 'New Account'
+	String get addTitle => 'New Account';
+
+	/// en: 'Select Account Type'
+	String get selectTypeTitle => 'Select Account Type';
+
+	/// en: 'Account Name'
+	String get nameLabel => 'Account Name';
+
+	/// en: 'Current Balance'
+	String get amountLabel => 'Current Balance';
+
+	/// en: 'Currency'
+	String get currencyLabel => 'Currency';
+
+	/// en: 'Hidden'
+	String get hiddenLabel => 'Hidden';
+
+	/// en: 'Hide this account from the list'
+	String get hiddenDesc => 'Hide this account from the list';
+
+	/// en: 'Include in Net Worth'
+	String get includeInNetWorthLabel => 'Include in Net Worth';
+
+	/// en: 'Count towards total net worth'
+	String get includeInNetWorthDesc => 'Count towards total net worth';
+
+	/// en: 'e.g. Salary Card'
+	String get nameHint => 'e.g. Salary Card';
+
+	/// en: '0.00'
+	String get amountHint => '0.00';
+
+	/// en: 'Delete Account'
+	String get deleteAccount => 'Delete Account';
+
+	/// en: 'Are you sure you want to delete this account? This cannot be undone.'
+	String get deleteConfirm => 'Are you sure you want to delete this account? This cannot be undone.';
+
+	/// en: 'Save Changes'
+	String get save => 'Save Changes';
+
+	/// en: 'Assets'
+	String get assetsCategory => 'Assets';
+
+	/// en: 'Liabilities/Credit'
+	String get liabilitiesCategory => 'Liabilities/Credit';
+
+	/// en: 'Cash Wallet'
+	String get cash => 'Cash Wallet';
+
+	/// en: 'Bank Deposit'
+	String get deposit => 'Bank Deposit';
+
+	/// en: 'Credit Card'
+	String get creditCard => 'Credit Card';
+
+	/// en: 'Investment'
+	String get investment => 'Investment';
+
+	/// en: 'E-Wallet'
+	String get eWallet => 'E-Wallet';
+
+	/// en: 'Loan'
+	String get loan => 'Loan';
+
+	/// en: 'Receivable'
+	String get receivable => 'Receivable';
+
+	/// en: 'Payable'
+	String get payable => 'Payable';
+
+	/// en: 'Other'
+	String get other => 'Other';
+
+	late final TranslationsAccountTypesEn types = TranslationsAccountTypesEn._(_root);
 }
 
 // Path: financial
-class _TranslationsFinancialEn extends TranslationsFinancialZh {
-	_TranslationsFinancialEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsFinancialEn {
+	TranslationsFinancialEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Financial';
-	@override String get management => 'Financial Management';
-	@override String get netWorth => 'Total Net Worth';
-	@override String get assets => 'Total Assets';
-	@override String get liabilities => 'Total Liabilities';
-	@override String get noAccounts => 'No accounts yet';
-	@override String get addFirstAccount => 'Tap the button below to add your first account';
-	@override String get assetAccounts => 'Asset Accounts';
-	@override String get liabilityAccounts => 'Liability Accounts';
-	@override String get selectCurrency => 'Select Currency';
-	@override String get cancel => 'Cancel';
-	@override String get confirm => 'Confirm';
-	@override String get settings => 'Financial Settings';
-	@override String get budgetManagement => 'Budget Management';
-	@override String get recurringTransactions => 'Recurring Transactions';
-	@override String get safetyThreshold => 'Safety Threshold';
-	@override String get dailyBurnRate => 'Daily Burn Rate';
-	@override String get financialAssistant => 'Financial Assistant';
-	@override String get manageFinancialSettings => 'Manage your financial settings';
-	@override String get safetyThresholdSettings => 'Safety Threshold Settings';
-	@override String get setSafetyThreshold => 'Set your financial safety threshold';
-	@override String get safetyThresholdSaved => 'Safety threshold saved';
-	@override String get dailyBurnRateSettings => 'Daily Burn Rate';
-	@override String get setDailyBurnRate => 'Set your estimated daily spending';
-	@override String get dailyBurnRateSaved => 'Daily burn rate saved';
-	@override String get saveFailed => 'Save failed';
+
+	/// en: 'Financial'
+	String get title => 'Financial';
+
+	/// en: 'Financial Management'
+	String get management => 'Financial Management';
+
+	/// en: 'Total Net Worth'
+	String get netWorth => 'Total Net Worth';
+
+	/// en: 'Total Assets'
+	String get assets => 'Total Assets';
+
+	/// en: 'Total Liabilities'
+	String get liabilities => 'Total Liabilities';
+
+	/// en: 'No accounts yet'
+	String get noAccounts => 'No accounts yet';
+
+	/// en: 'Tap the button below to add your first account'
+	String get addFirstAccount => 'Tap the button below to add your first account';
+
+	/// en: 'Asset Accounts'
+	String get assetAccounts => 'Asset Accounts';
+
+	/// en: 'Liability Accounts'
+	String get liabilityAccounts => 'Liability Accounts';
+
+	/// en: 'Select Currency'
+	String get selectCurrency => 'Select Currency';
+
+	/// en: 'Cancel'
+	String get cancel => 'Cancel';
+
+	/// en: 'Confirm'
+	String get confirm => 'Confirm';
+
+	/// en: 'Financial Settings'
+	String get settings => 'Financial Settings';
+
+	/// en: 'Budget Management'
+	String get budgetManagement => 'Budget Management';
+
+	/// en: 'Recurring Transactions'
+	String get recurringTransactions => 'Recurring Transactions';
+
+	/// en: 'Safety Threshold'
+	String get safetyThreshold => 'Safety Threshold';
+
+	/// en: 'Daily Burn Rate'
+	String get dailyBurnRate => 'Daily Burn Rate';
+
+	/// en: 'Financial Assistant'
+	String get financialAssistant => 'Financial Assistant';
+
+	/// en: 'Manage your financial settings'
+	String get manageFinancialSettings => 'Manage your financial settings';
+
+	/// en: 'Safety Threshold Settings'
+	String get safetyThresholdSettings => 'Safety Threshold Settings';
+
+	/// en: 'Set your financial safety threshold'
+	String get setSafetyThreshold => 'Set your financial safety threshold';
+
+	/// en: 'Safety threshold saved'
+	String get safetyThresholdSaved => 'Safety threshold saved';
+
+	/// en: 'Daily Burn Rate'
+	String get dailyBurnRateSettings => 'Daily Burn Rate';
+
+	/// en: 'Set your estimated daily spending'
+	String get setDailyBurnRate => 'Set your estimated daily spending';
+
+	/// en: 'Daily burn rate saved'
+	String get dailyBurnRateSaved => 'Daily burn rate saved';
+
+	/// en: 'Save failed'
+	String get saveFailed => 'Save failed';
 }
 
 // Path: app
-class _TranslationsAppEn extends TranslationsAppZh {
-	_TranslationsAppEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsAppEn {
+	TranslationsAppEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get splashTitle => 'Augo: Intelligence that Grows.';
-	@override String get splashSubtitle => 'Smart Financial Assistant';
+
+	/// en: 'Augo: Intelligence that Grows.'
+	String get splashTitle => 'Augo: Intelligence that Grows.';
+
+	/// en: 'Smart Financial Assistant'
+	String get splashSubtitle => 'Smart Financial Assistant';
 }
 
 // Path: statistics
-class _TranslationsStatisticsEn extends TranslationsStatisticsZh {
-	_TranslationsStatisticsEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsStatisticsEn {
+	TranslationsStatisticsEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Analysis';
-	@override String get analyze => 'Analysis';
-	@override String get exportInProgress => 'Export feature coming soon...';
-	@override String get ranking => 'Top Spending';
-	@override String get noData => 'No data available';
-	@override late final _TranslationsStatisticsOverviewEn overview = _TranslationsStatisticsOverviewEn._(_root);
-	@override late final _TranslationsStatisticsTrendEn trend = _TranslationsStatisticsTrendEn._(_root);
-	@override late final _TranslationsStatisticsAnalysisEn analysis = _TranslationsStatisticsAnalysisEn._(_root);
-	@override late final _TranslationsStatisticsFilterEn filter = _TranslationsStatisticsFilterEn._(_root);
-	@override late final _TranslationsStatisticsSortEn sort = _TranslationsStatisticsSortEn._(_root);
-	@override String get exportList => 'Export List';
-	@override late final _TranslationsStatisticsEmptyStateEn emptyState = _TranslationsStatisticsEmptyStateEn._(_root);
-	@override String get noMoreData => 'No more data';
+
+	/// en: 'Analysis'
+	String get title => 'Analysis';
+
+	/// en: 'Analysis'
+	String get analyze => 'Analysis';
+
+	/// en: 'Export feature coming soon...'
+	String get exportInProgress => 'Export feature coming soon...';
+
+	/// en: 'Top Spending'
+	String get ranking => 'Top Spending';
+
+	/// en: 'No data available'
+	String get noData => 'No data available';
+
+	late final TranslationsStatisticsOverviewEn overview = TranslationsStatisticsOverviewEn._(_root);
+	late final TranslationsStatisticsTrendEn trend = TranslationsStatisticsTrendEn._(_root);
+	late final TranslationsStatisticsAnalysisEn analysis = TranslationsStatisticsAnalysisEn._(_root);
+	late final TranslationsStatisticsFilterEn filter = TranslationsStatisticsFilterEn._(_root);
+	late final TranslationsStatisticsSortEn sort = TranslationsStatisticsSortEn._(_root);
+
+	/// en: 'Export List'
+	String get exportList => 'Export List';
+
+	late final TranslationsStatisticsEmptyStateEn emptyState = TranslationsStatisticsEmptyStateEn._(_root);
+
+	/// en: 'No more data'
+	String get noMoreData => 'No more data';
 }
 
 // Path: currency
-class _TranslationsCurrencyEn extends TranslationsCurrencyZh {
-	_TranslationsCurrencyEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsCurrencyEn {
+	TranslationsCurrencyEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get cny => 'Chinese Yuan';
-	@override String get usd => 'US Dollar';
-	@override String get eur => 'Euro';
-	@override String get jpy => 'Japanese Yen';
-	@override String get gbp => 'British Pound';
-	@override String get aud => 'Australian Dollar';
-	@override String get cad => 'Canadian Dollar';
-	@override String get chf => 'Swiss Franc';
-	@override String get rub => 'Russian Ruble';
-	@override String get hkd => 'Hong Kong Dollar';
-	@override String get twd => 'New Taiwan Dollar';
-	@override String get inr => 'Indian Rupee';
+
+	/// en: 'Chinese Yuan'
+	String get cny => 'Chinese Yuan';
+
+	/// en: 'US Dollar'
+	String get usd => 'US Dollar';
+
+	/// en: 'Euro'
+	String get eur => 'Euro';
+
+	/// en: 'Japanese Yen'
+	String get jpy => 'Japanese Yen';
+
+	/// en: 'British Pound'
+	String get gbp => 'British Pound';
+
+	/// en: 'Australian Dollar'
+	String get aud => 'Australian Dollar';
+
+	/// en: 'Canadian Dollar'
+	String get cad => 'Canadian Dollar';
+
+	/// en: 'Swiss Franc'
+	String get chf => 'Swiss Franc';
+
+	/// en: 'Russian Ruble'
+	String get rub => 'Russian Ruble';
+
+	/// en: 'Hong Kong Dollar'
+	String get hkd => 'Hong Kong Dollar';
+
+	/// en: 'New Taiwan Dollar'
+	String get twd => 'New Taiwan Dollar';
+
+	/// en: 'Indian Rupee'
+	String get inr => 'Indian Rupee';
 }
 
 // Path: budgetSuggestion
-class _TranslationsBudgetSuggestionEn extends TranslationsBudgetSuggestionZh {
-	_TranslationsBudgetSuggestionEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsBudgetSuggestionEn {
+	TranslationsBudgetSuggestionEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String highPercentage({required Object category, required Object percentage}) => '${category} accounts for ${percentage}% of spending. Consider setting a budget limit.';
-	@override String monthlyIncrease({required Object percentage}) => 'Spending increased by ${percentage}% this month. Needs attention.';
-	@override String frequentSmall({required Object category, required Object count}) => '${category} has ${count} small transactions. These might be subscriptions.';
-	@override String get financialInsights => 'Financial Insights';
+
+	/// en: '$category accounts for $percentage% of spending. Consider setting a budget limit.'
+	String highPercentage({required Object category, required Object percentage}) => '${category} accounts for ${percentage}% of spending. Consider setting a budget limit.';
+
+	/// en: 'Spending increased by $percentage% this month. Needs attention.'
+	String monthlyIncrease({required Object percentage}) => 'Spending increased by ${percentage}% this month. Needs attention.';
+
+	/// en: '$category has $count small transactions. These might be subscriptions.'
+	String frequentSmall({required Object category, required Object count}) => '${category} has ${count} small transactions. These might be subscriptions.';
+
+	/// en: 'Financial Insights'
+	String get financialInsights => 'Financial Insights';
 }
 
 // Path: server
-class _TranslationsServerEn extends TranslationsServerZh {
-	_TranslationsServerEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsServerEn {
+	TranslationsServerEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Connect to Server';
-	@override String get subtitle => 'Enter your self-hosted server address or scan the QR code displayed when starting the server';
-	@override String get urlLabel => 'Server Address';
-	@override String get urlPlaceholder => 'e.g. https://api.example.com or 192.168.1.100:8000';
-	@override String get scanQr => 'Scan QR Code';
-	@override String get scanQrInstruction => 'Point at the QR code displayed in the server terminal';
-	@override String get testConnection => 'Test Connection';
-	@override String get connecting => 'Connecting...';
-	@override String get connected => 'Connected';
-	@override String get connectionFailed => 'Connection Failed';
-	@override String get continueToLogin => 'Continue to Login';
-	@override String get saveAndReturn => 'Save and Return';
-	@override String get serverSettings => 'Server Settings';
-	@override String get currentServer => 'Current Server';
-	@override String get version => 'Version';
-	@override String get environment => 'Environment';
-	@override String get changeServer => 'Change Server';
-	@override String get changeServerWarning => 'Changing server will log you out. Continue?';
-	@override late final _TranslationsServerErrorEn error = _TranslationsServerErrorEn._(_root);
+
+	/// en: 'Connect to Server'
+	String get title => 'Connect to Server';
+
+	/// en: 'Enter your self-hosted server address or scan the QR code displayed when starting the server'
+	String get subtitle => 'Enter your self-hosted server address or scan the QR code displayed when starting the server';
+
+	/// en: 'Server Address'
+	String get urlLabel => 'Server Address';
+
+	/// en: 'e.g. https://api.example.com or 192.168.1.100:8000'
+	String get urlPlaceholder => 'e.g. https://api.example.com or 192.168.1.100:8000';
+
+	/// en: 'Scan QR Code'
+	String get scanQr => 'Scan QR Code';
+
+	/// en: 'Point at the QR code displayed in the server terminal'
+	String get scanQrInstruction => 'Point at the QR code displayed in the server terminal';
+
+	/// en: 'Test Connection'
+	String get testConnection => 'Test Connection';
+
+	/// en: 'Connecting...'
+	String get connecting => 'Connecting...';
+
+	/// en: 'Connected'
+	String get connected => 'Connected';
+
+	/// en: 'Connection Failed'
+	String get connectionFailed => 'Connection Failed';
+
+	/// en: 'Continue to Login'
+	String get continueToLogin => 'Continue to Login';
+
+	/// en: 'Save and Return'
+	String get saveAndReturn => 'Save and Return';
+
+	/// en: 'Server Settings'
+	String get serverSettings => 'Server Settings';
+
+	/// en: 'Current Server'
+	String get currentServer => 'Current Server';
+
+	/// en: 'Version'
+	String get version => 'Version';
+
+	/// en: 'Environment'
+	String get environment => 'Environment';
+
+	/// en: 'Change Server'
+	String get changeServer => 'Change Server';
+
+	/// en: 'Changing server will log you out. Continue?'
+	String get changeServerWarning => 'Changing server will log you out. Continue?';
+
+	late final TranslationsServerErrorEn error = TranslationsServerErrorEn._(_root);
 }
 
 // Path: sharedSpace
-class _TranslationsSharedSpaceEn extends TranslationsSharedSpaceZh {
-	_TranslationsSharedSpaceEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsSharedSpaceEn {
+	TranslationsSharedSpaceEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override late final _TranslationsSharedSpaceDashboardEn dashboard = _TranslationsSharedSpaceDashboardEn._(_root);
-	@override late final _TranslationsSharedSpaceRolesEn roles = _TranslationsSharedSpaceRolesEn._(_root);
+	late final TranslationsSharedSpaceDashboardEn dashboard = TranslationsSharedSpaceDashboardEn._(_root);
+	late final TranslationsSharedSpaceRolesEn roles = TranslationsSharedSpaceRolesEn._(_root);
 }
 
 // Path: errorMapping
-class _TranslationsErrorMappingEn extends TranslationsErrorMappingZh {
-	_TranslationsErrorMappingEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsErrorMappingEn {
+	TranslationsErrorMappingEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override late final _TranslationsErrorMappingGenericEn generic = _TranslationsErrorMappingGenericEn._(_root);
-	@override late final _TranslationsErrorMappingAuthEn auth = _TranslationsErrorMappingAuthEn._(_root);
-	@override late final _TranslationsErrorMappingTransactionEn transaction = _TranslationsErrorMappingTransactionEn._(_root);
-	@override late final _TranslationsErrorMappingSpaceEn space = _TranslationsErrorMappingSpaceEn._(_root);
-	@override late final _TranslationsErrorMappingRecurringEn recurring = _TranslationsErrorMappingRecurringEn._(_root);
-	@override late final _TranslationsErrorMappingUploadEn upload = _TranslationsErrorMappingUploadEn._(_root);
-	@override late final _TranslationsErrorMappingAiEn ai = _TranslationsErrorMappingAiEn._(_root);
+	late final TranslationsErrorMappingGenericEn generic = TranslationsErrorMappingGenericEn._(_root);
+	late final TranslationsErrorMappingAuthEn auth = TranslationsErrorMappingAuthEn._(_root);
+	late final TranslationsErrorMappingTransactionEn transaction = TranslationsErrorMappingTransactionEn._(_root);
+	late final TranslationsErrorMappingSpaceEn space = TranslationsErrorMappingSpaceEn._(_root);
+	late final TranslationsErrorMappingRecurringEn recurring = TranslationsErrorMappingRecurringEn._(_root);
+	late final TranslationsErrorMappingUploadEn upload = TranslationsErrorMappingUploadEn._(_root);
+	late final TranslationsErrorMappingAiEn ai = TranslationsErrorMappingAiEn._(_root);
 }
 
 // Path: auth.email
-class _TranslationsAuthEmailEn extends TranslationsAuthEmailZh {
-	_TranslationsAuthEmailEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsAuthEmailEn {
+	TranslationsAuthEmailEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get label => 'Email';
-	@override String get placeholder => 'Enter your email';
-	@override String get required => 'Email is required';
-	@override String get invalid => 'Please enter a valid email address';
+
+	/// en: 'Email'
+	String get label => 'Email';
+
+	/// en: 'Enter your email'
+	String get placeholder => 'Enter your email';
+
+	/// en: 'Email is required'
+	String get required => 'Email is required';
+
+	/// en: 'Please enter a valid email address'
+	String get invalid => 'Please enter a valid email address';
 }
 
 // Path: auth.password
-class _TranslationsAuthPasswordEn extends TranslationsAuthPasswordZh {
-	_TranslationsAuthPasswordEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsAuthPasswordEn {
+	TranslationsAuthPasswordEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get label => 'Password';
-	@override String get placeholder => 'Enter your password';
-	@override String get required => 'Password is required';
-	@override String get tooShort => 'Password must be at least 6 characters';
-	@override String get mustContainNumbersAndLetters => 'Password must contain both numbers and letters';
-	@override String get confirm => 'Confirm Password';
-	@override String get confirmPlaceholder => 'Re-enter your password';
-	@override String get mismatch => 'Passwords do not match';
+
+	/// en: 'Password'
+	String get label => 'Password';
+
+	/// en: 'Enter your password'
+	String get placeholder => 'Enter your password';
+
+	/// en: 'Password is required'
+	String get required => 'Password is required';
+
+	/// en: 'Password must be at least 6 characters'
+	String get tooShort => 'Password must be at least 6 characters';
+
+	/// en: 'Password must contain both numbers and letters'
+	String get mustContainNumbersAndLetters => 'Password must contain both numbers and letters';
+
+	/// en: 'Confirm Password'
+	String get confirm => 'Confirm Password';
+
+	/// en: 'Re-enter your password'
+	String get confirmPlaceholder => 'Re-enter your password';
+
+	/// en: 'Passwords do not match'
+	String get mismatch => 'Passwords do not match';
 }
 
 // Path: auth.verificationCode
-class _TranslationsAuthVerificationCodeEn extends TranslationsAuthVerificationCodeZh {
-	_TranslationsAuthVerificationCodeEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsAuthVerificationCodeEn {
+	TranslationsAuthVerificationCodeEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get label => 'Verification Code';
-	@override String get get => 'Get Code';
-	@override String get sending => 'Sending...';
-	@override String get sent => 'Code sent';
-	@override String get sendFailed => 'Failed to send';
-	@override String get placeholder => 'Optional for now, enter anything';
-	@override String get required => 'Verification code is required';
+
+	/// en: 'Verification Code'
+	String get label => 'Verification Code';
+
+	/// en: 'Get Code'
+	String get get => 'Get Code';
+
+	/// en: 'Sending...'
+	String get sending => 'Sending...';
+
+	/// en: 'Code sent'
+	String get sent => 'Code sent';
+
+	/// en: 'Failed to send'
+	String get sendFailed => 'Failed to send';
+
+	/// en: 'Optional for now, enter anything'
+	String get placeholder => 'Optional for now, enter anything';
+
+	/// en: 'Verification code is required'
+	String get required => 'Verification code is required';
 }
 
 // Path: calendar.weekdays
-class _TranslationsCalendarWeekdaysEn extends TranslationsCalendarWeekdaysZh {
-	_TranslationsCalendarWeekdaysEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsCalendarWeekdaysEn {
+	TranslationsCalendarWeekdaysEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get mon => 'M';
-	@override String get tue => 'T';
-	@override String get wed => 'W';
-	@override String get thu => 'T';
-	@override String get fri => 'F';
-	@override String get sat => 'S';
-	@override String get sun => 'S';
+
+	/// en: 'M'
+	String get mon => 'M';
+
+	/// en: 'T'
+	String get tue => 'T';
+
+	/// en: 'W'
+	String get wed => 'W';
+
+	/// en: 'T'
+	String get thu => 'T';
+
+	/// en: 'F'
+	String get fri => 'F';
+
+	/// en: 'S'
+	String get sat => 'S';
+
+	/// en: 'S'
+	String get sun => 'S';
 }
 
 // Path: appearance.palettes
-class _TranslationsAppearancePalettesEn extends TranslationsAppearancePalettesZh {
-	_TranslationsAppearancePalettesEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsAppearancePalettesEn {
+	TranslationsAppearancePalettesEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get zinc => 'Zinc';
-	@override String get slate => 'Slate';
-	@override String get red => 'Red';
-	@override String get rose => 'Rose';
-	@override String get orange => 'Orange';
-	@override String get green => 'Green';
-	@override String get blue => 'Blue';
-	@override String get yellow => 'Yellow';
-	@override String get violet => 'Violet';
+
+	/// en: 'Zinc'
+	String get zinc => 'Zinc';
+
+	/// en: 'Slate'
+	String get slate => 'Slate';
+
+	/// en: 'Red'
+	String get red => 'Red';
+
+	/// en: 'Rose'
+	String get rose => 'Rose';
+
+	/// en: 'Orange'
+	String get orange => 'Orange';
+
+	/// en: 'Green'
+	String get green => 'Green';
+
+	/// en: 'Blue'
+	String get blue => 'Blue';
+
+	/// en: 'Yellow'
+	String get yellow => 'Yellow';
+
+	/// en: 'Violet'
+	String get violet => 'Violet';
 }
 
 // Path: forecast.recurringTransaction
-class _TranslationsForecastRecurringTransactionEn extends TranslationsForecastRecurringTransactionZh {
-	_TranslationsForecastRecurringTransactionEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsForecastRecurringTransactionEn {
+	TranslationsForecastRecurringTransactionEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Recurring Transactions';
-	@override String get all => 'All';
-	@override String get expense => 'Expense';
-	@override String get income => 'Income';
-	@override String get transfer => 'Transfer';
-	@override String get noRecurring => 'No recurring transactions';
-	@override String get createHint => 'The system will automatically generate transactions after you create recurring rules';
-	@override String get create => 'Create Recurring Transaction';
-	@override String get edit => 'Edit Recurring Transaction';
-	@override String get newTransaction => 'New Recurring Transaction';
-	@override String deleteConfirm({required Object name}) => 'Are you sure you want to delete recurring transaction "${name}"? This cannot be undone.';
-	@override String activateConfirm({required Object name}) => 'Are you sure you want to activate recurring transaction "${name}"? It will automatically generate transactions.';
-	@override String pauseConfirm({required Object name}) => 'Are you sure you want to pause recurring transaction "${name}"? No transactions will be generated while paused.';
-	@override String get created => 'Recurring transaction created';
-	@override String get updated => 'Recurring transaction updated';
-	@override String get activated => 'Activated';
-	@override String get paused => 'Paused';
-	@override String get nextTime => 'Next';
-	@override String get sortByTime => 'Sort by time';
-	@override String get allPeriod => 'All recurring';
-	@override String periodCount({required Object type, required Object count}) => '${type} recurring (${count})';
-	@override String get confirmDelete => 'Confirm Delete';
-	@override String get confirmActivate => 'Confirm Activate';
-	@override String get confirmPause => 'Confirm Pause';
-	@override String get dynamicAmount => 'Est. Avg';
-	@override String get dynamicAmountTitle => 'Amount Requires Confirmation';
-	@override String get dynamicAmountDescription => 'System will send a reminder on the due date. You need to manually confirm the amount before recording.';
+
+	/// en: 'Recurring Transactions'
+	String get title => 'Recurring Transactions';
+
+	/// en: 'All'
+	String get all => 'All';
+
+	/// en: 'Expense'
+	String get expense => 'Expense';
+
+	/// en: 'Income'
+	String get income => 'Income';
+
+	/// en: 'Transfer'
+	String get transfer => 'Transfer';
+
+	/// en: 'No recurring transactions'
+	String get noRecurring => 'No recurring transactions';
+
+	/// en: 'The system will automatically generate transactions after you create recurring rules'
+	String get createHint => 'The system will automatically generate transactions after you create recurring rules';
+
+	/// en: 'Create Recurring Transaction'
+	String get create => 'Create Recurring Transaction';
+
+	/// en: 'Edit Recurring Transaction'
+	String get edit => 'Edit Recurring Transaction';
+
+	/// en: 'New Recurring Transaction'
+	String get newTransaction => 'New Recurring Transaction';
+
+	/// en: 'Are you sure you want to delete recurring transaction "$name"? This cannot be undone.'
+	String deleteConfirm({required Object name}) => 'Are you sure you want to delete recurring transaction "${name}"? This cannot be undone.';
+
+	/// en: 'Are you sure you want to activate recurring transaction "$name"? It will automatically generate transactions.'
+	String activateConfirm({required Object name}) => 'Are you sure you want to activate recurring transaction "${name}"? It will automatically generate transactions.';
+
+	/// en: 'Are you sure you want to pause recurring transaction "$name"? No transactions will be generated while paused.'
+	String pauseConfirm({required Object name}) => 'Are you sure you want to pause recurring transaction "${name}"? No transactions will be generated while paused.';
+
+	/// en: 'Recurring transaction created'
+	String get created => 'Recurring transaction created';
+
+	/// en: 'Recurring transaction updated'
+	String get updated => 'Recurring transaction updated';
+
+	/// en: 'Activated'
+	String get activated => 'Activated';
+
+	/// en: 'Paused'
+	String get paused => 'Paused';
+
+	/// en: 'Next'
+	String get nextTime => 'Next';
+
+	/// en: 'Sort by time'
+	String get sortByTime => 'Sort by time';
+
+	/// en: 'All recurring'
+	String get allPeriod => 'All recurring';
+
+	/// en: '$type recurring ($count)'
+	String periodCount({required Object type, required Object count}) => '${type} recurring (${count})';
+
+	/// en: 'Confirm Delete'
+	String get confirmDelete => 'Confirm Delete';
+
+	/// en: 'Confirm Activate'
+	String get confirmActivate => 'Confirm Activate';
+
+	/// en: 'Confirm Pause'
+	String get confirmPause => 'Confirm Pause';
+
+	/// en: 'Est. Avg'
+	String get dynamicAmount => 'Est. Avg';
+
+	/// en: 'Amount Requires Confirmation'
+	String get dynamicAmountTitle => 'Amount Requires Confirmation';
+
+	/// en: 'System will send a reminder on the due date. You need to manually confirm the amount before recording.'
+	String get dynamicAmountDescription => 'System will send a reminder on the due date. You need to manually confirm the amount before recording.';
 }
 
 // Path: chat.tools
-class _TranslationsChatToolsEn extends TranslationsChatToolsZh {
-	_TranslationsChatToolsEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatToolsEn {
+	TranslationsChatToolsEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get processing => 'Processing...';
-	@override String get readFile => 'Reading file...';
-	@override String get searchTransactions => 'Searching transactions...';
-	@override String get queryBudgetStatus => 'Checking budget...';
-	@override String get createBudget => 'Creating budget plan...';
-	@override String get getCashFlowAnalysis => 'Analyzing cash flow...';
-	@override String get getFinancialHealthScore => 'Calculating financial health score...';
-	@override String get getFinancialSummary => 'Generating financial report...';
-	@override String get evaluateFinancialHealth => 'Evaluating financial health...';
-	@override String get forecastBalance => 'Forecasting future balance...';
-	@override String get simulateExpenseImpact => 'Simulating purchase impact...';
-	@override String get recordTransactions => 'Recording transactions...';
-	@override String get createTransaction => 'Recording transaction...';
-	@override String get duckduckgoSearch => 'Searching the web...';
-	@override String get executeTransfer => 'Executing transfer...';
-	@override String get listDir => 'Browsing directory...';
-	@override String get execute => 'Processing...';
-	@override String get analyzeFinance => 'Analyzing finances...';
-	@override String get forecastFinance => 'Forecasting finances...';
-	@override String get analyzeBudget => 'Analyzing budget...';
-	@override String get auditAnalysis => 'Running audit analysis...';
-	@override String get budgetOps => 'Processing budget...';
-	@override String get createSharedTransaction => 'Creating shared expense...';
-	@override String get listSpaces => 'Loading shared spaces...';
-	@override String get querySpaceSummary => 'Querying space summary...';
-	@override String get prepareTransfer => 'Preparing transfer...';
-	@override String get unknown => 'Processing request...';
-	@override late final _TranslationsChatToolsDoneEn done = _TranslationsChatToolsDoneEn._(_root);
-	@override late final _TranslationsChatToolsFailedEn failed = _TranslationsChatToolsFailedEn._(_root);
-	@override String get cancelled => 'Cancelled';
+
+	/// en: 'Processing...'
+	String get processing => 'Processing...';
+
+	/// en: 'Reading file...'
+	String get read_file => 'Reading file...';
+
+	/// en: 'Searching transactions...'
+	String get search_transactions => 'Searching transactions...';
+
+	/// en: 'Checking budget...'
+	String get query_budget_status => 'Checking budget...';
+
+	/// en: 'Creating budget plan...'
+	String get create_budget => 'Creating budget plan...';
+
+	/// en: 'Analyzing cash flow...'
+	String get get_cash_flow_analysis => 'Analyzing cash flow...';
+
+	/// en: 'Calculating financial health score...'
+	String get get_financial_health_score => 'Calculating financial health score...';
+
+	/// en: 'Generating financial report...'
+	String get get_financial_summary => 'Generating financial report...';
+
+	/// en: 'Evaluating financial health...'
+	String get evaluate_financial_health => 'Evaluating financial health...';
+
+	/// en: 'Forecasting future balance...'
+	String get forecast_balance => 'Forecasting future balance...';
+
+	/// en: 'Simulating purchase impact...'
+	String get simulate_expense_impact => 'Simulating purchase impact...';
+
+	/// en: 'Recording transactions...'
+	String get record_transactions => 'Recording transactions...';
+
+	/// en: 'Recording transaction...'
+	String get create_transaction => 'Recording transaction...';
+
+	/// en: 'Searching the web...'
+	String get duckduckgo_search => 'Searching the web...';
+
+	/// en: 'Executing transfer...'
+	String get execute_transfer => 'Executing transfer...';
+
+	/// en: 'Browsing directory...'
+	String get list_dir => 'Browsing directory...';
+
+	/// en: 'Processing...'
+	String get execute => 'Processing...';
+
+	/// en: 'Analyzing finances...'
+	String get analyze_finance => 'Analyzing finances...';
+
+	/// en: 'Forecasting finances...'
+	String get forecast_finance => 'Forecasting finances...';
+
+	/// en: 'Analyzing budget...'
+	String get analyze_budget => 'Analyzing budget...';
+
+	/// en: 'Running audit analysis...'
+	String get audit_analysis => 'Running audit analysis...';
+
+	/// en: 'Processing budget...'
+	String get budget_ops => 'Processing budget...';
+
+	/// en: 'Creating shared expense...'
+	String get create_shared_transaction => 'Creating shared expense...';
+
+	/// en: 'Loading shared spaces...'
+	String get list_spaces => 'Loading shared spaces...';
+
+	/// en: 'Querying space summary...'
+	String get query_space_summary => 'Querying space summary...';
+
+	/// en: 'Preparing transfer...'
+	String get prepare_transfer => 'Preparing transfer...';
+
+	/// en: 'Processing request...'
+	String get unknown => 'Processing request...';
+
+	late final TranslationsChatToolsDoneEn done = TranslationsChatToolsDoneEn._(_root);
+	late final TranslationsChatToolsFailedEn failed = TranslationsChatToolsFailedEn._(_root);
+
+	/// en: 'Cancelled'
+	String get cancelled => 'Cancelled';
 }
 
 // Path: chat.transferWizard
-class _TranslationsChatTransferWizardEn extends TranslationsChatTransferWizardZh {
-	_TranslationsChatTransferWizardEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatTransferWizardEn {
+	TranslationsChatTransferWizardEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Transfer Wizard';
-	@override String get amount => 'Transfer Amount';
-	@override String get amountHint => 'Enter amount';
-	@override String get sourceAccount => 'Source Account';
-	@override String get targetAccount => 'Target Account';
-	@override String get selectAccount => 'Select Account';
-	@override String get confirmTransfer => 'Confirm Transfer';
-	@override String get confirmed => 'Confirmed';
-	@override String get transferSuccess => 'Transfer Successful';
+
+	/// en: 'Transfer Wizard'
+	String get title => 'Transfer Wizard';
+
+	/// en: 'Transfer Amount'
+	String get amount => 'Transfer Amount';
+
+	/// en: 'Enter amount'
+	String get amountHint => 'Enter amount';
+
+	/// en: 'Source Account'
+	String get sourceAccount => 'Source Account';
+
+	/// en: 'Target Account'
+	String get targetAccount => 'Target Account';
+
+	/// en: 'Select Account'
+	String get selectAccount => 'Select Account';
+
+	/// en: 'Confirm Transfer'
+	String get confirmTransfer => 'Confirm Transfer';
+
+	/// en: 'Confirmed'
+	String get confirmed => 'Confirmed';
+
+	/// en: 'Transfer Successful'
+	String get transferSuccess => 'Transfer Successful';
 }
 
 // Path: chat.genui
-class _TranslationsChatGenuiEn extends TranslationsChatGenuiZh {
-	_TranslationsChatGenuiEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatGenuiEn {
+	TranslationsChatGenuiEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override late final _TranslationsChatGenuiExpenseSummaryEn expenseSummary = _TranslationsChatGenuiExpenseSummaryEn._(_root);
-	@override late final _TranslationsChatGenuiTransactionListEn transactionList = _TranslationsChatGenuiTransactionListEn._(_root);
-	@override late final _TranslationsChatGenuiTransactionGroupReceiptEn transactionGroupReceipt = _TranslationsChatGenuiTransactionGroupReceiptEn._(_root);
-	@override late final _TranslationsChatGenuiBudgetReceiptEn budgetReceipt = _TranslationsChatGenuiBudgetReceiptEn._(_root);
-	@override late final _TranslationsChatGenuiBudgetStatusCardEn budgetStatusCard = _TranslationsChatGenuiBudgetStatusCardEn._(_root);
-	@override late final _TranslationsChatGenuiCashFlowForecastEn cashFlowForecast = _TranslationsChatGenuiCashFlowForecastEn._(_root);
-	@override late final _TranslationsChatGenuiHealthScoreEn healthScore = _TranslationsChatGenuiHealthScoreEn._(_root);
-	@override late final _TranslationsChatGenuiSpaceSelectorEn spaceSelector = _TranslationsChatGenuiSpaceSelectorEn._(_root);
-	@override late final _TranslationsChatGenuiTransferPathEn transferPath = _TranslationsChatGenuiTransferPathEn._(_root);
-	@override late final _TranslationsChatGenuiTransactionCardEn transactionCard = _TranslationsChatGenuiTransactionCardEn._(_root);
-	@override late final _TranslationsChatGenuiCashFlowCardEn cashFlowCard = _TranslationsChatGenuiCashFlowCardEn._(_root);
+	late final TranslationsChatGenuiExpenseSummaryEn expenseSummary = TranslationsChatGenuiExpenseSummaryEn._(_root);
+	late final TranslationsChatGenuiTransactionListEn transactionList = TranslationsChatGenuiTransactionListEn._(_root);
+	late final TranslationsChatGenuiTransactionGroupReceiptEn transactionGroupReceipt = TranslationsChatGenuiTransactionGroupReceiptEn._(_root);
+	late final TranslationsChatGenuiBudgetReceiptEn budgetReceipt = TranslationsChatGenuiBudgetReceiptEn._(_root);
+	late final TranslationsChatGenuiBudgetStatusCardEn budgetStatusCard = TranslationsChatGenuiBudgetStatusCardEn._(_root);
+	late final TranslationsChatGenuiCashFlowForecastEn cashFlowForecast = TranslationsChatGenuiCashFlowForecastEn._(_root);
+	late final TranslationsChatGenuiHealthScoreEn healthScore = TranslationsChatGenuiHealthScoreEn._(_root);
+	late final TranslationsChatGenuiSpaceSelectorEn spaceSelector = TranslationsChatGenuiSpaceSelectorEn._(_root);
+	late final TranslationsChatGenuiTransferPathEn transferPath = TranslationsChatGenuiTransferPathEn._(_root);
+	late final TranslationsChatGenuiTransactionCardEn transactionCard = TranslationsChatGenuiTransactionCardEn._(_root);
+	late final TranslationsChatGenuiCashFlowCardEn cashFlowCard = TranslationsChatGenuiCashFlowCardEn._(_root);
 }
 
 // Path: chat.welcome
-class _TranslationsChatWelcomeEn extends TranslationsChatWelcomeZh {
-	_TranslationsChatWelcomeEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeEn {
+	TranslationsChatWelcomeEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override late final _TranslationsChatWelcomeMorningEn morning = _TranslationsChatWelcomeMorningEn._(_root);
-	@override late final _TranslationsChatWelcomeMiddayEn midday = _TranslationsChatWelcomeMiddayEn._(_root);
-	@override late final _TranslationsChatWelcomeAfternoonEn afternoon = _TranslationsChatWelcomeAfternoonEn._(_root);
-	@override late final _TranslationsChatWelcomeEveningEn evening = _TranslationsChatWelcomeEveningEn._(_root);
-	@override late final _TranslationsChatWelcomeNightEn night = _TranslationsChatWelcomeNightEn._(_root);
+	late final TranslationsChatWelcomeMorningEn morning = TranslationsChatWelcomeMorningEn._(_root);
+	late final TranslationsChatWelcomeMiddayEn midday = TranslationsChatWelcomeMiddayEn._(_root);
+	late final TranslationsChatWelcomeAfternoonEn afternoon = TranslationsChatWelcomeAfternoonEn._(_root);
+	late final TranslationsChatWelcomeEveningEn evening = TranslationsChatWelcomeEveningEn._(_root);
+	late final TranslationsChatWelcomeNightEn night = TranslationsChatWelcomeNightEn._(_root);
 }
 
 // Path: error.genui
-class _TranslationsErrorGenuiEn extends TranslationsErrorGenuiZh {
-	_TranslationsErrorGenuiEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsErrorGenuiEn {
+	TranslationsErrorGenuiEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get loadingFailed => 'Component loading failed';
-	@override String get schemaFailed => 'Schema validation failed';
-	@override String get schemaDescription => 'Component definition does not comply with GenUI specifications, degraded to plain text display';
-	@override String get networkError => 'Network error';
-	@override String retryStatus({required Object retryCount, required Object maxRetries}) => 'Retried ${retryCount}/${maxRetries} times';
-	@override String get maxRetriesReached => 'Maximum retry attempts reached';
+
+	/// en: 'Component loading failed'
+	String get loadingFailed => 'Component loading failed';
+
+	/// en: 'Schema validation failed'
+	String get schemaFailed => 'Schema validation failed';
+
+	/// en: 'Component definition does not comply with GenUI specifications, degraded to plain text display'
+	String get schemaDescription => 'Component definition does not comply with GenUI specifications, degraded to plain text display';
+
+	/// en: 'Network error'
+	String get networkError => 'Network error';
+
+	/// en: 'Retried $retryCount/$maxRetries times'
+	String retryStatus({required Object retryCount, required Object maxRetries}) => 'Retried ${retryCount}/${maxRetries} times';
+
+	/// en: 'Maximum retry attempts reached'
+	String get maxRetriesReached => 'Maximum retry attempts reached';
 }
 
 // Path: account.types
-class _TranslationsAccountTypesEn extends TranslationsAccountTypesZh {
-	_TranslationsAccountTypesEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsAccountTypesEn {
+	TranslationsAccountTypesEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get cashTitle => 'Cash';
-	@override String get cashSubtitle => 'Physical currency and coins';
-	@override String get depositTitle => 'Bank Deposit';
-	@override String get depositSubtitle => 'Savings, checking accounts';
-	@override String get eMoneyTitle => 'E-Wallet';
-	@override String get eMoneySubtitle => 'Digital payment balances';
-	@override String get investmentTitle => 'Investment';
-	@override String get investmentSubtitle => 'Stocks, funds, bonds, etc.';
-	@override String get receivableTitle => 'Receivable';
-	@override String get receivableSubtitle => 'Loans to others, pending';
-	@override String get receivableHelper => 'Owed to me';
-	@override String get creditCardTitle => 'Credit Card';
-	@override String get creditCardSubtitle => 'Credit card balances';
-	@override String get loanTitle => 'Loan';
-	@override String get loanSubtitle => 'Mortgage, auto, personal';
-	@override String get payableTitle => 'Payable';
-	@override String get payableSubtitle => 'Amounts owed to others';
-	@override String get payableHelper => 'I owe';
+
+	/// en: 'Cash'
+	String get cashTitle => 'Cash';
+
+	/// en: 'Physical currency and coins'
+	String get cashSubtitle => 'Physical currency and coins';
+
+	/// en: 'Bank Deposit'
+	String get depositTitle => 'Bank Deposit';
+
+	/// en: 'Savings, checking accounts'
+	String get depositSubtitle => 'Savings, checking accounts';
+
+	/// en: 'E-Wallet'
+	String get eMoneyTitle => 'E-Wallet';
+
+	/// en: 'Digital payment balances'
+	String get eMoneySubtitle => 'Digital payment balances';
+
+	/// en: 'Investment'
+	String get investmentTitle => 'Investment';
+
+	/// en: 'Stocks, funds, bonds, etc.'
+	String get investmentSubtitle => 'Stocks, funds, bonds, etc.';
+
+	/// en: 'Receivable'
+	String get receivableTitle => 'Receivable';
+
+	/// en: 'Loans to others, pending'
+	String get receivableSubtitle => 'Loans to others, pending';
+
+	/// en: 'Owed to me'
+	String get receivableHelper => 'Owed to me';
+
+	/// en: 'Credit Card'
+	String get creditCardTitle => 'Credit Card';
+
+	/// en: 'Credit card balances'
+	String get creditCardSubtitle => 'Credit card balances';
+
+	/// en: 'Loan'
+	String get loanTitle => 'Loan';
+
+	/// en: 'Mortgage, auto, personal'
+	String get loanSubtitle => 'Mortgage, auto, personal';
+
+	/// en: 'Payable'
+	String get payableTitle => 'Payable';
+
+	/// en: 'Amounts owed to others'
+	String get payableSubtitle => 'Amounts owed to others';
+
+	/// en: 'I owe'
+	String get payableHelper => 'I owe';
 }
 
 // Path: statistics.overview
-class _TranslationsStatisticsOverviewEn extends TranslationsStatisticsOverviewZh {
-	_TranslationsStatisticsOverviewEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsStatisticsOverviewEn {
+	TranslationsStatisticsOverviewEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get balance => 'Total Balance';
-	@override String get income => 'Total Income';
-	@override String get expense => 'Total Expense';
+
+	/// en: 'Total Balance'
+	String get balance => 'Total Balance';
+
+	/// en: 'Total Income'
+	String get income => 'Total Income';
+
+	/// en: 'Total Expense'
+	String get expense => 'Total Expense';
 }
 
 // Path: statistics.trend
-class _TranslationsStatisticsTrendEn extends TranslationsStatisticsTrendZh {
-	_TranslationsStatisticsTrendEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsStatisticsTrendEn {
+	TranslationsStatisticsTrendEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Trends';
-	@override String get expense => 'Expense';
-	@override String get income => 'Income';
+
+	/// en: 'Trends'
+	String get title => 'Trends';
+
+	/// en: 'Expense'
+	String get expense => 'Expense';
+
+	/// en: 'Income'
+	String get income => 'Income';
 }
 
 // Path: statistics.analysis
-class _TranslationsStatisticsAnalysisEn extends TranslationsStatisticsAnalysisZh {
-	_TranslationsStatisticsAnalysisEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsStatisticsAnalysisEn {
+	TranslationsStatisticsAnalysisEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Analysis';
-	@override String get total => 'Total';
-	@override String get breakdown => 'Category Breakdown';
+
+	/// en: 'Analysis'
+	String get title => 'Analysis';
+
+	/// en: 'Total'
+	String get total => 'Total';
+
+	/// en: 'Category Breakdown'
+	String get breakdown => 'Category Breakdown';
 }
 
 // Path: statistics.filter
-class _TranslationsStatisticsFilterEn extends TranslationsStatisticsFilterZh {
-	_TranslationsStatisticsFilterEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsStatisticsFilterEn {
+	TranslationsStatisticsFilterEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get accountType => 'Account Type';
-	@override String get allAccounts => 'All Accounts';
-	@override String get apply => 'Apply';
+
+	/// en: 'Account Type'
+	String get accountType => 'Account Type';
+
+	/// en: 'All Accounts'
+	String get allAccounts => 'All Accounts';
+
+	/// en: 'Apply'
+	String get apply => 'Apply';
 }
 
 // Path: statistics.sort
-class _TranslationsStatisticsSortEn extends TranslationsStatisticsSortZh {
-	_TranslationsStatisticsSortEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsStatisticsSortEn {
+	TranslationsStatisticsSortEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get amount => 'By Amount';
-	@override String get date => 'By Time';
+
+	/// en: 'By Amount'
+	String get amount => 'By Amount';
+
+	/// en: 'By Time'
+	String get date => 'By Time';
 }
 
 // Path: statistics.emptyState
-class _TranslationsStatisticsEmptyStateEn extends TranslationsStatisticsEmptyStateZh {
-	_TranslationsStatisticsEmptyStateEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsStatisticsEmptyStateEn {
+	TranslationsStatisticsEmptyStateEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Unlock Financial Insights';
-	@override String get description => 'Your financial report is currently a blank canvas.\nRecord your first transaction and let the data tell your story.';
-	@override String get action => 'Record First Transaction';
+
+	/// en: 'Unlock Financial Insights'
+	String get title => 'Unlock Financial Insights';
+
+	/// en: 'Your financial report is currently a blank canvas. Record your first transaction and let the data tell your story.'
+	String get description => 'Your financial report is currently a blank canvas.\nRecord your first transaction and let the data tell your story.';
+
+	/// en: 'Record First Transaction'
+	String get action => 'Record First Transaction';
 }
 
 // Path: server.error
-class _TranslationsServerErrorEn extends TranslationsServerErrorZh {
-	_TranslationsServerErrorEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsServerErrorEn {
+	TranslationsServerErrorEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get urlRequired => 'Server address is required';
-	@override String get invalidUrl => 'Invalid URL format';
-	@override String get connectionTimeout => 'Connection timed out';
-	@override String get connectionRefused => 'Could not connect to server';
-	@override String get sslError => 'SSL certificate error';
-	@override String get serverError => 'Server error';
+
+	/// en: 'Server address is required'
+	String get urlRequired => 'Server address is required';
+
+	/// en: 'Invalid URL format'
+	String get invalidUrl => 'Invalid URL format';
+
+	/// en: 'Connection timed out'
+	String get connectionTimeout => 'Connection timed out';
+
+	/// en: 'Could not connect to server'
+	String get connectionRefused => 'Could not connect to server';
+
+	/// en: 'SSL certificate error'
+	String get sslError => 'SSL certificate error';
+
+	/// en: 'Server error'
+	String get serverError => 'Server error';
 }
 
 // Path: sharedSpace.dashboard
-class _TranslationsSharedSpaceDashboardEn extends TranslationsSharedSpaceDashboardZh {
-	_TranslationsSharedSpaceDashboardEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsSharedSpaceDashboardEn {
+	TranslationsSharedSpaceDashboardEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get cumulativeTotalExpense => 'Cumulative Total Expense';
-	@override String get participatingMembers => 'Participating Members';
-	@override String membersCount({required Object count}) => '${count} people';
-	@override String get averagePerMember => 'Avg per member';
-	@override String get spendingDistribution => 'Spending Distribution';
-	@override String get realtimeUpdates => 'Real-time updates';
-	@override String get paid => 'Paid';
+
+	/// en: 'Cumulative Total Expense'
+	String get cumulativeTotalExpense => 'Cumulative Total Expense';
+
+	/// en: 'Participating Members'
+	String get participatingMembers => 'Participating Members';
+
+	/// en: '$count people'
+	String membersCount({required Object count}) => '${count} people';
+
+	/// en: 'Avg per member'
+	String get averagePerMember => 'Avg per member';
+
+	/// en: 'Spending Distribution'
+	String get spendingDistribution => 'Spending Distribution';
+
+	/// en: 'Real-time updates'
+	String get realtimeUpdates => 'Real-time updates';
+
+	/// en: 'Paid'
+	String get paid => 'Paid';
 }
 
 // Path: sharedSpace.roles
-class _TranslationsSharedSpaceRolesEn extends TranslationsSharedSpaceRolesZh {
-	_TranslationsSharedSpaceRolesEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsSharedSpaceRolesEn {
+	TranslationsSharedSpaceRolesEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get owner => 'Owner';
-	@override String get admin => 'Admin';
-	@override String get member => 'Member';
+
+	/// en: 'Owner'
+	String get owner => 'Owner';
+
+	/// en: 'Admin'
+	String get admin => 'Admin';
+
+	/// en: 'Member'
+	String get member => 'Member';
 }
 
 // Path: errorMapping.generic
-class _TranslationsErrorMappingGenericEn extends TranslationsErrorMappingGenericZh {
-	_TranslationsErrorMappingGenericEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsErrorMappingGenericEn {
+	TranslationsErrorMappingGenericEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get badRequest => 'Bad Request';
-	@override String get authFailed => 'Authentication failed, please login again';
-	@override String get permissionDenied => 'Permission denied';
-	@override String get notFound => 'Resource not found';
-	@override String get serverError => 'Internal server error';
-	@override String get systemError => 'System error';
-	@override String get validationFailed => 'Validation failed';
+
+	/// en: 'Bad Request'
+	String get badRequest => 'Bad Request';
+
+	/// en: 'Authentication failed, please login again'
+	String get authFailed => 'Authentication failed, please login again';
+
+	/// en: 'Permission denied'
+	String get permissionDenied => 'Permission denied';
+
+	/// en: 'Resource not found'
+	String get notFound => 'Resource not found';
+
+	/// en: 'Internal server error'
+	String get serverError => 'Internal server error';
+
+	/// en: 'System error'
+	String get systemError => 'System error';
+
+	/// en: 'Validation failed'
+	String get validationFailed => 'Validation failed';
 }
 
 // Path: errorMapping.auth
-class _TranslationsErrorMappingAuthEn extends TranslationsErrorMappingAuthZh {
-	_TranslationsErrorMappingAuthEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsErrorMappingAuthEn {
+	TranslationsErrorMappingAuthEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get failed => 'Authentication failed';
-	@override String get emailWrong => 'Incorrect email';
-	@override String get phoneWrong => 'Incorrect phone number';
-	@override String get phoneRegistered => 'Phone number already registered';
-	@override String get emailRegistered => 'Email already registered';
-	@override String get sendFailed => 'Failed to send verification code';
-	@override String get expired => 'Verification code expired';
-	@override String get tooFrequent => 'Code sent too frequently';
-	@override String get unsupportedType => 'Unsupported code type';
-	@override String get wrongPassword => 'Incorrect password';
-	@override String get userNotFound => 'User not found';
-	@override String get prefsMissing => 'Preference parameters missing';
-	@override String get invalidTimezone => 'Invalid client timezone';
+
+	/// en: 'Authentication failed'
+	String get failed => 'Authentication failed';
+
+	/// en: 'Incorrect email'
+	String get emailWrong => 'Incorrect email';
+
+	/// en: 'Incorrect phone number'
+	String get phoneWrong => 'Incorrect phone number';
+
+	/// en: 'Phone number already registered'
+	String get phoneRegistered => 'Phone number already registered';
+
+	/// en: 'Email already registered'
+	String get emailRegistered => 'Email already registered';
+
+	/// en: 'Failed to send verification code'
+	String get sendFailed => 'Failed to send verification code';
+
+	/// en: 'Verification code expired'
+	String get expired => 'Verification code expired';
+
+	/// en: 'Code sent too frequently'
+	String get tooFrequent => 'Code sent too frequently';
+
+	/// en: 'Unsupported code type'
+	String get unsupportedType => 'Unsupported code type';
+
+	/// en: 'Incorrect password'
+	String get wrongPassword => 'Incorrect password';
+
+	/// en: 'User not found'
+	String get userNotFound => 'User not found';
+
+	/// en: 'Preference parameters missing'
+	String get prefsMissing => 'Preference parameters missing';
+
+	/// en: 'Invalid client timezone'
+	String get invalidTimezone => 'Invalid client timezone';
 }
 
 // Path: errorMapping.transaction
-class _TranslationsErrorMappingTransactionEn extends TranslationsErrorMappingTransactionZh {
-	_TranslationsErrorMappingTransactionEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsErrorMappingTransactionEn {
+	TranslationsErrorMappingTransactionEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get commentEmpty => 'Comment content cannot be empty';
-	@override String get invalidParent => 'Invalid parent comment ID';
-	@override String get saveFailed => 'Failed to save comment';
-	@override String get deleteFailed => 'Failed to delete comment';
-	@override String get notExists => 'Transaction does not exist';
+
+	/// en: 'Comment content cannot be empty'
+	String get commentEmpty => 'Comment content cannot be empty';
+
+	/// en: 'Invalid parent comment ID'
+	String get invalidParent => 'Invalid parent comment ID';
+
+	/// en: 'Failed to save comment'
+	String get saveFailed => 'Failed to save comment';
+
+	/// en: 'Failed to delete comment'
+	String get deleteFailed => 'Failed to delete comment';
+
+	/// en: 'Transaction does not exist'
+	String get notExists => 'Transaction does not exist';
 }
 
 // Path: errorMapping.space
-class _TranslationsErrorMappingSpaceEn extends TranslationsErrorMappingSpaceZh {
-	_TranslationsErrorMappingSpaceEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsErrorMappingSpaceEn {
+	TranslationsErrorMappingSpaceEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get notFound => 'Shared space not found or access denied';
-	@override String get inviteDenied => 'No permission to invite members';
-	@override String get inviteSelf => 'Cannot invite yourself';
-	@override String get inviteSent => 'Invitation sent';
-	@override String get alreadyMember => 'User is already a member or invited';
-	@override String get invalidAction => 'Invalid action';
-	@override String get invitationNotFound => 'Invitation does not exist';
-	@override String get onlyOwner => 'Only owner can perform this action';
-	@override String get ownerNotRemovable => 'Owner cannot be removed';
-	@override String get memberNotFound => 'Member not found';
-	@override String get notMember => 'User is not a member of this space';
-	@override String get ownerCantLeave => 'Owner cannot leave directly, please transfer ownership first';
-	@override String get invalidCode => 'Invalid invitation code';
-	@override String get codeExpired => 'Invitation code expired or usage limit reached';
+
+	/// en: 'Shared space not found or access denied'
+	String get notFound => 'Shared space not found or access denied';
+
+	/// en: 'No permission to invite members'
+	String get inviteDenied => 'No permission to invite members';
+
+	/// en: 'Cannot invite yourself'
+	String get inviteSelf => 'Cannot invite yourself';
+
+	/// en: 'Invitation sent'
+	String get inviteSent => 'Invitation sent';
+
+	/// en: 'User is already a member or invited'
+	String get alreadyMember => 'User is already a member or invited';
+
+	/// en: 'Invalid action'
+	String get invalidAction => 'Invalid action';
+
+	/// en: 'Invitation does not exist'
+	String get invitationNotFound => 'Invitation does not exist';
+
+	/// en: 'Only owner can perform this action'
+	String get onlyOwner => 'Only owner can perform this action';
+
+	/// en: 'Owner cannot be removed'
+	String get ownerNotRemovable => 'Owner cannot be removed';
+
+	/// en: 'Member not found'
+	String get memberNotFound => 'Member not found';
+
+	/// en: 'User is not a member of this space'
+	String get notMember => 'User is not a member of this space';
+
+	/// en: 'Owner cannot leave directly, please transfer ownership first'
+	String get ownerCantLeave => 'Owner cannot leave directly, please transfer ownership first';
+
+	/// en: 'Invalid invitation code'
+	String get invalidCode => 'Invalid invitation code';
+
+	/// en: 'Invitation code expired or usage limit reached'
+	String get codeExpired => 'Invitation code expired or usage limit reached';
 }
 
 // Path: errorMapping.recurring
-class _TranslationsErrorMappingRecurringEn extends TranslationsErrorMappingRecurringZh {
-	_TranslationsErrorMappingRecurringEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsErrorMappingRecurringEn {
+	TranslationsErrorMappingRecurringEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get invalidRule => 'Invalid recurrence rule';
-	@override String get ruleNotFound => 'Recurrence rule not found';
+
+	/// en: 'Invalid recurrence rule'
+	String get invalidRule => 'Invalid recurrence rule';
+
+	/// en: 'Recurrence rule not found'
+	String get ruleNotFound => 'Recurrence rule not found';
 }
 
 // Path: errorMapping.upload
-class _TranslationsErrorMappingUploadEn extends TranslationsErrorMappingUploadZh {
-	_TranslationsErrorMappingUploadEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsErrorMappingUploadEn {
+	TranslationsErrorMappingUploadEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get noFile => 'No file uploaded';
-	@override String get tooLarge => 'File too large';
-	@override String get unsupportedType => 'Unsupported file type';
-	@override String get tooManyFiles => 'Too many files';
+
+	/// en: 'No file uploaded'
+	String get noFile => 'No file uploaded';
+
+	/// en: 'File too large'
+	String get tooLarge => 'File too large';
+
+	/// en: 'Unsupported file type'
+	String get unsupportedType => 'Unsupported file type';
+
+	/// en: 'Too many files'
+	String get tooManyFiles => 'Too many files';
 }
 
 // Path: errorMapping.ai
-class _TranslationsErrorMappingAiEn extends TranslationsErrorMappingAiZh {
-	_TranslationsErrorMappingAiEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsErrorMappingAiEn {
+	TranslationsErrorMappingAiEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get contextLimit => 'Context limit exceeded';
-	@override String get tokenLimit => 'Insufficient tokens';
-	@override String get emptyMessage => 'Empty user message';
+
+	/// en: 'Context limit exceeded'
+	String get contextLimit => 'Context limit exceeded';
+
+	/// en: 'Insufficient tokens'
+	String get tokenLimit => 'Insufficient tokens';
+
+	/// en: 'Empty user message'
+	String get emptyMessage => 'Empty user message';
 }
 
 // Path: chat.tools.done
-class _TranslationsChatToolsDoneEn extends TranslationsChatToolsDoneZh {
-	_TranslationsChatToolsDoneEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatToolsDoneEn {
+	TranslationsChatToolsDoneEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get readFile => 'Read file';
-	@override String get searchTransactions => 'Searched transactions';
-	@override String get queryBudgetStatus => 'Checked budget';
-	@override String get createBudget => 'Created budget';
-	@override String get getCashFlowAnalysis => 'Analyzed cash flow';
-	@override String get getFinancialHealthScore => 'Calculated health score';
-	@override String get getFinancialSummary => 'Financial report ready';
-	@override String get evaluateFinancialHealth => 'Health evaluation complete';
-	@override String get forecastBalance => 'Balance forecast ready';
-	@override String get simulateExpenseImpact => 'Impact simulation complete';
-	@override String get recordTransactions => 'Recorded transactions';
-	@override String get createTransaction => 'Recorded transaction';
-	@override String get duckduckgoSearch => 'Searched the web';
-	@override String get executeTransfer => 'Transfer complete';
-	@override String get listDir => 'Browsed directory';
-	@override String get execute => 'Processing complete';
-	@override String get analyzeFinance => 'Finance analysis complete';
-	@override String get forecastFinance => 'Finance forecast complete';
-	@override String get analyzeBudget => 'Budget analysis complete';
-	@override String get auditAnalysis => 'Audit analysis complete';
-	@override String get budgetOps => 'Budget processing complete';
-	@override String get createSharedTransaction => 'Shared expense created';
-	@override String get listSpaces => 'Shared spaces loaded';
-	@override String get querySpaceSummary => 'Space summary ready';
-	@override String get prepareTransfer => 'Transfer ready';
-	@override String get unknown => 'Processing complete';
+
+	/// en: 'Read file'
+	String get read_file => 'Read file';
+
+	/// en: 'Searched transactions'
+	String get search_transactions => 'Searched transactions';
+
+	/// en: 'Checked budget'
+	String get query_budget_status => 'Checked budget';
+
+	/// en: 'Created budget'
+	String get create_budget => 'Created budget';
+
+	/// en: 'Analyzed cash flow'
+	String get get_cash_flow_analysis => 'Analyzed cash flow';
+
+	/// en: 'Calculated health score'
+	String get get_financial_health_score => 'Calculated health score';
+
+	/// en: 'Financial report ready'
+	String get get_financial_summary => 'Financial report ready';
+
+	/// en: 'Health evaluation complete'
+	String get evaluate_financial_health => 'Health evaluation complete';
+
+	/// en: 'Balance forecast ready'
+	String get forecast_balance => 'Balance forecast ready';
+
+	/// en: 'Impact simulation complete'
+	String get simulate_expense_impact => 'Impact simulation complete';
+
+	/// en: 'Recorded transactions'
+	String get record_transactions => 'Recorded transactions';
+
+	/// en: 'Recorded transaction'
+	String get create_transaction => 'Recorded transaction';
+
+	/// en: 'Searched the web'
+	String get duckduckgo_search => 'Searched the web';
+
+	/// en: 'Transfer complete'
+	String get execute_transfer => 'Transfer complete';
+
+	/// en: 'Browsed directory'
+	String get list_dir => 'Browsed directory';
+
+	/// en: 'Processing complete'
+	String get execute => 'Processing complete';
+
+	/// en: 'Finance analysis complete'
+	String get analyze_finance => 'Finance analysis complete';
+
+	/// en: 'Finance forecast complete'
+	String get forecast_finance => 'Finance forecast complete';
+
+	/// en: 'Budget analysis complete'
+	String get analyze_budget => 'Budget analysis complete';
+
+	/// en: 'Audit analysis complete'
+	String get audit_analysis => 'Audit analysis complete';
+
+	/// en: 'Budget processing complete'
+	String get budget_ops => 'Budget processing complete';
+
+	/// en: 'Shared expense created'
+	String get create_shared_transaction => 'Shared expense created';
+
+	/// en: 'Shared spaces loaded'
+	String get list_spaces => 'Shared spaces loaded';
+
+	/// en: 'Space summary ready'
+	String get query_space_summary => 'Space summary ready';
+
+	/// en: 'Transfer ready'
+	String get prepare_transfer => 'Transfer ready';
+
+	/// en: 'Processing complete'
+	String get unknown => 'Processing complete';
 }
 
 // Path: chat.tools.failed
-class _TranslationsChatToolsFailedEn extends TranslationsChatToolsFailedZh {
-	_TranslationsChatToolsFailedEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatToolsFailedEn {
+	TranslationsChatToolsFailedEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get unknown => 'Action failed';
+
+	/// en: 'Action failed'
+	String get unknown => 'Action failed';
 }
 
 // Path: chat.genui.expenseSummary
-class _TranslationsChatGenuiExpenseSummaryEn extends TranslationsChatGenuiExpenseSummaryZh {
-	_TranslationsChatGenuiExpenseSummaryEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatGenuiExpenseSummaryEn {
+	TranslationsChatGenuiExpenseSummaryEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get totalExpense => 'Total Expense';
-	@override String get mainExpenses => 'Main Expenses';
-	@override String viewAll({required Object count}) => 'View all ${count} transactions';
-	@override String get details => 'Transaction Details';
+
+	/// en: 'Total Expense'
+	String get totalExpense => 'Total Expense';
+
+	/// en: 'Main Expenses'
+	String get mainExpenses => 'Main Expenses';
+
+	/// en: 'View all $count transactions'
+	String viewAll({required Object count}) => 'View all ${count} transactions';
+
+	/// en: 'Transaction Details'
+	String get details => 'Transaction Details';
 }
 
 // Path: chat.genui.transactionList
-class _TranslationsChatGenuiTransactionListEn extends TranslationsChatGenuiTransactionListZh {
-	_TranslationsChatGenuiTransactionListEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatGenuiTransactionListEn {
+	TranslationsChatGenuiTransactionListEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String searchResults({required Object count}) => 'Search Results (${count})';
-	@override String loaded({required Object count}) => 'Loaded ${count}';
-	@override String get noResults => 'No transactions found';
-	@override String get loadMore => 'Scroll to load more';
-	@override String get allLoaded => 'All loaded';
+
+	/// en: 'Search Results ($count)'
+	String searchResults({required Object count}) => 'Search Results (${count})';
+
+	/// en: 'Loaded $count'
+	String loaded({required Object count}) => 'Loaded ${count}';
+
+	/// en: 'No transactions found'
+	String get noResults => 'No transactions found';
+
+	/// en: 'Scroll to load more'
+	String get loadMore => 'Scroll to load more';
+
+	/// en: 'All loaded'
+	String get allLoaded => 'All loaded';
 }
 
 // Path: chat.genui.transactionGroupReceipt
-class _TranslationsChatGenuiTransactionGroupReceiptEn extends TranslationsChatGenuiTransactionGroupReceiptZh {
-	_TranslationsChatGenuiTransactionGroupReceiptEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatGenuiTransactionGroupReceiptEn {
+	TranslationsChatGenuiTransactionGroupReceiptEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Successfully';
-	@override String count({required Object count}) => '${count} items';
-	@override String get total => 'Total';
-	@override String get selectAccount => 'Select Account';
-	@override String get selectAccountSubtitle => 'This account will be applied to all transactions above';
-	@override String associatedAccount({required Object name}) => 'Associated: ${name}';
-	@override String get clickToAssociate => 'Click to associate account';
-	@override String get associateSuccess => 'Successfully associated account to all transactions';
-	@override String associateFailed({required Object error}) => 'Action failed: ${error}';
-	@override String get accountAssociation => 'Account';
-	@override String get sharedSpace => 'Shared Space';
-	@override String get notAssociated => 'Not linked';
-	@override String get addSpace => 'Add';
-	@override String get selectSpace => 'Select Shared Space';
-	@override String get spaceAssociateSuccess => 'Linked to shared space';
-	@override String spaceAssociateFailed({required Object error}) => 'Failed to link: ${error}';
-	@override String get currencyMismatchTitle => 'Currency Mismatch';
-	@override String get currencyMismatchDesc => 'The transaction currency differs from the account currency. The account balance will be deducted at the exchange rate.';
-	@override String get transactionAmount => 'Transaction Amount';
-	@override String get accountCurrency => 'Account Currency';
-	@override String get targetAccount => 'Target Account';
-	@override String get currencyMismatchNote => 'Note: Account balance will be converted using current exchange rate';
-	@override String get confirmAssociate => 'Confirm';
-	@override String spaceCount({required Object count}) => '${count} spaces';
+
+	/// en: 'Successfully'
+	String get title => 'Successfully';
+
+	/// en: '$count items'
+	String count({required Object count}) => '${count} items';
+
+	/// en: 'Total'
+	String get total => 'Total';
+
+	/// en: 'Select Account'
+	String get selectAccount => 'Select Account';
+
+	/// en: 'This account will be applied to all transactions above'
+	String get selectAccountSubtitle => 'This account will be applied to all transactions above';
+
+	/// en: 'Associated: $name'
+	String associatedAccount({required Object name}) => 'Associated: ${name}';
+
+	/// en: 'Click to associate account'
+	String get clickToAssociate => 'Click to associate account';
+
+	/// en: 'Successfully associated account to all transactions'
+	String get associateSuccess => 'Successfully associated account to all transactions';
+
+	/// en: 'Action failed: $error'
+	String associateFailed({required Object error}) => 'Action failed: ${error}';
+
+	/// en: 'Account'
+	String get accountAssociation => 'Account';
+
+	/// en: 'Shared Space'
+	String get sharedSpace => 'Shared Space';
+
+	/// en: 'Not linked'
+	String get notAssociated => 'Not linked';
+
+	/// en: 'Add'
+	String get addSpace => 'Add';
+
+	/// en: 'Select Shared Space'
+	String get selectSpace => 'Select Shared Space';
+
+	/// en: 'Linked to shared space'
+	String get spaceAssociateSuccess => 'Linked to shared space';
+
+	/// en: 'Failed to link: $error'
+	String spaceAssociateFailed({required Object error}) => 'Failed to link: ${error}';
+
+	/// en: 'Currency Mismatch'
+	String get currencyMismatchTitle => 'Currency Mismatch';
+
+	/// en: 'The transaction currency differs from the account currency. The account balance will be deducted at the exchange rate.'
+	String get currencyMismatchDesc => 'The transaction currency differs from the account currency. The account balance will be deducted at the exchange rate.';
+
+	/// en: 'Transaction Amount'
+	String get transactionAmount => 'Transaction Amount';
+
+	/// en: 'Account Currency'
+	String get accountCurrency => 'Account Currency';
+
+	/// en: 'Target Account'
+	String get targetAccount => 'Target Account';
+
+	/// en: 'Note: Account balance will be converted using current exchange rate'
+	String get currencyMismatchNote => 'Note: Account balance will be converted using current exchange rate';
+
+	/// en: 'Confirm'
+	String get confirmAssociate => 'Confirm';
+
+	/// en: '$count spaces'
+	String spaceCount({required Object count}) => '${count} spaces';
 }
 
 // Path: chat.genui.budgetReceipt
-class _TranslationsChatGenuiBudgetReceiptEn extends TranslationsChatGenuiBudgetReceiptZh {
-	_TranslationsChatGenuiBudgetReceiptEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatGenuiBudgetReceiptEn {
+	TranslationsChatGenuiBudgetReceiptEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get newBudget => 'New Budget';
-	@override String get budgetCreated => 'Budget Created';
-	@override String get rolloverBudget => 'Rollover Budget';
-	@override String get createFailed => 'Failed to create budget';
-	@override String get thisMonth => 'This Month';
-	@override String dateRange({required Object start, required Object startDay, required Object end, required Object endDay}) => '${start}/${startDay} - ${end}/${endDay}';
+
+	/// en: 'New Budget'
+	String get newBudget => 'New Budget';
+
+	/// en: 'Budget Created'
+	String get budgetCreated => 'Budget Created';
+
+	/// en: 'Rollover Budget'
+	String get rolloverBudget => 'Rollover Budget';
+
+	/// en: 'Failed to create budget'
+	String get createFailed => 'Failed to create budget';
+
+	/// en: 'This Month'
+	String get thisMonth => 'This Month';
+
+	/// en: '$start/$startDay - $end/$endDay'
+	String dateRange({required Object start, required Object startDay, required Object end, required Object endDay}) => '${start}/${startDay} - ${end}/${endDay}';
 }
 
 // Path: chat.genui.budgetStatusCard
-class _TranslationsChatGenuiBudgetStatusCardEn extends TranslationsChatGenuiBudgetStatusCardZh {
-	_TranslationsChatGenuiBudgetStatusCardEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatGenuiBudgetStatusCardEn {
+	TranslationsChatGenuiBudgetStatusCardEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get budget => 'Budget';
-	@override String get overview => 'Budget Overview';
-	@override String get totalBudget => 'Total Budget';
-	@override String spent({required Object amount}) => 'Used ¥${amount}';
-	@override String remaining({required Object amount}) => 'Remaining ¥${amount}';
-	@override String get exceeded => 'Exceeded';
-	@override String get warning => 'Warning';
-	@override String get plentiful => 'Healthy';
-	@override String get normal => 'Normal';
+
+	/// en: 'Budget'
+	String get budget => 'Budget';
+
+	/// en: 'Budget Overview'
+	String get overview => 'Budget Overview';
+
+	/// en: 'Total Budget'
+	String get totalBudget => 'Total Budget';
+
+	/// en: 'Used ¥$amount'
+	String spent({required Object amount}) => 'Used ¥${amount}';
+
+	/// en: 'Remaining ¥$amount'
+	String remaining({required Object amount}) => 'Remaining ¥${amount}';
+
+	/// en: 'Exceeded'
+	String get exceeded => 'Exceeded';
+
+	/// en: 'Warning'
+	String get warning => 'Warning';
+
+	/// en: 'Healthy'
+	String get plentiful => 'Healthy';
+
+	/// en: 'Normal'
+	String get normal => 'Normal';
 }
 
 // Path: chat.genui.cashFlowForecast
-class _TranslationsChatGenuiCashFlowForecastEn extends TranslationsChatGenuiCashFlowForecastZh {
-	_TranslationsChatGenuiCashFlowForecastEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatGenuiCashFlowForecastEn {
+	TranslationsChatGenuiCashFlowForecastEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Cash Flow Forecast';
-	@override String get recurringTransaction => 'Recurring Transaction';
-	@override String get recurringIncome => 'Recurring Income';
-	@override String get recurringExpense => 'Recurring Expense';
-	@override String get recurringTransfer => 'Recurring Transfer';
-	@override String nextDays({required Object days}) => 'Next ${days} days';
-	@override String get noData => 'No forecast data';
-	@override String get summary => 'Forecast Summary';
-	@override String get variableExpense => 'Predicted Variable Expense';
-	@override String get netChange => 'Est. Net Change';
-	@override String get keyEvents => 'Key Events';
-	@override String get noSignificantEvents => 'No significant events in forecast period';
-	@override String get dateFormat => 'M/d';
+
+	/// en: 'Cash Flow Forecast'
+	String get title => 'Cash Flow Forecast';
+
+	/// en: 'Recurring Transaction'
+	String get recurringTransaction => 'Recurring Transaction';
+
+	/// en: 'Recurring Income'
+	String get recurringIncome => 'Recurring Income';
+
+	/// en: 'Recurring Expense'
+	String get recurringExpense => 'Recurring Expense';
+
+	/// en: 'Recurring Transfer'
+	String get recurringTransfer => 'Recurring Transfer';
+
+	/// en: 'Next $days days'
+	String nextDays({required Object days}) => 'Next ${days} days';
+
+	/// en: 'No forecast data'
+	String get noData => 'No forecast data';
+
+	/// en: 'Forecast Summary'
+	String get summary => 'Forecast Summary';
+
+	/// en: 'Predicted Variable Expense'
+	String get variableExpense => 'Predicted Variable Expense';
+
+	/// en: 'Est. Net Change'
+	String get netChange => 'Est. Net Change';
+
+	/// en: 'Key Events'
+	String get keyEvents => 'Key Events';
+
+	/// en: 'No significant events in forecast period'
+	String get noSignificantEvents => 'No significant events in forecast period';
+
+	/// en: 'M/d'
+	String get dateFormat => 'M/d';
 }
 
 // Path: chat.genui.healthScore
-class _TranslationsChatGenuiHealthScoreEn extends TranslationsChatGenuiHealthScoreZh {
-	_TranslationsChatGenuiHealthScoreEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatGenuiHealthScoreEn {
+	TranslationsChatGenuiHealthScoreEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Financial Health';
-	@override String get suggestions => 'Suggestions';
-	@override String scorePoint({required Object score}) => '${score} pts';
-	@override late final _TranslationsChatGenuiHealthScoreStatusEn status = _TranslationsChatGenuiHealthScoreStatusEn._(_root);
+
+	/// en: 'Financial Health'
+	String get title => 'Financial Health';
+
+	/// en: 'Suggestions'
+	String get suggestions => 'Suggestions';
+
+	/// en: '$score pts'
+	String scorePoint({required Object score}) => '${score} pts';
+
+	late final TranslationsChatGenuiHealthScoreStatusEn status = TranslationsChatGenuiHealthScoreStatusEn._(_root);
 }
 
 // Path: chat.genui.spaceSelector
-class _TranslationsChatGenuiSpaceSelectorEn extends TranslationsChatGenuiSpaceSelectorZh {
-	_TranslationsChatGenuiSpaceSelectorEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatGenuiSpaceSelectorEn {
+	TranslationsChatGenuiSpaceSelectorEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get selected => 'Selected';
-	@override String get unnamedSpace => 'Unnamed Space';
-	@override String get linked => 'Linked';
-	@override String get roleOwner => 'Owner';
-	@override String get roleAdmin => 'Admin';
-	@override String get roleMember => 'Member';
+
+	/// en: 'Selected'
+	String get selected => 'Selected';
+
+	/// en: 'Unnamed Space'
+	String get unnamedSpace => 'Unnamed Space';
+
+	/// en: 'Linked'
+	String get linked => 'Linked';
+
+	/// en: 'Owner'
+	String get roleOwner => 'Owner';
+
+	/// en: 'Admin'
+	String get roleAdmin => 'Admin';
+
+	/// en: 'Member'
+	String get roleMember => 'Member';
 }
 
 // Path: chat.genui.transferPath
-class _TranslationsChatGenuiTransferPathEn extends TranslationsChatGenuiTransferPathZh {
-	_TranslationsChatGenuiTransferPathEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatGenuiTransferPathEn {
+	TranslationsChatGenuiTransferPathEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get selectSource => 'Select Source Account';
-	@override String get selectTarget => 'Select Target Account';
-	@override String get from => 'From (Source)';
-	@override String get to => 'To (Target)';
-	@override String get select => 'Select';
-	@override String get cancelled => 'Operation Cancelled';
-	@override String get loadError => 'Failed to load account data';
-	@override String get historyMissing => 'Account info missing in history';
-	@override String get amountUnconfirmed => 'Amount Unconfirmed';
-	@override String confirmedWithArrow({required Object source, required Object target}) => 'Confirmed: ${source} → ${target}';
-	@override String confirmAction({required Object source, required Object target}) => 'Confirm: ${source} → ${target}';
-	@override String get pleaseSelectSource => 'Please select source account';
-	@override String get pleaseSelectTarget => 'Please select target account';
-	@override String get confirmLinks => 'Confirm Transfer Path';
-	@override String get linkLocked => 'Path Locked';
-	@override String get clickToConfirm => 'Click button below to confirm';
-	@override String get reselect => 'Reselect';
-	@override String get title => 'Transfer';
-	@override String get history => 'History';
-	@override String get unknownAccount => 'Unknown Account';
-	@override String get confirmed => 'Confirmed';
+
+	/// en: 'Select Source Account'
+	String get selectSource => 'Select Source Account';
+
+	/// en: 'Select Target Account'
+	String get selectTarget => 'Select Target Account';
+
+	/// en: 'From (Source)'
+	String get from => 'From (Source)';
+
+	/// en: 'To (Target)'
+	String get to => 'To (Target)';
+
+	/// en: 'Select'
+	String get select => 'Select';
+
+	/// en: 'Operation Cancelled'
+	String get cancelled => 'Operation Cancelled';
+
+	/// en: 'Failed to load account data'
+	String get loadError => 'Failed to load account data';
+
+	/// en: 'Account info missing in history'
+	String get historyMissing => 'Account info missing in history';
+
+	/// en: 'Amount Unconfirmed'
+	String get amountUnconfirmed => 'Amount Unconfirmed';
+
+	/// en: 'Confirmed: $source → $target'
+	String confirmedWithArrow({required Object source, required Object target}) => 'Confirmed: ${source} → ${target}';
+
+	/// en: 'Confirm: $source → $target'
+	String confirmAction({required Object source, required Object target}) => 'Confirm: ${source} → ${target}';
+
+	/// en: 'Please select source account'
+	String get pleaseSelectSource => 'Please select source account';
+
+	/// en: 'Please select target account'
+	String get pleaseSelectTarget => 'Please select target account';
+
+	/// en: 'Confirm Transfer Path'
+	String get confirmLinks => 'Confirm Transfer Path';
+
+	/// en: 'Path Locked'
+	String get linkLocked => 'Path Locked';
+
+	/// en: 'Click button below to confirm'
+	String get clickToConfirm => 'Click button below to confirm';
+
+	/// en: 'Reselect'
+	String get reselect => 'Reselect';
+
+	/// en: 'Transfer'
+	String get title => 'Transfer';
+
+	/// en: 'History'
+	String get history => 'History';
+
+	/// en: 'Unknown Account'
+	String get unknownAccount => 'Unknown Account';
+
+	/// en: 'Confirmed'
+	String get confirmed => 'Confirmed';
 }
 
 // Path: chat.genui.transactionCard
-class _TranslationsChatGenuiTransactionCardEn extends TranslationsChatGenuiTransactionCardZh {
-	_TranslationsChatGenuiTransactionCardEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatGenuiTransactionCardEn {
+	TranslationsChatGenuiTransactionCardEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Transaction Successful';
-	@override String get associatedAccount => 'Associated Account';
-	@override String get notCounted => 'Not counted';
-	@override String get modify => 'Modify';
-	@override String get associate => 'Associate Account';
-	@override String get selectAccount => 'Select Account';
-	@override String get noAccount => 'No accounts available, please add one first';
-	@override String get missingId => 'Transaction ID missing, cannot update';
-	@override String associatedTo({required Object name}) => 'Associated to ${name}';
-	@override String updateFailed({required Object error}) => 'Update failed: ${error}';
-	@override String get sharedSpace => 'Shared Space';
-	@override String get noSpace => 'No shared spaces available';
-	@override String get selectSpace => 'Select Shared Space';
-	@override String get linkedToSpace => 'Linked to shared space';
+
+	/// en: 'Transaction Successful'
+	String get title => 'Transaction Successful';
+
+	/// en: 'Associated Account'
+	String get associatedAccount => 'Associated Account';
+
+	/// en: 'Not counted'
+	String get notCounted => 'Not counted';
+
+	/// en: 'Modify'
+	String get modify => 'Modify';
+
+	/// en: 'Associate Account'
+	String get associate => 'Associate Account';
+
+	/// en: 'Select Account'
+	String get selectAccount => 'Select Account';
+
+	/// en: 'No accounts available, please add one first'
+	String get noAccount => 'No accounts available, please add one first';
+
+	/// en: 'Transaction ID missing, cannot update'
+	String get missingId => 'Transaction ID missing, cannot update';
+
+	/// en: 'Associated to $name'
+	String associatedTo({required Object name}) => 'Associated to ${name}';
+
+	/// en: 'Update failed: $error'
+	String updateFailed({required Object error}) => 'Update failed: ${error}';
+
+	/// en: 'Shared Space'
+	String get sharedSpace => 'Shared Space';
+
+	/// en: 'No shared spaces available'
+	String get noSpace => 'No shared spaces available';
+
+	/// en: 'Select Shared Space'
+	String get selectSpace => 'Select Shared Space';
+
+	/// en: 'Linked to shared space'
+	String get linkedToSpace => 'Linked to shared space';
 }
 
 // Path: chat.genui.cashFlowCard
-class _TranslationsChatGenuiCashFlowCardEn extends TranslationsChatGenuiCashFlowCardZh {
-	_TranslationsChatGenuiCashFlowCardEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatGenuiCashFlowCardEn {
+	TranslationsChatGenuiCashFlowCardEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Cash Flow Analysis';
-	@override String savingsRate({required Object rate}) => 'Savings ${rate}%';
-	@override String get totalIncome => 'Total Income';
-	@override String get totalExpense => 'Total Expense';
-	@override String get essentialExpense => 'Essential';
-	@override String get discretionaryExpense => 'Discretionary';
-	@override String get aiInsight => 'AI Insight';
+
+	/// en: 'Cash Flow Analysis'
+	String get title => 'Cash Flow Analysis';
+
+	/// en: 'Savings $rate%'
+	String savingsRate({required Object rate}) => 'Savings ${rate}%';
+
+	/// en: 'Total Income'
+	String get totalIncome => 'Total Income';
+
+	/// en: 'Total Expense'
+	String get totalExpense => 'Total Expense';
+
+	/// en: 'Essential'
+	String get essentialExpense => 'Essential';
+
+	/// en: 'Discretionary'
+	String get discretionaryExpense => 'Discretionary';
+
+	/// en: 'AI Insight'
+	String get aiInsight => 'AI Insight';
 }
 
 // Path: chat.welcome.morning
-class _TranslationsChatWelcomeMorningEn extends TranslationsChatWelcomeMorningZh {
-	_TranslationsChatWelcomeMorningEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeMorningEn {
+	TranslationsChatWelcomeMorningEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get subtitle => 'Start your day by tracking';
-	@override late final _TranslationsChatWelcomeMorningBreakfastEn breakfast = _TranslationsChatWelcomeMorningBreakfastEn._(_root);
-	@override late final _TranslationsChatWelcomeMorningYesterdayReviewEn yesterdayReview = _TranslationsChatWelcomeMorningYesterdayReviewEn._(_root);
-	@override late final _TranslationsChatWelcomeMorningTodayBudgetEn todayBudget = _TranslationsChatWelcomeMorningTodayBudgetEn._(_root);
+
+	/// en: 'Start your day by tracking'
+	String get subtitle => 'Start your day by tracking';
+
+	late final TranslationsChatWelcomeMorningBreakfastEn breakfast = TranslationsChatWelcomeMorningBreakfastEn._(_root);
+	late final TranslationsChatWelcomeMorningYesterdayReviewEn yesterdayReview = TranslationsChatWelcomeMorningYesterdayReviewEn._(_root);
+	late final TranslationsChatWelcomeMorningTodayBudgetEn todayBudget = TranslationsChatWelcomeMorningTodayBudgetEn._(_root);
 }
 
 // Path: chat.welcome.midday
-class _TranslationsChatWelcomeMiddayEn extends TranslationsChatWelcomeMiddayZh {
-	_TranslationsChatWelcomeMiddayEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeMiddayEn {
+	TranslationsChatWelcomeMiddayEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get greeting => 'Good Afternoon';
-	@override String get subtitle => 'Quick record during lunch';
-	@override late final _TranslationsChatWelcomeMiddayLunchEn lunch = _TranslationsChatWelcomeMiddayLunchEn._(_root);
-	@override late final _TranslationsChatWelcomeMiddayWeeklyExpenseEn weeklyExpense = _TranslationsChatWelcomeMiddayWeeklyExpenseEn._(_root);
-	@override late final _TranslationsChatWelcomeMiddayCheckBalanceEn checkBalance = _TranslationsChatWelcomeMiddayCheckBalanceEn._(_root);
+
+	/// en: 'Good Afternoon'
+	String get greeting => 'Good Afternoon';
+
+	/// en: 'Quick record during lunch'
+	String get subtitle => 'Quick record during lunch';
+
+	late final TranslationsChatWelcomeMiddayLunchEn lunch = TranslationsChatWelcomeMiddayLunchEn._(_root);
+	late final TranslationsChatWelcomeMiddayWeeklyExpenseEn weeklyExpense = TranslationsChatWelcomeMiddayWeeklyExpenseEn._(_root);
+	late final TranslationsChatWelcomeMiddayCheckBalanceEn checkBalance = TranslationsChatWelcomeMiddayCheckBalanceEn._(_root);
 }
 
 // Path: chat.welcome.afternoon
-class _TranslationsChatWelcomeAfternoonEn extends TranslationsChatWelcomeAfternoonZh {
-	_TranslationsChatWelcomeAfternoonEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeAfternoonEn {
+	TranslationsChatWelcomeAfternoonEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get subtitle => 'Tea time, let\'s review finances';
-	@override late final _TranslationsChatWelcomeAfternoonQuickRecordEn quickRecord = _TranslationsChatWelcomeAfternoonQuickRecordEn._(_root);
-	@override late final _TranslationsChatWelcomeAfternoonAnalyzeSpendingEn analyzeSpending = _TranslationsChatWelcomeAfternoonAnalyzeSpendingEn._(_root);
-	@override late final _TranslationsChatWelcomeAfternoonBudgetProgressEn budgetProgress = _TranslationsChatWelcomeAfternoonBudgetProgressEn._(_root);
+
+	/// en: 'Tea time, let's review finances'
+	String get subtitle => 'Tea time, let\'s review finances';
+
+	late final TranslationsChatWelcomeAfternoonQuickRecordEn quickRecord = TranslationsChatWelcomeAfternoonQuickRecordEn._(_root);
+	late final TranslationsChatWelcomeAfternoonAnalyzeSpendingEn analyzeSpending = TranslationsChatWelcomeAfternoonAnalyzeSpendingEn._(_root);
+	late final TranslationsChatWelcomeAfternoonBudgetProgressEn budgetProgress = TranslationsChatWelcomeAfternoonBudgetProgressEn._(_root);
 }
 
 // Path: chat.welcome.evening
-class _TranslationsChatWelcomeEveningEn extends TranslationsChatWelcomeEveningZh {
-	_TranslationsChatWelcomeEveningEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeEveningEn {
+	TranslationsChatWelcomeEveningEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get subtitle => 'End of day, time to balance the books';
-	@override late final _TranslationsChatWelcomeEveningDinnerEn dinner = _TranslationsChatWelcomeEveningDinnerEn._(_root);
-	@override late final _TranslationsChatWelcomeEveningTodaySummaryEn todaySummary = _TranslationsChatWelcomeEveningTodaySummaryEn._(_root);
-	@override late final _TranslationsChatWelcomeEveningTomorrowPlanEn tomorrowPlan = _TranslationsChatWelcomeEveningTomorrowPlanEn._(_root);
+
+	/// en: 'End of day, time to balance the books'
+	String get subtitle => 'End of day, time to balance the books';
+
+	late final TranslationsChatWelcomeEveningDinnerEn dinner = TranslationsChatWelcomeEveningDinnerEn._(_root);
+	late final TranslationsChatWelcomeEveningTodaySummaryEn todaySummary = TranslationsChatWelcomeEveningTodaySummaryEn._(_root);
+	late final TranslationsChatWelcomeEveningTomorrowPlanEn tomorrowPlan = TranslationsChatWelcomeEveningTomorrowPlanEn._(_root);
 }
 
 // Path: chat.welcome.night
-class _TranslationsChatWelcomeNightEn extends TranslationsChatWelcomeNightZh {
-	_TranslationsChatWelcomeNightEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeNightEn {
+	TranslationsChatWelcomeNightEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get greeting => 'Late Night';
-	@override String get subtitle => 'Quiet time for financial planning';
-	@override late final _TranslationsChatWelcomeNightMakeupRecordEn makeupRecord = _TranslationsChatWelcomeNightMakeupRecordEn._(_root);
-	@override late final _TranslationsChatWelcomeNightMonthlyReviewEn monthlyReview = _TranslationsChatWelcomeNightMonthlyReviewEn._(_root);
-	@override late final _TranslationsChatWelcomeNightFinancialThinkingEn financialThinking = _TranslationsChatWelcomeNightFinancialThinkingEn._(_root);
+
+	/// en: 'Late Night'
+	String get greeting => 'Late Night';
+
+	/// en: 'Quiet time for financial planning'
+	String get subtitle => 'Quiet time for financial planning';
+
+	late final TranslationsChatWelcomeNightMakeupRecordEn makeupRecord = TranslationsChatWelcomeNightMakeupRecordEn._(_root);
+	late final TranslationsChatWelcomeNightMonthlyReviewEn monthlyReview = TranslationsChatWelcomeNightMonthlyReviewEn._(_root);
+	late final TranslationsChatWelcomeNightFinancialThinkingEn financialThinking = TranslationsChatWelcomeNightFinancialThinkingEn._(_root);
 }
 
 // Path: chat.genui.healthScore.status
-class _TranslationsChatGenuiHealthScoreStatusEn extends TranslationsChatGenuiHealthScoreStatusZh {
-	_TranslationsChatGenuiHealthScoreStatusEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatGenuiHealthScoreStatusEn {
+	TranslationsChatGenuiHealthScoreStatusEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get excellent => 'Excellent';
-	@override String get good => 'Good';
-	@override String get fair => 'Fair';
-	@override String get needsImprovement => 'Needs Improvement';
-	@override String get poor => 'Poor';
+
+	/// en: 'Excellent'
+	String get excellent => 'Excellent';
+
+	/// en: 'Good'
+	String get good => 'Good';
+
+	/// en: 'Fair'
+	String get fair => 'Fair';
+
+	/// en: 'Needs Improvement'
+	String get needsImprovement => 'Needs Improvement';
+
+	/// en: 'Poor'
+	String get poor => 'Poor';
 }
 
 // Path: chat.welcome.morning.breakfast
-class _TranslationsChatWelcomeMorningBreakfastEn extends TranslationsChatWelcomeMorningBreakfastZh {
-	_TranslationsChatWelcomeMorningBreakfastEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeMorningBreakfastEn {
+	TranslationsChatWelcomeMorningBreakfastEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Breakfast';
-	@override String get prompt => 'Record breakfast expense';
-	@override String get description => 'Log today\'s first expense';
+
+	/// en: 'Breakfast'
+	String get title => 'Breakfast';
+
+	/// en: 'Record breakfast expense'
+	String get prompt => 'Record breakfast expense';
+
+	/// en: 'Log today's first expense'
+	String get description => 'Log today\'s first expense';
 }
 
 // Path: chat.welcome.morning.yesterdayReview
-class _TranslationsChatWelcomeMorningYesterdayReviewEn extends TranslationsChatWelcomeMorningYesterdayReviewZh {
-	_TranslationsChatWelcomeMorningYesterdayReviewEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeMorningYesterdayReviewEn {
+	TranslationsChatWelcomeMorningYesterdayReviewEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Yesterday Review';
-	@override String get prompt => 'Analyze yesterday\'s spending';
-	@override String get description => 'Check how much you spent yesterday';
+
+	/// en: 'Yesterday Review'
+	String get title => 'Yesterday Review';
+
+	/// en: 'Analyze yesterday's spending'
+	String get prompt => 'Analyze yesterday\'s spending';
+
+	/// en: 'Check how much you spent yesterday'
+	String get description => 'Check how much you spent yesterday';
 }
 
 // Path: chat.welcome.morning.todayBudget
-class _TranslationsChatWelcomeMorningTodayBudgetEn extends TranslationsChatWelcomeMorningTodayBudgetZh {
-	_TranslationsChatWelcomeMorningTodayBudgetEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeMorningTodayBudgetEn {
+	TranslationsChatWelcomeMorningTodayBudgetEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Today\'s Budget';
-	@override String get prompt => 'How much budget left for today';
-	@override String get description => 'Plan your spending for today';
+
+	/// en: 'Today's Budget'
+	String get title => 'Today\'s Budget';
+
+	/// en: 'How much budget left for today'
+	String get prompt => 'How much budget left for today';
+
+	/// en: 'Plan your spending for today'
+	String get description => 'Plan your spending for today';
 }
 
 // Path: chat.welcome.midday.lunch
-class _TranslationsChatWelcomeMiddayLunchEn extends TranslationsChatWelcomeMiddayLunchZh {
-	_TranslationsChatWelcomeMiddayLunchEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeMiddayLunchEn {
+	TranslationsChatWelcomeMiddayLunchEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Lunch';
-	@override String get prompt => 'Record lunch expense';
-	@override String get description => 'Log your lunch spending';
+
+	/// en: 'Lunch'
+	String get title => 'Lunch';
+
+	/// en: 'Record lunch expense'
+	String get prompt => 'Record lunch expense';
+
+	/// en: 'Log your lunch spending'
+	String get description => 'Log your lunch spending';
 }
 
 // Path: chat.welcome.midday.weeklyExpense
-class _TranslationsChatWelcomeMiddayWeeklyExpenseEn extends TranslationsChatWelcomeMiddayWeeklyExpenseZh {
-	_TranslationsChatWelcomeMiddayWeeklyExpenseEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeMiddayWeeklyExpenseEn {
+	TranslationsChatWelcomeMiddayWeeklyExpenseEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Weekly Spending';
-	@override String get prompt => 'Analyze this week\'s spending';
-	@override String get description => 'See your weekly expenses';
+
+	/// en: 'Weekly Spending'
+	String get title => 'Weekly Spending';
+
+	/// en: 'Analyze this week's spending'
+	String get prompt => 'Analyze this week\'s spending';
+
+	/// en: 'See your weekly expenses'
+	String get description => 'See your weekly expenses';
 }
 
 // Path: chat.welcome.midday.checkBalance
-class _TranslationsChatWelcomeMiddayCheckBalanceEn extends TranslationsChatWelcomeMiddayCheckBalanceZh {
-	_TranslationsChatWelcomeMiddayCheckBalanceEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeMiddayCheckBalanceEn {
+	TranslationsChatWelcomeMiddayCheckBalanceEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Check Balance';
-	@override String get prompt => 'Check my account balance';
-	@override String get description => 'View your account balances';
+
+	/// en: 'Check Balance'
+	String get title => 'Check Balance';
+
+	/// en: 'Check my account balance'
+	String get prompt => 'Check my account balance';
+
+	/// en: 'View your account balances'
+	String get description => 'View your account balances';
 }
 
 // Path: chat.welcome.afternoon.quickRecord
-class _TranslationsChatWelcomeAfternoonQuickRecordEn extends TranslationsChatWelcomeAfternoonQuickRecordZh {
-	_TranslationsChatWelcomeAfternoonQuickRecordEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeAfternoonQuickRecordEn {
+	TranslationsChatWelcomeAfternoonQuickRecordEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Quick Record';
-	@override String get prompt => 'Help me record an expense';
-	@override String get description => 'Quickly log a transaction';
+
+	/// en: 'Quick Record'
+	String get title => 'Quick Record';
+
+	/// en: 'Help me record an expense'
+	String get prompt => 'Help me record an expense';
+
+	/// en: 'Quickly log a transaction'
+	String get description => 'Quickly log a transaction';
 }
 
 // Path: chat.welcome.afternoon.analyzeSpending
-class _TranslationsChatWelcomeAfternoonAnalyzeSpendingEn extends TranslationsChatWelcomeAfternoonAnalyzeSpendingZh {
-	_TranslationsChatWelcomeAfternoonAnalyzeSpendingEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeAfternoonAnalyzeSpendingEn {
+	TranslationsChatWelcomeAfternoonAnalyzeSpendingEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Analyze Spending';
-	@override String get prompt => 'Analyze this month\'s spending';
-	@override String get description => 'View spending trends and breakdown';
+
+	/// en: 'Analyze Spending'
+	String get title => 'Analyze Spending';
+
+	/// en: 'Analyze this month's spending'
+	String get prompt => 'Analyze this month\'s spending';
+
+	/// en: 'View spending trends and breakdown'
+	String get description => 'View spending trends and breakdown';
 }
 
 // Path: chat.welcome.afternoon.budgetProgress
-class _TranslationsChatWelcomeAfternoonBudgetProgressEn extends TranslationsChatWelcomeAfternoonBudgetProgressZh {
-	_TranslationsChatWelcomeAfternoonBudgetProgressEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeAfternoonBudgetProgressEn {
+	TranslationsChatWelcomeAfternoonBudgetProgressEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Budget Progress';
-	@override String get prompt => 'Check budget status';
-	@override String get description => 'See how your budget is doing';
+
+	/// en: 'Budget Progress'
+	String get title => 'Budget Progress';
+
+	/// en: 'Check budget status'
+	String get prompt => 'Check budget status';
+
+	/// en: 'See how your budget is doing'
+	String get description => 'See how your budget is doing';
 }
 
 // Path: chat.welcome.evening.dinner
-class _TranslationsChatWelcomeEveningDinnerEn extends TranslationsChatWelcomeEveningDinnerZh {
-	_TranslationsChatWelcomeEveningDinnerEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeEveningDinnerEn {
+	TranslationsChatWelcomeEveningDinnerEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Dinner';
-	@override String get prompt => 'Record dinner expense';
-	@override String get description => 'Log tonight\'s dinner spending';
+
+	/// en: 'Dinner'
+	String get title => 'Dinner';
+
+	/// en: 'Record dinner expense'
+	String get prompt => 'Record dinner expense';
+
+	/// en: 'Log tonight's dinner spending'
+	String get description => 'Log tonight\'s dinner spending';
 }
 
 // Path: chat.welcome.evening.todaySummary
-class _TranslationsChatWelcomeEveningTodaySummaryEn extends TranslationsChatWelcomeEveningTodaySummaryZh {
-	_TranslationsChatWelcomeEveningTodaySummaryEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeEveningTodaySummaryEn {
+	TranslationsChatWelcomeEveningTodaySummaryEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Today\'s Summary';
-	@override String get prompt => 'Summarize today\'s spending';
-	@override String get description => 'See what you spent today';
+
+	/// en: 'Today's Summary'
+	String get title => 'Today\'s Summary';
+
+	/// en: 'Summarize today's spending'
+	String get prompt => 'Summarize today\'s spending';
+
+	/// en: 'See what you spent today'
+	String get description => 'See what you spent today';
 }
 
 // Path: chat.welcome.evening.tomorrowPlan
-class _TranslationsChatWelcomeEveningTomorrowPlanEn extends TranslationsChatWelcomeEveningTomorrowPlanZh {
-	_TranslationsChatWelcomeEveningTomorrowPlanEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeEveningTomorrowPlanEn {
+	TranslationsChatWelcomeEveningTomorrowPlanEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Tomorrow\'s Plan';
-	@override String get prompt => 'What fixed expenses tomorrow';
-	@override String get description => 'Plan ahead for tomorrow';
+
+	/// en: 'Tomorrow's Plan'
+	String get title => 'Tomorrow\'s Plan';
+
+	/// en: 'What fixed expenses tomorrow'
+	String get prompt => 'What fixed expenses tomorrow';
+
+	/// en: 'Plan ahead for tomorrow'
+	String get description => 'Plan ahead for tomorrow';
 }
 
 // Path: chat.welcome.night.makeupRecord
-class _TranslationsChatWelcomeNightMakeupRecordEn extends TranslationsChatWelcomeNightMakeupRecordZh {
-	_TranslationsChatWelcomeNightMakeupRecordEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeNightMakeupRecordEn {
+	TranslationsChatWelcomeNightMakeupRecordEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Catch Up';
-	@override String get prompt => 'Help me log any missed expenses';
-	@override String get description => 'Record expenses you forgot today';
+
+	/// en: 'Catch Up'
+	String get title => 'Catch Up';
+
+	/// en: 'Help me log any missed expenses'
+	String get prompt => 'Help me log any missed expenses';
+
+	/// en: 'Record expenses you forgot today'
+	String get description => 'Record expenses you forgot today';
 }
 
 // Path: chat.welcome.night.monthlyReview
-class _TranslationsChatWelcomeNightMonthlyReviewEn extends TranslationsChatWelcomeNightMonthlyReviewZh {
-	_TranslationsChatWelcomeNightMonthlyReviewEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeNightMonthlyReviewEn {
+	TranslationsChatWelcomeNightMonthlyReviewEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Monthly Review';
-	@override String get prompt => 'Analyze this month\'s spending';
-	@override String get description => 'Review your monthly expenses';
+
+	/// en: 'Monthly Review'
+	String get title => 'Monthly Review';
+
+	/// en: 'Analyze this month's spending'
+	String get prompt => 'Analyze this month\'s spending';
+
+	/// en: 'Review your monthly expenses'
+	String get description => 'Review your monthly expenses';
 }
 
 // Path: chat.welcome.night.financialThinking
-class _TranslationsChatWelcomeNightFinancialThinkingEn extends TranslationsChatWelcomeNightFinancialThinkingZh {
-	_TranslationsChatWelcomeNightFinancialThinkingEn._(TranslationsEn root) : this._root = root, super.internal(root);
+class TranslationsChatWelcomeNightFinancialThinkingEn {
+	TranslationsChatWelcomeNightFinancialThinkingEn._(this._root);
 
-	final TranslationsEn _root; // ignore: unused_field
+	final Translations _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Financial Tips';
-	@override String get prompt => 'Give me some financial advice';
-	@override String get description => 'Get AI-powered financial insights';
+
+	/// en: 'Financial Tips'
+	String get title => 'Financial Tips';
+
+	/// en: 'Give me some financial advice'
+	String get prompt => 'Give me some financial advice';
+
+	/// en: 'Get AI-powered financial insights'
+	String get description => 'Get AI-powered financial insights';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1947,7 +3848,7 @@ class _TranslationsChatWelcomeNightFinancialThinkingEn extends TranslationsChatW
 ///
 /// The Dart AOT compiler has issues with very large switch statements,
 /// so the map is split into smaller functions (512 entries each).
-extension on TranslationsEn {
+extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
 			'common.loading' => 'Loading...',
@@ -2397,57 +4298,57 @@ extension on TranslationsEn {
 			'chat.aiThinking' => 'AI processing...',
 			'chat.listening' => 'Listening...',
 			'chat.tools.processing' => 'Processing...',
-			'chat.tools.readFile' => 'Reading file...',
-			'chat.tools.searchTransactions' => 'Searching transactions...',
-			'chat.tools.queryBudgetStatus' => 'Checking budget...',
-			'chat.tools.createBudget' => 'Creating budget plan...',
-			'chat.tools.getCashFlowAnalysis' => 'Analyzing cash flow...',
-			'chat.tools.getFinancialHealthScore' => 'Calculating financial health score...',
-			'chat.tools.getFinancialSummary' => 'Generating financial report...',
-			'chat.tools.evaluateFinancialHealth' => 'Evaluating financial health...',
-			'chat.tools.forecastBalance' => 'Forecasting future balance...',
-			'chat.tools.simulateExpenseImpact' => 'Simulating purchase impact...',
-			'chat.tools.recordTransactions' => 'Recording transactions...',
-			'chat.tools.createTransaction' => 'Recording transaction...',
-			'chat.tools.duckduckgoSearch' => 'Searching the web...',
-			'chat.tools.executeTransfer' => 'Executing transfer...',
-			'chat.tools.listDir' => 'Browsing directory...',
+			'chat.tools.read_file' => 'Reading file...',
+			'chat.tools.search_transactions' => 'Searching transactions...',
+			'chat.tools.query_budget_status' => 'Checking budget...',
+			'chat.tools.create_budget' => 'Creating budget plan...',
+			'chat.tools.get_cash_flow_analysis' => 'Analyzing cash flow...',
+			'chat.tools.get_financial_health_score' => 'Calculating financial health score...',
+			'chat.tools.get_financial_summary' => 'Generating financial report...',
+			'chat.tools.evaluate_financial_health' => 'Evaluating financial health...',
+			'chat.tools.forecast_balance' => 'Forecasting future balance...',
+			'chat.tools.simulate_expense_impact' => 'Simulating purchase impact...',
+			'chat.tools.record_transactions' => 'Recording transactions...',
+			'chat.tools.create_transaction' => 'Recording transaction...',
+			'chat.tools.duckduckgo_search' => 'Searching the web...',
+			'chat.tools.execute_transfer' => 'Executing transfer...',
+			'chat.tools.list_dir' => 'Browsing directory...',
 			'chat.tools.execute' => 'Processing...',
-			'chat.tools.analyzeFinance' => 'Analyzing finances...',
-			'chat.tools.forecastFinance' => 'Forecasting finances...',
-			'chat.tools.analyzeBudget' => 'Analyzing budget...',
-			'chat.tools.auditAnalysis' => 'Running audit analysis...',
-			'chat.tools.budgetOps' => 'Processing budget...',
-			'chat.tools.createSharedTransaction' => 'Creating shared expense...',
-			'chat.tools.listSpaces' => 'Loading shared spaces...',
-			'chat.tools.querySpaceSummary' => 'Querying space summary...',
-			'chat.tools.prepareTransfer' => 'Preparing transfer...',
+			'chat.tools.analyze_finance' => 'Analyzing finances...',
+			'chat.tools.forecast_finance' => 'Forecasting finances...',
+			'chat.tools.analyze_budget' => 'Analyzing budget...',
+			'chat.tools.audit_analysis' => 'Running audit analysis...',
+			'chat.tools.budget_ops' => 'Processing budget...',
+			'chat.tools.create_shared_transaction' => 'Creating shared expense...',
+			'chat.tools.list_spaces' => 'Loading shared spaces...',
+			'chat.tools.query_space_summary' => 'Querying space summary...',
+			'chat.tools.prepare_transfer' => 'Preparing transfer...',
 			'chat.tools.unknown' => 'Processing request...',
-			'chat.tools.done.readFile' => 'Read file',
-			'chat.tools.done.searchTransactions' => 'Searched transactions',
-			'chat.tools.done.queryBudgetStatus' => 'Checked budget',
-			'chat.tools.done.createBudget' => 'Created budget',
-			'chat.tools.done.getCashFlowAnalysis' => 'Analyzed cash flow',
-			'chat.tools.done.getFinancialHealthScore' => 'Calculated health score',
-			'chat.tools.done.getFinancialSummary' => 'Financial report ready',
-			'chat.tools.done.evaluateFinancialHealth' => 'Health evaluation complete',
-			'chat.tools.done.forecastBalance' => 'Balance forecast ready',
-			'chat.tools.done.simulateExpenseImpact' => 'Impact simulation complete',
-			'chat.tools.done.recordTransactions' => 'Recorded transactions',
-			'chat.tools.done.createTransaction' => 'Recorded transaction',
-			'chat.tools.done.duckduckgoSearch' => 'Searched the web',
-			'chat.tools.done.executeTransfer' => 'Transfer complete',
-			'chat.tools.done.listDir' => 'Browsed directory',
+			'chat.tools.done.read_file' => 'Read file',
+			'chat.tools.done.search_transactions' => 'Searched transactions',
+			'chat.tools.done.query_budget_status' => 'Checked budget',
+			'chat.tools.done.create_budget' => 'Created budget',
+			'chat.tools.done.get_cash_flow_analysis' => 'Analyzed cash flow',
+			'chat.tools.done.get_financial_health_score' => 'Calculated health score',
+			'chat.tools.done.get_financial_summary' => 'Financial report ready',
+			'chat.tools.done.evaluate_financial_health' => 'Health evaluation complete',
+			'chat.tools.done.forecast_balance' => 'Balance forecast ready',
+			'chat.tools.done.simulate_expense_impact' => 'Impact simulation complete',
+			'chat.tools.done.record_transactions' => 'Recorded transactions',
+			'chat.tools.done.create_transaction' => 'Recorded transaction',
+			'chat.tools.done.duckduckgo_search' => 'Searched the web',
+			'chat.tools.done.execute_transfer' => 'Transfer complete',
+			'chat.tools.done.list_dir' => 'Browsed directory',
 			'chat.tools.done.execute' => 'Processing complete',
-			'chat.tools.done.analyzeFinance' => 'Finance analysis complete',
-			'chat.tools.done.forecastFinance' => 'Finance forecast complete',
-			'chat.tools.done.analyzeBudget' => 'Budget analysis complete',
-			'chat.tools.done.auditAnalysis' => 'Audit analysis complete',
-			'chat.tools.done.budgetOps' => 'Budget processing complete',
-			'chat.tools.done.createSharedTransaction' => 'Shared expense created',
-			'chat.tools.done.listSpaces' => 'Shared spaces loaded',
-			'chat.tools.done.querySpaceSummary' => 'Space summary ready',
-			'chat.tools.done.prepareTransfer' => 'Transfer ready',
+			'chat.tools.done.analyze_finance' => 'Finance analysis complete',
+			'chat.tools.done.forecast_finance' => 'Finance forecast complete',
+			'chat.tools.done.analyze_budget' => 'Budget analysis complete',
+			'chat.tools.done.audit_analysis' => 'Audit analysis complete',
+			'chat.tools.done.budget_ops' => 'Budget processing complete',
+			'chat.tools.done.create_shared_transaction' => 'Shared expense created',
+			'chat.tools.done.list_spaces' => 'Shared spaces loaded',
+			'chat.tools.done.query_space_summary' => 'Space summary ready',
+			'chat.tools.done.prepare_transfer' => 'Transfer ready',
 			'chat.tools.done.unknown' => 'Processing complete',
 			'chat.tools.failed.unknown' => 'Action failed',
 			'chat.tools.cancelled' => 'Cancelled',

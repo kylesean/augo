@@ -18,6 +18,12 @@ import '../services/custom_content_generator.dart';
 final _logger = Logger('GenUiLifecycleManager');
 
 /// Manages the lifecycle of the GenUI service and handles surface events.
+///
+/// Enhanced features:
+/// - Surface state tracking (loading/rendered/updated/error/removed)
+/// - DeleteSurface event handling
+/// - Session cleanup on close
+/// - Reactive update metrics
 class GenUiLifecycleManager {
   final SecureStorageService _secureStorageService;
   final MessageRepository _messageRepository;
@@ -36,8 +42,16 @@ class GenUiLifecycleManager {
 
   GenUiService? _genUiService;
 
-  // Legacy tracking of surface info (to be refactored later, kept for compatibility)
-  final Map<String, List<GenUiSurfaceInfo>> _messageSurfaces = {};
+  // Surface lifecycle tracking (surfaceId -> SurfaceInfo)
+  final Map<String, GenUiSurfaceInfo> _surfaceRegistry = {};
+
+  // Message to surfaces mapping
+  final Map<String, List<String>> _messageSurfaceIds = {};
+
+  // Metrics tracking
+  int _totalSurfacesCreated = 0;
+  int _totalReactiveUpdates = 0;
+  int _totalSurfacesDeleted = 0;
 
   GenUiLifecycleManager({
     required SecureStorageService secureStorageService,
@@ -65,6 +79,12 @@ class GenUiLifecycleManager {
 
   bool get isInitialized => _genUiService?.isInitialized ?? false;
   GenUiService? get service => _genUiService;
+
+  // Metrics getters
+  int get totalSurfacesCreated => _totalSurfacesCreated;
+  int get totalReactiveUpdates => _totalReactiveUpdates;
+  int get totalSurfacesDeleted => _totalSurfacesDeleted;
+  int get activeSurfaceCount => _surfaceRegistry.length;
 
   /// Initialize GenUI service
   Future<void> initialize({Dio? dio, required String sseBaseUrl}) async {
@@ -148,7 +168,94 @@ class GenUiLifecycleManager {
 
   void dispose() {
     unawaited(_genUiService?.dispose());
-    _messageSurfaces.clear();
+    _clearAllSurfaces();
+  }
+
+  /// Clear all surfaces when session ends
+  void clearSession() {
+    _logger.info(
+      'GenUiLifecycleManager: Clearing session - '
+      '${_surfaceRegistry.length} surfaces, '
+      'created=$_totalSurfacesCreated, '
+      'updates=$_totalReactiveUpdates, '
+      'deleted=$_totalSurfacesDeleted',
+    );
+    _clearAllSurfaces();
+  }
+
+  void _clearAllSurfaces() {
+    _surfaceRegistry.clear();
+    _messageSurfaceIds.clear();
+  }
+
+  // ============================================================
+  // Surface State Management
+  // ============================================================
+
+  /// Get surface info by ID
+  GenUiSurfaceInfo? getSurfaceInfo(String surfaceId) {
+    return _surfaceRegistry[surfaceId];
+  }
+
+  /// Get all surfaces for a message
+  List<GenUiSurfaceInfo> getSurfacesForMessage(String messageId) {
+    final surfaceIds = _messageSurfaceIds[messageId] ?? [];
+    return surfaceIds
+        .map((id) => _surfaceRegistry[id])
+        .whereType<GenUiSurfaceInfo>()
+        .toList();
+  }
+
+  /// Update surface status
+  void updateSurfaceStatus(String surfaceId, SurfaceStatus status) {
+    final existing = _surfaceRegistry[surfaceId];
+    if (existing != null) {
+      _surfaceRegistry[surfaceId] = existing.copyWith(
+        status: status,
+        updatedAt: DateTime.now(),
+      );
+      _logger.fine(
+        'GenUiLifecycleManager: Surface $surfaceId status -> $status',
+      );
+
+      // Track reactive updates
+      if (status == SurfaceStatus.updated) {
+        _totalReactiveUpdates++;
+      }
+    }
+  }
+
+  /// Handle DataModelUpdate - mark surface as updated
+  void handleDataModelUpdate(String surfaceId, String path) {
+    updateSurfaceStatus(surfaceId, SurfaceStatus.updated);
+    _logger.info(
+      'GenUiLifecycleManager: DataModelUpdate for $surfaceId at path $path',
+    );
+  }
+
+  /// Handle DeleteSurface event
+  void handleDeleteSurface(String surfaceId) {
+    final existing = _surfaceRegistry[surfaceId];
+    if (existing != null) {
+      updateSurfaceStatus(surfaceId, SurfaceStatus.removed);
+      _surfaceRegistry.remove(surfaceId);
+      _totalSurfacesDeleted++;
+
+      // Remove from message mapping
+      _messageSurfaceIds.forEach((messageId, surfaceIds) {
+        surfaceIds.remove(surfaceId);
+      });
+
+      // Remove from message repository
+      _messageRepository.removeSurfaceIdFromMessage(surfaceId);
+
+      _logger.info('GenUiLifecycleManager: Deleted surface $surfaceId');
+      GenUiLogger.logSurfaceLifecycle(
+        event: 'deleted',
+        surfaceId: surfaceId,
+        messageId: existing.messageId,
+      );
+    }
   }
 
   // ============================================================
@@ -162,34 +269,14 @@ class GenUiLifecycleManager {
       return;
     }
 
-    GenUiLogger.logSurfaceLifecycle(
-      event: 'added',
-      surfaceId: event.surfaceId,
-      messageId: _getCurrentStreamingMessageId(),
-    );
-
     final messageId = _findTargetMessageIdForSurface(event.surfaceId);
     if (messageId.isEmpty) return;
 
-    final surfaceInfo = GenUiSurfaceInfo(
-      surfaceId: event.surfaceId,
-      messageId: messageId,
-      createdAt: DateTime.now(),
-      status: SurfaceStatus.loading,
-    );
-
-    _messageSurfaces.putIfAbsent(messageId, () => []).add(surfaceInfo);
-    _messageRepository.addSurfaceIdToMessage(messageId, event.surfaceId);
+    _registerSurface(event.surfaceId, messageId);
   }
 
   void _handleSurfaceIdAdded(String surfaceId) {
     _logger.info('GenUiLifecycleManager: Surface ID added - $surfaceId');
-
-    GenUiLogger.logSurfaceLifecycle(
-      event: 'added',
-      surfaceId: surfaceId,
-      messageId: _getCurrentStreamingMessageId(),
-    );
 
     final messageId = _findTargetMessageIdForSurface(surfaceId);
     if (messageId.isEmpty) return;
@@ -200,12 +287,36 @@ class GenUiLifecycleManager {
       'GenUiLifecycleManager: Silent mode - UI component received, marking as first chunk',
     );
 
+    _registerSurface(surfaceId, messageId);
+  }
+
+  void _registerSurface(String surfaceId, String messageId) {
+    // Create surface info
+    final surfaceInfo = GenUiSurfaceInfo(
+      surfaceId: surfaceId,
+      messageId: messageId,
+      createdAt: DateTime.now(),
+      status: SurfaceStatus.loading,
+    );
+
+    // Register in tracking
+    _surfaceRegistry[surfaceId] = surfaceInfo;
+    _messageSurfaceIds.putIfAbsent(messageId, () => []).add(surfaceId);
+    _totalSurfacesCreated++;
+
+    // Store in message repository
     _messageRepository.addSurfaceIdToMessage(messageId, surfaceId);
+
+    GenUiLogger.logSurfaceLifecycle(
+      event: 'added',
+      surfaceId: surfaceId,
+      messageId: messageId,
+    );
   }
 
   void _handleSurfaceRemoved(genui.SurfaceRemoved event) {
     _logger.info('GenUiLifecycleManager: Surface removed - ${event.surfaceId}');
-    _messageRepository.removeSurfaceIdFromMessage(event.surfaceId);
+    handleDeleteSurface(event.surfaceId);
   }
 
   void _handleGenUiError(String error) {
@@ -223,7 +334,7 @@ class GenUiLifecycleManager {
     } else if (error.contains('Authentication') || error.contains('token')) {
       userFriendlyMessage = '登录状态已过期，请重新登录';
     } else {
-      userFriendlyMessage = '出了点小问题，请稍后再试 🙏';
+      userFriendlyMessage = '出了点小问题，请稍后再试';
     }
 
     final currentId = _getCurrentStreamingMessageId();
@@ -288,7 +399,7 @@ class GenUiLifecycleManager {
 
     final messageId = _getCurrentStreamingMessageId();
     if (messageId.isNotEmpty) {
-      _messageRepository.addSurfaceIdToMessage(messageId, surfaceId);
+      _registerSurface(surfaceId, messageId);
     }
   }
 }

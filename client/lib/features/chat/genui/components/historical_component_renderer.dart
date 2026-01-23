@@ -35,10 +35,6 @@ class HistoricalComponentRenderer extends StatelessWidget {
       'ExpenseTable' => ExpenseTable(data: historicalData),
       'ChartCard' => ChartCard(data: historicalData),
       'SummaryCard' => SummaryCard(data: historicalData),
-      'TransferPathBuilder' => TransferPathBuilder(
-        data: historicalData,
-        dispatchEvent: HistoricalModeHelper.noopDispatch,
-      ),
       // Budget components
       'BudgetStatusCard' => BudgetStatusCard(data: historicalData),
       'BudgetReceipt' => BudgetReceipt(data: historicalData),
