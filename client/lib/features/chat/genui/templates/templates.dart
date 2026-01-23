@@ -1,4 +1,5 @@
 export 'transaction_card.dart';
+export 'reactive_transaction_card.dart';
 export 'expense_table.dart';
 export 'chart_card.dart';
 export 'summary_card.dart';

@@ -393,8 +393,8 @@ class AppCatalog {
         return _buildErrorWidget(context.buildContext, '交易记录加载失败，请重试');
       }
 
-      // 使用三段式设计 TransactionCard
-      final widget = TransactionCard(data: data);
+      // Use ReactiveTransactionCard for DataContext reactive updates
+      final widget = ReactiveTransactionCard(catalogContext: context);
       final duration = DateTime.now().difference(startTime).inMilliseconds;
       GenUiLogger.logBuilderInvocation(
         componentName: componentName,
