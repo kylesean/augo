@@ -286,7 +286,7 @@ async def search_transactions(
 
     IMPORTANT: This tool ONLY lists transactions. For any "analysis", "spending breakdown",
     "patterns", or "financial health", you MUST use the specialized skills in the catalog
-    (e.g., spending-analyzer, cashflow-analyst).
+    (e.g., reviewing-finances for spending analysis and health scoring).
 
     Defaults to last 7 days.
     """

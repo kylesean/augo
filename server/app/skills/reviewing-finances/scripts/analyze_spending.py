@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Budget Analysis Script - Spending Pattern Analysis
+"""Spending Analysis Script - Category Breakdown and Patterns
 
-Directly queries the database to analyze spending patterns and suggest budgets.
+Directly queries the database to analyze spending patterns by category.
 Follows AgentSkills.io best practice: scripts access data directly via DB.
 
 Usage:
-    python app/skills/budget-expert/scripts/analyze_budget.py
+    uv run python app/skills/reviewing-finances/scripts/analyze_spending.py
 
     Or with options via stdin JSON:
-    echo '{"days": 90, "category": "FOOD_DINING"}' | python analyze_budget.py
+    echo '{"days": 90, "category": "FOOD_DINING"}' | uv run python analyze_spending.py
 
 Environment:
     USER_ID: Required. User UUID (injected by bash tool).
@@ -41,7 +41,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
@@ -52,6 +52,7 @@ from app.core.database import db_manager  # noqa: E402
 from app.services.transaction_query_service import (  # noqa: E402
     TransactionQueryParams,
     TransactionQueryService,
+    TransactionType,
 )
 
 
@@ -130,8 +131,6 @@ def analyze_spending(transactions: list[dict[str, Any]], days: int = 90) -> dict
     # Trend calculation
     trends = {}
     if len(months) >= 2:
-        from typing import cast
-
         last_month = cast(Decimal, by_month[months[-1]]["total"])
         prev_month = cast(Decimal, by_month[months[-2]]["total"])
         change = last_month - prev_month
@@ -216,7 +215,7 @@ async def main() -> None:
             params = TransactionQueryParams(
                 start_date=start_date.isoformat(),
                 end_date=end_date.isoformat(),
-                transaction_types=["EXPENSE"],
+                transaction_types=[TransactionType.EXPENSE],
                 per_page=100,
             )
 
@@ -244,7 +243,7 @@ async def main() -> None:
             output = {
                 "success": True,
                 "componentType": "BudgetAnalysisCard",
-                "title": "预算规划方案",  # 显式指定标题
+                "title": "消费支出分析",  # 显式指定标题，解决职责正交化后的语意对齐
                 **analysis,
             }
 

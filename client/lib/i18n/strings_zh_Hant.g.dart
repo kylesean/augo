@@ -35,7 +35,7 @@ class TranslationsZhHant extends Translations with BaseTranslations<AppLocale, T
 
 	late final TranslationsZhHant _root = this; // ignore: unused_field
 
-	@override 
+	@override
 	TranslationsZhHant $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsZhHant(meta: meta ?? this.$meta);
 
 	// Translations
@@ -1029,6 +1029,7 @@ class _TranslationsChatGenuiZhHant extends TranslationsChatGenuiZh {
 	@override late final _TranslationsChatGenuiTransactionGroupReceiptZhHant transactionGroupReceipt = _TranslationsChatGenuiTransactionGroupReceiptZhHant._(_root);
 	@override late final _TranslationsChatGenuiTransactionCardZhHant transactionCard = _TranslationsChatGenuiTransactionCardZhHant._(_root);
 	@override late final _TranslationsChatGenuiCashFlowCardZhHant cashFlowCard = _TranslationsChatGenuiCashFlowCardZhHant._(_root);
+	@override late final _TranslationsChatGenuiBudgetSimulatorZhHant budgetSimulator = _TranslationsChatGenuiBudgetSimulatorZhHant._(_root);
 }
 
 // Path: error.genui
@@ -1269,6 +1270,26 @@ class _TranslationsChatGenuiCashFlowCardZhHant extends TranslationsChatGenuiCash
 	@override String get essentialExpense => '必要支出';
 	@override String get discretionaryExpense => '可選消費';
 	@override String get aiInsight => 'AI 分析';
+}
+
+// Path: chat.genui.budgetSimulator
+class _TranslationsChatGenuiBudgetSimulatorZhHant extends TranslationsChatGenuiBudgetSimulatorZh {
+	_TranslationsChatGenuiBudgetSimulatorZhHant._(TranslationsZhHant root) : this._root = root, super.internal(root);
+
+	final TranslationsZhHant _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => '預算壓力模擬器';
+	@override String get targetAmount => '目標預算金額';
+	@override String get overspendProbability => '預計超支機率';
+	@override String get riskLow => '風險極低';
+	@override String get riskMedium => '風險適中';
+	@override String get riskHigh => '超支高危';
+	@override String get evaluating => '正在評估歷史消費習慣...';
+	@override String get historyAverage => '歷史月均';
+	@override String get dailyAllowance => '每日限額';
+	@override String get cancel => '放棄';
+	@override String get confirm => '採用此預算';
 }
 
 /// The flat map containing all translations for locale <zh-Hant>.
@@ -1821,6 +1842,17 @@ extension on TranslationsZhHant {
 			'chat.genui.cashFlowCard.essentialExpense' => '必要支出',
 			'chat.genui.cashFlowCard.discretionaryExpense' => '可選消費',
 			'chat.genui.cashFlowCard.aiInsight' => 'AI 分析',
+			'chat.genui.budgetSimulator.title' => '預算壓力模擬器',
+			'chat.genui.budgetSimulator.targetAmount' => '目標預算金額',
+			'chat.genui.budgetSimulator.overspendProbability' => '預計超支機率',
+			'chat.genui.budgetSimulator.riskLow' => '風險極低',
+			'chat.genui.budgetSimulator.riskMedium' => '風險適中',
+			'chat.genui.budgetSimulator.riskHigh' => '超支高危',
+			'chat.genui.budgetSimulator.evaluating' => '正在評估歷史消費習慣...',
+			'chat.genui.budgetSimulator.historyAverage' => '歷史月均',
+			'chat.genui.budgetSimulator.dailyAllowance' => '每日限額',
+			'chat.genui.budgetSimulator.cancel' => '放棄',
+			'chat.genui.budgetSimulator.confirm' => '採用此預算',
 			'footprint.searchIn' => '搜尋',
 			'footprint.searchInAllRecords' => '在所有記錄中搜尋相關內容',
 			'media.selectPhotos' => '選擇照片',

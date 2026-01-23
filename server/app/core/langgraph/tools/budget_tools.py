@@ -195,6 +195,10 @@ async def query_budget_status(
 # Export Tools
 # ============================================================================
 
+# Note: Budget simulation (BudgetSimulatorCard) is triggered by the
+# planning-budgets skill, not a standalone tool. The skill presents the
+# GenUI component and handles the interactive flow.
+
 budget_tools = [
     query_budget_status,
 ]

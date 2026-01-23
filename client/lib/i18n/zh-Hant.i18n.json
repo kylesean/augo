@@ -604,6 +604,19 @@
                 "essentialExpense": "必要支出",
                 "discretionaryExpense": "可選消費",
                 "aiInsight": "AI 分析"
+            },
+            "budgetSimulator": {
+                "title": "預算壓力模擬器",
+                "targetAmount": "目標預算金額",
+                "overspendProbability": "預計超支機率",
+                "riskLow": "風險極低",
+                "riskMedium": "風險適中",
+                "riskHigh": "超支高危",
+                "evaluating": "正在評估歷史消費習慣...",
+                "historyAverage": "歷史月均",
+                "dailyAllowance": "每日限額",
+                "cancel": "放棄",
+                "confirm": "採用此預算"
             }
         }
     },

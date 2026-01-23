@@ -3,7 +3,6 @@ export 'expense_table.dart';
 export 'chart_card.dart';
 export 'summary_card.dart';
 export 'transfer_wizard.dart';
-export 'reactive_transfer_wizard.dart';
 export 'budget_status_card.dart';
 export 'budget_receipt.dart';
 export 'budget_analysis_card.dart';

@@ -65,7 +65,7 @@ async def execute_transfer(
     """Execute a transfer between two accounts.
 
     IMPORTANT: This tool requires specific account IDs, which should be provided by the
-    TransferPathBuilder UI. When user asks to transfer money, use the transfer-expert
+    TransferPathBuilder UI. When user asks to transfer money, use the executing-transfers
     skill to display the interactive UI for account selection.
     """
     user_uuid = _get_user_uuid(config)

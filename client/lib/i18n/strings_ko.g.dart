@@ -35,7 +35,7 @@ class TranslationsKo extends Translations with BaseTranslations<AppLocale, Trans
 
 	late final TranslationsKo _root = this; // ignore: unused_field
 
-	@override 
+	@override
 	TranslationsKo $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsKo(meta: meta ?? this.$meta);
 
 	// Translations
@@ -1028,6 +1028,7 @@ class _TranslationsChatGenuiKo extends TranslationsChatGenuiZh {
 	@override late final _TranslationsChatGenuiTransactionGroupReceiptKo transactionGroupReceipt = _TranslationsChatGenuiTransactionGroupReceiptKo._(_root);
 	@override late final _TranslationsChatGenuiTransactionCardKo transactionCard = _TranslationsChatGenuiTransactionCardKo._(_root);
 	@override late final _TranslationsChatGenuiCashFlowCardKo cashFlowCard = _TranslationsChatGenuiCashFlowCardKo._(_root);
+	@override late final _TranslationsChatGenuiBudgetSimulatorKo budgetSimulator = _TranslationsChatGenuiBudgetSimulatorKo._(_root);
 }
 
 // Path: error.genui
@@ -1268,6 +1269,26 @@ class _TranslationsChatGenuiCashFlowCardKo extends TranslationsChatGenuiCashFlow
 	@override String get essentialExpense => '필수 지출';
 	@override String get discretionaryExpense => '선택적 소비';
 	@override String get aiInsight => 'AI 분석';
+}
+
+// Path: chat.genui.budgetSimulator
+class _TranslationsChatGenuiBudgetSimulatorKo extends TranslationsChatGenuiBudgetSimulatorZh {
+	_TranslationsChatGenuiBudgetSimulatorKo._(TranslationsKo root) : this._root = root, super.internal(root);
+
+	final TranslationsKo _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => '예산 스트레스 시뮬레이터';
+	@override String get targetAmount => '목표 예산 금액';
+	@override String get overspendProbability => '초과 지출 확률';
+	@override String get riskLow => '위험 매우 낮음';
+	@override String get riskMedium => '위험 보통';
+	@override String get riskHigh => '초과 위험 높음';
+	@override String get evaluating => '소비 패턴 분석 중...';
+	@override String get historyAverage => '역대 월 평균';
+	@override String get dailyAllowance => '일일 한도';
+	@override String get cancel => '취소';
+	@override String get confirm => '이 예산 적용';
 }
 
 /// The flat map containing all translations for locale <ko>.
@@ -1820,6 +1841,17 @@ extension on TranslationsKo {
 			'chat.genui.cashFlowCard.essentialExpense' => '필수 지출',
 			'chat.genui.cashFlowCard.discretionaryExpense' => '선택적 소비',
 			'chat.genui.cashFlowCard.aiInsight' => 'AI 분석',
+			'chat.genui.budgetSimulator.title' => '예산 스트레스 시뮬레이터',
+			'chat.genui.budgetSimulator.targetAmount' => '목표 예산 금액',
+			'chat.genui.budgetSimulator.overspendProbability' => '초과 지출 확률',
+			'chat.genui.budgetSimulator.riskLow' => '위험 매우 낮음',
+			'chat.genui.budgetSimulator.riskMedium' => '위험 보통',
+			'chat.genui.budgetSimulator.riskHigh' => '초과 위험 높음',
+			'chat.genui.budgetSimulator.evaluating' => '소비 패턴 분석 중...',
+			'chat.genui.budgetSimulator.historyAverage' => '역대 월 평균',
+			'chat.genui.budgetSimulator.dailyAllowance' => '일일 한도',
+			'chat.genui.budgetSimulator.cancel' => '취소',
+			'chat.genui.budgetSimulator.confirm' => '이 예산 적용',
 			'footprint.searchIn' => '검색',
 			'footprint.searchInAllRecords' => '모든 기록에서 검색',
 			'media.selectPhotos' => '사진 선택',

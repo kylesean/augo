@@ -201,6 +201,7 @@ class CustomContentGenerator implements genui.ContentGenerator {
 
     // GenUI event registry processing
     Map<String, dynamic>? clientStateJson;
+    Map<String, dynamic>? payloadExtensions;
     String? userMessageContent;
 
     try {
@@ -213,20 +214,33 @@ class CustomContentGenerator implements genui.ContentGenerator {
         final eventType = metadata['event_type'] as String?;
 
         if (eventType != null) {
-          final clientState = GenUiEventRegistry.dispatch(eventType, metadata);
+          final result = GenUiEventRegistry.dispatch(eventType, metadata);
 
-          if (clientState != null && !clientState.isEmpty) {
+          if (result != null && !result.isEmpty) {
             _logger.info('Event $eventType dispatched via registry');
-            clientStateJson = clientState.toJson();
+            if (result.mutation != null) {
+              clientStateJson = result.mutation!.toJson();
+            }
+            if (result.payloadExtensions != null) {
+              payloadExtensions = result.payloadExtensions;
+            }
           }
-        } else if (currentMessage['content'] != null) {
-          userMessageContent = currentMessage['content'].toString();
         }
       }
     } catch (e) {
       _logger.info(
         'CustomContentGenerator: Error parsing message for events: $e',
       );
+    }
+
+    // Prepare message for backend
+    var finalPayload = <Map<String, dynamic>>[currentMessage];
+    if (payloadExtensions != null) {
+      // If the registry provided a specialized payload for this event
+      finalPayload = [payloadExtensions];
+      if (payloadExtensions['content'] is String) {
+        userMessageContent = payloadExtensions['content'] as String;
+      }
     }
 
     // 2. Optimistic UI update
@@ -240,7 +254,7 @@ class CustomContentGenerator implements genui.ContentGenerator {
 
     // 3. Execute unified request logic
     await _sendRequestInternal(
-      messages: messages,
+      messages: finalPayload,
       sessionId: _currentSessionId,
       clientState: clientStateJson,
     );
@@ -725,6 +739,7 @@ class CustomContentGenerator implements genui.ContentGenerator {
   }
 
   /// Handle UserActionEvent and convert to human-readable message
+  /// (Now only used as a parser, logic moved to registry)
   Future<Map<String, dynamic>> _handleUserActionEvent(
     Map<String, dynamic> rawEventData,
     String rawContent,
@@ -737,64 +752,20 @@ class CustomContentGenerator implements genui.ContentGenerator {
     final eventName = eventData['name'] as String?;
     final context = eventData['context'] as Map<String, dynamic>?;
 
-    _logger.info('CustomContentGenerator: Handling event: $eventName');
-    _logger.info('CustomContentGenerator: Event context: $context');
+    _logger.info(
+      'CustomContentGenerator: Parsing interaction event: $eventName',
+    );
 
-    if (eventName == 'transfer_path_confirmed') {
-      return {
-        'role': 'user',
-        'content': '按照我的选择执行', // 用户友好的消息，无论后续验证是否通过
-        'metadata': {'event_type': 'transfer_path_confirmed', ...context ?? {}},
-      };
-    }
-
-    if (eventName == 'send_chat_message') {
-      final message = context?['message'] as String? ?? '';
-      return {'role': 'user', 'content': message};
-    }
-
-    if (eventName == 'account_selected' && context != null) {
-      final selectedAccountId = context['selected_account_id'] as String?;
-      final selectionType = context['selection_type'] as String?;
-      final amount = context['amount'];
-
-      final humanReadable =
-          'I selected account ID: $selectedAccountId '
-          '(${selectionType == "source" ? "source" : "destination"} account).'
-          'Please continue to complete the transfer${amount != null ? " with amount $amount" : ""}.';
-
-      _logger.info(
-        'CustomContentGenerator: Converted account_selected event to: $humanReadable',
-      );
-
-      return {
-        'role': 'user',
-        'content': humanReadable,
-        'metadata': {
-          'event_type': 'account_selected',
-          'selected_account_id': selectedAccountId,
-          'selection_type': selectionType,
-          ...context,
-        },
-      };
-    } else if (eventName == 'account_selection_cancelled') {
-      _logger.info('CustomContentGenerator: Account selection cancelled');
-      return {
-        'role': 'user',
-        'content':
-            'I cancelled account selection, please do not execute this transfer.',
-      };
-    }
-
-    if (eventName == 'transaction_confirmed') {
-      return {
-        'role': 'user',
-        'content': 'confirm',
-        'metadata': {'event_type': 'transaction_confirmed', ...context ?? {}},
-      };
-    }
-
-    return {'role': 'user', 'content': rawContent};
+    // Return the specific event data in metadata for the registry to handle later in sendRequest
+    return {
+      'role': 'user',
+      'content': 'Action: $eventName',
+      'metadata': {
+        'event_type': eventName,
+        'surface_id': context?['surface_id'],
+        ...?context,
+      },
+    };
   }
 
   @override

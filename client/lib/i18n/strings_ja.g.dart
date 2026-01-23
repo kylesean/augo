@@ -35,7 +35,7 @@ class TranslationsJa extends Translations with BaseTranslations<AppLocale, Trans
 
 	late final TranslationsJa _root = this; // ignore: unused_field
 
-	@override 
+	@override
 	TranslationsJa $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsJa(meta: meta ?? this.$meta);
 
 	// Translations
@@ -1028,6 +1028,7 @@ class _TranslationsChatGenuiJa extends TranslationsChatGenuiZh {
 	@override late final _TranslationsChatGenuiTransactionGroupReceiptJa transactionGroupReceipt = _TranslationsChatGenuiTransactionGroupReceiptJa._(_root);
 	@override late final _TranslationsChatGenuiTransactionCardJa transactionCard = _TranslationsChatGenuiTransactionCardJa._(_root);
 	@override late final _TranslationsChatGenuiCashFlowCardJa cashFlowCard = _TranslationsChatGenuiCashFlowCardJa._(_root);
+	@override late final _TranslationsChatGenuiBudgetSimulatorJa budgetSimulator = _TranslationsChatGenuiBudgetSimulatorJa._(_root);
 }
 
 // Path: error.genui
@@ -1268,6 +1269,26 @@ class _TranslationsChatGenuiCashFlowCardJa extends TranslationsChatGenuiCashFlow
 	@override String get essentialExpense => '必須支出';
 	@override String get discretionaryExpense => '自由裁量支出';
 	@override String get aiInsight => 'AI分析';
+}
+
+// Path: chat.genui.budgetSimulator
+class _TranslationsChatGenuiBudgetSimulatorJa extends TranslationsChatGenuiBudgetSimulatorZh {
+	_TranslationsChatGenuiBudgetSimulatorJa._(TranslationsJa root) : this._root = root, super.internal(root);
+
+	final TranslationsJa _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => '予算ストレステスト';
+	@override String get targetAmount => '目標予算額';
+	@override String get overspendProbability => '超過確率';
+	@override String get riskLow => 'リスク極低';
+	@override String get riskMedium => 'リスク中程度';
+	@override String get riskHigh => '超過リスク高';
+	@override String get evaluating => '消費パターンを分析中...';
+	@override String get historyAverage => '過去の月平均';
+	@override String get dailyAllowance => '1日あたりの上限';
+	@override String get cancel => 'キャンセル';
+	@override String get confirm => 'この予算を適用';
 }
 
 /// The flat map containing all translations for locale <ja>.
@@ -1820,6 +1841,17 @@ extension on TranslationsJa {
 			'chat.genui.cashFlowCard.essentialExpense' => '必須支出',
 			'chat.genui.cashFlowCard.discretionaryExpense' => '自由裁量支出',
 			'chat.genui.cashFlowCard.aiInsight' => 'AI分析',
+			'chat.genui.budgetSimulator.title' => '予算ストレステスト',
+			'chat.genui.budgetSimulator.targetAmount' => '目標予算額',
+			'chat.genui.budgetSimulator.overspendProbability' => '超過確率',
+			'chat.genui.budgetSimulator.riskLow' => 'リスク極低',
+			'chat.genui.budgetSimulator.riskMedium' => 'リスク中程度',
+			'chat.genui.budgetSimulator.riskHigh' => '超過リスク高',
+			'chat.genui.budgetSimulator.evaluating' => '消費パターンを分析中...',
+			'chat.genui.budgetSimulator.historyAverage' => '過去の月平均',
+			'chat.genui.budgetSimulator.dailyAllowance' => '1日あたりの上限',
+			'chat.genui.budgetSimulator.cancel' => 'キャンセル',
+			'chat.genui.budgetSimulator.confirm' => 'この予算を適用',
 			'footprint.searchIn' => '検索',
 			'footprint.searchInAllRecords' => 'すべての記録から検索',
 			'media.selectPhotos' => '写真を選択',

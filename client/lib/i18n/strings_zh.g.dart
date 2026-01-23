@@ -2322,9 +2322,6 @@ class TranslationsChatToolsZh {
 	/// zh: '正在评估财务健康...'
 	String get evaluateFinancialHealth => '正在评估财务健康...';
 
-	/// zh: '正在预测未来余额...'
-	String get forecastBalance => '正在预测未来余额...';
-
 	/// zh: '正在模拟购买影响...'
 	String get simulateExpenseImpact => '正在模拟购买影响...';
 
@@ -2346,23 +2343,23 @@ class TranslationsChatToolsZh {
 	/// zh: '正在执行脚本...'
 	String get execute => '正在执行脚本...';
 
-	/// zh: '正在分析财务状况...'
-	String get analyzeFinance => '正在分析财务状况...';
+	/// zh: '正在分析支出明细...'
+	String get analyzeSpending => '正在分析支出明细...';
 
-	/// zh: '正在预测财务趋势...'
-	String get forecastFinance => '正在预测财务趋势...';
+	/// zh: '正在分析现金流...'
+	String get analyzeCashflow => '正在分析现金流...';
 
-	/// zh: '正在分析预算...'
-	String get analyzeBudget => '正在分析预算...';
+	/// zh: '正在预测未来余额...'
+	String get forecastBalance => '正在预测未来余额...';
 
-	/// zh: '正在审计分析...'
-	String get auditAnalysis => '正在审计分析...';
+	/// zh: '正在推荐预算...'
+	String get suggestBudget => '正在推荐预算...';
 
-	/// zh: '正在处理预算...'
-	String get budgetOps => '正在处理预算...';
+	/// zh: '正在准备预算模拟...'
+	String get prepareBudgetSimulation => '正在准备预算模拟...';
 
-	/// zh: '正在创建共享账单...'
-	String get createSharedTransaction => '正在创建共享账单...';
+	/// zh: '正在模拟预算影响...'
+	String get simulateBudget => '正在模拟预算影响...';
 
 	/// zh: '正在获取共享空间...'
 	String get listSpaces => '正在获取共享空间...';
@@ -2442,6 +2439,7 @@ class TranslationsChatGenuiZh {
 	late final TranslationsChatGenuiTransactionConfirmationZh transactionConfirmation = TranslationsChatGenuiTransactionConfirmationZh.internal(_root);
 	late final TranslationsChatGenuiBudgetAnalysisZh budgetAnalysis = TranslationsChatGenuiBudgetAnalysisZh.internal(_root);
 	late final TranslationsChatGenuiCashFlowCardZh cashFlowCard = TranslationsChatGenuiCashFlowCardZh.internal(_root);
+	late final TranslationsChatGenuiBudgetSimulatorZh budgetSimulator = TranslationsChatGenuiBudgetSimulatorZh.internal(_root);
 }
 
 // Path: chat.welcome
@@ -2991,23 +2989,20 @@ class TranslationsChatToolsDoneZh {
 	/// zh: '脚本执行完成'
 	String get execute => '脚本执行完成';
 
-	/// zh: '财务分析完成'
-	String get analyzeFinance => '财务分析完成';
+	/// zh: '支出分析完成'
+	String get analyzeSpending => '支出分析完成';
 
-	/// zh: '财务预测完成'
-	String get forecastFinance => '财务预测完成';
+	/// zh: '现金流分析完成'
+	String get analyzeCashflow => '现金流分析完成';
 
-	/// zh: '预算分析完成'
-	String get analyzeBudget => '预算分析完成';
+	/// zh: '预算推荐完成'
+	String get suggestBudget => '预算推荐完成';
 
-	/// zh: '审计分析完成'
-	String get auditAnalysis => '审计分析完成';
+	/// zh: '预算模拟准备完成'
+	String get prepareBudgetSimulation => '预算模拟准备完成';
 
-	/// zh: '预算处理完成'
-	String get budgetOps => '预算处理完成';
-
-	/// zh: '共享账单创建完成'
-	String get createSharedTransaction => '共享账单创建完成';
+	/// zh: '预算模拟完成'
+	String get simulateBudget => '预算模拟完成';
 
 	/// zh: '共享空间获取完成'
 	String get listSpaces => '共享空间获取完成';
@@ -3514,6 +3509,48 @@ class TranslationsChatGenuiCashFlowCardZh {
 
 	/// zh: 'AI 分析'
 	String get aiInsight => 'AI 分析';
+}
+
+// Path: chat.genui.budgetSimulator
+class TranslationsChatGenuiBudgetSimulatorZh {
+	TranslationsChatGenuiBudgetSimulatorZh.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// zh: '预算压力模拟器'
+	String get title => '预算压力模拟器';
+
+	/// zh: '目标预算金额'
+	String get targetAmount => '目标预算金额';
+
+	/// zh: '预计超支概率'
+	String get overspendProbability => '预计超支概率';
+
+	/// zh: '风险极低'
+	String get riskLow => '风险极低';
+
+	/// zh: '风险适中'
+	String get riskMedium => '风险适中';
+
+	/// zh: '超支高危'
+	String get riskHigh => '超支高危';
+
+	/// zh: '正在评估历史消费习惯...'
+	String get evaluating => '正在评估历史消费习惯...';
+
+	/// zh: '历史月均'
+	String get historyAverage => '历史月均';
+
+	/// zh: '每日限额'
+	String get dailyAllowance => '每日限额';
+
+	/// zh: '放弃'
+	String get cancel => '放弃';
+
+	/// zh: '采用此预算'
+	String get confirm => '采用此预算';
 }
 
 // Path: chat.welcome.morning
@@ -4360,7 +4397,6 @@ extension on Translations {
 			'chat.tools.getFinancialHealthScore' => '正在计算财务健康分...',
 			'chat.tools.getFinancialSummary' => '正在生成财务报告...',
 			'chat.tools.evaluateFinancialHealth' => '正在评估财务健康...',
-			'chat.tools.forecastBalance' => '正在预测未来余额...',
 			'chat.tools.simulateExpenseImpact' => '正在模拟购买影响...',
 			'chat.tools.recordTransactions' => '正在记账...',
 			'chat.tools.createTransaction' => '正在记账...',
@@ -4368,12 +4404,12 @@ extension on Translations {
 			'chat.tools.executeTransfer' => '正在执行转账...',
 			'chat.tools.listDir' => '正在浏览目录...',
 			'chat.tools.execute' => '正在执行脚本...',
-			'chat.tools.analyzeFinance' => '正在分析财务状况...',
-			'chat.tools.forecastFinance' => '正在预测财务趋势...',
-			'chat.tools.analyzeBudget' => '正在分析预算...',
-			'chat.tools.auditAnalysis' => '正在审计分析...',
-			'chat.tools.budgetOps' => '正在处理预算...',
-			'chat.tools.createSharedTransaction' => '正在创建共享账单...',
+			'chat.tools.analyzeSpending' => '正在分析支出明细...',
+			'chat.tools.analyzeCashflow' => '正在分析现金流...',
+			'chat.tools.forecastBalance' => '正在预测未来余额...',
+			'chat.tools.suggestBudget' => '正在推荐预算...',
+			'chat.tools.prepareBudgetSimulation' => '正在准备预算模拟...',
+			'chat.tools.simulateBudget' => '正在模拟预算影响...',
 			'chat.tools.listSpaces' => '正在获取共享空间...',
 			'chat.tools.querySpaceSummary' => '正在查询空间摘要...',
 			'chat.tools.prepareTransfer' => '正在准备转账...',
@@ -4394,12 +4430,11 @@ extension on Translations {
 			'chat.tools.done.executeTransfer' => '转账完成',
 			'chat.tools.done.listDir' => '已浏览目录',
 			'chat.tools.done.execute' => '脚本执行完成',
-			'chat.tools.done.analyzeFinance' => '财务分析完成',
-			'chat.tools.done.forecastFinance' => '财务预测完成',
-			'chat.tools.done.analyzeBudget' => '预算分析完成',
-			'chat.tools.done.auditAnalysis' => '审计分析完成',
-			'chat.tools.done.budgetOps' => '预算处理完成',
-			'chat.tools.done.createSharedTransaction' => '共享账单创建完成',
+			'chat.tools.done.analyzeSpending' => '支出分析完成',
+			'chat.tools.done.analyzeCashflow' => '现金流分析完成',
+			'chat.tools.done.suggestBudget' => '预算推荐完成',
+			'chat.tools.done.prepareBudgetSimulation' => '预算模拟准备完成',
+			'chat.tools.done.simulateBudget' => '预算模拟完成',
 			'chat.tools.done.listSpaces' => '共享空间获取完成',
 			'chat.tools.done.querySpaceSummary' => '空间摘要查询完成',
 			'chat.tools.done.prepareTransfer' => '转账准备完成',
@@ -4416,10 +4451,10 @@ extension on Translations {
 			'chat.viewProfile' => '查看个人资料',
 			'chat.noRelatedFound' => '未找到相关会话',
 			'chat.tryOtherKeywords' => '尝试搜索其他关键词',
-			_ => null,
-		} ?? switch (path) {
 			'chat.searchFailed' => '搜索失败',
 			'chat.deleteConversation' => '删除会话',
+			_ => null,
+		} ?? switch (path) {
 			'chat.deleteConversationConfirm' => '确定要删除这个会话吗？此操作无法撤销。',
 			'chat.conversationDeleted' => '会话已删除',
 			'chat.deleteConversationFailed' => '删除会话失败',
@@ -4559,6 +4594,17 @@ extension on Translations {
 			'chat.genui.cashFlowCard.essentialExpense' => '必要支出',
 			'chat.genui.cashFlowCard.discretionaryExpense' => '可选消费',
 			'chat.genui.cashFlowCard.aiInsight' => 'AI 分析',
+			'chat.genui.budgetSimulator.title' => '预算压力模拟器',
+			'chat.genui.budgetSimulator.targetAmount' => '目标预算金额',
+			'chat.genui.budgetSimulator.overspendProbability' => '预计超支概率',
+			'chat.genui.budgetSimulator.riskLow' => '风险极低',
+			'chat.genui.budgetSimulator.riskMedium' => '风险适中',
+			'chat.genui.budgetSimulator.riskHigh' => '超支高危',
+			'chat.genui.budgetSimulator.evaluating' => '正在评估历史消费习惯...',
+			'chat.genui.budgetSimulator.historyAverage' => '历史月均',
+			'chat.genui.budgetSimulator.dailyAllowance' => '每日限额',
+			'chat.genui.budgetSimulator.cancel' => '放弃',
+			'chat.genui.budgetSimulator.confirm' => '采用此预算',
 			'chat.welcome.morning.subtitle' => '新的一天，从记录开始',
 			'chat.welcome.morning.breakfast.title' => '早餐记账',
 			'chat.welcome.morning.breakfast.prompt' => '记一笔早餐',

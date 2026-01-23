@@ -15,6 +15,7 @@ import '../models/chat_message_attachment.dart';
 import '../providers/chat_history_provider.dart';
 import '../services/data_uri_service.dart';
 import 'authenticated_image.dart';
+import '../services/genui_cache_service.dart';
 
 /// 用户消息气泡组件
 /// 支持显示文本和多媒体附件
@@ -31,7 +32,7 @@ class _UserMessageBubbleState extends ConsumerState<UserMessageBubble> {
   static const double _imagePreviewWidth = 200;
   static const double _imagePreviewHeight = 150;
   static const double _imageBorderRadius = 12;
-  static final Map<String, Uint8List> _mediaImageCache = {};
+  static const String _cacheCategory = 'user_media_previews';
 
   bool _hasRequestedSignedUrls = false;
 
@@ -494,10 +495,14 @@ class _UserMessageBubbleState extends ConsumerState<UserMessageBubble> {
     ThemeData theme,
   ) {
     final cacheKey = _mediaCacheKey(file);
-    final bytes = _mediaImageCache.putIfAbsent(
-      cacheKey,
-      () => _getImageBytesFromDataUri(file.dataUri),
-    );
+
+    // Use the cache service for media previews to prevent memory leaks
+    var bytes = GenUiCacheService().get<Uint8List>(_cacheCategory, cacheKey);
+    if (bytes == null) {
+      bytes = _getImageBytesFromDataUri(file.dataUri);
+      GenUiCacheService().put(_cacheCategory, cacheKey, bytes);
+    }
+
     final heroTag = 'media_$cacheKey';
 
     return Container(

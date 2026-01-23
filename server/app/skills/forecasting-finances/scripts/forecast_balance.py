@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Finance Forecast Script - Cash Flow Prediction
+"""Balance Forecast Script - Cash Flow Prediction
 
 This script uses ForecastService to predict future cash flow.
 It follows AgentSkills.io best practice: scripts call services for data.
 
 Usage:
-    uv run python app/skills/finance-analyst/scripts/forecast_finance.py --days 30
-    uv run python app/skills/finance-analyst/scripts/forecast_finance.py --simulate-purchase --amount 5000 --description "Purchase"
+    uv run python app/skills/forecasting-finances/scripts/forecast_balance.py --days 30
+    uv run python app/skills/forecasting-finances/scripts/forecast_balance.py --simulate-purchase --amount 5000 --description "iPhone"
 
 Environment:
     USER_ID: Required. User UUID (injected by execute tool).

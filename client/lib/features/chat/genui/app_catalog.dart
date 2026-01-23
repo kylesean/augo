@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../services/genui_logger.dart';
+import 'genui_event_registry.dart';
 import 'templates/templates.dart';
 
 /// 应用特定的组件目录
@@ -16,6 +17,9 @@ class AppCatalog {
   static Catalog build() {
     // 从核心组件开始
     final catalog = CoreCatalogItems.asCatalog();
+
+    // 初始化事件注册表
+    GenUiEventRegistry.initialize();
 
     // 添加自定义组件
     return catalog.copyWith([
@@ -573,8 +577,10 @@ class AppCatalog {
         );
         return _buildErrorWidget(context.buildContext, '转账向导加载失败，请重试');
       }
-      // Use ReactiveTransferWizard for DataContext reactive updates
-      final widget = ReactiveTransferWizard(catalogContext: context);
+      final widget = TransferWizard(
+        data: data,
+        dispatchEvent: context.dispatchEvent,
+      );
       final duration = DateTime.now().difference(startTime).inMilliseconds;
       GenUiLogger.logBuilderInvocation(
         componentName: componentName,
@@ -615,19 +621,55 @@ class AppCatalog {
   static Widget _buildErrorWidget(BuildContext context, String message) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8.0),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.red.shade50,
-        borderRadius: BorderRadius.circular(8),
+        color: Colors.red.shade50.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.red.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, color: Colors.red),
-          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.red.shade100,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.error_outline_rounded,
+              color: Colors.red.shade800,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              '组件加载失败: $message',
-              style: TextStyle(color: Colors.red.shade900),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '组件渲染遇到问题',
+                  style: TextStyle(
+                    color: Colors.red.shade900,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  message,
+                  style: TextStyle(color: Colors.red.shade700, fontSize: 12),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ),
         ],

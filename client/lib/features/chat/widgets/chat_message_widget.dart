@@ -69,7 +69,7 @@ class _ChatMessageWidgetState extends ConsumerState<ChatMessageWidget>
 
     // Debug: 追踪消息数据
     if (message.surfaceIds.isNotEmpty || message.uiComponents.isNotEmpty) {
-      _logger.info(
+      _logger.fine(
         'ChatMessageWidget: Rendering message ${message.id} - surfaceIds: ${message.surfaceIds.length}, uiComponents: ${message.uiComponents.length}',
       );
     }

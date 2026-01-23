@@ -2,11 +2,11 @@
 """Query summary of a shared space or all spaces for the user.
 
 Usage:
-    # 查询所有空间的汇总
-    python app/skills/shared-space/scripts/query_space_summary.py
+    # Query summary for all spaces
+    uv run python app/skills/managing-shared-ledgers/scripts/query_space_summary.py
 
-    # 查询指定空间的汇总
-    echo '{"space_id": 123}' | python app/skills/shared-space/scripts/query_space_summary.py
+    # Query summary for a specific space
+    echo '{"space_id": "uuid"}' | uv run python app/skills/managing-shared-ledgers/scripts/query_space_summary.py
 """
 
 import asyncio

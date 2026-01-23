@@ -4,6 +4,7 @@ import 'package:forui/forui.dart';
 import 'package:genui/genui.dart';
 import 'package:augo/app/theme/app_semantic_colors.dart';
 import 'package:augo/i18n/strings.g.dart';
+import '../../services/genui_cache_service.dart';
 
 /// SpaceSelectorCard Data Layer
 class SpaceSelectorData {
@@ -70,8 +71,7 @@ class SpaceSelectorCard extends StatefulWidget {
 }
 
 class _SpaceSelectorCardState extends State<SpaceSelectorCard> {
-  // Static cache for confirmed state persistence across rebuilds
-  static final Map<String, int?> _confirmedSpaceCache = {};
+  static const String _cacheCategory = 'space_selector';
 
   late SpaceSelectorData _model;
   int? _selectedSpaceId;
@@ -83,7 +83,10 @@ class _SpaceSelectorCardState extends State<SpaceSelectorCard> {
     _model = SpaceSelectorData.fromJson(widget.data);
 
     // Restore from cache if available
-    final cachedSpaceId = _confirmedSpaceCache[_model.surfaceId];
+    final cachedSpaceId = GenUiCacheService().get<int>(
+      _cacheCategory,
+      _model.surfaceId,
+    );
     if (cachedSpaceId != null) {
       _selectedSpaceId = cachedSpaceId;
       _isConfirmed = true;
@@ -446,7 +449,7 @@ class _SpaceSelectorCardState extends State<SpaceSelectorCard> {
     setState(() => _isConfirmed = true);
 
     // Cache the selection
-    _confirmedSpaceCache[_model.surfaceId] = _selectedSpaceId;
+    GenUiCacheService().put(_cacheCategory, _model.surfaceId, _selectedSpaceId);
 
     final selectedSpace = _selectedSpace;
 

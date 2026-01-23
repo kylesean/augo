@@ -35,7 +35,7 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 
 	late final TranslationsEn _root = this; // ignore: unused_field
 
-	@override 
+	@override
 	TranslationsEn $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsEn(meta: meta ?? this.$meta);
 
 	// Translations
@@ -1082,7 +1082,6 @@ class _TranslationsChatToolsEn extends TranslationsChatToolsZh {
 	@override String get getFinancialHealthScore => 'Calculating financial health score...';
 	@override String get getFinancialSummary => 'Generating financial report...';
 	@override String get evaluateFinancialHealth => 'Evaluating financial health...';
-	@override String get forecastBalance => 'Forecasting future balance...';
 	@override String get simulateExpenseImpact => 'Simulating purchase impact...';
 	@override String get recordTransactions => 'Recording transactions...';
 	@override String get createTransaction => 'Recording transaction...';
@@ -1090,12 +1089,12 @@ class _TranslationsChatToolsEn extends TranslationsChatToolsZh {
 	@override String get executeTransfer => 'Executing transfer...';
 	@override String get listDir => 'Browsing directory...';
 	@override String get execute => 'Processing...';
-	@override String get analyzeFinance => 'Analyzing finances...';
-	@override String get forecastFinance => 'Forecasting finances...';
-	@override String get analyzeBudget => 'Analyzing budget...';
-	@override String get auditAnalysis => 'Running audit analysis...';
-	@override String get budgetOps => 'Processing budget...';
-	@override String get createSharedTransaction => 'Creating shared expense...';
+	@override String get analyzeSpending => 'Analyzing spendings...';
+	@override String get analyzeCashflow => 'Analyzing cashflow...';
+	@override String get forecastBalance => 'Forecasting balance...';
+	@override String get suggestBudget => 'Suggesting budget...';
+	@override String get prepareBudgetSimulation => 'Preparing budget simulation...';
+	@override String get simulateBudget => 'Simulating budget...';
 	@override String get listSpaces => 'Loading shared spaces...';
 	@override String get querySpaceSummary => 'Querying space summary...';
 	@override String get prepareTransfer => 'Preparing transfer...';
@@ -1141,6 +1140,7 @@ class _TranslationsChatGenuiEn extends TranslationsChatGenuiZh {
 	@override late final _TranslationsChatGenuiTransferPathEn transferPath = _TranslationsChatGenuiTransferPathEn._(_root);
 	@override late final _TranslationsChatGenuiTransactionCardEn transactionCard = _TranslationsChatGenuiTransactionCardEn._(_root);
 	@override late final _TranslationsChatGenuiCashFlowCardEn cashFlowCard = _TranslationsChatGenuiCashFlowCardEn._(_root);
+	@override late final _TranslationsChatGenuiBudgetSimulatorEn budgetSimulator = _TranslationsChatGenuiBudgetSimulatorEn._(_root);
 }
 
 // Path: chat.welcome
@@ -1447,12 +1447,11 @@ class _TranslationsChatToolsDoneEn extends TranslationsChatToolsDoneZh {
 	@override String get executeTransfer => 'Transfer complete';
 	@override String get listDir => 'Browsed directory';
 	@override String get execute => 'Processing complete';
-	@override String get analyzeFinance => 'Finance analysis complete';
-	@override String get forecastFinance => 'Finance forecast complete';
-	@override String get analyzeBudget => 'Budget analysis complete';
-	@override String get auditAnalysis => 'Audit analysis complete';
-	@override String get budgetOps => 'Budget processing complete';
-	@override String get createSharedTransaction => 'Shared expense created';
+	@override String get analyzeSpending => 'Spending analysis complete';
+	@override String get analyzeCashflow => 'Cashflow analysis complete';
+	@override String get suggestBudget => 'Budget suggestion complete';
+	@override String get prepareBudgetSimulation => 'Budget simulation ready';
+	@override String get simulateBudget => 'Budget simulation complete';
 	@override String get listSpaces => 'Shared spaces loaded';
 	@override String get querySpaceSummary => 'Space summary ready';
 	@override String get prepareTransfer => 'Transfer ready';
@@ -1679,6 +1678,26 @@ class _TranslationsChatGenuiCashFlowCardEn extends TranslationsChatGenuiCashFlow
 	@override String get essentialExpense => 'Essential';
 	@override String get discretionaryExpense => 'Discretionary';
 	@override String get aiInsight => 'AI Insight';
+}
+
+// Path: chat.genui.budgetSimulator
+class _TranslationsChatGenuiBudgetSimulatorEn extends TranslationsChatGenuiBudgetSimulatorZh {
+	_TranslationsChatGenuiBudgetSimulatorEn._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Budget Stress Simulator';
+	@override String get targetAmount => 'Target Budget Amount';
+	@override String get overspendProbability => 'Overspend Probability';
+	@override String get riskLow => 'Very Low Risk';
+	@override String get riskMedium => 'Moderate Risk';
+	@override String get riskHigh => 'High Overspend Risk';
+	@override String get evaluating => 'Evaluating spending history...';
+	@override String get historyAverage => 'Historical Average';
+	@override String get dailyAllowance => 'Daily Allowance';
+	@override String get cancel => 'Cancel';
+	@override String get confirm => 'Apply This Budget';
 }
 
 // Path: chat.welcome.morning
@@ -2405,7 +2424,6 @@ extension on TranslationsEn {
 			'chat.tools.getFinancialHealthScore' => 'Calculating financial health score...',
 			'chat.tools.getFinancialSummary' => 'Generating financial report...',
 			'chat.tools.evaluateFinancialHealth' => 'Evaluating financial health...',
-			'chat.tools.forecastBalance' => 'Forecasting future balance...',
 			'chat.tools.simulateExpenseImpact' => 'Simulating purchase impact...',
 			'chat.tools.recordTransactions' => 'Recording transactions...',
 			'chat.tools.createTransaction' => 'Recording transaction...',
@@ -2413,12 +2431,12 @@ extension on TranslationsEn {
 			'chat.tools.executeTransfer' => 'Executing transfer...',
 			'chat.tools.listDir' => 'Browsing directory...',
 			'chat.tools.execute' => 'Processing...',
-			'chat.tools.analyzeFinance' => 'Analyzing finances...',
-			'chat.tools.forecastFinance' => 'Forecasting finances...',
-			'chat.tools.analyzeBudget' => 'Analyzing budget...',
-			'chat.tools.auditAnalysis' => 'Running audit analysis...',
-			'chat.tools.budgetOps' => 'Processing budget...',
-			'chat.tools.createSharedTransaction' => 'Creating shared expense...',
+			'chat.tools.analyzeSpending' => 'Analyzing spendings...',
+			'chat.tools.analyzeCashflow' => 'Analyzing cashflow...',
+			'chat.tools.forecastBalance' => 'Forecasting balance...',
+			'chat.tools.suggestBudget' => 'Suggesting budget...',
+			'chat.tools.prepareBudgetSimulation' => 'Preparing budget simulation...',
+			'chat.tools.simulateBudget' => 'Simulating budget...',
 			'chat.tools.listSpaces' => 'Loading shared spaces...',
 			'chat.tools.querySpaceSummary' => 'Querying space summary...',
 			'chat.tools.prepareTransfer' => 'Preparing transfer...',
@@ -2439,12 +2457,11 @@ extension on TranslationsEn {
 			'chat.tools.done.executeTransfer' => 'Transfer complete',
 			'chat.tools.done.listDir' => 'Browsed directory',
 			'chat.tools.done.execute' => 'Processing complete',
-			'chat.tools.done.analyzeFinance' => 'Finance analysis complete',
-			'chat.tools.done.forecastFinance' => 'Finance forecast complete',
-			'chat.tools.done.analyzeBudget' => 'Budget analysis complete',
-			'chat.tools.done.auditAnalysis' => 'Audit analysis complete',
-			'chat.tools.done.budgetOps' => 'Budget processing complete',
-			'chat.tools.done.createSharedTransaction' => 'Shared expense created',
+			'chat.tools.done.analyzeSpending' => 'Spending analysis complete',
+			'chat.tools.done.analyzeCashflow' => 'Cashflow analysis complete',
+			'chat.tools.done.suggestBudget' => 'Budget suggestion complete',
+			'chat.tools.done.prepareBudgetSimulation' => 'Budget simulation ready',
+			'chat.tools.done.simulateBudget' => 'Budget simulation complete',
 			'chat.tools.done.listSpaces' => 'Shared spaces loaded',
 			'chat.tools.done.querySpaceSummary' => 'Space summary ready',
 			'chat.tools.done.prepareTransfer' => 'Transfer ready',
@@ -2462,10 +2479,10 @@ extension on TranslationsEn {
 			'chat.noRelatedFound' => 'No related conversations found',
 			'chat.tryOtherKeywords' => 'Try searching with other keywords',
 			'chat.searchFailed' => 'Search failed',
-			_ => null,
-		} ?? switch (path) {
 			'chat.deleteConversation' => 'Delete Conversation',
 			'chat.deleteConversationConfirm' => 'Are you sure you want to delete this conversation? This action cannot be undone.',
+			_ => null,
+		} ?? switch (path) {
 			'chat.conversationDeleted' => 'Conversation deleted',
 			'chat.deleteConversationFailed' => 'Failed to delete conversation',
 			'chat.transferWizard.title' => 'Transfer Wizard',
@@ -2594,6 +2611,17 @@ extension on TranslationsEn {
 			'chat.genui.cashFlowCard.essentialExpense' => 'Essential',
 			'chat.genui.cashFlowCard.discretionaryExpense' => 'Discretionary',
 			'chat.genui.cashFlowCard.aiInsight' => 'AI Insight',
+			'chat.genui.budgetSimulator.title' => 'Budget Stress Simulator',
+			'chat.genui.budgetSimulator.targetAmount' => 'Target Budget Amount',
+			'chat.genui.budgetSimulator.overspendProbability' => 'Overspend Probability',
+			'chat.genui.budgetSimulator.riskLow' => 'Very Low Risk',
+			'chat.genui.budgetSimulator.riskMedium' => 'Moderate Risk',
+			'chat.genui.budgetSimulator.riskHigh' => 'High Overspend Risk',
+			'chat.genui.budgetSimulator.evaluating' => 'Evaluating spending history...',
+			'chat.genui.budgetSimulator.historyAverage' => 'Historical Average',
+			'chat.genui.budgetSimulator.dailyAllowance' => 'Daily Allowance',
+			'chat.genui.budgetSimulator.cancel' => 'Cancel',
+			'chat.genui.budgetSimulator.confirm' => 'Apply This Budget',
 			'chat.welcome.morning.subtitle' => 'Start your day by tracking',
 			'chat.welcome.morning.breakfast.title' => 'Breakfast',
 			'chat.welcome.morning.breakfast.prompt' => 'Record breakfast expense',

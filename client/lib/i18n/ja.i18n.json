@@ -604,6 +604,19 @@
                 "essentialExpense": "必須支出",
                 "discretionaryExpense": "自由裁量支出",
                 "aiInsight": "AI分析"
+            },
+            "budgetSimulator": {
+                "title": "予算ストレステスト",
+                "targetAmount": "目標予算額",
+                "overspendProbability": "超過確率",
+                "riskLow": "リスク極低",
+                "riskMedium": "リスク中程度",
+                "riskHigh": "超過リスク高",
+                "evaluating": "消費パターンを分析中...",
+                "historyAverage": "過去の月平均",
+                "dailyAllowance": "1日あたりの上限",
+                "cancel": "キャンセル",
+                "confirm": "この予算を適用"
             }
         }
     },

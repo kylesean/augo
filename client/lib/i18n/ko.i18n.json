@@ -604,6 +604,19 @@
                 "essentialExpense": "필수 지출",
                 "discretionaryExpense": "선택적 소비",
                 "aiInsight": "AI 분석"
+            },
+            "budgetSimulator": {
+                "title": "예산 스트레스 시뮬레이터",
+                "targetAmount": "목표 예산 금액",
+                "overspendProbability": "초과 지출 확률",
+                "riskLow": "위험 매우 낮음",
+                "riskMedium": "위험 보통",
+                "riskHigh": "초과 위험 높음",
+                "evaluating": "소비 패턴 분석 중...",
+                "historyAverage": "역대 월 평균",
+                "dailyAllowance": "일일 한도",
+                "cancel": "취소",
+                "confirm": "이 예산 적용"
             }
         }
     },

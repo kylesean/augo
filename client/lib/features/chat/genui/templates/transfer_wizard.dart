@@ -5,6 +5,7 @@ import 'package:genui/genui.dart';
 import 'package:augo/app/theme/app_semantic_colors.dart';
 import '../organisms/organisms.dart';
 import 'package:augo/i18n/strings.g.dart';
+import '../../services/genui_cache_service.dart';
 import 'package:augo/shared/utils/amount_formatter.dart';
 
 /// 转账向导数据模型 (Data Layer)
@@ -81,9 +82,7 @@ class _ConfirmedState {
 }
 
 class _TransferWizardState extends State<TransferWizard> {
-  // 静态缓存：保存用户确认时的选择状态
-  // 当组件重建时，可以从缓存恢复状态
-  static final Map<String, _ConfirmedState> _confirmedStateCache = {};
+  static const String _cacheCategory = 'transfer_wizard';
 
   late TransferWizardData _model;
   late TextEditingController _amountController;
@@ -97,7 +96,10 @@ class _TransferWizardState extends State<TransferWizard> {
     _model = TransferWizardData.fromJson(widget.data);
 
     // 优先从缓存恢复确认状态（解决组件重建后状态丢失问题）
-    final cachedState = _confirmedStateCache[_model.surfaceId];
+    final cachedState = GenUiCacheService().get<_ConfirmedState>(
+      _cacheCategory,
+      _model.surfaceId,
+    );
     if (cachedState != null) {
       _sourceId = cachedState.sourceId;
       _targetId = cachedState.targetId;
@@ -516,10 +518,14 @@ class _TransferWizardState extends State<TransferWizard> {
     final finalAmount = double.tryParse(_amountController.text) ?? 0;
 
     // 将用户选择保存到缓存，防止组件重建时状态丢失
-    _confirmedStateCache[_model.surfaceId] = _ConfirmedState(
-      sourceId: _sourceId,
-      targetId: _targetId,
-      amount: _amountController.text,
+    GenUiCacheService().put(
+      _cacheCategory,
+      _model.surfaceId,
+      _ConfirmedState(
+        sourceId: _sourceId,
+        targetId: _targetId,
+        amount: _amountController.text,
+      ),
     );
 
     // 获取账户名称用于后端 TransferReceipt 组件显示

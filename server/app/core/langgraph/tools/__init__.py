@@ -7,7 +7,7 @@
 设计原则：
 - 工具语义清晰，LLM 无需额外提示即可正确选择
 - 统一入口：record_transactions 支持混合类型批量记录
-- 转账通过 transfer-expert 技能触发，由 UI 收集账户信息
+- 转账通过 executing-transfers 技能触发，由 UI 收集账户信息
 - Skills 通过 load_skill 工具按需加载（官方 Progressive Disclosure 模式）
 """
 
@@ -65,8 +65,8 @@ utility_tools: list[BaseTool] = [
 tools: list[BaseTool] = utility_tools + business_tools + filesystem_tools + memory_tools + skill_tools
 
 # 5. 技能专属工具（已迁移到脚本模式，不再需要）
-# - finance-analyst: 通过 analyze_finance.py, forecast_finance.py 脚本
-# - shared-space: 通过 list_spaces.py, query_space_summary.py 脚本
+# - reviewing-finances: 通过 analyze_spending.py, analyze_cashflow.py 脚本
+# - managing-shared-ledgers: 通过 list_spaces.py, query_space_summary.py 脚本
 skill_exclusive_tools: dict[str, list[BaseTool]] = {}
 
 # 6. 内部工具（不暴露给 LLM，仅供 GenUI 回调等内部使用）

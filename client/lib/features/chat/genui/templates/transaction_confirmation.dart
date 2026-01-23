@@ -3,18 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:genui/genui.dart';
 import 'package:augo/i18n/strings.g.dart';
+import '../../services/genui_cache_service.dart';
 import '../organisms/organisms.dart';
 
 /// 提交缓存
 class _ConfirmationCache {
-  static final Map<String, String?> _cache = {};
+  static const String _cacheCategory = 'transaction_confirmation';
 
   static void markConfirmed(String surfaceId, String? accountId) {
-    _cache[surfaceId] = accountId;
+    GenUiCacheService().put(_cacheCategory, surfaceId, accountId);
   }
 
-  static bool isConfirmed(String surfaceId) => _cache.containsKey(surfaceId);
-  static String? getAccountId(String surfaceId) => _cache[surfaceId];
+  static bool isConfirmed(String surfaceId) =>
+      GenUiCacheService().containsKey(_cacheCategory, surfaceId);
+
+  static String? getAccountId(String surfaceId) =>
+      GenUiCacheService().get<String>(_cacheCategory, surfaceId);
 }
 
 /// 交易确认 - 账户选择

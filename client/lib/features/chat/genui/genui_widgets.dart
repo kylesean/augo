@@ -35,3 +35,4 @@ export 'organisms/organisms.dart';
 // Utilities
 export 'utils/formatters.dart';
 export 'utils/theme_helpers.dart';
+export 'utils/genui_data_paths.dart';

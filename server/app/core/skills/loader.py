@@ -74,25 +74,22 @@ class SkillLoader:
                 parts = content.split("---", 2)
                 if len(parts) >= 3:
                     frontmatter_str = parts[1]
-                    markdown_content = parts[2].strip()  # 提取 Markdown 正文
+                    markdown_content = parts[2].strip()  # Extract Markdown body
                     data = yaml.safe_load(frontmatter_str)
 
-                    # 使用相对路径，更利于 LLM 理解和构造命令
+                    # Use relative path for better LLM understanding and command construction
                     rel_path = os.path.relpath(file_path)
 
-                    # 解析 allowed-tools（支持两种格式）
-                    # 1. 新格式（官方规范）: "Bash Read Write" 或 "Bash(git:*) Read"
-                    # 2. 旧格式: ["bash", "read_file", ...]
+                    # Parse allowed-tools (AgentSkills.io specification)
+                    # Format: space-delimited string of tool names
+                    # Example: "Bash(git:*) Bash(jq:*) Read"
+                    # Reference: https://agentskills.io/specification#allowed-tools-field
                     allowed_tools_raw = data.get("allowed-tools")
                     allowed_tools = None
 
-                    if allowed_tools_raw:
-                        if isinstance(allowed_tools_raw, str):
-                            # 新格式：空格分隔的字符串
-                            allowed_tools = allowed_tools_raw.split()
-                        elif isinstance(allowed_tools_raw, list):
-                            # 旧格式：列表
-                            allowed_tools = allowed_tools_raw
+                    if allowed_tools_raw and isinstance(allowed_tools_raw, str):
+                        # Official format: space-delimited string
+                        allowed_tools = allowed_tools_raw.split()
 
                     return SkillMetadata(
                         name=data.get("name", "unknown"),
@@ -177,5 +174,5 @@ You have activated the **{skill.name}** skill. Follow the instructions above str
         if not skill or not skill.allowed_tools:
             return None
 
-        # 直接返回工具名列表（不再做映射）
+        # Return tool names directly (no mapping needed)
         return skill.allowed_tools

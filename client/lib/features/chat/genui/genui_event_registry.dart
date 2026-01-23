@@ -27,11 +27,23 @@ import 'package:logging/logging.dart';
 import '../models/client_state_mutation.dart';
 import 'events/events.dart';
 
+/// 事件处理器结果
+///
+/// 包含业务变更 (ClientStateMutation) 和 可选的发送给 LLM 的 Payload 增强数据
+class EventProcessingResult {
+  final ClientStateMutation? mutation;
+  final Map<String, dynamic>? payloadExtensions;
+
+  const EventProcessingResult({this.mutation, this.payloadExtensions});
+
+  bool get isEmpty => mutation == null && payloadExtensions == null;
+}
+
 /// 事件处理器类型
 ///
-/// 接收事件上下文，返回对应的 ClientStateMutation
+/// 接收事件上下文，返回结果
 typedef StateMutationHandler =
-    ClientStateMutation? Function(Map<String, dynamic> context);
+    EventProcessingResult? Function(Map<String, dynamic> context);
 
 /// GenUI 事件注册表
 ///
@@ -45,10 +57,6 @@ class GenUiEventRegistry {
   static bool _initialized = false;
 
   /// 注册事件处理器
-  ///
-  /// [eventName] 事件名称，建议使用 GenUiEventNames 常量
-  /// [handler] 处理器函数，接收 context 返回 mutation
-  /// [allowOverride] 是否允许覆盖已有处理器（默认 false）
   static void register(
     String eventName,
     StateMutationHandler handler, {
@@ -58,7 +66,7 @@ class GenUiEventRegistry {
 
     if (_handlers.containsKey(eventName) && !allowOverride) {
       _logger.info(
-        'GenUiEventRegistry: WARNING - Event "$eventName" already registered. Use allowOverride=true to override.',
+        'GenUiEventRegistry: WARNING - Event "$eventName" already registered.',
       );
       return;
     }
@@ -68,10 +76,8 @@ class GenUiEventRegistry {
     _logger.info('GenUiEventRegistry: Registered event "$eventName"');
   }
 
-  /// 分发事件，获取对应的 ClientStateMutation
-  ///
-  /// 如果事件未注册，返回 null
-  static ClientStateMutation? dispatch(
+  /// 分发事件
+  static EventProcessingResult? dispatch(
     String eventName,
     Map<String, dynamic> context,
   ) {
@@ -81,48 +87,37 @@ class GenUiEventRegistry {
       return null;
     }
 
-    // 记录分发次数
     _dispatchCounts[eventName] = (_dispatchCounts[eventName] ?? 0) + 1;
-
     return handler(context);
   }
 
-  /// 检查事件是否已注册
-  static bool hasHandler(String eventName) => _handlers.containsKey(eventName);
-
-  /// 获取已注册的事件名称列表
-  static List<String> get registeredEvents => _handlers.keys.toList();
-
-  /// 获取事件分发统计
-  static Map<String, int> get dispatchStats =>
-      Map.unmodifiable(_dispatchCounts);
-
-  /// 打印调试信息
-  static void debugPrintStats() {
-    _logger.info('=== GenUiEventRegistry Stats ===');
-    _logger.info('Registered events: ${_handlers.keys.toList()}');
-    _logger.info('Dispatch counts: $_dispatchCounts');
-    _logger.info('================================');
-  }
-
-  /// 初始化注册表（注册所有业务事件）
-  ///
-  /// 应在 app 启动时调用一次
+  /// 初始化注册表
   static void initialize() {
     if (_initialized) return;
     _initialized = true;
 
-    // 注册转账相关事件
-    // 注意：只有参数完全确定、无需 AI 判断的场景才应该注册为 direct_execute
-    // 交易确认（transaction_confirmed）走 agent 节点，让 AI 处理 tags 生成和账户语义
     _registerTransferEvents();
-
-    // 注册共享空间相关事件
     _registerSpaceEvents();
+    _registerAccountEvents();
+  }
 
-    // 未来可扩展：
-    // _registerFilterEvents();
-    // _registerSearchEvents();
+  /// 注册账户相关事件
+  static void _registerAccountEvents() {
+    register(GenUiEventNames.accountSelected, (context) {
+      final selectedAccountId = context['selected_account_id'] as String?;
+      final selectionType = context['selection_type'] as String?;
+
+      return EventProcessingResult(
+        payloadExtensions: {
+          'role': 'user',
+          'content': '我选择了账户 ID: $selectedAccountId ($selectionType)',
+          'metadata': {
+            'event_type': GenUiEventNames.accountSelected,
+            ...context,
+          },
+        },
+      );
+    });
   }
 
   /// 注册转账相关事件
@@ -135,7 +130,6 @@ class GenUiEventRegistry {
       final targetAccountName =
           context['target_account_name'] as String? ?? '转入账户';
 
-      // 安全解析 amount
       double amount = 0.0;
       final rawAmount = context['amount'];
       if (rawAmount is num) {
@@ -146,16 +140,24 @@ class GenUiEventRegistry {
 
       final currency = context['currency'] as String? ?? 'CNY';
 
-      _logger.info('transfer_path_confirmed: $amount $currency');
-
-      return ClientStateMutation.forTransfer(
-        surfaceId: context['surface_id'] as String?,
-        sourceAccountId: sourceAccountId ?? '',
-        targetAccountId: targetAccountId ?? '',
-        sourceAccountName: sourceAccountName,
-        targetAccountName: targetAccountName,
-        amount: amount,
-        currency: currency,
+      return EventProcessingResult(
+        mutation: ClientStateMutation.forTransfer(
+          surfaceId: context['surface_id'] as String?,
+          sourceAccountId: sourceAccountId ?? '',
+          targetAccountId: targetAccountId ?? '',
+          sourceAccountName: sourceAccountName,
+          targetAccountName: targetAccountName,
+          amount: amount,
+          currency: currency,
+        ),
+        payloadExtensions: {
+          'role': 'user',
+          'content': '按照我的选择执行转账',
+          'metadata': {
+            'event_type': GenUiEventNames.transferPathConfirmed,
+            ...context,
+          },
+        },
       );
     });
   }
@@ -165,16 +167,18 @@ class GenUiEventRegistry {
     register(SpaceEventNames.spaceSelected, (context) {
       final spaceId = context['space_id'] as int?;
       final transactionIds = context['transaction_ids'] as List<dynamic>?;
-      final surfaceId = context['surface_id'] as String?;
 
-      _logger.info(
-        'space_selected: spaceId=$spaceId, txCount=${transactionIds?.length}',
-      );
-
-      return ClientStateMutation.forSpaceAssociation(
-        surfaceId: surfaceId,
-        spaceId: spaceId ?? 0,
-        transactionIds: transactionIds?.cast<String>() ?? [],
+      return EventProcessingResult(
+        mutation: ClientStateMutation.forSpaceAssociation(
+          surfaceId: context['surface_id'] as String?,
+          spaceId: spaceId ?? 0,
+          transactionIds: transactionIds?.cast<String>() ?? [],
+        ),
+        payloadExtensions: {
+          'role': 'user',
+          'content': '关联选定的空间',
+          'metadata': {'event_type': SpaceEventNames.spaceSelected, ...context},
+        },
       );
     });
   }

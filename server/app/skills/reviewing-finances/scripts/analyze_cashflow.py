@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Finance Analysis Script - Cash Flow and Health Scoring
+"""Cash Flow Analysis Script - Income/Expense Balance and Health Scoring
 
 This script uses StatisticsService to analyze user's financial health.
 It follows AgentSkills.io best practice: scripts call services for data.
 
 Usage:
-    uv run python app/skills/finance-analyst/scripts/analyze_finance.py --days 90
+    uv run python app/skills/reviewing-finances/scripts/analyze_cashflow.py --days 90
 
 Environment:
     USER_ID: Required. User UUID (injected by execute tool).
