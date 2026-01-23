@@ -106,6 +106,31 @@ class TransactionService:
         """Update transaction's account."""
         return await self._crud.update_transaction_account(transaction_id, user_uuid, account_id)
 
+    async def update_transaction(
+        self,
+        transaction_id: UUID,
+        user_uuid: UUID,
+        *,
+        amount: float | None = None,
+        category_key: str | None = None,
+        raw_input: str | None = None,
+        transaction_at: datetime | None = None,
+        tags: list[str] | None = None,
+    ) -> dict[str, Any]:
+        """Update transaction properties.
+
+        Returns _intent='update' for reactive UI updates.
+        """
+        return await self._crud.update_transaction(
+            transaction_id=transaction_id,
+            user_uuid=user_uuid,
+            amount=amount,
+            category_key=category_key,
+            raw_input=raw_input,
+            transaction_at=transaction_at,
+            tags=tags,
+        )
+
     # ===== Query Operations (delegated to TransactionQueryService) =====
 
     async def get_transaction_feed(

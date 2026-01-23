@@ -418,7 +418,88 @@ async def search_transactions(
 
 
 # ============================================================================
+# Update Transaction Tool
+# ============================================================================
+
+
+class UpdateTransactionInput(BaseModel):
+    """Update transaction input schema"""
+
+    transaction_id: str = Field(..., description="Transaction ID to update")
+    amount: float | None = Field(
+        None, description="New amount (optional). Must be positive."
+    )
+    category_key: TransactionCategory | None = Field(
+        None, description="New category key (optional)"
+    )
+    raw_input: str | None = Field(
+        None, description="New description/raw_input (optional)"
+    )
+    tags: list[str] | None = Field(None, description="New tags (optional)")
+
+
+@tool("update_transaction", args_schema=UpdateTransactionInput)
+async def update_transaction(
+    transaction_id: str,
+    amount: float | None = None,
+    category_key: str | None = None,
+    raw_input: str | None = None,
+    tags: list[str] | None = None,
+    *,
+    config: RunnableConfig,
+) -> dict[str, Any]:
+    """Update an existing transaction's properties.
+
+    Use this when the user wants to MODIFY an existing transaction, not create a new one.
+    Examples:
+    - "改成 200" -> Update the most recent transaction's amount to 200
+    - "改成交通费" -> Update the category to TRANSPORTATION
+    - "备注改成买书" -> Update the raw_input
+
+    IMPORTANT: This tool updates the transaction in the database and returns
+    _intent='update' to trigger reactive UI update (DataModelUpdate) instead
+    of creating a new Surface.
+    """
+    user_uuid = _get_user_uuid(config)
+    if not user_uuid:
+        return {"success": False, "message": "User not authenticated"}
+
+    try:
+        tx_id = uuid.UUID(transaction_id)
+    except ValueError:
+        return {"success": False, "message": f"Invalid transaction ID: {transaction_id}"}
+
+    async with db_manager.session_factory() as session:
+        service = TransactionService(session)
+
+        try:
+            result = await service.update_transaction(
+                transaction_id=tx_id,
+                user_uuid=user_uuid,
+                amount=amount,
+                category_key=category_key,
+                raw_input=raw_input,
+                tags=tags,
+            )
+
+            if result.get("success"):
+                # Add component type for GenUI rendering
+                result["componentType"] = "TransactionReceipt"
+                logger.info(
+                    "update_transaction_success",
+                    transaction_id=transaction_id,
+                    changed_fields=result.get("_changed_fields", []),
+                )
+
+            return result
+
+        except Exception as e:
+            logger.error("update_transaction_failed", error=str(e), exc_info=True)
+            return {"success": False, "message": f"更新失败: {str(e)}"}
+
+
+# ============================================================================
 # Export
 # ============================================================================
 
-transaction_tools = [record_transactions, search_transactions]
+transaction_tools = [record_transactions, search_transactions, update_transaction]

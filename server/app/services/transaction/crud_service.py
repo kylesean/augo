@@ -260,6 +260,157 @@ class TransactionCRUDService:
             ).model_dump(),
         }
 
+    async def update_transaction(
+        self,
+        transaction_id: UUID,
+        user_uuid: UUID,
+        *,
+        amount: float | None = None,
+        category_key: str | None = None,
+        raw_input: str | None = None,
+        transaction_at: datetime | None = None,
+        tags: list[str] | None = None,
+    ) -> dict[str, Any]:
+        """Update transaction properties.
+
+        Supports updating: amount, category, raw_input, transaction_at, tags.
+        Returns _intent='update' for reactive UI updates via DataModelUpdate.
+
+        Args:
+            transaction_id: Transaction ID
+            user_uuid: User UUID
+            amount: New amount (optional)
+            category_key: New category key (optional)
+            raw_input: New description (optional)
+            transaction_at: New transaction time (optional)
+            tags: New tags list (optional)
+
+        Returns:
+            Updated transaction data with _intent flag
+
+        Raises:
+            NotFoundError: Transaction not found
+            BusinessError: Permission denied
+        """
+        from app.services.exchange_rate_service import exchange_rate_service
+
+        # Query transaction
+        query = select(Transaction).where(cast(Any, Transaction.id == transaction_id))
+        result = await self.db.execute(query)
+        transaction = result.scalar_one_or_none()
+
+        if not transaction:
+            raise NotFoundError("Transaction")
+
+        # Verify ownership
+        if transaction.user_uuid != user_uuid:
+            raise BusinessError("Permission denied to modify this transaction", "PERMISSION_DENIED")
+
+        # Track what changed for DataModelUpdate paths
+        changed_fields: list[str] = []
+
+        # Update amount if provided
+        if amount is not None and amount > 0:
+            old_amount = transaction.amount
+            new_amount = Decimal(str(amount))
+
+            # Get user's display currency
+            display_currency = await get_user_display_currency(self.db, user_uuid)
+            tx_currency = (transaction.currency or BASE_CURRENCY).upper()
+
+            # If different currency, convert
+            if tx_currency != display_currency:
+                rate = await exchange_rate_service.convert(
+                    amount=1.0,
+                    from_currency=display_currency,
+                    to_currency=tx_currency,
+                )
+                if rate:
+                    # User input is in display currency, convert to storage currency
+                    new_amount = Decimal(str(amount)) * Decimal(str(rate))
+
+            transaction.amount = new_amount.quantize(Decimal("0.00000001"))
+            transaction.amount_original = Decimal(str(amount))
+            changed_fields.append("/amount")
+
+            # Update linked account balance if exists
+            linked_account_id = (
+                transaction.source_account_id
+                if transaction.type == "EXPENSE"
+                else transaction.target_account_id
+            )
+            if linked_account_id:
+                account_query = select(FinancialAccount).where(
+                    cast(Any, FinancialAccount.id == linked_account_id)
+                )
+                account_result = await self.db.execute(account_query)
+                account = account_result.scalar_one_or_none()
+                if account:
+                    # Rollback old amount, apply new amount
+                    diff = new_amount - old_amount
+                    if transaction.type == "EXPENSE":
+                        account.current_balance -= diff
+                    else:
+                        account.current_balance += diff
+                    account.updated_at = utc_now()
+
+        # Update category if provided
+        if category_key is not None:
+            transaction.category_key = category_key.upper()
+            changed_fields.append("/category_key")
+
+        # Update raw_input (description) if provided
+        if raw_input is not None:
+            transaction.raw_input = raw_input
+            changed_fields.append("/raw_input")
+
+        # Update transaction time if provided
+        if transaction_at is not None:
+            transaction.transaction_at = transaction_at
+            changed_fields.append("/transaction_at")
+
+        # Update tags if provided
+        if tags is not None:
+            transaction.tags = tags
+            changed_fields.append("/tags")
+
+        # Update timestamp
+        transaction.updated_at = utc_now()
+
+        await self.db.commit()
+        await self.db.refresh(transaction)
+
+        logger.info(
+            "transaction_updated",
+            transaction_id=str(transaction_id),
+            changed_fields=changed_fields,
+        )
+
+        # Get display values
+        display_currency = await get_user_display_currency(self.db, user_uuid)
+        exchange_rate = await get_exchange_rate_from_base(display_currency)
+        display_amount = float(transaction.amount)
+        if display_currency != BASE_CURRENCY and exchange_rate:
+            display_amount = display_amount * float(exchange_rate)
+
+        return {
+            "success": True,
+            "transaction_id": str(transaction.id),
+            "amount": round(display_amount, 2),
+            "amount_original": float(transaction.amount_original) if transaction.amount_original else display_amount,
+            "currency": display_currency,
+            "type": transaction.type,
+            "category_key": transaction.category_key,
+            "raw_input": transaction.raw_input,
+            "tags": transaction.tags or [],
+            "transaction_at": transaction.transaction_at.isoformat() if transaction.transaction_at else None,
+            "updated_at": transaction.updated_at.isoformat() if transaction.updated_at else None,
+            # KEY: This flag tells frontend to use DataModelUpdate instead of creating new surface
+            "_intent": "update",
+            "_changed_fields": changed_fields,
+            "message": f"已更新交易记录",
+        }
+
     async def delete_transaction(
         self,
         transaction_id: UUID,
