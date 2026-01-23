@@ -511,16 +511,53 @@ class CustomContentGenerator implements genui.ContentGenerator {
         return;
       }
 
+      // =====================================================================
+      // NEW: Enhanced message type detection for DataModelUpdate support
+      // GenUI's A2uiMessage.fromJson uses the outer key as discriminator
+      // =====================================================================
+
+      // Check for dataModelUpdate message type
+      if (a2uiMessageData.containsKey('dataModelUpdate')) {
+        final payload =
+            a2uiMessageData['dataModelUpdate'] as Map<String, dynamic>;
+        final surfaceId = payload['surfaceId'] as String?;
+        final path = payload['path'] as String?;
+        final value = payload['value'];
+
+        _logger.info(
+          '[A2UI] DataModelUpdate received: surfaceId=$surfaceId, path=$path, value=$value',
+        );
+
+        // Parse and emit the message - GenUI will handle the reactive update
+        final a2uiMessage = genui.A2uiMessage.fromJson(a2uiMessageData);
+        _a2uiMessageController.add(a2uiMessage);
+
+        // Yield to event loop for UI update
+        await Future<void>.delayed(Duration.zero);
+        return;
+      }
+
+      // Check for deleteSurface message type
+      if (a2uiMessageData.containsKey('deleteSurface')) {
+        final payload =
+            a2uiMessageData['deleteSurface'] as Map<String, dynamic>;
+        final surfaceId = payload['surfaceId'] as String?;
+
+        _logger.info('[A2UI] DeleteSurface received: surfaceId=$surfaceId');
+
+        final a2uiMessage = genui.A2uiMessage.fromJson(a2uiMessageData);
+        _a2uiMessageController.add(a2uiMessage);
+        return;
+      }
+
+      // Standard message handling (surfaceUpdate, beginRendering, etc.)
       final a2uiMessage = genui.A2uiMessage.fromJson(a2uiMessageData);
 
-      // 立即发送到 controller，不再缓冲到流结束
-      // 这样 GenUI 组件会立即渲染，不会等待流式文本完成
+      // Send immediately - GenUI components render without waiting for stream end
       _a2uiMessageController.add(a2uiMessage);
-      _logger.info(
-        '[A2UI] ✓ Message sent immediately: ${a2uiMessage.runtimeType}',
-      );
+      _logger.info('[A2UI] Message sent: ${a2uiMessage.runtimeType}');
 
-      // 处理 surface 相关回调
+      // Handle surface lifecycle callbacks
       if (a2uiMessage is genui.SurfaceUpdate) {
         final surfaceId = a2uiMessage.surfaceId;
         onSurfaceCreated?.call(surfaceId);

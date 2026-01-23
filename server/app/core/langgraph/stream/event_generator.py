@@ -20,6 +20,7 @@ from uuid import UUID
 
 from langchain_core.messages import AIMessage, ToolMessage
 
+from app.core.genui import SurfaceTracker
 from app.core.langgraph.stream.component_detector import ComponentDetector
 from app.core.logging import logger
 from app.schemas.genui import GenUIEvent
@@ -38,7 +39,7 @@ class EventGenerator:
     - 文本过滤决策 (TextFilterPolicy)
     """
 
-    def __init__(self) -> None:
+    def __init__(self, surface_tracker: SurfaceTracker | None = None) -> None:
         # 工具调用时间追踪（用于计算 duration_ms）
         self._tool_start_times: dict[str, float] = {}
         # 工具 ID 到名称的映射
@@ -47,6 +48,8 @@ class EventGenerator:
         self._processed_tool_calls: set[str] = set()
         # 流式 AI 回复积累（用于历史记录）
         self._ai_response_parts: list[str] = []
+        # Surface 追踪器（用于增量更新和 Surface 复用）
+        self._surface_tracker = surface_tracker or SurfaceTracker()
 
     def reset(self) -> None:
         """重置状态（每次新请求前调用）"""
@@ -275,11 +278,19 @@ class EventGenerator:
         session_id: UUID,
         tool_call_id: str | None,
     ) -> AsyncGenerator[GenUIEvent]:
-        """生成 UI 组件事件（a2ui_message）"""
+        """生成 UI 组件事件（a2ui_message）
+
+        Enhanced for GenUI Full Architecture:
+        1. Check if reusable Surface exists for this component type
+        2. If reusable: emit DataModelUpdate for changed fields only
+        3. If new: emit SurfaceUpdate + BeginRendering as before
+        """
         from app.core.genui_protocol import (
             BeginRendering,
             BeginRenderingPayload,
             Component,
+            DataModelUpdate,
+            DataModelUpdatePayload,
             SurfaceUpdate,
             SurfaceUpdatePayload,
         )
@@ -287,7 +298,6 @@ class EventGenerator:
         # 使用 ComponentDetector 检测组件类型
         component_name = ComponentDetector.detect_with_overrides(tool_result, tool_name)
 
-        # 调试日志：检查组件检测结果
         logger.debug(
             "component_detection",
             tool_name=tool_name,
@@ -302,8 +312,41 @@ class EventGenerator:
         if not ComponentDetector.is_successful_result(tool_result):
             return
 
-        # 生成 Surface ID 和 Component ID
-        # 使用 tool_call_id 确保 surface ID 的唯一性和可追踪性
+        # =====================================================================
+        # NEW: Check for reusable Surface (enables "update existing UI" scenarios)
+        # =====================================================================
+        existing_surface_id = self._surface_tracker.find_reusable_surface(
+            session_id=str(session_id),
+            component_type=component_name,
+        )
+
+        if existing_surface_id and self._is_incremental_update(tool_result):
+            # Reuse existing Surface with incremental updates
+            logger.info(
+                "reusing_surface_with_incremental_update",
+                surface_id=existing_surface_id,
+                component=component_name,
+            )
+
+            # Get changes and emit DataModelUpdate for each
+            changes = self._extract_data_changes(existing_surface_id, tool_result)
+            for path, value in changes:
+                data_update_msg = DataModelUpdate(
+                    dataModelUpdate=DataModelUpdatePayload(
+                        surfaceId=existing_surface_id,
+                        path=path,
+                        value=value,
+                    )
+                )
+                yield GenUIEvent(type="a2ui_message", data=data_update_msg.model_dump())
+
+                # Update tracker state
+                self._surface_tracker.update_surface_data(existing_surface_id, path, value)
+            return
+
+        # =====================================================================
+        # Original logic: Create new Surface
+        # =====================================================================
         if not tool_call_id:
             logger.warning(
                 "missing_tool_call_id_for_component",
@@ -326,6 +369,15 @@ class EventGenerator:
         # 注入 _surfaceId 到组件数据
         component_data = {**tool_result, "_surfaceId": surface_id}
 
+        # Register Surface in tracker
+        self._surface_tracker.register_surface(
+            session_id=str(session_id),
+            surface_id=surface_id,
+            component_type=component_name,
+            data=component_data,
+            tool_call_id=tool_call_id,
+        )
+
         # 发送 SurfaceUpdate
         comp = Component(id=component_id, component={component_name: component_data})
         update_msg = SurfaceUpdate(surfaceUpdate=SurfaceUpdatePayload(surfaceId=surface_id, components=[comp]))
@@ -334,6 +386,46 @@ class EventGenerator:
         # 发送 BeginRendering
         render_msg = BeginRendering(beginRendering=BeginRenderingPayload(surfaceId=surface_id, root=component_id))
         yield GenUIEvent(type="a2ui_message", data=render_msg.model_dump())
+
+    def _is_incremental_update(self, tool_result: Any) -> bool:
+        """Check if this tool result should trigger incremental update.
+
+        Incremental updates are suitable when:
+        - The result contains an 'update' or 'modify' intent marker
+        - The result has only a few changed fields
+        """
+        if not isinstance(tool_result, dict):
+            return False
+
+        # Check for explicit update intent
+        if tool_result.get("_intent") == "update":
+            return True
+        if tool_result.get("_incremental_update"):
+            return True
+
+        # Future: Could add heuristics based on changed field count
+        return False
+
+    def _extract_data_changes(
+        self,
+        surface_id: str,
+        new_data: dict[str, Any],
+    ) -> list[tuple[str, Any]]:
+        """Extract changed fields between existing surface data and new data.
+
+        Returns list of (path, value) tuples for changed fields.
+        """
+        existing_data = self._surface_tracker.get_surface_data(surface_id) or {}
+        changes: list[tuple[str, Any]] = []
+
+        # Compare top-level fields
+        for key, new_value in new_data.items():
+            if key.startswith("_"):
+                continue  # Skip internal fields
+            if key not in existing_data or existing_data[key] != new_value:
+                changes.append((f"/{key}", new_value))
+
+        return changes
 
     # =========================================================================
     # 辅助方法

@@ -151,3 +151,71 @@ class UserInteraction(BaseModel):
     """
 
     userInteraction: UserInteractionPayload
+
+
+# ============================================================================
+# 6. DataModelUpdate - Update Surface Data (Reactive Updates)
+# ============================================================================
+
+
+class DataModelUpdatePayload(BaseModel):
+    """Payload for data model update.
+
+    Used for reactive updates: only widgets bound to the specified path
+    will rebuild, instead of the entire surface.
+    """
+
+    surfaceId: str
+    path: str  # JSONPath format, e.g., "/amount" or "/user/name"
+    value: Any  # The new value at the specified path
+
+
+class DataModelUpdate(BaseModel):
+    """GenUI DataModelUpdate message.
+
+    Used to update a specific data path in the Surface's DataModel,
+    triggering reactive rebuilds of bound widgets.
+
+    GenUI expects:
+    {
+      "dataModelUpdate": {
+        "surfaceId": "surface_123",
+        "path": "/amount",
+        "value": 2000.0
+      }
+    }
+
+    Use cases:
+    - User changes amount: update only the AmountDisplay widget
+    - User selects account: update only the AccountDisplay widget
+    - AI corrects a value: seamless update without full rebuild
+    """
+
+    dataModelUpdate: DataModelUpdatePayload
+
+
+# ============================================================================
+# 7. DeleteSurface - Remove a Surface from UI
+# ============================================================================
+
+
+class DeleteSurfacePayload(BaseModel):
+    """Payload for surface deletion."""
+
+    surfaceId: str
+
+
+class DeleteSurface(BaseModel):
+    """GenUI DeleteSurface message.
+
+    Used to explicitly remove a Surface from the UI.
+
+    GenUI expects:
+    {
+      "deleteSurface": {
+        "surfaceId": "surface_123"
+      }
+    }
+    """
+
+    deleteSurface: DeleteSurfacePayload
